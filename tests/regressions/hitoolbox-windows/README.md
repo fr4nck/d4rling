@@ -40,9 +40,17 @@ tested there. No production source or test assertions are modified for MSVC.
 - Applied source: `Checks: 25 | Failures: 0`, exit 0.
 - Both builds emitted the MSVC `getenv` deprecation warning C4996.
 
-The Linux runner and full Darling build have not been executed in this session.
-WSL enumeration previously failed with `Wsl/EnumerateDistros/Service/E_ACCESSDENIED`.
-Logic has not been installed or run. GUI and audio compatibility remain untested.
+Linux verification on 2026-10-15: Debian 13.5 x86_64, GCC 14.2.0, C++17,
+without the MSVC attribute shim. The original source produced 25 checks / 23
+failures (exit 1); the patched source produced 25 checks / 0 failures (exit 0).
+The shipped Linux runner also completed with 25 checks / 0 failures (exit 0).
+Both Linux builds emit the preexisting unused `closeDisplay` declaration warning.
+
+WSL access works with the required host permissions. The earlier command-based
+inventory incorrectly reported GCC and Git missing; direct checks confirmed them.
+Clang, CMake, Ninja and pkg-config are unavailable, so a full Darling build has
+not been performed. Logic has not been installed or run; GUI and audio
+compatibility remain untested.
 
 ## Scope limits
 
