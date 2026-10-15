@@ -1,3 +1,40 @@
+# d4rling
+
+Personal development fork of [Darling](https://github.com/darlinghq/darling),
+maintained by [fr4nck](https://github.com/fr4nck), including experimental work
+toward Logic Studio 8 compatibility.
+
+**[Credits and source provenance](CREDITS.md)** ·
+**[Recorded validation and remaining work](docs/logic8-progress.md)**
+
+The default `master` branch includes the latest upstream baseline imported on
+2026-10-15, `60ba801decee7a00782f74f6be4c8ffb013f79ff`, plus this fork's changes.
+Logic has not been installed or run; compatibility is not established.
+
+## Keeping the fork current
+
+Upstream updates are integrated with Git merges, preserving upstream authors,
+history and our local changes. The upstream project is a source dependency;
+working on this fork does not submit contributions there.
+
+From a clean checkout, check for and integrate upstream changes before new work:
+
+```sh
+git switch master
+git fetch https://github.com/darlinghq/darling.git master
+git merge --no-edit FETCH_HEAD
+git submodule sync --recursive
+git submodule update --init --recursive
+git push origin master
+```
+
+Resolve any conflicts explicitly before continuing. Do not reset this fork to
+upstream or force-push over its changes. Upstream synchronization is currently
+manual; no background schedule is configured. Update the recorded upstream
+baseline and [credits](CREDITS.md) when incorporating new work.
+
+---
+
 <p align=center>
   <a href="https://darlinghq.org/">
     <img alt="Darling logo" src="https://darlinghq.org/img/darling250.png">

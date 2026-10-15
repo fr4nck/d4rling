@@ -58,3 +58,28 @@ imported. Audio error handling, MIDI packet bounds and worker lifetime, locally
 chosen property values, and coherent AppKit/backend rebuilding still require
 investigation. No GUI rendering, audio hardware, MIDI hardware, Carbon ABI or
 Logic compatibility has been validated.
+
+## Additional source-level validation and fork maintenance
+
+On 2026-10-15, workspace-local Clang 19.1.7 compiled the real DateTimeUtils.cpp
+and UnicodeConverter.cpp before and after the header corrections. The real
+CoreFoundation revisions were a3640a77410cf1825f7855172b1551ae7917c461 and nested
+ea1ea0bb416025a8cc5a282df03c2e8f12788e2d. nm confirms C++-mangled names before
+and plain C names after for UCConvertUTCDateTimeToCFAbsoluteTime,
+CreateTextToUnicodeInfo and CreateTextToUnicodeInfoByEncoding.
+
+This is a Linux x86_64 ELF object check with __APPLE_CC__=1,
+DEPLOYMENT_RUNTIME_SWIFT=1 and a forced include of the real MacTypes.h. It is not
+a complete Darling/Mach-O build, exported-library check or functional API test.
+The Unicode functions remain stubs. DateTimeUtils emits its existing
+LLONG_MAX-to-double warning on both versions. Three other corrected functions
+remain unvalidated by compilation. Clang was extracted into the workspace from
+Debian packages, without installing system packages; CMake/Ninja and full build
+dependencies remain unavailable.
+
+The default master branch is the integration line for upstream history and this
+fork's changes. The README records the manual merge procedure; no periodic sync
+is configured. All 149 sibling submodule URLs are made absolute under darlinghq
+without changing their pinned revisions. See CREDITS.md for imported work and
+attribution. Being integrated into this development fork does not imply that a
+full application or full build has been validated.
