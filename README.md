@@ -5,7 +5,8 @@ maintained by [fr4nck](https://github.com/fr4nck), including experimental work
 toward Logic Studio 8 compatibility.
 
 **[Credits and source provenance](CREDITS.md)** ·
-**[Recorded validation and remaining work](docs/logic8-progress.md)**
+**[Recorded validation and remaining work](docs/logic8-progress.md)** ·
+**[Carbon UI architecture and next milestone](docs/carbon-ui-roadmap.md)**
 
 The default `master` branch includes the latest upstream baseline imported on
 2026-10-15, `60ba801decee7a00782f74f6be4c8ffb013f79ff`, plus this fork's changes.
