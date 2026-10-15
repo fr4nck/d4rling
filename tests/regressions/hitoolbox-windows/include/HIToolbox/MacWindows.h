@@ -1,8 +1,9 @@
 #pragma once
-// Minimal standalone ABI-compatible types for contract tests. NOT the Darling SDK.
+// Minimal standalone types for stub tests. NOT the Darling SDK or ABI validation.
 #include <stdint.h>
 #include <stddef.h>
 typedef int32_t OSStatus;
+typedef void* EventTargetRef;
 typedef uint8_t Boolean;
 typedef int32_t SInt32;
 typedef struct OpaqueWindow* WindowRef;
@@ -37,7 +38,7 @@ OSStatus SetWindowTitleWithCFString(WindowRef, CFStringRef);
 OSStatus TransitionWindowWithOptions(WindowRef, WindowTransitionEffect, WindowTransitionAction, const HIRect*, Boolean, TransitionWindowOptions*);
 OSStatus CreateWindowGroup(WindowGroupAttributes, WindowGroupRef*);
 OSStatus GetWindowBounds(WindowRef, WindowRegionCode, Rect*);
-OSStatus GetWindowEventTarget(WindowRef);
+EventTargetRef GetWindowEventTarget(WindowRef);
 OSStatus GetWindowGroupLevel(WindowGroupRef, SInt32*);
 WindowGroupRef GetWindowGroupOfClass(WindowClass);
 CGrafPtr GetWindowPort(WindowRef);

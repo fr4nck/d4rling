@@ -18,9 +18,23 @@
 */
 
 #include <HIToolbox/CarbonEventsCore.h>
+#include <CarbonCore/MacErrors.h>
+
+#include <stdatomic.h>
+#include <time.h>
 
 #include <stdlib.h>
 #include <stdio.h>
+
+/* Event metadata is immutable; only ownership changes after creation. */
+struct OpaqueEventRef {
+    CFAllocatorRef allocator;
+    _Atomic(ItemCount) retainCount;
+    OSType eventClass;
+    UInt32 eventKind;
+    EventTime time;
+    EventAttributes attributes;
+};
 
 static int verbose = 0;
 
@@ -35,22 +49,45 @@ OSStatus CallNextEventHandler(EventHandlerCallRef a, EventRef b)
 	return 0;
 }
 
-OSStatus CreateEvent(CFAllocatorRef a, OSType b, UInt32 c, EventTime d, EventAttributes e, EventRef* f)
+OSStatus CreateEvent(CFAllocatorRef inAllocator, OSType inClassID, UInt32 kind,
+                     EventTime when, EventAttributes flags, EventRef* outEvent)
 {
-    if (verbose) puts("STUB: CreateEvent called");
-	return 0;
+    if (!outEvent)
+        return paramErr;
+    *outEvent = NULL;
+
+    if (when == 0) {
+        when = GetCurrentEventTime();
+        if (when == 0)
+            return unimpErr;
+    }
+
+    CFAllocatorRef allocator = inAllocator ? inAllocator : CFAllocatorGetDefault();
+    CFRetain(allocator);
+    EventRef event = CFAllocatorAllocate(allocator, sizeof(*event), 0);
+    if (!event) {
+        CFRelease(allocator);
+        return memFullErr;
+    }
+
+    event->allocator = allocator;
+    atomic_init(&event->retainCount, 1);
+    event->eventClass = inClassID;
+    event->eventKind = kind;
+    event->time = when;
+    event->attributes = flags;
+    *outEvent = event;
+    return noErr;
 }
 
 OSType GetEventClass(EventRef a)
 {
-    if (verbose) puts("STUB: GetEventClass called");
-	return 0;
+    return a ? a->eventClass : 0;
 }
 
 UInt32 GetEventKind(EventRef a)
 {
-    if (verbose) puts("STUB: GetEventKind called");
-	return 0;
+    return a ? a->eventKind : 0;
 }
 
 OSStatus GetEventParameter(EventRef a, EventParamName b, EventParamType c, EventParamType* d, ByteCount e, ByteCount* f, void* g)
@@ -89,9 +126,33 @@ OSStatus ReceiveNextEvent(ItemCount a, const EventTypeSpec* b, EventTimeout c, B
 	return 0;
 }
 
-void ReleaseEvent(EventRef a)
+EventRef RetainEvent(EventRef inEvent)
 {
-    if (verbose) puts("STUB: ReleaseEvent called");
+    if (!inEvent)
+        return NULL;
+    ItemCount count = atomic_load_explicit(&inEvent->retainCount, memory_order_relaxed);
+    do {
+        if (count == (ItemCount)-1)
+            return NULL;
+    } while (!atomic_compare_exchange_weak_explicit(&inEvent->retainCount, &count,
+              count + 1, memory_order_relaxed, memory_order_relaxed));
+    return inEvent;
+}
+
+ItemCount GetEventRetainCount(EventRef inEvent)
+{
+    return inEvent ? atomic_load_explicit(&inEvent->retainCount, memory_order_relaxed) : 0;
+}
+
+void ReleaseEvent(EventRef inEvent)
+{
+    if (!inEvent)
+        return;
+    if (atomic_fetch_sub_explicit(&inEvent->retainCount, 1, memory_order_acq_rel) == 1) {
+        CFAllocatorRef allocator = inEvent->allocator;
+        CFAllocatorDeallocate(allocator, inEvent);
+        CFRelease(allocator);
+    }
 }
 
 OSStatus RemoveEventHandler(EventHandlerRef a)
@@ -114,6 +175,13 @@ UInt32 GetCurrentKeyModifiers()
 
 EventTime GetEventTime(EventRef inEvent)
 {
-    if (verbose) puts("STUB: GetEventTime called");
-    return (double) 0;
+    return inEvent ? inEvent->time : 0;
+}
+
+EventTime GetCurrentEventTime(void)
+{
+    struct timespec now;
+    if (clock_gettime(CLOCK_MONOTONIC, &now) != 0)
+        return 0;
+    return (EventTime)now.tv_sec + (EventTime)now.tv_nsec / 1000000000.0;
 }

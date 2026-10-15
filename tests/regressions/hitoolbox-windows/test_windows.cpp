@@ -34,7 +34,7 @@ int main() {
     check(SetWindowTitleWithCFString(nullptr, nullptr) == unimpErr, "SetWindowTitleWithCFString fails explicitly");
     check(TransitionWindowWithOptions(nullptr, 0, 0, nullptr, 0, nullptr) == unimpErr,
           "TransitionWindowWithOptions fails explicitly");
-    check(GetWindowEventTarget(nullptr) == unimpErr, "GetWindowEventTarget fails explicitly");
+    check(GetWindowEventTarget(nullptr) == nullptr, "GetWindowEventTarget returns no target without backend");
     check(ReleaseWindow(nullptr) == unimpErr, "ReleaseWindow fails explicitly");
 
     WindowGroupRef group = 999;

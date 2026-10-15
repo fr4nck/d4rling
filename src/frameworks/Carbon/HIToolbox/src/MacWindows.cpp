@@ -179,9 +179,10 @@ OSStatus GetWindowBounds(WindowRef a, WindowRegionCode b, Rect * c)
 	return unimpErr;
 }
 
-OSStatus GetWindowEventTarget(WindowRef a)
+EventTargetRef GetWindowEventTarget(WindowRef a)
 {
-	return unimpErr;
+	// No window event targets exist until a backend is implemented.
+	return nullptr;
 }
 
 OSStatus GetWindowGroupLevel(WindowGroupRef a, SInt32 * b)

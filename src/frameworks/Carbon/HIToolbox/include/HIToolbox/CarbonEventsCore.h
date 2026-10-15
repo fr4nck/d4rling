@@ -20,10 +20,11 @@ typedef void* EventTargetRef;
 typedef OSType EventParamName;
 typedef struct EventTypeSpec { OSType eventClass; UInt32 eventKind; } EventTypeSpec;
 typedef EventTime EventTimeout;
-typedef void* EventHandlerProcPtr;
+typedef OSStatus (*EventHandlerProcPtr)(EventHandlerCallRef inHandlerCallRef,
+                                       EventRef inEvent, void* inUserData);
 typedef UInt32 EventAttributes;
 typedef struct OpaqueEventQueueRef* EventQueueRef;
-typedef void* EventHandlerUPP;
+typedef EventHandlerProcPtr EventHandlerUPP;
 typedef SInt16 EventPriority;
 typedef void* EventHandlerRef;
 
@@ -54,6 +55,8 @@ OSStatus PostEventToQueue(EventQueueRef a, EventRef b, EventPriority c);
 
 OSStatus ReceiveNextEvent(ItemCount a, const EventTypeSpec* b, EventTimeout c, Boolean d, EventRef* e);
 
+EventRef RetainEvent(EventRef inEvent);
+ItemCount GetEventRetainCount(EventRef inEvent);
 void ReleaseEvent(EventRef a);
 OSStatus RemoveEventHandler(EventHandlerRef a);
 
@@ -61,6 +64,7 @@ OSStatus SendEventToEventTarget(EventRef a, EventTargetRef b);
 
 UInt32 GetCurrentKeyModifiers(void);
 EventTime GetEventTime(EventRef inEvent);
+EventTime GetCurrentEventTime(void);
 
 #ifdef __cplusplus
 }
