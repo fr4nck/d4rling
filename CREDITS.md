@@ -68,3 +68,15 @@ was consulted for EventHandlerProcPtr, EventHandlerUPP and GetWindowEventTarget.
 No external implementation was copied. Existing Darling notices and history are
 retained; new regression sources use GPL-3.0-or-later. The follow-up commit records
 these changes together with the tests and validation note.
+
+## Carbon event metadata and lifetime
+
+Prepared for fr4nck with OpenAI Codex on top of
+c003abfdad4adebc327d8c5c1875d9761ef5b4d2. Existing Darling authors and the source
+GPL notice are retained. New regression files use GPL-3.0-or-later.
+The Apple Carbon Event Manager Reference linked above was consulted for event
+creation and ownership contracts; the pinned
+[Darling Libc time.h](https://github.com/darlinghq/darling-Libc/blob/5a38c8dabf9e76b39407c24bc13134e33e5594e6/include/time.h)
+was checked for clock declarations. No external implementation was copied.
+Host tests use an explicitly identified test-only CF allocator adapter;
+they do not validate the actual CoreFoundation runtime.

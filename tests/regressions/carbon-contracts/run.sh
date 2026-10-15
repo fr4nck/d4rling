@@ -8,7 +8,7 @@ cc=${CC:-clang}
 cxx=${CXX:-clang++}
 
 # Host ELF checks using real Darling headers, not a guest SDK or Mach-O build.
-set -- -D__APPLE_CC__=1 -DDEPLOYMENT_RUNTIME_SWIFT=1 \
+set -- -D_POSIX_C_SOURCE=200809L -D__APPLE_CC__=1 -DDEPLOYMENT_RUNTIME_SWIFT=1 \
     -include "$repo/basic-headers/MacTypes.h" \
     -I"$repo/src/frameworks/Carbon/HIToolbox/include" \
     -I"$repo/src/frameworks/CoreServices/include" \
@@ -20,11 +20,14 @@ source="$repo/tests/regressions/carbon-contracts/contracts.c"
 "$cc" -std=c11 "$@" -c \
     "$repo/src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c" -o "$build/events.o"
 
+"$cc" -std=c11 "$@" -c \
+    "$repo/tests/regressions/carbon-events/allocator-adapter.c" -o "$build/allocator.o"
+
 for language in c c++; do
     if [ "$language" = c ]; then compiler=$cc; standard=c11; else compiler=$cxx; standard=c++17; fi
     "$compiler" -x "$language" -std="$standard" \
         -Werror=incompatible-function-pointer-types "$@" -c "$source" -o "$build/contracts.o"
-    "$cxx" "$build/contracts.o" "$build/windows.o" "$build/events.o" -o "$build/contracts"
+    "$cxx" "$build/contracts.o" "$build/windows.o" "$build/events.o" "$build/allocator.o" -o "$build/contracts"
     "$build/contracts"
     if "$compiler" -x "$language" -std="$standard" \
         -Werror=incompatible-function-pointer-types -DREJECT_BAD_HANDLER "$@" \

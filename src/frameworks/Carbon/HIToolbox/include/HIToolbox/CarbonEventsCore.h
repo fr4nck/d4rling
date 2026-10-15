@@ -55,6 +55,8 @@ OSStatus PostEventToQueue(EventQueueRef a, EventRef b, EventPriority c);
 
 OSStatus ReceiveNextEvent(ItemCount a, const EventTypeSpec* b, EventTimeout c, Boolean d, EventRef* e);
 
+EventRef RetainEvent(EventRef inEvent);
+ItemCount GetEventRetainCount(EventRef inEvent);
 void ReleaseEvent(EventRef a);
 OSStatus RemoveEventHandler(EventHandlerRef a);
 
@@ -62,6 +64,7 @@ OSStatus SendEventToEventTarget(EventRef a, EventTargetRef b);
 
 UInt32 GetCurrentKeyModifiers(void);
 EventTime GetEventTime(EventRef inEvent);
+EventTime GetCurrentEventTime(void);
 
 #ifdef __cplusplus
 }

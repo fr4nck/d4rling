@@ -99,3 +99,22 @@ Details, sources, commands and limitations are in
 [the contract regression record](../tests/regressions/carbon-contracts/README.md).
 No GUI, event dispatch, full Darling build, i386 guest ABI or Logic runtime
 validation is claimed. This does not complete the event-core milestone.
+
+## Carbon event objects follow-up (2026-10-15)
+
+Parent c003abfdad4adebc327d8c5c1875d9761ef5b4d2, on the same work branch/PR.
+CreateEvent now allocates metadata-bearing event objects with allocator ownership;
+class/kind/time accessors and atomic reference counting are implemented.
+GetCurrentEventTime uses the monotonic clock for zero-time creation.
+
+The source-level creation probe reproduces false success on the parent and
+passes after correction. The delivered host regression runner reports 54 checks /
+0 failures, including four-thread retain/release stress and injected allocation
+failure. The same checks pass with AddressSanitizer and leak detection. The
+previous C/C++ signature checks still pass. Host nm shows the expected C names.
+
+These tests compile real production source/headers but substitute a small,
+identified CF allocator adapter. Real CoreFoundation integration, full Darling
+and Mach-O builds, i386 guest validation, queues/dispatch and graphics remain
+pending. No Logic/audio/MIDI result is claimed.
+See [event regression details](../tests/regressions/carbon-events/README.md).
