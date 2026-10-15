@@ -83,3 +83,19 @@ is configured. All 149 sibling submodule URLs are made absolute under darlinghq
 without changing their pinned revisions. See CREDITS.md for imported work and
 attribution. Being integrated into this development fork does not imply that a
 full application or full build has been validated.
+
+## Carbon event contract follow-up (2026-10-15)
+
+Based on master b932d448bbb317654a45640717925823d2fd3fb0, a focused work branch
+corrects the public callback/UPP types and GetWindowEventTarget's return type.
+The unavailable window target now returns null. The original window fixture and
+one assertion follow this corrected contract.
+
+Real-header host checks with Clang 19.1.7 fail on the old signatures and pass
+in C11/C++17 after correction; incompatible callbacks are rejected. Both host
+executables return exit 0, and the updated standalone GCC window checks report
+25 checks / 0 failures. The delivered regression runner was executed as well.
+Details, sources, commands and limitations are in
+[the contract regression record](../tests/regressions/carbon-contracts/README.md).
+No GUI, event dispatch, full Darling build, i386 guest ABI or Logic runtime
+validation is claimed. This does not complete the event-core milestone.

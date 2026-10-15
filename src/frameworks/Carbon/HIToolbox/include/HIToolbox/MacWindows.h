@@ -4,6 +4,7 @@
 //#include <X11/Xlib.h>
 #include <CarbonCore/MacErrors.h>
 #include "CoreServices/MacTypes.h"
+#include <HIToolbox/CarbonEventsCore.h>
 #include <stdint.h>
 #include <QD/QD.h>
 
@@ -43,7 +44,7 @@ OSStatus SetWindowTitleWithCFString(WindowRef a, CFStringRef b);
 OSStatus TransitionWindowWithOptions(WindowRef a, WindowTransitionEffect b, WindowTransitionAction c, const HIRect * d, Boolean e, TransitionWindowOptions * f);
 OSStatus CreateWindowGroup(WindowGroupAttributes a, WindowGroupRef *b);
 OSStatus GetWindowBounds(WindowRef a, WindowRegionCode b, Rect * c);
-OSStatus GetWindowEventTarget(WindowRef a);
+EventTargetRef GetWindowEventTarget(WindowRef a);
 OSStatus GetWindowGroupLevel(WindowGroupRef a, SInt32 * b);
 WindowGroupRef GetWindowGroupOfClass(WindowClass a);
 CGrafPtr GetWindowPort(WindowRef a);

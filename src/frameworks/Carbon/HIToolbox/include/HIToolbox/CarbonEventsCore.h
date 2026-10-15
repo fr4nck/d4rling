@@ -20,10 +20,11 @@ typedef void* EventTargetRef;
 typedef OSType EventParamName;
 typedef struct EventTypeSpec { OSType eventClass; UInt32 eventKind; } EventTypeSpec;
 typedef EventTime EventTimeout;
-typedef void* EventHandlerProcPtr;
+typedef OSStatus (*EventHandlerProcPtr)(EventHandlerCallRef inHandlerCallRef,
+                                       EventRef inEvent, void* inUserData);
 typedef UInt32 EventAttributes;
 typedef struct OpaqueEventQueueRef* EventQueueRef;
-typedef void* EventHandlerUPP;
+typedef EventHandlerProcPtr EventHandlerUPP;
 typedef SInt16 EventPriority;
 typedef void* EventHandlerRef;
 

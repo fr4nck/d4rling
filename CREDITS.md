@@ -58,3 +58,13 @@ author attribution in the commit as well as this file.
 
 Genki ALSA/CoreMIDI, the other examined VibeDarling MIDI and Cocotron patches,
 and the Carbon event-loop WIP have not been imported into this fork.
+
+## Carbon callback and window-target contracts
+
+Prepared for fr4nck with OpenAI Codex, based on personal integration commit
+b932d448bbb317654a45640717925823d2fd3fb0. The original
+[Apple Carbon Event Manager Reference, archived mirror](https://leopard-adc.pepas.com/documentation/Carbon/Reference/Carbon_Event_Manager_Ref/Reference/reference.html)
+was consulted for EventHandlerProcPtr, EventHandlerUPP and GetWindowEventTarget.
+No external implementation was copied. Existing Darling notices and history are
+retained; new regression sources use GPL-3.0-or-later. The follow-up commit records
+these changes together with the tests and validation note.
