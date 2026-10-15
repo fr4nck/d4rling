@@ -63,15 +63,18 @@ void closeDisplay()
 
 OSStatus CreateNewWindow(WindowClass cls, WindowAttributes attr, const Rect* rect, WindowRef* newWindow)
 {
-#ifndef NO_X11
-	Window win;
-	Display* dpy;
-	int blackColor, whiteColor;
+	if (!newWindow || !rect)
+		return paramErr;
 
 	*newWindow = 0;
 
 	if (rect->right < rect->left || rect->bottom < rect->top)
 		return paramErr;
+
+#ifndef NO_X11
+	Window win;
+	Display* dpy;
+	int blackColor, whiteColor;
 
 	dpy = Darling::Carbon::getDisplay();
 	blackColor = BlackPixel(dpy, DefaultScreen(dpy));
@@ -85,8 +88,11 @@ OSStatus CreateNewWindow(WindowClass cls, WindowAttributes attr, const Rect* rec
 		return paramErr;
 
 	*newWindow = win;
-#endif
 	return noErr;
+#else
+	// No windowing backend is enabled in this build.
+	return unimpErr;
+#endif
 }
 
 void DisposeWindow(WindowRef wnd)
@@ -129,52 +135,61 @@ Boolean IsWindowVisible(WindowRef wnd)
 
 OSStatus SelectWindow(WindowRef a)
 {
-	return 0;
+	return unimpErr;
 }
 
 OSStatus SetWindowContentColor(WindowRef a, const RGBColor * b)
 {
-	return 0;
+	return unimpErr;
 }
 
 OSStatus SetWindowGroup(WindowRef a, WindowGroupRef b)
 {
-	return 0;
+	return unimpErr;
 }
 
 OSStatus SetWindowGroupLevel(WindowGroupRef a, SInt32 b)
 {
-	return 0;
+	return unimpErr;
 }
 
 OSStatus SetWindowTitleWithCFString(WindowRef a, CFStringRef b)
 {
-	return 0;
+	return unimpErr;
 }
 
 OSStatus TransitionWindowWithOptions(WindowRef a, WindowTransitionEffect b, WindowTransitionAction c, const HIRect * d, Boolean e, TransitionWindowOptions * f)
 {
-	return 0;
+	return unimpErr;
 }
 
 OSStatus CreateWindowGroup(WindowGroupAttributes a, WindowGroupRef *b)
 {
-	return 0;
+	if (!b)
+		return paramErr;
+	*b = 0;
+	return unimpErr;
 }
 
 OSStatus GetWindowBounds(WindowRef a, WindowRegionCode b, Rect * c)
 {
-	return 0;
+	if (!c)
+		return paramErr;
+	*c = Rect{};
+	return unimpErr;
 }
 
 OSStatus GetWindowEventTarget(WindowRef a)
 {
-	return 0;
+	return unimpErr;
 }
 
 OSStatus GetWindowGroupLevel(WindowGroupRef a, SInt32 * b)
 {
-	return 0;
+	if (!b)
+		return paramErr;
+	*b = 0;
+	return unimpErr;
 }
 
 WindowGroupRef GetWindowGroupOfClass(WindowClass a)
@@ -199,5 +214,5 @@ Boolean IsValidWindowPtr(WindowRef a)
 
 OSStatus ReleaseWindow(WindowRef a)
 {
-	return 0;
+	return unimpErr;
 }
