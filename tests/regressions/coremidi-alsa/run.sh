@@ -139,6 +139,8 @@ echo "ALSA_COMPILE_PASS: compiled against system ALSA development files"
     -Wl,--wrap=snd_seq_close \
     -o "$INPUT_SESSION" $(pkg-config --libs alsa)
 "$INPUT_SESSION"
+# Check PIC shared linking/loading with ALSA both disabled and enabled.
+sh "$ROOT/tests/regressions/coremidi-shared/run.sh"
 # Link the same real bridge against libasound, but wrap only snd_seq_open.
 # This verifies rejection of malformed MIDI without a sequencer device.
 "$CC" -std=c11 -DDARLING_COREMIDI_WITH_ALSA=1 \

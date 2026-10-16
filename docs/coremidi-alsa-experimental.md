@@ -411,3 +411,28 @@ native GCC run.
 The host regression emits a separate `ALSA_INPUT_POLL_PASS` marker
 after the session descriptor handoff and bounds checks succeed;
 `ALSA_INPUT_SESSION_PASS` remains as the existing lifecycle gate.
+
+## Host shared-library build and dynamic CoreMIDI symbol regression
+
+The CoreMIDI CMake target already includes `MIDIVirtual.c` and
+`MIDIAlsaBridge.c` in its source list. It exposes the experimental
+`DARLING_COREMIDI_ENABLE_ALSA` option (OFF by default), which finds
+ALSA, uses Darling's `wrap_elf` machinery and enables
+`DARLING_COREMIDI_WITH_ALSA=1`. Source inspection found no overlap
+between the named CoreMIDI.m stub functions and virtual entry points.
+
+`tests/regressions/coremidi-shared/run.sh` now builds the two C
+sources as host ELF shared libraries with `-fPIC -shared -Wl,-z,defs`
+in ALSA-off and ALSA-on configurations, then loads both using
+`dlopen(RTLD_NOW)` and invokes representative exported CoreMIDI
+functions using `dlsym`. It verifies a callback receives a packet
+across the host shared-library boundary. Marker:
+`COREMIDI_SHARED_PASS`. The ALSA regression runner invokes this
+check before its kernel-dependent runtime gate.
+
+**Scope:** this checks native host ELF linking, symbol visibility and
+callback ABI with the isolated header set. It does not build the
+actual Darling framework, load Mach-O binaries, validate Darling's
+`wrap_elf` output, or prove compatibility with Logic Studio 8.
+It requires native qualification on the 5700X. No kernel sequencer
+is required for the test.

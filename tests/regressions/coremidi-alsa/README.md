@@ -117,7 +117,18 @@ descriptor queries, oversized counts, closed sessions, and attempts
 from a callback during active pumping. The real-sequencer smoke test
 also uses this API to prepare its `poll()` loop.
 
+A separate `tests/regressions/coremidi-shared/run.sh` gate builds
+`MIDIVirtual.c` and `MIDIAlsaBridge.c` into two host ELF shared
+libraries (ALSA disabled/enabled), with position-independent code
+and unresolved-symbol errors treated as link failures. An independent
+host executable `dlopen`s each library, resolves the public CoreMIDI
+entry points with `dlsym`, and verifies virtual source routing
+through a callback. This catches a class of shared-library
+link/visibility problems that previous single-executable regressions
+could miss. It is **not** a Darling Mach-O framework build.
+
 Output markers:
+- `COREMIDI_SHARED_PASS`: host ELF shared-link and dynamically loaded callback test succeeded.
 - `ALSA_INPUT_POLL_PASS`: session descriptor query, capacity and failure checks passed.
 - `ALSA_INPUT_RUNTIME_PASS`: native ALSA sender event reached the CoreMIDI callback.
 - `ALSA_INPUT_SESSION_PASS`: session open/subscribe/pump/unsubscribe/close and rollback checks passed.
