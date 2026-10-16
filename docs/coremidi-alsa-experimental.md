@@ -61,3 +61,13 @@ Actual host libasound headers were unavailable in the isolated runner, and
 `/dev/snd/seq` was absent. Therefore no genuine ALSA compile/link and no
 sequencer events were verified. These results must be obtained on a Linux
 environment with ALSA development files and an accessible sequencer.
+
+## Debian 13 strict C11 header qualification
+
+A native build on the 5700X with ALSA 1.2.14 exposed an implicit
+`alloca` declaration in the ALSA sequencer allocation macros. The bridge
+now explicitly includes `<alloca.h>` before `<alsa/asoundlib.h>` to support
+`-std=c11 -Wall -Wextra -Werror`. An isolated strict-C11 include/use check
+passed with GCC and Clang; the genuine ALSA bridge still requires a rerun
+on the 5700X. `ALSA_COMPILE_PASS` and runtime transport must not be claimed
+until the corresponding tests have actually completed.

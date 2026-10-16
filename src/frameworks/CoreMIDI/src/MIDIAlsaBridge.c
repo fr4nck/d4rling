@@ -10,6 +10,8 @@
 #define D4_ALSA_HANDLE_MASK UINT32_C(0xffff0000)
 
 #ifdef DARLING_COREMIDI_WITH_ALSA
+/* ALSA's *_alloca macros require the alloca declaration with strict C11. */
+#include <alloca.h>
 #include <alsa/asoundlib.h>
 #include <pthread.h>
 
