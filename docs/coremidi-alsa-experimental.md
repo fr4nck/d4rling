@@ -84,8 +84,8 @@ must be rejected without trying to open the ALSA sequencer, and a valid
 Note On must reach the intercepted open. Marker: `ALSA_PREFLIGHT_PASS`.
 
 This test can run under WSL2 with no `/dev/snd/seq`; it is **not** a test
-of real ALSA event delivery. The first qualification run of this new gate
-on the 5700X is pending.
+of real ALSA event delivery. On the 5700X at commit `7311124`, this gate
+returned `ALSA_PREFLIGHT_PASS`.
 
 ## 5700X / Debian 13 WSL2 — verified 2026-10-16
 
@@ -117,3 +117,35 @@ Missing kernel config or module files must not be interpreted as definitive
 proof that the option was disabled. `/dev/snd/seq` requires sequencer
 support in the running kernel; libasound development headers alone cannot
 provide the device.
+
+## 5700X WSL2 kernel gate — confirmed 2026-10-16
+
+At commit `8d3613`, the read-only kernel diagnostic ran on the 5700X.
+It identified:
+
+```text
+ALSA_KERNEL_RELEASE: 6.18.33.2-microsoft-standard-WSL2
+ALSA_SEQ_NODE: absent
+ALSA_KERNEL_CONFIG_SOURCE: /proc/config.gz
+CONFIG_SOUND=m
+CONFIG_SND=m
+# CONFIG_SND_SEQUENCER is not set
+ALSA_PROC_SEQUENCER: unavailable
+ALSA_LOADED_SEQ_MODULES: (none listed)
+ALSA_MODULE_TREE: present
+```
+
+The checkout was clean at `8d3613`. The **running WSL2 kernel has
+ALSA Sequencer support disabled at build time**, unlike merely having an
+unloaded `snd_seq` module. Installing user-space ALSA packages, creating
+the missing device node or using `modprobe` alone cannot enable that
+functionality. Do not treat `ALSA_RUNTIME_SKIP (77)` as a product failure.
+
+Keep the tested native compilation and preflight gates in Debian WSL2.
+For future real sequencer loopback tests, use a Linux kernel built with
+`CONFIG_SND_SEQUENCER=y` or `=m` (with matching modules installed).
+One option is a Linux live system or suitable VM; alternatively, WSL2
+supports a custom kernel via the global `%UserProfile%/.wslconfig`, but
+that changes the kernel environment for **all WSL2 distributions** and
+must be evaluated separately. Do not change kernels as part of an
+ordinary CoreMIDI source qualification.
