@@ -195,3 +195,22 @@ The previously observed 5700X run on commit `26be43b` gave
 `ALSA_COMPILE_PASS`, `ALSA_TRANSLATION_PASS`,
 `ALSA_PREFLIGHT_PASS` and `ALSA_RUNTIME_SKIP` (exit 77); these are
 baseline results predating this new reverse codec.
+
+## Reverse-event delivery to virtual CoreMIDI ports (pending native qualification)
+
+The internal `D4MIDIAlsaDeliverToVirtualSource` accepts a supplied ALSA
+channel event and an existing *CoreMIDI virtual source*, encodes MIDI 1.0
+bytes via `D4MIDIAlsaEncodeEvent`, and synchronously routes a one-packet
+`MIDIPacketList` via `MIDIReceived` to connected input callbacks.
+It does not call `snd_seq_open`, create an ALSA input client, discover ALSA
+sources, map ALSA client/port IDs, or install a receive thread.
+The temporary packet list is valid only during that synchronous dispatch;
+there is no timestamp scheduling. All valid events currently use timestamp 0.
+
+`host_delivery.c` is the native no-sequencer regression gate. It exercises
+the actual production router with two connections, all seven supported
+channel-message classes across 16 channels, per-connection refCons,
+unsupported events, disconnect and source disposal. Marker:
+`ALSA_DELIVERY_PASS`. Added pending first native GCC + ALSA qualification
+on the 5700X. It does not prove realtime safety, callback lifetime under
+concurrent disposal, ALSA device input or application-level compatibility.

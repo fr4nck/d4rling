@@ -225,6 +225,33 @@ OSStatus D4MIDIAlsaEncodeEvent(const snd_seq_event_t *event, Byte *data,
     return noErr;
 }
 
+/*
+ * Deliver a decoded ALSA channel event through an existing CoreMIDI virtual
+ * source and its connected input ports. This does NOT open an ALSA input,
+ * enumerate native sources or subscribe to an ALSA port.
+ *
+ * No persistent packet storage is used: MIDIReceived invokes callbacks
+ * synchronously with this on-stack packet list.
+ */
+OSStatus D4MIDIAlsaDeliverToVirtualSource(MIDIEndpointRef source,
+                                        const snd_seq_event_t *event)
+{
+    union { long double align; Byte bytes[64]; } storage;
+    MIDIPacketList *list = (MIDIPacketList *)storage.bytes;
+    MIDIPacket *packet;
+    Byte data[3];
+    ByteCount length = 0;
+    OSStatus status;
+
+    status = D4MIDIAlsaEncodeEvent(event, data, sizeof(data), &length);
+    if (status != noErr) return status;
+    packet = MIDIPacketListInit(list);
+    if (!packet || !MIDIPacketListAdd(list, sizeof(storage.bytes), packet,
+                                      0, length, data))
+        return kMIDIMessageSendErr;
+    return MIDIReceived(source, list);
+}
+
 OSStatus D4MIDIAlsaSend(MIDIEndpointRef destination, const MIDIPacketList *packets)
 {
     OSStatus status = kMIDIUnknownEndpoint;

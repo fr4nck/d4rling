@@ -35,7 +35,16 @@ second packet must all fail **before** `snd_seq_open`; a valid packet must
 reach the wrapped call. This is a native packet-validation test, **not**
 proof of real ALSA sequencer I/O.
 
+Before attempting ALSA sequencer I/O, `host_delivery.c` creates a virtual
+CoreMIDI source and two connected input ports, then delivers synthetic ALSA
+events through the production reverse codec and `MIDIReceived`. It verifies
+all seven channel-event classes across 16 channels, connection-specific
+callback context, rejection of unsupported events, disconnect, and disposal.
+It prints `ALSA_DELIVERY_PASS` on success. **This does not establish an ALSA
+input port, poll a physical device, or qualify callback concurrency.**
+
 Output markers:
+- `ALSA_DELIVERY_PASS`: synthetic ALSA events reached virtual CoreMIDI input callbacks.
 - `ALSA_TRANSLATION_PASS`: channel-message translation tests passed.
 - `ALSA_REVERSE_PASS`: ALSA event to MIDI 1.0 codec checks passed.
 - `ALSA_PREFLIGHT_PASS`: native bridge validation works without a sequencer.
