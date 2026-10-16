@@ -57,10 +57,14 @@ qualify the framework's final build or Logic Studio.
 
 On 2026-10-16, the test source passed Clang and GCC syntax checks with a
 *synthetic ALSA header* on Debian 13, and `sh -n` passed for its runner.
-Actual host libasound headers were unavailable in the isolated runner, and
-`/dev/snd/seq` was absent. Therefore no genuine ALSA compile/link and no
-sequencer events were verified. These results must be obtained on a Linux
-environment with ALSA development files and an accessible sequencer.
+Those were preliminary results. On 2026-10-16, the separate **Ryzen 7
+5700X / Debian 13 WSL2** qualification used ALSA **1.2.14** and GCC with
+real libasound headers. After the `<alloca.h>` fix in `8cb4953`, the
+virtual suite reported **PASS**, and the actual enabled bridge plus
+`host_loopback.c` compiled and linked: **ALSA_COMPILE_PASS**. The runner
+then emitted **ALSA_RUNTIME_SKIP (77)** because `/dev/snd/seq` was absent.
+The checkout was clean at that commit. None of this qualifies real ALSA
+sequencer traffic, Darling Mach-O/ELF wrapping or Logic Studio.
 
 ## Debian 13 strict C11 header qualification
 
@@ -68,6 +72,17 @@ A native build on the 5700X with ALSA 1.2.14 exposed an implicit
 `alloca` declaration in the ALSA sequencer allocation macros. The bridge
 now explicitly includes `<alloca.h>` before `<alsa/asoundlib.h>` to support
 `-std=c11 -Wall -Wextra -Werror`. An isolated strict-C11 include/use check
-passed with GCC and Clang; the genuine ALSA bridge still requires a rerun
-on the 5700X. `ALSA_COMPILE_PASS` and runtime transport must not be claimed
-until the corresponding tests have actually completed.
+passed with GCC and Clang; the 5700X rerun on commit `8cb4953` subsequently produced
+`ALSA_COMPILE_PASS`. A real sequencer transport test is still pending.
+
+## Sequencer-independent ALSA preflight
+
+The native test runner now additionally builds `host_preflight.c` using
+real libasound headers and linkage, with only `snd_seq_open` intercepted
+at link time. Invalid packet values and a valid-then-invalid packet list
+must be rejected without trying to open the ALSA sequencer, and a valid
+Note On must reach the intercepted open. Marker: `ALSA_PREFLIGHT_PASS`.
+
+This test can run under WSL2 with no `/dev/snd/seq`; it is **not** a test
+of real ALSA event delivery. The first qualification run of this new gate
+on the 5700X is pending.
