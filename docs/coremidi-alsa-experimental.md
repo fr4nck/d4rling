@@ -86,3 +86,34 @@ Note On must reach the intercepted open. Marker: `ALSA_PREFLIGHT_PASS`.
 This test can run under WSL2 with no `/dev/snd/seq`; it is **not** a test
 of real ALSA event delivery. The first qualification run of this new gate
 on the 5700X is pending.
+
+## 5700X / Debian 13 WSL2 — verified 2026-10-16
+
+User-run qualification in the native Linux checkout
+`/home/Deniel/d4rling-midi-qualif` at commit `7311124`:
+
+- `CC=gcc sh tests/regressions/coremidi-virtual/run.sh`:
+  **PASS**, exit 0.
+- `CC=gcc sh tests/regressions/coremidi-alsa/run.sh`:
+  **ALSA_COMPILE_PASS** with system ALSA 1.2.14 and GCC.
+- Same runner: **ALSA_PREFLIGHT_PASS**, verifying MIDI packet rejection
+  happens before attempted ALSA sequencer access.
+- **ALSA_RUNTIME_SKIP**, exit 77, because `/dev/snd/seq` was absent.
+- The Git checkout remained clean. No actual MIDI event was delivered,
+  and the Darling framework build and Logic were **not tested**.
+
+## Read-only sequencer kernel diagnostic
+
+Run on the target Linux system:
+
+```sh
+sh tests/regressions/coremidi-alsa/kernel-diagnostics.sh
+```
+
+It checks the sequencer device, kernel release, `CONFIG_SND_SEQUENCER` when
+the kernel's configuration is available, and loaded modules. The diagnostic
+**never invokes sudo, modprobe, mknod, package installation or kernel changes**.
+Missing kernel config or module files must not be interpreted as definitive
+proof that the option was disabled. `/dev/snd/seq` requires sequencer
+support in the running kernel; libasound development headers alone cannot
+provide the device.
