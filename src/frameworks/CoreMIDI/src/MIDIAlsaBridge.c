@@ -14,6 +14,7 @@
 /* ALSA's *_alloca macros require the alloca declaration with strict C11. */
 #include <alloca.h>
 #include <alsa/asoundlib.h>
+#include <errno.h>
 #include <pthread.h>
 
 static pthread_mutex_t g_alsa_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -442,6 +443,44 @@ OSStatus D4MIDIAlsaRouteInputEvent(const snd_seq_event_t *event)
     pthread_mutex_unlock(&g_input_binding_lock);
     if (!source) return kMIDIUnknownEndpoint;
     return D4MIDIAlsaDeliverToVirtualSource(source, event);
+}
+
+
+/*
+ * Consume up to budget queued events from a caller-owned NONBLOCKING ALSA
+ * input sequencer. No input handle, port, subscription or thread is created.
+ * Unbound/unsupported MIDI channel events are discarded; unexpected errors
+ * from ALSA or the CoreMIDI router are reported to the caller.
+ *
+ * ALSA 1.2.x owns the event storage returned by snd_seq_event_input:
+ * consume it synchronously before requesting the next event. Calling the
+ * deprecated snd_seq_free_event() is not required.
+ */
+OSStatus D4MIDIAlsaPumpNonblocking(struct _snd_seq *sequencer,
+                                  ItemCount budget, ItemCount *delivered)
+{
+    ItemCount i;
+    if (delivered) *delivered = 0;
+    if (!sequencer || !delivered || !budget || budget > 4096)
+        return paramErr;
+    for (i = 0; i < budget; ++i) {
+        snd_seq_event_t *event = NULL;
+        OSStatus result;
+        int status = snd_seq_event_input(sequencer, &event);
+        if (status == -EAGAIN)
+            return noErr;
+        if (status < 0 || !event)
+            return kMIDIMessageSendErr;
+
+        result = D4MIDIAlsaRouteInputEvent(event);
+        if (result == noErr) {
+            ++*delivered;
+        } else if (result != kMIDIUnknownEndpoint &&
+                   result != kMIDIMessageSendErr) {
+            return result;
+        }
+    }
+    return noErr;
 }
 
 OSStatus D4MIDIAlsaSend(MIDIEndpointRef destination, const MIDIPacketList *packets)

@@ -73,7 +73,18 @@ receiver port is excluded. This integration test runs **only** when
 It is distinct from the injected source-address route test: discovery
 does not yet subscribe to ALSA ports or receive MIDI events.
 
+The `host_input_pump.c` test exercises `D4MIDIAlsaPumpNonblocking`
+with an intercepted `snd_seq_event_input` and genuine libasound event
+types. It injects bounded Note On, Program Change, Control Change,
+an unbound source and an unsupported SysEx event, confirming that
+connected CoreMIDI callbacks receive only the routed channel messages.
+It covers `-EAGAIN`, I/O failure, FIFO overrun and invalid arguments,
+including a successful zero return from ALSA input. This verifies the
+input *adapter* independently of kernel sequencer I/O; no ALSA input
+port, hardware connection or receive thread exists yet.
+
 Output markers:
+- `ALSA_INPUT_PUMP_PASS`: bounded nonblocking input adapter regression passed.
 - `ALSA_SOURCE_FILTER_PASS`: no-sequencer native capability filter test succeeded.
 - `ALSA_SOURCE_RUNTIME_PASS`: sequencer runtime enumerated a native sender port.
 - `ALSA_SOURCE_LIFETIME_PASS`: disposed sources/clients automatically release source-address bindings.

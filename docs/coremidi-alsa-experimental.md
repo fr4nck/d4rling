@@ -304,3 +304,35 @@ reentrant, concurrent, and `ALSA_COMPILE_PASS`,
 `ALSA_SOURCE_LIFETIME_PASS`, and `ALSA_PREFLIGHT_PASS`.
 The runtime test was skipped (77), as expected. The new source
 discovery changes require another native requalification.
+
+## Bounded nonblocking ALSA input-event pump (new gate; pending 5700X)
+
+`D4MIDIAlsaPumpNonblocking` consumes at most 4096 events per call
+from a **caller-owned, already-open, nonblocking ALSA sequencer
+input handle**. It invokes the existing address-to-virtual-source
+router synchronously, returning the count of *delivered* channel
+messages. Unmapped senders and unsupported messages are consumed
+without callbacks. `-EAGAIN` is a normal empty queue; other ALSA
+errors such as FIFO overflow (`-ENOSPC`) fail the call.
+This method does **not** create, own, configure or close a sequencer
+handle; it also does not subscribe to any ALSA source, start a thread,
+provide scheduling or map MIDI timestamps.
+
+The buffer returned by `snd_seq_event_input` belongs to ALSA in
+current libasound and is consumed before the next read. The deprecated
+`snd_seq_free_event` is not necessary. This avoids accidentally
+freeing ALSA-managed storage.
+
+`host_input_pump.c` uses genuine ALSA types and production source
+code, but intercepts only `snd_seq_event_input` via the linker.
+It checks two correctly routed callback destinations, filtering,
+budget exhaustion, `-EAGAIN`, `-EIO`, `-ENOSPC`, NULL returned
+events and invalid arguments. Marker: `ALSA_INPUT_PUMP_PASS`.
+This tests *injected input*, not actual kernel event reception,
+real subscriptions, hotplug, runtime Darling or Logic Studio 8.
+The new test has **not** been qualified on the 5700X yet.
+
+The latest prior 5700X run at `8bf455f` passed the three virtual
+regressions and eight ALSA compile/codec/routing/source/filter
+checks, with `ALSA_RUNTIME_SKIP` (exit 77). The new input adapter
+requires another native requalification.

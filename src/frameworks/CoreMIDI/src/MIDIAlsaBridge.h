@@ -17,6 +17,15 @@ ItemCount D4MIDIAlsaSourceAddressCount(void);
 OSStatus D4MIDIAlsaSourceAddressAt(ItemCount index, int *client, int *port);
 /* Predicate is provided by the ALSA-enabled backend; no device is opened. */
 int D4MIDIAlsaSourcePortIsConnectable(unsigned int capabilities);
+/* Caller supplies an already-open NONBLOCKING ALSA input sequencer.
+ * This consumes at most budget events, routing bound MIDI 1.0 events.
+ * Compiled only when the experimental ALSA bridge is enabled.
+ */
+#ifdef DARLING_COREMIDI_WITH_ALSA
+struct _snd_seq;
+OSStatus D4MIDIAlsaPumpNonblocking(struct _snd_seq *sequencer,
+                                  ItemCount budget, ItemCount *delivered);
+#endif
 /* Called after virtual source/client disposal, outside objectsMutex. */
 void D4MIDIAlsaForgetVirtualSource(MIDIEndpointRef source);
 /* Takes the virtual object registry mutex; safe while ALSA binding mutex held. */
