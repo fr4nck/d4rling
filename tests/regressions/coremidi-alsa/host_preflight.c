@@ -47,7 +47,9 @@ int main(void)
     const Byte on[3] = {0x90, 60, 100};
     const Byte bad_note[3] = {0x90, 128, 100};
     const Byte bad_velocity[3] = {0x90, 60, 128};
-    const Byte unsupported[3] = {0xb0, 60, 100};
+    const Byte unsupported[3] = {0xf1, 60, 100};
+    const Byte controller[3] = {0xb7, 7, 100};
+    const Byte pitch[3] = {0xef, 0, 64};
     union { long double align; unsigned char bytes[128]; } storage;
     MIDIPacketList *list;
 
@@ -78,6 +80,31 @@ int main(void)
     /* A valid packet passes preflight and reaches the wrapped open call. */
     assert(MIDISend(output, fake_destination, list) == kMIDIMessageSendErr);
     assert(open_calls == 1);
+
+    /* New channel messages must pass preflight and try ALSA as well. */
+    list = make_list(storage.bytes, sizeof(storage.bytes), controller, NULL);
+    assert(MIDISend(output, fake_destination, list) == kMIDIMessageSendErr);
+    assert(open_calls == 2);
+    list = make_list(storage.bytes, sizeof(storage.bytes), pitch, NULL);
+    assert(MIDISend(output, fake_destination, list) == kMIDIMessageSendErr);
+    assert(open_calls == 3);
+
+    /* Program Change is a complete TWO-byte MIDI message. */
+    {
+        const Byte program[2] = {0xc5, 127};
+        MIDIPacket *next;
+        list = (MIDIPacketList *)storage.bytes;
+        next = MIDIPacketListInit(list);
+        assert(next != NULL);
+        assert(MIDIPacketListAdd(list, sizeof(storage.bytes), next, 0, 2, program));
+        assert(MIDISend(output, fake_destination, list) == kMIDIMessageSendErr);
+        assert(open_calls == 4);
+    }
+
+    /* Valid first message + unsupported second message: no ALSA attempt. */
+    list = make_list(storage.bytes, sizeof(storage.bytes), controller, unsupported);
+    assert(MIDISend(output, fake_destination, list) == kMIDIMessageSendErr);
+    assert(open_calls == 4);
 
     assert(MIDIPortDispose(output) == noErr);
     assert(MIDIClientDispose(client) == noErr);

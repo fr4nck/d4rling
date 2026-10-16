@@ -13,7 +13,14 @@ sources, compiled **natively** outside the Darling framework. It creates an
 ALSA input client, locates its endpoint via public CoreMIDI enumeration, sends
 Note On/Off (channel 1, note 60), and checks their delivery and byte values.
 
-Before checking for a sequencer, the runner also compiles and executes
+Before checking for a sequencer, the runner compiles and executes
+`host_translation.c` against the actual bridge and ALSA headers. It verifies
+Note On/Off, polyphonic aftertouch, Control Change, Program Change, Channel
+Pressure and Pitch Bend on all 16 channels. Two-byte message lengths,
+zero-velocity Note On, boundary values and unsupported/malformed messages
+are checked. Success emits `ALSA_TRANSLATION_PASS`.
+
+The runner also compiles and executes
 `host_preflight.c`. It links to genuine libasound but uses GNU ld's
 `--wrap=snd_seq_open` to count attempted sequencer opens without opening a
 device. Invalid note/velocity values, unsupported opcodes and an invalid
@@ -22,6 +29,7 @@ reach the wrapped call. This is a native packet-validation test, **not**
 proof of real ALSA sequencer I/O.
 
 Output markers:
+- `ALSA_TRANSLATION_PASS`: channel-message translation tests passed.
 - `ALSA_PREFLIGHT_PASS`: native bridge validation works without a sequencer.
 - `ALSA_COMPILE_PASS`: the native build and link completed.
 - `ALSA_RUNTIME_PASS`: ALSA delivered Note On and Note Off.

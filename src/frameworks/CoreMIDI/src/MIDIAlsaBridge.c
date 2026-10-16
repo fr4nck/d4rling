@@ -91,6 +91,63 @@ MIDIEndpointRef D4MIDIAlsaDestinationAt(ItemCount index)
     return result;
 }
 
+/*
+ * Convert one complete MIDI 1.0 channel message into an ALSA event.
+ * A MIDIPacket holds exactly one supported message in this experimental
+ * backend. Running status, SysEx and system messages are not implemented.
+ * No /dev/snd/seq access: shared by the preflight gate and the sender.
+ */
+OSStatus D4MIDIAlsaTranslate(const MIDIPacket *packet, snd_seq_event_t *event)
+{
+    unsigned int opcode, channel, status;
+    unsigned int expected_length;
+    if (!packet || !event) return paramErr;
+    if (packet->length < 2 || packet->length > 3) return kMIDIMessageSendErr;
+    status = packet->data[0];
+    if (status < 0x80 || status >= 0xf0) return kMIDIMessageSendErr;
+    opcode = status & 0xf0u;
+    expected_length = (opcode == 0xc0 || opcode == 0xd0) ? 2u : 3u;
+    if (packet->length != expected_length ||
+        (packet->data[1] & 0x80u) ||
+        (expected_length == 3 && (packet->data[2] & 0x80u)))
+        return kMIDIMessageSendErr;
+
+    channel = status & 0x0fu;
+    snd_seq_ev_clear(event);
+    switch (opcode) {
+    case 0x80:
+        snd_seq_ev_set_noteoff(event, channel, packet->data[1], packet->data[2]);
+        break;
+    case 0x90:
+        /* MIDI Note On with velocity zero is semantically a Note Off. */
+        if (packet->data[2] == 0)
+            snd_seq_ev_set_noteoff(event, channel, packet->data[1], 0);
+        else
+            snd_seq_ev_set_noteon(event, channel, packet->data[1], packet->data[2]);
+        break;
+    case 0xa0:
+        snd_seq_ev_set_keypress(event, channel, packet->data[1], packet->data[2]);
+        break;
+    case 0xb0:
+        snd_seq_ev_set_controller(event, channel, packet->data[1], packet->data[2]);
+        break;
+    case 0xc0:
+        snd_seq_ev_set_pgmchange(event, channel, packet->data[1]);
+        break;
+    case 0xd0:
+        snd_seq_ev_set_chanpress(event, channel, packet->data[1]);
+        break;
+    case 0xe0:
+        snd_seq_ev_set_pitchbend(event, channel,
+                                ((int)packet->data[1] |
+                                 ((int)packet->data[2] << 7)) - 8192);
+        break;
+    default:
+        return kMIDIMessageSendErr;
+    }
+    return noErr;
+}
+
 OSStatus D4MIDIAlsaSend(MIDIEndpointRef destination, const MIDIPacketList *packets)
 {
     OSStatus status = kMIDIUnknownEndpoint;
@@ -103,21 +160,17 @@ OSStatus D4MIDIAlsaSend(MIDIEndpointRef destination, const MIDIPacketList *packe
         return paramErr;
 
     /*
-     * Validate all packets before transmitting any of them. An invalid second
-     * packet must not cause the first event to escape to ALSA. This is still a
-     * limited MIDI 1.0 subset; running status and SysEx are not supported.
+     * Validate all packets before sending any event. This prevents a late
+     * unsupported MIDI message from causing a partial ALSA transmission.
+     * Caller-supplied MIDIPacketList has no buffer-capacity argument; a
+     * corrupted packet pointer cannot be made memory-safe here.
      */
-    {
-        const MIDIPacket *check = &packets->packet[0];
-        for (i = 0; i < packets->numPackets; ++i) {
-            unsigned char opcode;
-            if (check->length != 3) return kMIDIMessageSendErr;
-            opcode = check->data[0] & 0xf0;
-            if ((opcode != 0x90 && opcode != 0x80) ||
-                check->data[1] > 127 || check->data[2] > 127)
-                return kMIDIMessageSendErr;
-            if (i + 1 < packets->numPackets) check = MIDIPacketNext(check);
-        }
+    packet = &packets->packet[0];
+    for (i = 0; i < packets->numPackets; ++i) {
+        snd_seq_event_t probe;
+        if (D4MIDIAlsaTranslate(packet, &probe) != noErr)
+            return kMIDIMessageSendErr;
+        if (i + 1 < packets->numPackets) packet = MIDIPacketNext(packet);
     }
 
     pthread_mutex_lock(&g_alsa_lock);
@@ -134,27 +187,18 @@ OSStatus D4MIDIAlsaSend(MIDIEndpointRef destination, const MIDIPacketList *packe
     packet = &packets->packet[0];
     for (i = 0; i < packets->numPackets; ++i) {
         snd_seq_event_t event;
-        unsigned char opcode;
-        int rc;
-        if (packet->length != 3) { status = kMIDIMessageSendErr; break; }
-        opcode = packet->data[0] & 0xf0;
-        snd_seq_ev_clear(&event);
-        if (opcode == 0x90) {
-            snd_seq_ev_set_noteon(&event, packet->data[0] & 15,
-                                  packet->data[1], packet->data[2]);
-        } else if (opcode == 0x80) {
-            snd_seq_ev_set_noteoff(&event, packet->data[0] & 15,
-                                   packet->data[1], packet->data[2]);
-        } else {
+        if (D4MIDIAlsaTranslate(packet, &event) != noErr) {
             status = kMIDIMessageSendErr;
             break;
         }
         snd_seq_ev_set_source(&event, g_output_port);
         snd_seq_ev_set_dest(&event, (destination >> 8) & 255, destination & 255);
         snd_seq_ev_set_direct(&event);
-        rc = snd_seq_event_output_direct(g_seq, &event);
-        if (rc < 0) { status = kMIDIMessageSendErr; break; }
-        packet = MIDIPacketNext(packet);
+        if (snd_seq_event_output_direct(g_seq, &event) < 0) {
+            status = kMIDIMessageSendErr;
+            break;
+        }
+        if (i + 1 < packets->numPackets) packet = MIDIPacketNext(packet);
     }
 done:
     pthread_mutex_unlock(&g_alsa_lock);

@@ -149,3 +149,27 @@ supports a custom kernel via the global `%UserProfile%/.wslconfig`, but
 that changes the kernel environment for **all WSL2 distributions** and
 must be evaluated separately. Do not change kernels as part of an
 ordinary CoreMIDI source qualification.
+
+## MIDI 1.0 channel message expansion (pending 5700X qualification)
+
+`D4MIDIAlsaTranslate` now centralizes packet validation and translation
+into native `snd_seq_event_t` values for Note On/Off, polyphonic aftertouch,
+Control Change, Program Change (2 bytes), Channel Pressure (2 bytes) and
+Pitch Bend (signed -8192..8191), including all 16 MIDI channels.
+Note On with velocity zero is emitted as ALSA Note Off. Both preflight
+and send use the same translator, preventing late malformed messages from
+causing partial output **before** the first ALSA event.
+
+A channel `MIDIPacket` must contain exactly one whole channel message;
+multiple MIDI messages per packet, running status, SysEx, real-time/system
+messages, timestamps and scheduler behavior remain unsupported. CoreMIDI
+provides no packet-list capacity to `MIDISend`; the sender cannot safely
+dereference arbitrary corrupted or truncated caller pointers.
+
+The native no-sequencer gate `host_translation.c` covers all seven
+message classes, 16 channels and data/length boundary cases.
+`host_preflight.c` also checks that two-byte Program Change passes
+validation before attempting ALSA. These tests were **added but still require
+running on the 5700X against real ALSA 1.2.14**. An independent translation
+logic test, using a synthetic ALSA event representation, passed isolated
+GCC and Clang with ASan/UBSan; this does not substitute for real ALSA.
