@@ -27,12 +27,14 @@ typedef struct {
     MIDIPortRef input;
     MIDIEndpointRef source;
     void *refCon;
+    uint64_t generation; /* distinguishes disconnect/reconnect in the same slot */
 } VirtualConnection;
 
 static pthread_mutex_t objectsMutex = PTHREAD_MUTEX_INITIALIZER;
 static VirtualObject objects[VIRTUAL_OBJECT_LIMIT];
 static VirtualConnection connections[VIRTUAL_CONNECTION_LIMIT];
 static MIDIObjectRef nextObjectID = 1;
+static uint64_t nextConnectionGeneration = 1;
 
 static VirtualObject *lookup(MIDIObjectRef id, enum ObjectKind kind)
 {
@@ -231,10 +233,13 @@ OSStatus MIDIPortConnectSource(MIDIPortRef port, MIDIEndpointRef source, void *r
         }
         if (!connections[i].input && !freeSlot) freeSlot = &connections[i];
     }
-    if (freeSlot) {
+    if (freeSlot && nextConnectionGeneration) {
         freeSlot->input = port;
         freeSlot->source = source;
         freeSlot->refCon = refCon;
+        freeSlot->generation = nextConnectionGeneration++;
+    } else {
+        freeSlot = NULL;
     }
     pthread_mutex_unlock(&objectsMutex);
     return freeSlot ? noErr : kMIDIMessageSendErr;
@@ -284,7 +289,16 @@ OSStatus MIDISend(MIDIPortRef port, MIDIEndpointRef dest, const MIDIPacketList *
 
 OSStatus MIDIReceived(MIDIEndpointRef source, const MIDIPacketList *packets)
 {
-    struct Receiver { MIDIReadProc proc; void *portRefCon; void *connRefCon; } receivers[VIRTUAL_CONNECTION_LIMIT];
+    /*
+     * Snapshot connection identities, not callback pointers. Callbacks may
+     * synchronously disconnect or dispose other connections and their refCons.
+     * Revalidate each slot just before invoking it, outside objectsMutex.
+     *
+     * This prevents stale callbacks on the SAME delivery thread. Inter-thread
+     * disposal between unlock and invocation still needs a callback lifetime
+     * protocol; this change must not be treated as full concurrency safety.
+     */
+    struct Receiver { size_t slot; uint64_t generation; } receivers[VIRTUAL_CONNECTION_LIMIT];
     size_t count = 0, i;
     if (!packets || !packets->numPackets) return paramErr;
     pthread_mutex_lock(&objectsMutex);
@@ -293,19 +307,33 @@ OSStatus MIDIReceived(MIDIEndpointRef source, const MIDIPacketList *packets)
         return kMIDIUnknownEndpoint;
     }
     for (i = 0; i < VIRTUAL_CONNECTION_LIMIT; ++i) {
-        if (connections[i].source == source) {
-            VirtualObject *port = lookup(connections[i].input, OBJ_INPUT);
-            if (port) {
-                receivers[count].proc = port->readProc;
-                receivers[count].portRefCon = port->refCon;
-                receivers[count].connRefCon = connections[i].refCon;
-                ++count;
-            }
+        if (connections[i].source == source &&
+            lookup(connections[i].input, OBJ_INPUT)) {
+            receivers[count].slot = i;
+            receivers[count].generation = connections[i].generation;
+            ++count;
         }
     }
     pthread_mutex_unlock(&objectsMutex);
-    for (i = 0; i < count; ++i)
-        receivers[i].proc(packets, receivers[i].portRefCon, receivers[i].connRefCon);
+    for (i = 0; i < count; ++i) {
+        MIDIReadProc proc = NULL;
+        void *portRefCon = NULL, *connRefCon = NULL;
+        size_t slot = receivers[i].slot;
+        pthread_mutex_lock(&objectsMutex);
+        if (lookup(source, OBJ_SOURCE) &&
+            connections[slot].source == source &&
+            connections[slot].generation == receivers[i].generation) {
+            VirtualObject *port = lookup(connections[slot].input, OBJ_INPUT);
+            if (port) {
+                proc = port->readProc;
+                portRefCon = port->refCon;
+                connRefCon = connections[slot].refCon;
+            }
+        }
+        pthread_mutex_unlock(&objectsMutex);
+        if (proc)
+            proc(packets, portRefCon, connRefCon);
+    }
     return noErr;
 }
 

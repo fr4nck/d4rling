@@ -44,3 +44,23 @@ checked against the caller-provided buffer size. A large-buffer regression
 was added. The isolated packet-builder implementation passed GCC and Clang
 with AddressSanitizer and UndefinedBehaviorSanitizer on an independent
 Debian 13 environment. The full repository regression must still be rerun.
+
+## Reentrant callback invalidation (new test, qualification pending)
+
+The virtual source dispatcher now snapshots **connection identities**
+rather than callback function pointers/refCons, and revalidates each
+identity immediately before invoking its callback without holding the
+registry mutex during user code. A fresh monotonically increasing
+connection generation distinguishes disconnect/reconnect in a reused slot.
+
+`tests/regressions/coremidi-virtual/reentrant.c` checks synchronous
+callback-triggered disconnect, same-slot reconnect, input-port disposal
+and source disposal. It requires no ALSA kernel device.
+
+**Scope:** this prevents dispatching stale callback snapshots after
+mutations made *by a previously invoked callback on the same thread*.
+The interval between registry unlock and callback invocation remains
+susceptible to disposal **on another thread**. Cross-thread callback
+lifetime and deterministic teardown need further design and tests
+before claiming concurrency safety. The new test has not yet been run
+on the 5700X at the current commit.

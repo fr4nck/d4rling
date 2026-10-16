@@ -5,7 +5,8 @@ cd "$(dirname "$0")/../../.."
 ROOT=$(pwd)
 CC=${CC:-clang}
 OUT=$(mktemp "${TMPDIR:-/tmp}/d4rling-midi-XXXXXX")
-trap 'rm -f "$OUT"' EXIT HUP INT TERM
+REENTRANT=$(mktemp "${TMPDIR:-/tmp}/d4rling-midi-reentrant-XXXXXX")
+trap 'rm -f "$OUT" "$REENTRANT"' EXIT HUP INT TERM
 "$CC" -std=c11 -Wall -Wextra -Werror -pthread \
   -I"$ROOT/tests/regressions/coremidi-virtual/include" \
   -I"$ROOT/src/frameworks/CoreMIDI/include" \
@@ -13,3 +14,11 @@ trap 'rm -f "$OUT"' EXIT HUP INT TERM
   "$ROOT/src/frameworks/CoreMIDI/src/MIDIAlsaBridge.c" \
   "$ROOT/tests/regressions/coremidi-virtual/test.c" -o "$OUT"
 "$OUT"
+# Reentrant callbacks must not invoke stale disconnected recipients.
+"$CC" -std=c11 -Wall -Wextra -Werror -pthread \
+  -I"$ROOT/tests/regressions/coremidi-virtual/include" \
+  -I"$ROOT/src/frameworks/CoreMIDI/include" \
+  -x c "$ROOT/src/frameworks/CoreMIDI/src/MIDIVirtual.c" \
+  "$ROOT/src/frameworks/CoreMIDI/src/MIDIAlsaBridge.c" \
+  "$ROOT/tests/regressions/coremidi-virtual/reentrant.c" -o "$REENTRANT"
+"$REENTRANT"
