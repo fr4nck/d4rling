@@ -34,3 +34,13 @@ Local test: Clang and GCC passed. A separate local Clang AddressSanitizer/Undefi
 ## Next
 
 Build CoreMIDI within Darling and inspect exports, add an in-framework smoke test, then bridge virtual endpoints to ALSA sequencer before connecting physical controllers.
+
+## Packet-list buffer sizing
+
+The earlier prototype rejected any `MIDIPacketListAdd` buffer exceeding
+65,536 bytes, regardless of whether the packet fit. This arbitrary limit is
+removed: each packet retains its UInt16 payload bound and every write remains
+checked against the caller-provided buffer size. A large-buffer regression
+was added. The isolated packet-builder implementation passed GCC and Clang
+with AddressSanitizer and UndefinedBehaviorSanitizer on an independent
+Debian 13 environment. The full repository regression must still be rerun.

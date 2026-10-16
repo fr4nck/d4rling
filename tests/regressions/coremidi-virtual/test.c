@@ -1,6 +1,7 @@
 #include <CoreMIDI/MIDIServices.h>
 #include <assert.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -60,6 +61,23 @@ int main(void)
     assert(MIDIClientDispose(client) == noErr);
     assert(MIDIGetNumberOfSources() == 0 && MIDIGetNumberOfDestinations() == 0);
     assert(MIDIClientDispose(client) == kMIDIInvalidClient);
+
+    /* ByteCount is not capped at 64 KiB; only each MIDI packet is UInt16-sized. */
+    {
+        Byte *largeStorage = (Byte *)malloc(70000);
+        MIDIPacketList *largeList;
+        MIDIPacket *largePacket;
+        assert(largeStorage != NULL);
+        largeList = (MIDIPacketList *)largeStorage;
+        largePacket = MIDIPacketListInit(largeList);
+        assert(largePacket != NULL);
+        largePacket = MIDIPacketListAdd(largeList, 70000, largePacket,
+                                       3, sizeof(on), on);
+        assert(largePacket != NULL);
+        assert(largeList->numPackets == 1);
+        assert(memcmp(largePacket->data, on, sizeof(on)) == 0);
+        free(largeStorage);
+    }
     puts("CoreMIDI virtual: Note On/Off, routing, bounds and cleanup PASS");
     return 0;
 }

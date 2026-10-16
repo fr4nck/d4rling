@@ -323,7 +323,7 @@ MIDIPacket *MIDIPacketListAdd(MIDIPacketList *list, ByteCount size, MIDIPacket *
     MIDIPacket *packet;
     size_t needed, i;
     if (!list || !current || !data || !nData || nData > UINT16_MAX ||
-        size > 65536 || size < offsetof(MIDIPacketList, packet) + offsetof(MIDIPacket, data) + nData)
+        size < offsetof(MIDIPacketList, packet) + offsetof(MIDIPacket, data) + nData)
         return NULL;
     base = (uintptr_t)list;
     if (size > UINTPTR_MAX - base) return NULL;
