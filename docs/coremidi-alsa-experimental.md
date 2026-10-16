@@ -230,9 +230,9 @@ the existing CoreMIDI virtual delivery layer.
 The mapping lock is released before invoking any CoreMIDI callback,
 so callbacks may unbind their own source address. An already-routed event
 may still be delivered while a concurrent unbind is taking place.
-Mappings are currently manually maintained and are not automatically
-removed when a source is disposed; this is a provisional input staging
-layer, not discovery or a stable CoreMIDI device ID contract.
+Bindings are now explicitly purged when a virtual source is disposed
+or an owning client is disposed. Mapping/delivery still does not
+perform native ALSA discovery or stable cross-process identity assignment.
 
 The new `host_source_route.c` exercises source isolation across 16
 channels, binding validation, reentrant unbind, short Program Change,
@@ -247,3 +247,24 @@ reentrant and concurrent callback regression gates, plus
 `ALSA_REVERSE_PASS`, `ALSA_DELIVERY_PASS`, and
 `ALSA_PREFLIGHT_PASS`. Actual sequencer traffic was skipped (77),
 and this source router had not yet been added.
+
+## Virtual source binding lifetime (new gate; qualification pending)
+
+To avoid exhausting the 128-entry ALSA source-address map with stale
+entries, `MIDIEndpointDispose` and `MIDIClientDispose` explicitly
+forget all mappings for destroyed virtual sources. The enabled ALSA
+bridge implements `D4MIDIAlsaForgetVirtualSource`; a no-op stub preserves
+the non-ALSA build. The CoreMIDI object registry is unlocked before
+taking the ALSA binding mutex. The binding path now revalidates source
+liveness while its mapping mutex is held, using an internal
+`D4MIDIVirtualSourceIsLive` query that briefly locks the virtual registry.
+This closes the bind-after-dispose race in the source mapping.
+
+`host_source_lifetime.c` checks all 128 table entries can be reclaimed
+after source destruction and after client destruction of multiple
+sources, then reused without reaching the binding limit. The existing
+`host_source_route.c` regression checks immediate address reuse and
+automatic unbinding on client disposal. The new marker is
+`ALSA_SOURCE_LIFETIME_PASS`, pending native GCC and ALSA validation
+on the 5700X. This is an in-process ownership guarantee; it does not
+qualify ALSA hotplug, cross-process sequencing or real device input.

@@ -4,6 +4,7 @@
  * Enumeration and send only; no input polling or realtime scheduling.
  */
 #include <CoreMIDI/MIDIServices.h>
+#include "MIDIAlsaBridge.h"
 #include <stdint.h>
 
 #define D4_ALSA_HANDLE_TAG UINT32_C(0xa0000000)
@@ -274,19 +275,20 @@ OSStatus D4MIDIAlsaDeliverToVirtualSource(MIDIEndpointRef source,
  */
 OSStatus D4MIDIAlsaBindSourceAddress(int client, int port, MIDIEndpointRef source)
 {
-    ItemCount i, count;
     size_t slot, vacant = D4_ALSA_INPUT_BINDING_LIMIT;
     if (client < 0 || client > 255 || port < 0 || port > 255 || !source)
         return paramErr;
 
-    /* Validate the source via the CoreMIDI virtual source enumeration. */
-    count = MIDIGetNumberOfSources();
-    for (i = 0; i < count; ++i)
-        if (MIDIGetSource(i) == source)
-            break;
-    if (i == count) return kMIDIUnknownEndpoint;
-
     pthread_mutex_lock(&g_input_binding_lock);
+    /* Revalidate under binding mutex so source disposal cannot leave a
+     * stale binding after a successful cleanup. Lock order:
+     * binding mutex -> virtual objectsMutex. Disposal releases objectsMutex
+     * before acquiring binding mutex to purge the source.
+     */
+    if (!D4MIDIVirtualSourceIsLive(source)) {
+        pthread_mutex_unlock(&g_input_binding_lock);
+        return kMIDIUnknownEndpoint;
+    }
     for (slot = 0; slot < D4_ALSA_INPUT_BINDING_LIMIT; ++slot) {
         D4MIDIAlsaInputBinding *binding = &g_input_bindings[slot];
         if (binding->source && binding->client == client && binding->port == port) {
@@ -306,6 +308,21 @@ OSStatus D4MIDIAlsaBindSourceAddress(int client, int port, MIDIEndpointRef sourc
     g_input_bindings[vacant].source = source;
     pthread_mutex_unlock(&g_input_binding_lock);
     return noErr;
+}
+
+
+/* Remove all bindings for a disposed virtual source, including aliases.
+ * The dispatcher does not hold the binding mutex during user callbacks.
+ */
+void D4MIDIAlsaForgetVirtualSource(MIDIEndpointRef source)
+{
+    size_t slot;
+    if (!source) return;
+    pthread_mutex_lock(&g_input_binding_lock);
+    for (slot = 0; slot < D4_ALSA_INPUT_BINDING_LIMIT; ++slot)
+        if (g_input_bindings[slot].source == source)
+            g_input_bindings[slot].source = 0;
+    pthread_mutex_unlock(&g_input_binding_lock);
 }
 
 OSStatus D4MIDIAlsaUnbindSourceAddress(int client, int port)
@@ -411,6 +428,10 @@ done:
 
 #else
 /* Explicit no-ALSA fallback: isolated builds never depend on host MIDI. */
+void D4MIDIAlsaForgetVirtualSource(MIDIEndpointRef source)
+{
+    (void)source;
+}
 ItemCount D4MIDIAlsaDestinationCount(void) { return 0; }
 MIDIEndpointRef D4MIDIAlsaDestinationAt(ItemCount index)
 {

@@ -130,13 +130,21 @@ int main(void)
     assert(D4MIDIAlsaRouteInputEvent(&event) == kMIDIMessageSendErr);
     assert(b.calls == 17);
 
-    /* Source lifetime is independent from the explicit address binding. */
+    /* Disposing sourceB must automatically release address 43:2. */
     assert(MIDIEndpointDispose(sourceB) == noErr);
     inject_note(&event, 43, 2, 0);
     assert(D4MIDIAlsaRouteInputEvent(&event) == kMIDIUnknownEndpoint);
-    assert(D4MIDIAlsaUnbindSourceAddress(43, 2) == noErr);
+    assert(D4MIDIAlsaUnbindSourceAddress(43, 2) == kMIDINoConnection);
+
+    /* The freed address can immediately be rebound to a surviving source. */
+    assert(D4MIDIAlsaBindSourceAddress(43, 2, sourceA) == noErr);
+    assert(D4MIDIAlsaRouteInputEvent(&event) == noErr);
+    assert(a.calls == 18 && b.calls == 17);
+    assert(a.connection == (void *)(uintptr_t)0x1111);
+
     assert(D4MIDIAlsaUnbindSourceAddress(-1, 2) == paramErr);
     assert(MIDIClientDispose(midiClient) == noErr);
+    assert(D4MIDIAlsaUnbindSourceAddress(43, 2) == kMIDINoConnection);
 
     puts("ALSA_SOURCE_ROUTE_PASS: injected source addresses delivered to distinct callbacks");
     return 0;

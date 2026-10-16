@@ -89,6 +89,19 @@ static VirtualObject *allocate(enum ObjectKind kind, MIDIClientRef owner)
     return NULL;
 }
 
+
+/* Internal bridge query; the caller may hold the ALSA binding mutex.
+ * Never acquire the binding mutex while objectsMutex is held.
+ */
+int D4MIDIVirtualSourceIsLive(MIDIEndpointRef source)
+{
+    int live;
+    pthread_mutex_lock(&objectsMutex);
+    live = lookup(source, OBJ_SOURCE) != NULL;
+    pthread_mutex_unlock(&objectsMutex);
+    return live;
+}
+
 static void pruneConnections(void)
 {
     size_t i;
@@ -114,7 +127,8 @@ OSStatus MIDIClientCreate(CFStringRef name, MIDINotifyProc notify, void *refCon,
 
 OSStatus MIDIClientDispose(MIDIClientRef client)
 {
-    size_t i;
+    size_t i, sourceCount = 0;
+    MIDIEndpointRef discardedSources[VIRTUAL_OBJECT_LIMIT];
     callbackLifetimeEnter();
     pthread_mutex_lock(&objectsMutex);
     if (!lookup(client, OBJ_CLIENT)) {
@@ -122,11 +136,20 @@ OSStatus MIDIClientDispose(MIDIClientRef client)
         callbackLifetimeLeave();
         return kMIDIInvalidClient;
     }
-    for (i = 0; i < VIRTUAL_OBJECT_LIMIT; ++i)
-        if (objects[i].id == client || objects[i].owner == client)
+    for (i = 0; i < VIRTUAL_OBJECT_LIMIT; ++i) {
+        if (objects[i].id == client || objects[i].owner == client) {
+            if (objects[i].kind == OBJ_SOURCE)
+                discardedSources[sourceCount++] = objects[i].id;
             memset(&objects[i], 0, sizeof(objects[i]));
+        }
+    }
     pruneConnections();
     pthread_mutex_unlock(&objectsMutex);
+    /* The ALSA binding mutex is never acquired while objectsMutex is held.
+     * The callback lifetime gate remains held across the whole disposal.
+     */
+    for (i = 0; i < sourceCount; ++i)
+        D4MIDIAlsaForgetVirtualSource(discardedSources[i]);
     callbackLifetimeLeave();
     return noErr;
 }
@@ -197,15 +220,18 @@ OSStatus MIDIPortDispose(MIDIPortRef port)
 OSStatus MIDIEndpointDispose(MIDIEndpointRef endpoint)
 {
     VirtualObject *object;
-    int existed;
+    int existed, wasSource = 0;
     callbackLifetimeEnter();
     pthread_mutex_lock(&objectsMutex);
     object = lookup(endpoint, OBJ_SOURCE);
+    if (object) wasSource = 1;
     if (!object) object = lookup(endpoint, OBJ_DEST);
     existed = object != NULL;
     if (object) memset(object, 0, sizeof(*object));
     pruneConnections();
     pthread_mutex_unlock(&objectsMutex);
+    if (wasSource)
+        D4MIDIAlsaForgetVirtualSource(endpoint);
     callbackLifetimeLeave();
     return existed ? noErr : kMIDIUnknownEndpoint;
 }

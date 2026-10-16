@@ -50,7 +50,16 @@ addresses, no unintended cross-delivery, reentrant unbinding from a
 callback, short Program Change events and disposed virtual sources.
 It does not discover or subscribe to hardware ALSA sources.
 
+The `host_source_lifetime.c` regression fills all 128 binding slots,
+verifies source-endpoint disposal removes *every* old ALSA address,
+refills them across two sources belonging to one CoreMIDI client,
+and verifies client disposal releases both sets. It then reuses all
+128 slots on a newly created source. `host_source_route.c` also
+checks immediate address reuse following endpoint disposal.
+Both tests run with genuine libasound but without `/dev/snd/seq`.
+
 Output markers:
+- `ALSA_SOURCE_LIFETIME_PASS`: disposed sources/clients automatically release source-address bindings.
 - `ALSA_SOURCE_ROUTE_PASS`: synthetic ALSA source-address binding and delivery passed.
 - `ALSA_DELIVERY_PASS`: synthetic ALSA events reached virtual CoreMIDI input callbacks.
 - `ALSA_TRANSLATION_PASS`: channel-message translation tests passed.
