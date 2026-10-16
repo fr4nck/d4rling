@@ -11,6 +11,69 @@
 #include <stdio.h>
 #include <string.h>
 
+static unsigned input_callback_count;
+static void input_callback(const MIDIPacketList *list, void *context,
+                           void *connection)
+{
+    const MIDIPacket *packet;
+    (void)context;
+    (void)connection;
+    if (!list || list->numPackets != 1) return;
+    packet = &list->packet[0];
+    if (packet->length == 3 && packet->data[0] == 0x90 &&
+        packet->data[1] == 64 && packet->data[2] == 95)
+        ++input_callback_count;
+}
+
+static int test_native_input(MIDIClientRef client,
+                             snd_seq_t *sender, int senderClient, int senderPort)
+{
+    D4MIDIAlsaInputSession session = {0};
+    MIDIEndpointRef source = 0;
+    MIDIPortRef port = 0;
+    snd_seq_event_t event;
+    struct pollfd fds[8];
+    int count, tries, result = -1;
+    if (MIDISourceCreate(client, NULL, &source) != noErr ||
+        MIDIInputPortCreate(client, NULL, input_callback, NULL, &port) != noErr ||
+        MIDIPortConnectSource(port, source, NULL) != noErr)
+        goto done;
+    if (D4MIDIAlsaInputSessionOpen(&session) != noErr ||
+        D4MIDIAlsaInputSessionSubscribe(&session, senderClient, senderPort,
+                                        source) != noErr)
+        goto done;
+
+    snd_seq_ev_clear(&event);
+    snd_seq_ev_set_noteon(&event, 0, 64, 95);
+    snd_seq_ev_set_source(&event, senderPort);
+    snd_seq_ev_set_subs(&event);
+    snd_seq_ev_set_direct(&event);
+    if (snd_seq_event_output_direct(sender, &event) < 0)
+        goto done;
+    count = snd_seq_poll_descriptors_count(session.sequencer, POLLIN);
+    if (count <= 0 || count > (int)(sizeof(fds) / sizeof(fds[0])) ||
+        snd_seq_poll_descriptors(session.sequencer, fds, (unsigned int)count,
+                                 POLLIN) < 0)
+        goto done;
+    for (tries = 0; tries < 10 && !input_callback_count; ++tries) {
+        ItemCount delivered = 0;
+        if (poll(fds, (nfds_t)count, 500) <= 0 ||
+            D4MIDIAlsaInputSessionPump(&session, 64, &delivered) != noErr)
+            goto done;
+    }
+    if (input_callback_count == 1) {
+        puts("ALSA_INPUT_RUNTIME_PASS: native sender reaches CoreMIDI callback");
+        result = 0;
+    }
+done:
+    if (session.sequencer &&
+        D4MIDIAlsaInputSessionClose(&session) != noErr)
+        result = -1;
+    if (port) MIDIPortDispose(port);
+    if (source) MIDIEndpointDispose(source);
+    return result;
+}
+
 static int receive_note(snd_seq_t *receiver, int expected_type, int expected_velocity)
 {
     struct pollfd fds[8];
@@ -131,6 +194,10 @@ int main(void)
     if (send_one(output, destination, 0x80, 0) != noErr ||
         receive_note(receiver, SND_SEQ_EVENT_NOTEOFF, 0) != 0) {
         fprintf(stderr, "ALSA_RUNTIME_FAIL: Note Off not received\n");
+        goto cleanup;
+    }
+    if (test_native_input(client, native_source, source_client, source_port) != 0) {
+        fprintf(stderr, "ALSA_RUNTIME_FAIL: native input session/callback\n");
         goto cleanup;
     }
     if (send_one(output, destination, 0x90, 128) != kMIDIMessageSendErr) {

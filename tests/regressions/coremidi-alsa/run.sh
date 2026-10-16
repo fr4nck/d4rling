@@ -17,7 +17,8 @@ SOURCE_ROUTE=$(mktemp "${TMPDIR:-/tmp}/d4rling-midi-source-route-XXXXXX")
 SOURCE_LIFETIME=$(mktemp "${TMPDIR:-/tmp}/d4rling-midi-source-lifetime-XXXXXX")
 SOURCE_FILTER=$(mktemp "${TMPDIR:-/tmp}/d4rling-midi-source-filter-XXXXXX")
 INPUT_PUMP=$(mktemp "${TMPDIR:-/tmp}/d4rling-midi-input-pump-XXXXXX")
-trap 'rm -f "$OUT" "$PREFLIGHT" "$TRANSLATE" "$REVERSE" "$DELIVERY" "$SOURCE_ROUTE" "$SOURCE_LIFETIME" "$SOURCE_FILTER" "$INPUT_PUMP"' EXIT HUP INT TERM
+INPUT_SESSION=$(mktemp "${TMPDIR:-/tmp}/d4rling-midi-input-session-XXXXXX")
+trap 'rm -f "$OUT" "$PREFLIGHT" "$TRANSLATE" "$REVERSE" "$DELIVERY" "$SOURCE_ROUTE" "$SOURCE_LIFETIME" "$SOURCE_FILTER" "$INPUT_PUMP" "$INPUT_SESSION"' EXIT HUP INT TERM
 "$CC" -std=c11 -DDARLING_COREMIDI_WITH_ALSA=1 \
     -Wall -Wextra -Werror -pthread \
     -I"$ROOT/tests/regressions/coremidi-virtual/include" \
@@ -115,6 +116,27 @@ echo "ALSA_COMPILE_PASS: compiled against system ALSA development files"
     "$ROOT/tests/regressions/coremidi-alsa/host_input_pump.c" \
     -Wl,--wrap=snd_seq_event_input -o "$INPUT_PUMP" $(pkg-config --libs alsa)
 "$INPUT_PUMP"
+# Exercise the native input session lifecycle with genuine ALSA types while
+# wrapping ONLY the device-facing operations. No /dev/snd/seq is opened.
+"$CC" -std=c11 -DDARLING_COREMIDI_WITH_ALSA=1 \
+    -Wall -Wextra -Werror -pthread \
+    -I"$ROOT/tests/regressions/coremidi-virtual/include" \
+    -I"$ROOT/src/frameworks/CoreMIDI/include" \
+    -I"$ROOT/src/frameworks/CoreMIDI/src" \
+    $(pkg-config --cflags alsa) \
+    "$ROOT/src/frameworks/CoreMIDI/src/MIDIVirtual.c" \
+    "$ROOT/src/frameworks/CoreMIDI/src/MIDIAlsaBridge.c" \
+    "$ROOT/tests/regressions/coremidi-alsa/host_input_session.c" \
+    -Wl,--wrap=snd_seq_open \
+    -Wl,--wrap=snd_seq_set_client_name \
+    -Wl,--wrap=snd_seq_create_simple_port \
+    -Wl,--wrap=snd_seq_get_any_port_info \
+    -Wl,--wrap=snd_seq_connect_from \
+    -Wl,--wrap=snd_seq_disconnect_from \
+    -Wl,--wrap=snd_seq_event_input \
+    -Wl,--wrap=snd_seq_close \
+    -o "$INPUT_SESSION" $(pkg-config --libs alsa)
+"$INPUT_SESSION"
 # Link the same real bridge against libasound, but wrap only snd_seq_open.
 # This verifies rejection of malformed MIDI without a sequencer device.
 "$CC" -std=c11 -DDARLING_COREMIDI_WITH_ALSA=1 \

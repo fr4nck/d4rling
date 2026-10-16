@@ -83,7 +83,33 @@ including a successful zero return from ALSA input. This verifies the
 input *adapter* independently of kernel sequencer I/O; no ALSA input
 port, hardware connection or receive thread exists yet.
 
+The `host_input_session.c` test verifies a single-source
+`D4MIDIAlsaInputSession` lifecycle: nonblocking native input open,
+port creation, address capability checks, exclusive source binding,
+ALSA subscription, pumping through the existing CoreMIDI router,
+explicit unsubscription, and closing the owned ALSA handle.
+Only the eight sequencer-facing ALSA operations are intercepted via
+GNU ld `--wrap`; genuine ALSA structures and all CoreMIDI code
+remain in use. It also tests rollback after open/name/port/connect
+failures, duplicate-session address collisions, retryable disconnect
+failures and cleanup when close fails. **No real input sequencer is
+opened by the host regression.**
+
+On Linux with a working ALSA Sequencer, the existing
+`host_loopback.c` runtime test now also opens a genuine CoreMIDI
+input session, subscribes to its native ALSA test sender, emits
+a Note On through ALSA subscriptions, and checks arrival in a
+CoreMIDI input callback. This path is skipped on the current WSL2
+kernel. It is a runtime smoke test, not a realtime or hardware-
+controller test.
+
+A callback invoked by the session pump cannot unsubscribe or close
+that same session until the pump returns; the regression checks both
+operations are refused during the callback.
+
 Output markers:
+- `ALSA_INPUT_RUNTIME_PASS`: native ALSA sender event reached the CoreMIDI callback.
+- `ALSA_INPUT_SESSION_PASS`: session open/subscribe/pump/unsubscribe/close and rollback checks passed.
 - `ALSA_INPUT_PUMP_PASS`: bounded nonblocking input adapter regression passed.
 - `ALSA_SOURCE_FILTER_PASS`: no-sequencer native capability filter test succeeded.
 - `ALSA_SOURCE_RUNTIME_PASS`: sequencer runtime enumerated a native sender port.

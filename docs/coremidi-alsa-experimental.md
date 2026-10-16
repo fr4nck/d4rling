@@ -336,3 +336,52 @@ The latest prior 5700X run at `8bf455f` passed the three virtual
 regressions and eight ALSA compile/codec/routing/source/filter
 checks, with `ALSA_RUNTIME_SKIP` (exit 77). The new input adapter
 requires another native requalification.
+
+## Explicit native ALSA input session (new gate; pending 5700X)
+
+The internal single-source `D4MIDIAlsaInputSession` brings the
+previously independent components together without starting any
+worker thread:
+
+1. Open an ALSA `SND_SEQ_OPEN_INPUT` handle with
+   `SND_SEQ_NONBLOCK` and create a receiving
+   `WRITE|SUBS_WRITE` sequencer port.
+2. Validate the chosen sender through `snd_seq_get_any_port_info`,
+   claim its `client:port` mapping **exclusively** to an existing
+   virtual CoreMIDI source, and call `snd_seq_connect_from`.
+3. Pump at most a caller-provided number of messages using
+   `D4MIDIAlsaPumpNonblocking`, then disconnect, remove the mapping
+   and close the owned ALSA handle.
+
+The caller must zero-initialize the session, serialize all operations
+(including callback-triggered teardown), and arrange a polling/event
+loop if continuous reception is needed. Session operations are not
+thread-safe or realtime-safe. Each session accepts only one sender;
+native hotplug, reconnection after ALSA client-number changes,
+timestamp scheduling, and automatic CoreMIDI source creation are
+outside this lot. If subscription fails, the owned address binding
+is rolled back. On native disconnection failure the subscription
+remains marked active so unsubscription can be retried; definitive
+close still removes the binding and closes the ALSA handle.
+
+`host_input_session.c` links the real bridge and libasound but
+intercepts the sequencer-facing ALSA operations with `--wrap`.
+It exercises open/create/connect/pump/disconnect/close, source
+isolation, failure rollback, exclusive map ownership and cleanup.
+Marker: `ALSA_INPUT_SESSION_PASS`, **not yet qualified on 5700X**.
+No actual `/dev/snd/seq` transport, real device, or Logic Studio 8
+execution is claimed.
+
+The native `host_loopback.c` test also now exercises the complete
+experimental input session: a real ALSA sender port is subscribed to
+the new session receiver, a Note On is delivered via ALSA sequencer
+subscriptions and the resulting CoreMIDI callback is checked.
+Marker: `ALSA_INPUT_RUNTIME_PASS` **only** on a kernel with active
+ALSA Sequencer. There is no native PASS for this path yet.
+
+While a session pump is active, callback-initiated
+`Unsubscribe` and `Close` return `paramErr` instead of invalidating
+the sequencer handle before the pump finishes. This is an in-thread
+reentrancy guard, not cross-thread synchronization. The caller must
+still serialize use of a session across multiple threads.
+

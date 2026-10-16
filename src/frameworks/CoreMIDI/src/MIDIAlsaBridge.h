@@ -25,6 +25,26 @@ int D4MIDIAlsaSourcePortIsConnectable(unsigned int capabilities);
 struct _snd_seq;
 OSStatus D4MIDIAlsaPumpNonblocking(struct _snd_seq *sequencer,
                                   ItemCount budget, ItemCount *delivered);
+/* Internal single-source session. Must be zero-initialized by caller.
+ * Caller serializes its lifecycle and pump operations on one thread.
+ * No worker thread, device hotplug or automatic endpoint creation.
+ */
+typedef struct {
+    struct _snd_seq *sequencer;
+    int input_port;
+    int sender_client;
+    int sender_port;
+    int subscribed;
+    int pumping; /* callback-initiated close/unsubscribe is rejected */
+} D4MIDIAlsaInputSession;
+OSStatus D4MIDIAlsaInputSessionOpen(D4MIDIAlsaInputSession *session);
+OSStatus D4MIDIAlsaInputSessionSubscribe(D4MIDIAlsaInputSession *session,
+                                        int client, int port,
+                                        MIDIEndpointRef source);
+OSStatus D4MIDIAlsaInputSessionUnsubscribe(D4MIDIAlsaInputSession *session);
+OSStatus D4MIDIAlsaInputSessionPump(D4MIDIAlsaInputSession *session,
+                                   ItemCount budget, ItemCount *delivered);
+OSStatus D4MIDIAlsaInputSessionClose(D4MIDIAlsaInputSession *session);
 #endif
 /* Called after virtual source/client disposal, outside objectsMutex. */
 void D4MIDIAlsaForgetVirtualSource(MIDIEndpointRef source);

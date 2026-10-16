@@ -349,7 +349,8 @@ OSStatus D4MIDIAlsaDeliverToVirtualSource(MIDIEndpointRef source,
  * This is a manual mapping until ALSA discovery and input subscriptions exist.
  * No ALSA sequencer device is opened here.
  */
-OSStatus D4MIDIAlsaBindSourceAddress(int client, int port, MIDIEndpointRef source)
+static OSStatus bindSourceAddress(int client, int port,
+                                  MIDIEndpointRef source, int idempotent)
 {
     size_t slot, vacant = D4_ALSA_INPUT_BINDING_LIMIT;
     if (client < 0 || client > 255 || port < 0 || port > 255 || !source)
@@ -368,7 +369,8 @@ OSStatus D4MIDIAlsaBindSourceAddress(int client, int port, MIDIEndpointRef sourc
     for (slot = 0; slot < D4_ALSA_INPUT_BINDING_LIMIT; ++slot) {
         D4MIDIAlsaInputBinding *binding = &g_input_bindings[slot];
         if (binding->source && binding->client == client && binding->port == port) {
-            OSStatus status = binding->source == source ? noErr : paramErr;
+            OSStatus status = idempotent && binding->source == source
+                                ? noErr : paramErr;
             pthread_mutex_unlock(&g_input_binding_lock);
             return status;
         }
@@ -385,6 +387,12 @@ OSStatus D4MIDIAlsaBindSourceAddress(int client, int port, MIDIEndpointRef sourc
     pthread_mutex_unlock(&g_input_binding_lock);
     return noErr;
 }
+
+OSStatus D4MIDIAlsaBindSourceAddress(int client, int port, MIDIEndpointRef source)
+{
+    return bindSourceAddress(client, port, source, 1);
+}
+
 
 
 /* Remove all bindings for a disposed virtual source, including aliases.
@@ -481,6 +489,126 @@ OSStatus D4MIDIAlsaPumpNonblocking(struct _snd_seq *sequencer,
         }
     }
     return noErr;
+}
+
+
+/*
+ * Minimal explicit ALSA input session. The caller serializes Open/Subscribe/
+ * Pump/Close (including callback-initiated teardown) and owns its storage.
+ * No worker thread, hotplug tracking, or automatic CoreMIDI endpoint.
+ */
+OSStatus D4MIDIAlsaInputSessionOpen(D4MIDIAlsaInputSession *session)
+{
+    snd_seq_t *sequencer = NULL;
+    int port;
+    if (!session || session->sequencer || session->pumping) return paramErr;
+    if (snd_seq_open(&sequencer, "default", SND_SEQ_OPEN_INPUT,
+                     SND_SEQ_NONBLOCK) < 0 || !sequencer)
+        return kMIDIMessageSendErr;
+    if (snd_seq_set_client_name(sequencer, "d4rling CoreMIDI Input") < 0) {
+        snd_seq_close(sequencer);
+        return kMIDIMessageSendErr;
+    }
+    port = snd_seq_create_simple_port(sequencer, "CoreMIDI Input",
+        SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE,
+        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION);
+    if (port < 0) {
+        snd_seq_close(sequencer);
+        return kMIDIMessageSendErr;
+    }
+    session->sequencer = sequencer;
+    session->input_port = port;
+    session->subscribed = 0;
+    session->pumping = 0;
+    return noErr;
+}
+
+OSStatus D4MIDIAlsaInputSessionSubscribe(D4MIDIAlsaInputSession *session,
+                                        int client, int port,
+                                        MIDIEndpointRef source)
+{
+    snd_seq_port_info_t *info;
+    OSStatus status;
+    if (!session || !session->sequencer || session->subscribed ||
+        session->pumping || client < 0 || client > 255 || port < 0 || port > 255 || !source)
+        return paramErr;
+    snd_seq_port_info_alloca(&info);
+    if (snd_seq_get_any_port_info(session->sequencer, client, port, info) < 0 ||
+        !D4MIDIAlsaSourcePortIsConnectable(
+            snd_seq_port_info_get_capability(info)))
+        return kMIDIUnknownEndpoint;
+
+    /* Claim the address exclusively. Duplicate bindings must not be
+     * unbound by a failed subscription or by this session's teardown.
+     */
+    status = bindSourceAddress(client, port, source, 0);
+    if (status != noErr) return status;
+    if (snd_seq_connect_from(session->sequencer, session->input_port,
+                             client, port) < 0) {
+        (void)D4MIDIAlsaUnbindSourceAddress(client, port);
+        return kMIDIMessageSendErr;
+    }
+    session->sender_client = client;
+    session->sender_port = port;
+    session->subscribed = 1;
+    return noErr;
+}
+
+OSStatus D4MIDIAlsaInputSessionUnsubscribe(D4MIDIAlsaInputSession *session)
+{
+    int result;
+    if (!session || !session->sequencer || !session->subscribed ||
+        session->pumping)
+        return paramErr;
+    result = snd_seq_disconnect_from(session->sequencer, session->input_port,
+                                     session->sender_client, session->sender_port);
+    if (result < 0)
+        return kMIDIMessageSendErr; /* Still subscribed: safe to retry. */
+    (void)D4MIDIAlsaUnbindSourceAddress(session->sender_client,
+                                        session->sender_port);
+    session->subscribed = 0;
+    return noErr;
+}
+
+OSStatus D4MIDIAlsaInputSessionPump(D4MIDIAlsaInputSession *session,
+                                   ItemCount budget, ItemCount *delivered)
+{
+    OSStatus status;
+    if (delivered) *delivered = 0;
+    if (!session || !session->sequencer || !session->subscribed ||
+        session->pumping)
+        return paramErr;
+    session->pumping = 1;
+    status = D4MIDIAlsaPumpNonblocking(session->sequencer, budget, delivered);
+    session->pumping = 0;
+    return status;
+}
+
+OSStatus D4MIDIAlsaInputSessionClose(D4MIDIAlsaInputSession *session)
+{
+    int result;
+    OSStatus status = noErr;
+    if (!session || !session->sequencer || session->pumping)
+        return paramErr;
+    if (session->subscribed) {
+        status = D4MIDIAlsaInputSessionUnsubscribe(session);
+        if (session->subscribed) {
+            /* Disconnect failed: close still destroys the native link;
+             * release the binding even though unsubscribe could not.
+             */
+            (void)D4MIDIAlsaUnbindSourceAddress(session->sender_client,
+                                                 session->sender_port);
+        }
+    }
+    result = snd_seq_close(session->sequencer);
+    session->sequencer = NULL;
+    session->input_port = 0;
+    session->sender_client = 0;
+    session->sender_port = 0;
+    session->subscribed = 0;
+    session->pumping = 0;
+    if (result < 0) status = kMIDIMessageSendErr;
+    return status;
 }
 
 OSStatus D4MIDIAlsaSend(MIDIEndpointRef destination, const MIDIPacketList *packets)
