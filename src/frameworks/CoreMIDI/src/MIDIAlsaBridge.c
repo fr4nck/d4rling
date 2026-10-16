@@ -99,6 +99,25 @@ OSStatus D4MIDIAlsaSend(MIDIEndpointRef destination, const MIDIPacketList *packe
         return kMIDIUnknownEndpoint;
     if (!packets || !packets->numPackets || packets->numPackets > 4096)
         return paramErr;
+
+    /*
+     * Validate all packets before transmitting any of them. An invalid second
+     * packet must not cause the first event to escape to ALSA. This is still a
+     * limited MIDI 1.0 subset; running status and SysEx are not supported.
+     */
+    {
+        const MIDIPacket *check = &packets->packet[0];
+        for (i = 0; i < packets->numPackets; ++i) {
+            unsigned char opcode;
+            if (check->length != 3) return kMIDIMessageSendErr;
+            opcode = check->data[0] & 0xf0;
+            if ((opcode != 0x90 && opcode != 0x80) ||
+                check->data[1] > 127 || check->data[2] > 127)
+                return kMIDIMessageSendErr;
+            if (i + 1 < packets->numPackets) check = MIDIPacketNext(check);
+        }
+    }
+
     pthread_mutex_lock(&g_alsa_lock);
     if (open_sequencer() != 0) {
         status = kMIDIMessageSendErr;
