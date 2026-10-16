@@ -214,3 +214,36 @@ unsupported events, disconnect and source disposal. Marker:
 `ALSA_DELIVERY_PASS`. Added pending first native GCC + ALSA qualification
 on the 5700X. It does not prove realtime safety, callback lifetime under
 concurrent disposal, ALSA device input or application-level compatibility.
+
+## ALSA sender address -> virtual CoreMIDI source routing (qualification pending)
+
+An internal bounded, mutex-protected map allows an ALSA sender
+`client:port` address (0..255 each) to be bound manually to an existing
+virtual CoreMIDI source, unbound, and resolved for a supplied
+`snd_seq_event_t` using `event->source.client` and
+`event->source.port`. Address collisions are rejected; identical
+rebindings are idempotent. The source must appear in current virtual
+source enumeration at bind time. An event from an unknown sender returns
+`kMIDIUnknownEndpoint`; disposed bound sources are also rejected by
+the existing CoreMIDI virtual delivery layer.
+
+The mapping lock is released before invoking any CoreMIDI callback,
+so callbacks may unbind their own source address. An already-routed event
+may still be delivered while a concurrent unbind is taking place.
+Mappings are currently manually maintained and are not automatically
+removed when a source is disposed; this is a provisional input staging
+layer, not discovery or a stable CoreMIDI device ID contract.
+
+The new `host_source_route.c` exercises source isolation across 16
+channels, binding validation, reentrant unbind, short Program Change,
+invalid messages and source disposal. It needs only libasound headers
+and the real bridge source, **not** `/dev/snd/seq`. Marker:
+`ALSA_SOURCE_ROUTE_PASS`. The gate is pending native execution on the
+5700X.
+
+The previous 5700X run of `978d0ac` passed the CoreMIDI virtual,
+reentrant and concurrent callback regression gates, plus
+`ALSA_COMPILE_PASS`, `ALSA_TRANSLATION_PASS`,
+`ALSA_REVERSE_PASS`, `ALSA_DELIVERY_PASS`, and
+`ALSA_PREFLIGHT_PASS`. Actual sequencer traffic was skipped (77),
+and this source router had not yet been added.

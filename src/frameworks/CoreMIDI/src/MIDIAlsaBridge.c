@@ -19,6 +19,21 @@ static pthread_mutex_t g_alsa_lock = PTHREAD_MUTEX_INITIALIZER;
 static snd_seq_t *g_seq;
 static int g_output_port = -1;
 
+/* Explicit ALSA client/port -> in-process CoreMIDI source bindings.
+ * These are NOT native source discovery, hotplug or subscription support.
+ * The table is independent of the output-only ALSA sequencer handle.
+ */
+#define D4_ALSA_INPUT_BINDING_LIMIT 128
+typedef struct {
+    int client;
+    int port;
+    MIDIEndpointRef source; /* 0 indicates an unused entry */
+} D4MIDIAlsaInputBinding;
+
+static pthread_mutex_t g_input_binding_lock = PTHREAD_MUTEX_INITIALIZER;
+static D4MIDIAlsaInputBinding g_input_bindings[D4_ALSA_INPUT_BINDING_LIMIT];
+
+
 static int open_sequencer(void)
 {
     if (g_seq) return 0;
@@ -250,6 +265,91 @@ OSStatus D4MIDIAlsaDeliverToVirtualSource(MIDIEndpointRef source,
                                       0, length, data))
         return kMIDIMessageSendErr;
     return MIDIReceived(source, list);
+}
+
+/*
+ * Bind one native ALSA sender address to an existing virtual CoreMIDI source.
+ * This is a manual mapping until ALSA discovery and input subscriptions exist.
+ * No ALSA sequencer device is opened here.
+ */
+OSStatus D4MIDIAlsaBindSourceAddress(int client, int port, MIDIEndpointRef source)
+{
+    ItemCount i, count;
+    size_t slot, vacant = D4_ALSA_INPUT_BINDING_LIMIT;
+    if (client < 0 || client > 255 || port < 0 || port > 255 || !source)
+        return paramErr;
+
+    /* Validate the source via the CoreMIDI virtual source enumeration. */
+    count = MIDIGetNumberOfSources();
+    for (i = 0; i < count; ++i)
+        if (MIDIGetSource(i) == source)
+            break;
+    if (i == count) return kMIDIUnknownEndpoint;
+
+    pthread_mutex_lock(&g_input_binding_lock);
+    for (slot = 0; slot < D4_ALSA_INPUT_BINDING_LIMIT; ++slot) {
+        D4MIDIAlsaInputBinding *binding = &g_input_bindings[slot];
+        if (binding->source && binding->client == client && binding->port == port) {
+            OSStatus status = binding->source == source ? noErr : paramErr;
+            pthread_mutex_unlock(&g_input_binding_lock);
+            return status;
+        }
+        if (!binding->source && vacant == D4_ALSA_INPUT_BINDING_LIMIT)
+            vacant = slot;
+    }
+    if (vacant == D4_ALSA_INPUT_BINDING_LIMIT) {
+        pthread_mutex_unlock(&g_input_binding_lock);
+        return kMIDIMessageSendErr;
+    }
+    g_input_bindings[vacant].client = client;
+    g_input_bindings[vacant].port = port;
+    g_input_bindings[vacant].source = source;
+    pthread_mutex_unlock(&g_input_binding_lock);
+    return noErr;
+}
+
+OSStatus D4MIDIAlsaUnbindSourceAddress(int client, int port)
+{
+    size_t slot;
+    if (client < 0 || client > 255 || port < 0 || port > 255)
+        return paramErr;
+    pthread_mutex_lock(&g_input_binding_lock);
+    for (slot = 0; slot < D4_ALSA_INPUT_BINDING_LIMIT; ++slot) {
+        D4MIDIAlsaInputBinding *binding = &g_input_bindings[slot];
+        if (binding->source && binding->client == client && binding->port == port) {
+            binding->source = 0;
+            pthread_mutex_unlock(&g_input_binding_lock);
+            return noErr;
+        }
+    }
+    pthread_mutex_unlock(&g_input_binding_lock);
+    return kMIDINoConnection;
+}
+
+/*
+ * The event must originate from a caller-supplied ALSA input event.
+ * Only previously bound source addresses are accepted. The binding lock
+ * is never held across CoreMIDI user callbacks (which may themselves unbind).
+ * Concurrent unbinding does not cancel a delivery already in progress.
+ */
+OSStatus D4MIDIAlsaRouteInputEvent(const snd_seq_event_t *event)
+{
+    size_t slot;
+    MIDIEndpointRef source = 0;
+    if (!event) return paramErr;
+    pthread_mutex_lock(&g_input_binding_lock);
+    for (slot = 0; slot < D4_ALSA_INPUT_BINDING_LIMIT; ++slot) {
+        const D4MIDIAlsaInputBinding *binding = &g_input_bindings[slot];
+        if (binding->source &&
+            binding->client == event->source.client &&
+            binding->port == event->source.port) {
+            source = binding->source;
+            break;
+        }
+    }
+    pthread_mutex_unlock(&g_input_binding_lock);
+    if (!source) return kMIDIUnknownEndpoint;
+    return D4MIDIAlsaDeliverToVirtualSource(source, event);
 }
 
 OSStatus D4MIDIAlsaSend(MIDIEndpointRef destination, const MIDIPacketList *packets)

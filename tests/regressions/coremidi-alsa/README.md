@@ -43,7 +43,15 @@ callback context, rejection of unsupported events, disconnect, and disposal.
 It prints `ALSA_DELIVERY_PASS` on success. **This does not establish an ALSA
 input port, poll a physical device, or qualify callback concurrency.**
 
+The no-sequencer `host_source_route.c` gate checks explicit
+`client:port` ALSA sender-address bindings to distinct virtual CoreMIDI
+sources, across 16 channels. It verifies unmatched and invalid sender
+addresses, no unintended cross-delivery, reentrant unbinding from a
+callback, short Program Change events and disposed virtual sources.
+It does not discover or subscribe to hardware ALSA sources.
+
 Output markers:
+- `ALSA_SOURCE_ROUTE_PASS`: synthetic ALSA source-address binding and delivery passed.
 - `ALSA_DELIVERY_PASS`: synthetic ALSA events reached virtual CoreMIDI input callbacks.
 - `ALSA_TRANSLATION_PASS`: channel-message translation tests passed.
 - `ALSA_REVERSE_PASS`: ALSA event to MIDI 1.0 codec checks passed.
