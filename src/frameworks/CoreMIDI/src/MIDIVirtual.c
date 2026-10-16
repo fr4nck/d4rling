@@ -36,6 +36,34 @@ static VirtualConnection connections[VIRTUAL_CONNECTION_LIMIT];
 static MIDIObjectRef nextObjectID = 1;
 static uint64_t nextConnectionGeneration = 1;
 
+/*
+ * Coarse-grained callback lifetime gate. All callback entry and object/
+ * connection teardown must acquire this gate before objectsMutex, so a
+ * different thread cannot destroy callback refCons during invocation.
+ *
+ * C11 thread-local depth permits callbacks to dispose/reconnect themselves
+ * without deadlocking a non-recursive mutex. The gate is intentionally held
+ * across user callbacks; callbacks must not synchronously wait for another
+ * thread that is trying to dispose/disconnect CoreMIDI objects. This is
+ * a correctness gate, NOT realtime-safe dispatch.
+ */
+static pthread_mutex_t callbackLifetimeMutex = PTHREAD_MUTEX_INITIALIZER;
+static _Thread_local unsigned callbackLifetimeDepth;
+
+static void callbackLifetimeEnter(void)
+{
+    if (callbackLifetimeDepth == 0)
+        pthread_mutex_lock(&callbackLifetimeMutex);
+    ++callbackLifetimeDepth;
+}
+
+static void callbackLifetimeLeave(void)
+{
+    if (--callbackLifetimeDepth == 0)
+        pthread_mutex_unlock(&callbackLifetimeMutex);
+}
+
+
 static VirtualObject *lookup(MIDIObjectRef id, enum ObjectKind kind)
 {
     size_t i;
@@ -87,9 +115,11 @@ OSStatus MIDIClientCreate(CFStringRef name, MIDINotifyProc notify, void *refCon,
 OSStatus MIDIClientDispose(MIDIClientRef client)
 {
     size_t i;
+    callbackLifetimeEnter();
     pthread_mutex_lock(&objectsMutex);
     if (!lookup(client, OBJ_CLIENT)) {
         pthread_mutex_unlock(&objectsMutex);
+        callbackLifetimeLeave();
         return kMIDIInvalidClient;
     }
     for (i = 0; i < VIRTUAL_OBJECT_LIMIT; ++i)
@@ -97,9 +127,9 @@ OSStatus MIDIClientDispose(MIDIClientRef client)
             memset(&objects[i], 0, sizeof(objects[i]));
     pruneConnections();
     pthread_mutex_unlock(&objectsMutex);
+    callbackLifetimeLeave();
     return noErr;
 }
-
 static OSStatus createOwned(MIDIClientRef client, enum ObjectKind kind,
                             MIDIReadProc proc, void *refCon, MIDIObjectRef *out)
 {
@@ -152,27 +182,33 @@ OSStatus MIDIDestinationCreate(MIDIClientRef client, CFStringRef name,
 OSStatus MIDIPortDispose(MIDIPortRef port)
 {
     VirtualObject *object;
+    int existed;
+    callbackLifetimeEnter();
     pthread_mutex_lock(&objectsMutex);
     object = lookup(port, OBJ_INPUT);
     if (!object) object = lookup(port, OBJ_OUTPUT);
+    existed = object != NULL;
     if (object) memset(object, 0, sizeof(*object));
     pruneConnections();
     pthread_mutex_unlock(&objectsMutex);
-    return object ? noErr : kMIDIInvalidPort;
+    callbackLifetimeLeave();
+    return existed ? noErr : kMIDIInvalidPort;
 }
-
 OSStatus MIDIEndpointDispose(MIDIEndpointRef endpoint)
 {
     VirtualObject *object;
+    int existed;
+    callbackLifetimeEnter();
     pthread_mutex_lock(&objectsMutex);
     object = lookup(endpoint, OBJ_SOURCE);
     if (!object) object = lookup(endpoint, OBJ_DEST);
+    existed = object != NULL;
     if (object) memset(object, 0, sizeof(*object));
     pruneConnections();
     pthread_mutex_unlock(&objectsMutex);
-    return object ? noErr : kMIDIUnknownEndpoint;
+    callbackLifetimeLeave();
+    return existed ? noErr : kMIDIUnknownEndpoint;
 }
-
 static ItemCount countEndpoints(enum ObjectKind kind)
 {
     ItemCount n = 0;
@@ -248,45 +284,51 @@ OSStatus MIDIPortConnectSource(MIDIPortRef port, MIDIEndpointRef source, void *r
 OSStatus MIDIPortDisconnectSource(MIDIPortRef port, MIDIEndpointRef source)
 {
     size_t i;
+    callbackLifetimeEnter();
     pthread_mutex_lock(&objectsMutex);
     if (!lookup(port, OBJ_INPUT)) {
         pthread_mutex_unlock(&objectsMutex);
+        callbackLifetimeLeave();
         return kMIDIInvalidPort;
     }
     for (i = 0; i < VIRTUAL_CONNECTION_LIMIT; ++i) {
         if (connections[i].input == port && connections[i].source == source) {
             memset(&connections[i], 0, sizeof(connections[i]));
             pthread_mutex_unlock(&objectsMutex);
+            callbackLifetimeLeave();
             return noErr;
         }
     }
     pthread_mutex_unlock(&objectsMutex);
+    callbackLifetimeLeave();
     return kMIDINoConnection;
 }
-
 OSStatus MIDISend(MIDIPortRef port, MIDIEndpointRef dest, const MIDIPacketList *packets)
 {
     MIDIReadProc callback;
     void *refCon;
     VirtualObject *object;
     if (!packets || !packets->numPackets) return paramErr;
+    callbackLifetimeEnter();
     pthread_mutex_lock(&objectsMutex);
     if (!lookup(port, OBJ_OUTPUT)) {
         pthread_mutex_unlock(&objectsMutex);
+        callbackLifetimeLeave();
         return kMIDIInvalidPort;
     }
     object = lookup(dest, OBJ_DEST);
     if (!object) {
         pthread_mutex_unlock(&objectsMutex);
+        callbackLifetimeLeave();
         return D4MIDIAlsaSend(dest, packets);
     }
     callback = object->readProc;
     refCon = object->refCon;
     pthread_mutex_unlock(&objectsMutex);
-    callback(packets, refCon, NULL); /* synchronous virtual delivery */
+    callback(packets, refCon, NULL); /* serialized synchronous virtual delivery */
+    callbackLifetimeLeave();
     return noErr;
 }
-
 OSStatus MIDIReceived(MIDIEndpointRef source, const MIDIPacketList *packets)
 {
     /*
@@ -301,9 +343,11 @@ OSStatus MIDIReceived(MIDIEndpointRef source, const MIDIPacketList *packets)
     struct Receiver { size_t slot; uint64_t generation; } receivers[VIRTUAL_CONNECTION_LIMIT];
     size_t count = 0, i;
     if (!packets || !packets->numPackets) return paramErr;
+    callbackLifetimeEnter();
     pthread_mutex_lock(&objectsMutex);
     if (!lookup(source, OBJ_SOURCE)) {
         pthread_mutex_unlock(&objectsMutex);
+        callbackLifetimeLeave();
         return kMIDIUnknownEndpoint;
     }
     for (i = 0; i < VIRTUAL_CONNECTION_LIMIT; ++i) {
@@ -334,6 +378,7 @@ OSStatus MIDIReceived(MIDIEndpointRef source, const MIDIPacketList *packets)
         if (proc)
             proc(packets, portRefCon, connRefCon);
     }
+    callbackLifetimeLeave();
     return noErr;
 }
 
