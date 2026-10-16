@@ -148,6 +148,83 @@ OSStatus D4MIDIAlsaTranslate(const MIDIPacket *packet, snd_seq_event_t *event)
     return noErr;
 }
 
+/*
+ * Encode one ALSA sequencer channel event into a complete MIDI 1.0 message.
+ * No sequencer access or callback dispatch; reserved for future input support.
+ * An unsupported or out-of-range event leaves the caller's bytes untouched.
+ */
+OSStatus D4MIDIAlsaEncodeEvent(const snd_seq_event_t *event, Byte *data,
+                              ByteCount capacity, ByteCount *length)
+{
+    unsigned int opcode, channel, first = 0, second = 0;
+    ByteCount needed = 3;
+    int value;
+    if (!event || !data || !length) return paramErr;
+    *length = 0;
+    switch (event->type) {
+    case SND_SEQ_EVENT_NOTEOFF:
+        opcode = 0x80;
+        channel = event->data.note.channel;
+        first = event->data.note.note;
+        second = event->data.note.velocity;
+        break;
+    case SND_SEQ_EVENT_NOTEON:
+        opcode = 0x90;
+        channel = event->data.note.channel;
+        first = event->data.note.note;
+        second = event->data.note.velocity;
+        break;
+    case SND_SEQ_EVENT_KEYPRESS:
+        opcode = 0xa0;
+        channel = event->data.note.channel;
+        first = event->data.note.note;
+        second = event->data.note.velocity;
+        break;
+    case SND_SEQ_EVENT_CONTROLLER:
+        opcode = 0xb0;
+        channel = event->data.control.channel;
+        first = event->data.control.param;
+        value = event->data.control.value;
+        if (value < 0 || value > 127) return kMIDIMessageSendErr;
+        second = (unsigned int)value;
+        break;
+    case SND_SEQ_EVENT_PGMCHANGE:
+        opcode = 0xc0;
+        channel = event->data.control.channel;
+        value = event->data.control.value;
+        if (value < 0 || value > 127) return kMIDIMessageSendErr;
+        first = (unsigned int)value;
+        needed = 2;
+        break;
+    case SND_SEQ_EVENT_CHANPRESS:
+        opcode = 0xd0;
+        channel = event->data.control.channel;
+        value = event->data.control.value;
+        if (value < 0 || value > 127) return kMIDIMessageSendErr;
+        first = (unsigned int)value;
+        needed = 2;
+        break;
+    case SND_SEQ_EVENT_PITCHBEND:
+        opcode = 0xe0;
+        channel = event->data.control.channel;
+        value = event->data.control.value;
+        if (value < -8192 || value > 8191) return kMIDIMessageSendErr;
+        first = (unsigned int)(value + 8192) & 0x7fu;
+        second = ((unsigned int)(value + 8192) >> 7) & 0x7fu;
+        break;
+    default:
+        return kMIDIMessageSendErr;
+    }
+    if (channel > 15 || first > 127 || second > 127)
+        return kMIDIMessageSendErr;
+    if (capacity < needed) return paramErr;
+    data[0] = (Byte)(opcode | channel);
+    data[1] = (Byte)first;
+    if (needed == 3) data[2] = (Byte)second;
+    *length = needed;
+    return noErr;
+}
+
 OSStatus D4MIDIAlsaSend(MIDIEndpointRef destination, const MIDIPacketList *packets)
 {
     OSStatus status = kMIDIUnknownEndpoint;

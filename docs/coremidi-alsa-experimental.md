@@ -173,3 +173,25 @@ validation before attempting ALSA. These tests were **added but still require
 running on the 5700X against real ALSA 1.2.14**. An independent translation
 logic test, using a synthetic ALSA event representation, passed isolated
 GCC and Clang with ASan/UBSan; this does not substitute for real ALSA.
+
+## ALSA event to MIDI 1.0 codec — pending native qualification
+
+An internal sequencer-independent `D4MIDIAlsaEncodeEvent` helper now maps
+the same seven ALSA channel-event classes back to complete MIDI 1.0 messages,
+including 16 channels, Program Change and Channel Pressure as two-byte
+messages, and signed pitch bend represented as the two 7-bit MIDI bytes.
+Unsupported types, out-of-range data, invalid channels and short output
+buffers are rejected before writing any caller bytes; `*length` is reset
+to zero on such rejections when arguments are valid.
+
+`tests/regressions/coremidi-alsa/host_reverse.c` runs forward/reverse
+round trips and negative tests with the production codec and genuine
+libasound event types. It requires no `/dev/snd/seq`. It is not yet
+qualified on the 5700X, and does **not** implement ALSA input polling,
+CoreMIDI source enumeration, callback distribution or actual MIDI capture.
+The test runner emits `ALSA_REVERSE_PASS` only upon success.
+
+The previously observed 5700X run on commit `26be43b` gave
+`ALSA_COMPILE_PASS`, `ALSA_TRANSLATION_PASS`,
+`ALSA_PREFLIGHT_PASS` and `ALSA_RUNTIME_SKIP` (exit 77); these are
+baseline results predating this new reverse codec.

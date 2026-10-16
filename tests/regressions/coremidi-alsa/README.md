@@ -13,6 +13,13 @@ sources, compiled **natively** outside the Darling framework. It creates an
 ALSA input client, locates its endpoint via public CoreMIDI enumeration, sends
 Note On/Off (channel 1, note 60), and checks their delivery and byte values.
 
+Before checking for a sequencer, the runner also builds
+`host_reverse.c` using the genuine ALSA event representation. It checks
+the **internal, sequencer-independent** ALSA-to-MIDI 1.0 codec with 16-channel
+round trips, correct 2-byte messages, Note On velocity-zero normalization,
+rejection of out-of-range/unsupported events, and bounded output buffers.
+The test prints `ALSA_REVERSE_PASS` when successful.
+
 Before checking for a sequencer, the runner compiles and executes
 `host_translation.c` against the actual bridge and ALSA headers. It verifies
 Note On/Off, polyphonic aftertouch, Control Change, Program Change, Channel
@@ -30,6 +37,7 @@ proof of real ALSA sequencer I/O.
 
 Output markers:
 - `ALSA_TRANSLATION_PASS`: channel-message translation tests passed.
+- `ALSA_REVERSE_PASS`: ALSA event to MIDI 1.0 codec checks passed.
 - `ALSA_PREFLIGHT_PASS`: native bridge validation works without a sequencer.
 - `ALSA_COMPILE_PASS`: the native build and link completed.
 - `ALSA_RUNTIME_PASS`: ALSA delivered Note On and Note Off.
