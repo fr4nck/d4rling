@@ -12,7 +12,7 @@
 extern OSStatus D4MIDIAlsaTranslate(const MIDIPacket *, snd_seq_event_t *);
 
 static void check(unsigned status, unsigned length, unsigned first, unsigned second,
-                  int type, unsigned channel, int primary, int secondary)
+                  int type, unsigned channel, unsigned primary, int secondary)
 {
     union { long double align; Byte bytes[128]; } storage;
     MIDIPacketList *list = (MIDIPacketList *)storage.bytes;
