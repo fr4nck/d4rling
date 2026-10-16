@@ -58,7 +58,24 @@ and verifies client disposal releases both sets. It then reuses all
 checks immediate address reuse following endpoint disposal.
 Both tests run with genuine libasound but without `/dev/snd/seq`.
 
+A separate `host_source_filter.c` gate tests ALSA source discovery
+eligibility using real `snd_seq_port_info_t` objects. Candidates
+must have both `SND_SEQ_PORT_CAP_READ` and `SND_SEQ_PORT_CAP_SUBS_READ`;
+`SND_SEQ_PORT_CAP_NO_EXPORT` excludes unexportable ports, and a
+write-only destination must not be misidentified as a source.
+This requires libasound but no `/dev/snd/seq`.
+
+The real sequencer integration test `host_loopback.c` additionally creates
+a source port and verifies it appears through the internal
+`D4MIDIAlsaSourceAddressCount/At` enumeration, while a write-only
+receiver port is excluded. This integration test runs **only** when
+`/dev/snd/seq` is available and emits `ALSA_SOURCE_RUNTIME_PASS`.
+It is distinct from the injected source-address route test: discovery
+does not yet subscribe to ALSA ports or receive MIDI events.
+
 Output markers:
+- `ALSA_SOURCE_FILTER_PASS`: no-sequencer native capability filter test succeeded.
+- `ALSA_SOURCE_RUNTIME_PASS`: sequencer runtime enumerated a native sender port.
 - `ALSA_SOURCE_LIFETIME_PASS`: disposed sources/clients automatically release source-address bindings.
 - `ALSA_SOURCE_ROUTE_PASS`: synthetic ALSA source-address binding and delivery passed.
 - `ALSA_DELIVERY_PASS`: synthetic ALSA events reached virtual CoreMIDI input callbacks.

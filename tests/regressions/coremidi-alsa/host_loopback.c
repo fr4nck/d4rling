@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 #include <CoreMIDI/MIDIServices.h>
+#include "MIDIAlsaBridge.h"
 #include <alsa/asoundlib.h>
 #include <poll.h>
 #include <stdint.h>
@@ -45,13 +46,29 @@ static int send_one(MIDIPortRef output, MIDIEndpointRef destination,
     return MIDISend(output, destination, list);
 }
 
+
+static int find_native_source(int wanted_client, int wanted_port)
+{
+    ItemCount count = D4MIDIAlsaSourceAddressCount();
+    ItemCount i;
+    for (i = 0; i < count; ++i) {
+        int client = -1, port = -1;
+        if (D4MIDIAlsaSourceAddressAt(i, &client, &port) != noErr)
+            return -1; /* Device list changed or query failed. */
+        if (client == wanted_client && port == wanted_port)
+            return 1;
+    }
+    return 0;
+}
+
 int main(void)
 {
     snd_seq_t *receiver = NULL;
+    snd_seq_t *native_source = NULL;
     MIDIClientRef client = 0;
     MIDIPortRef output = 0;
     MIDIEndpointRef destination = 0;
-    int receiving_port, receiver_client, rc = 1;
+    int receiving_port, receiver_client, source_port, source_client, rc = 1;
     ItemCount i;
     if (snd_seq_open(&receiver, "default", SND_SEQ_OPEN_INPUT, SND_SEQ_NONBLOCK) < 0) {
         fprintf(stderr, "ALSA_RUNTIME_FAIL: snd_seq_open receiver failed\n");
@@ -66,6 +83,29 @@ int main(void)
         goto cleanup;
     }
     receiver_client = snd_seq_client_id(receiver);
+    /* Real sequencer discovery gate: advertise a native ALSA sender and
+     * ensure our source enumerator finds it but excludes the receiver.
+     */
+    if (snd_seq_open(&native_source, "default", SND_SEQ_OPEN_OUTPUT,
+                     SND_SEQ_NONBLOCK) < 0) {
+        fprintf(stderr, "ALSA_RUNTIME_FAIL: source client creation failed\n");
+        goto cleanup;
+    }
+    snd_seq_set_client_name(native_source, "d4rling MIDI self-test source");
+    source_port = snd_seq_create_simple_port(native_source, "Test MIDI Source",
+        SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ,
+        SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION);
+    if (source_port < 0) {
+        fprintf(stderr, "ALSA_RUNTIME_FAIL: source port creation failed\n");
+        goto cleanup;
+    }
+    source_client = snd_seq_client_id(native_source);
+    if (find_native_source(source_client, source_port) != 1 ||
+        find_native_source(receiver_client, receiving_port) != 0) {
+        fprintf(stderr, "ALSA_RUNTIME_FAIL: source discovery/capability filtering\n");
+        goto cleanup;
+    }
+    puts("ALSA_SOURCE_RUNTIME_PASS: native sequencer source port discovered");
     for (i = 0; i < MIDIGetNumberOfDestinations(); ++i) {
         MIDIEndpointRef candidate = MIDIGetDestination(i);
         if (((candidate >> 8) & 255) == (unsigned)receiver_client &&
@@ -102,6 +142,7 @@ int main(void)
 cleanup:
     if (output) MIDIPortDispose(output);
     if (client) MIDIClientDispose(client);
+    if (native_source) snd_seq_close(native_source);
     if (receiver) snd_seq_close(receiver);
     return rc;
 }

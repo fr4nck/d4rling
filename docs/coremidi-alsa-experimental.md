@@ -268,3 +268,39 @@ automatic unbinding on client disposal. The new marker is
 `ALSA_SOURCE_LIFETIME_PASS`, pending native GCC and ALSA validation
 on the 5700X. This is an in-process ownership guarantee; it does not
 qualify ALSA hotplug, cross-process sequencing or real device input.
+
+## ALSA native sender discovery (new gate; not yet qualified)
+
+The ALSA-enabled bridge adds internal `D4MIDIAlsaSourceAddressCount`
+and `D4MIDIAlsaSourceAddressAt` APIs. They enumerate currently
+available ALSA sender `client:port` addresses using the existing
+native sequencer client, but **do not** expose them automatically as
+CoreMIDI endpoints, subscribe to sources or poll for MIDI data.
+Enumeration is an instantaneous snapshot; ALSA clients/ports may
+disappear and numeric identifiers can be reused.
+
+A sender candidate is readable (`SND_SEQ_PORT_CAP_READ`), allows read
+subscriptions (`SND_SEQ_PORT_CAP_SUBS_READ`) and is not
+`SND_SEQ_PORT_CAP_NO_EXPORT`. The bridge's own ALSA client is
+excluded, as are addresses not representable by the sequencer's
+8-bit `client`/`port` fields. The no-sequencer regression
+`host_source_filter.c` checks these rules using genuine ALSA
+port-info structs and verifies NULL output argument rejection before
+any device access. Marker: `ALSA_SOURCE_FILTER_PASS`.
+
+On a Linux kernel with `/dev/snd/seq`, `host_loopback.c` creates a
+separate native ALSA source, checks its address appears in the new
+enumerator, and checks a destination-only receiver port is not
+misidentified as a source. Marker: `ALSA_SOURCE_RUNTIME_PASS`.
+This runtime test is **not** executable on the current 5700X WSL2
+kernel and has not passed yet. The new discovery methods cannot
+be used as evidence of MIDI input reception, hotplug handling,
+Mach-O/ELF linking or Logic Studio 8 operation.
+
+The 5700X GCC/ALSA run at commit `5986708` passed CoreMIDI virtual,
+reentrant, concurrent, and `ALSA_COMPILE_PASS`,
+`ALSA_TRANSLATION_PASS`, `ALSA_REVERSE_PASS`,
+`ALSA_DELIVERY_PASS`, `ALSA_SOURCE_ROUTE_PASS`,
+`ALSA_SOURCE_LIFETIME_PASS`, and `ALSA_PREFLIGHT_PASS`.
+The runtime test was skipped (77), as expected. The new source
+discovery changes require another native requalification.

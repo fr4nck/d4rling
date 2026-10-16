@@ -8,6 +8,15 @@ extern "C" {
 ItemCount D4MIDIAlsaDestinationCount(void);
 MIDIEndpointRef D4MIDIAlsaDestinationAt(ItemCount index);
 OSStatus D4MIDIAlsaSend(MIDIEndpointRef destination, const MIDIPacketList *packets);
+/*
+ * Internal-only ALSA source-address enumeration. Does not allocate virtual
+ * endpoints, subscribe to a port or poll sequencer events. Addresses are
+ * snapshots, not stable device identifiers.
+ */
+ItemCount D4MIDIAlsaSourceAddressCount(void);
+OSStatus D4MIDIAlsaSourceAddressAt(ItemCount index, int *client, int *port);
+/* Predicate is provided by the ALSA-enabled backend; no device is opened. */
+int D4MIDIAlsaSourcePortIsConnectable(unsigned int capabilities);
 /* Called after virtual source/client disposal, outside objectsMutex. */
 void D4MIDIAlsaForgetVirtualSource(MIDIEndpointRef source);
 /* Takes the virtual object registry mutex; safe while ALSA binding mutex held. */

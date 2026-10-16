@@ -89,6 +89,81 @@ static ItemCount scan_destinations(ItemCount wanted, MIDIEndpointRef *selected)
     return count;
 }
 
+/*
+ * An ALSA MIDI input candidate must be readable and allow external
+ * read-side subscriptions. Ports flagged NO_EXPORT cannot be subscribed to
+ * from another ALSA client. This predicate requires no sequencer device.
+ */
+int D4MIDIAlsaSourcePortIsConnectable(unsigned int capabilities)
+{
+    const unsigned int required = SND_SEQ_PORT_CAP_READ |
+                                  SND_SEQ_PORT_CAP_SUBS_READ;
+    return (capabilities & required) == required &&
+           !(capabilities & SND_SEQ_PORT_CAP_NO_EXPORT);
+}
+
+/*
+ * Enumerate ALSA sender addresses separately from CoreMIDI virtual sources.
+ * Caller holds g_alsa_lock. This does not subscribe, receive, or create a
+ * CoreMIDI endpoint. Addresses may change after scan if clients disappear.
+ */
+static ItemCount scan_sources(ItemCount wanted, int *selectedClient,
+                              int *selectedPort)
+{
+    snd_seq_client_info_t *ci;
+    snd_seq_port_info_t *pi;
+    ItemCount count = 0;
+    snd_seq_client_info_alloca(&ci);
+    snd_seq_port_info_alloca(&pi);
+    snd_seq_client_info_set_client(ci, -1);
+    while (snd_seq_query_next_client(g_seq, ci) >= 0) {
+        int client = snd_seq_client_info_get_client(ci);
+        if (client == snd_seq_client_id(g_seq)) continue;
+        if (client < 0 || client > 255) continue;
+        snd_seq_port_info_set_client(pi, client);
+        snd_seq_port_info_set_port(pi, -1);
+        while (snd_seq_query_next_port(g_seq, pi) >= 0) {
+            int port = snd_seq_port_info_get_port(pi);
+            unsigned int caps = snd_seq_port_info_get_capability(pi);
+            if (port < 0 || port > 255 ||
+                !D4MIDIAlsaSourcePortIsConnectable(caps))
+                continue;
+            if (selectedClient && selectedPort && wanted == count) {
+                *selectedClient = client;
+                *selectedPort = port;
+            }
+            ++count;
+        }
+    }
+    return count;
+}
+
+ItemCount D4MIDIAlsaSourceAddressCount(void)
+{
+    ItemCount count = 0;
+    pthread_mutex_lock(&g_alsa_lock);
+    if (open_sequencer() == 0) count = scan_sources(0, NULL, NULL);
+    pthread_mutex_unlock(&g_alsa_lock);
+    return count;
+}
+
+OSStatus D4MIDIAlsaSourceAddressAt(ItemCount index, int *client, int *port)
+{
+    OSStatus result = kMIDIUnknownEndpoint;
+    ItemCount count;
+    if (!client || !port) return paramErr;
+    *client = -1;
+    *port = -1;
+    pthread_mutex_lock(&g_alsa_lock);
+    if (open_sequencer() == 0) {
+        count = scan_sources(index, client, port);
+        if (index < count && *client >= 0 && *port >= 0)
+            result = noErr;
+    }
+    pthread_mutex_unlock(&g_alsa_lock);
+    return result;
+}
+
 ItemCount D4MIDIAlsaDestinationCount(void)
 {
     ItemCount result = 0;
@@ -428,6 +503,22 @@ done:
 
 #else
 /* Explicit no-ALSA fallback: isolated builds never depend on host MIDI. */
+/* No ALSA library: no native source address enumeration is available. */
+int D4MIDIAlsaSourcePortIsConnectable(unsigned int capabilities)
+{
+    (void)capabilities;
+    return 0;
+}
+
+ItemCount D4MIDIAlsaSourceAddressCount(void) { return 0; }
+OSStatus D4MIDIAlsaSourceAddressAt(ItemCount index, int *client, int *port)
+{
+    (void)index;
+    if (!client || !port) return paramErr;
+    *client = -1;
+    *port = -1;
+    return kMIDIUnknownEndpoint;
+}
 void D4MIDIAlsaForgetVirtualSource(MIDIEndpointRef source)
 {
     (void)source;
