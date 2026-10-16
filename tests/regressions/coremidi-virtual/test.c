@@ -46,6 +46,8 @@ int main(void)
     assert(packet != NULL);
     assert(MIDIPacketListAdd(list, sizeof(storage.bytes), packet, 2, sizeof(off), off) != NULL);
     assert(list->numPackets == 2);
+    /* Without ALSA configured, foreign endpoint IDs never silently succeed. */
+    assert(MIDISend(output, 0xa0000101u, list) == kMIDIUnknownEndpoint);
     assert(MIDIReceived(source, list) == noErr);
     assert(in.calls == 1 && in.noteOn == 1 && in.noteOff == 1);
     assert(in.lastConnection == (void *)(uintptr_t)0x1234);

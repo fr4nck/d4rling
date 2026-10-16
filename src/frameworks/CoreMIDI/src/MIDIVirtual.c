@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 #include <CoreMIDI/MIDIServices.h>
+#include "MIDIAlsaBridge.h"
 #include <pthread.h>
 #include <stddef.h>
 #include <stdint.h>
@@ -182,7 +183,10 @@ static ItemCount countEndpoints(enum ObjectKind kind)
 }
 
 ItemCount MIDIGetNumberOfSources(void) { return countEndpoints(OBJ_SOURCE); }
-ItemCount MIDIGetNumberOfDestinations(void) { return countEndpoints(OBJ_DEST); }
+ItemCount MIDIGetNumberOfDestinations(void)
+{
+    return countEndpoints(OBJ_DEST) + D4MIDIAlsaDestinationCount();
+}
 
 static MIDIEndpointRef getEndpoint(enum ObjectKind kind, ItemCount index)
 {
@@ -199,7 +203,13 @@ static MIDIEndpointRef getEndpoint(enum ObjectKind kind, ItemCount index)
 }
 
 MIDIEndpointRef MIDIGetSource(ItemCount index) { return getEndpoint(OBJ_SOURCE, index); }
-MIDIEndpointRef MIDIGetDestination(ItemCount index) { return getEndpoint(OBJ_DEST, index); }
+MIDIEndpointRef MIDIGetDestination(ItemCount index)
+{
+    ItemCount virtualCount = countEndpoints(OBJ_DEST);
+    if (index < virtualCount)
+        return getEndpoint(OBJ_DEST, index);
+    return D4MIDIAlsaDestinationAt(index - virtualCount);
+}
 
 OSStatus MIDIPortConnectSource(MIDIPortRef port, MIDIEndpointRef source, void *refCon)
 {
@@ -263,7 +273,7 @@ OSStatus MIDISend(MIDIPortRef port, MIDIEndpointRef dest, const MIDIPacketList *
     object = lookup(dest, OBJ_DEST);
     if (!object) {
         pthread_mutex_unlock(&objectsMutex);
-        return kMIDIUnknownEndpoint;
+        return D4MIDIAlsaSend(dest, packets);
     }
     callback = object->readProc;
     refCon = object->refCon;

@@ -10,5 +10,6 @@ trap 'rm -f "$OUT"' EXIT HUP INT TERM
   -I"$ROOT/tests/regressions/coremidi-virtual/include" \
   -I"$ROOT/src/frameworks/CoreMIDI/include" \
   -x c "$ROOT/src/frameworks/CoreMIDI/src/MIDIVirtual.c" \
+  "$ROOT/src/frameworks/CoreMIDI/src/MIDIAlsaBridge.c" \
   "$ROOT/tests/regressions/coremidi-virtual/test.c" -o "$OUT"
 "$OUT"
