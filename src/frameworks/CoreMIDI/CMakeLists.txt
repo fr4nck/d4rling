@@ -19,6 +19,7 @@ add_framework(CoreMIDI
 
     SOURCES
         src/CoreMIDI.m
+        src/MIDIVirtual.c
         src/MIDICIProfile.m
         src/MIDICIProfileState.m
         src/MIDICISession.m

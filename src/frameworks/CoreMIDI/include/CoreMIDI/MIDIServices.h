@@ -2,81 +2,94 @@
 #define __MIDIServices_h__
 
 #include <CoreFoundation/CoreFoundation.h>
+#include <stddef.h>
+
+/* CoreMIDI 1.0-compatible declarations used by the virtual-only MVP. */
+typedef UInt32 MIDIObjectRef;
+typedef MIDIObjectRef MIDIClientRef;
+typedef MIDIObjectRef MIDIPortRef;
+typedef MIDIObjectRef MIDIEndpointRef;
+typedef UInt64 MIDITimeStamp;
+
+typedef struct MIDINotification {
+    SInt32 messageID;
+    UInt32 messageSize;
+} MIDINotification;
+typedef void (*MIDINotifyProc)(const MIDINotification *, void *);
+
+#if defined(__arm__) || defined(__aarch64__)
+#pragma pack(push, 4)
+#else
+#pragma pack(push, 1)
+#endif
+typedef struct MIDIPacket {
+    MIDITimeStamp timeStamp;
+    UInt16 length;
+    Byte data[256];
+} MIDIPacket;
+typedef struct MIDIPacketList {
+    UInt32 numPackets;
+    MIDIPacket packet[1];
+} MIDIPacketList;
+#pragma pack(pop)
+
+/* On Intel, CoreMIDI uses unaligned packed packet records; ARM pads to 4 bytes. */
+static inline MIDIPacket *MIDIPacketNext(const MIDIPacket *packet)
+{
+    size_t stride = offsetof(MIDIPacket, data) + packet->length;
+#if defined(__arm__) || defined(__aarch64__)
+    stride = (stride + 3u) & ~(size_t)3u;
+#endif
+    return (MIDIPacket *)((const Byte *)packet + stride);
+}
+
+typedef void (*MIDIReadProc)(const MIDIPacketList *, void *, void *);
+
+enum {
+    kMIDIInvalidClient = -10830,
+    kMIDIInvalidPort = -10831,
+    kMIDIWrongEndpointType = -10832,
+    kMIDINoConnection = -10833,
+    kMIDIUnknownEndpoint = -10834,
+    kMIDIMessageSendErr = -10838
+};
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+OSStatus MIDIClientCreate(CFStringRef, MIDINotifyProc, void *, MIDIClientRef *);
+OSStatus MIDIClientDispose(MIDIClientRef);
+OSStatus MIDIInputPortCreate(MIDIClientRef, CFStringRef, MIDIReadProc, void *, MIDIPortRef *);
+OSStatus MIDIOutputPortCreate(MIDIClientRef, CFStringRef, MIDIPortRef *);
+OSStatus MIDIPortDispose(MIDIPortRef);
+OSStatus MIDISourceCreate(MIDIClientRef, CFStringRef, MIDIEndpointRef *);
+OSStatus MIDIDestinationCreate(MIDIClientRef, CFStringRef, MIDIReadProc, void *, MIDIEndpointRef *);
+OSStatus MIDIEndpointDispose(MIDIEndpointRef);
+ItemCount MIDIGetNumberOfSources(void);
+ItemCount MIDIGetNumberOfDestinations(void);
+MIDIEndpointRef MIDIGetSource(ItemCount);
+MIDIEndpointRef MIDIGetDestination(ItemCount);
+OSStatus MIDIPortConnectSource(MIDIPortRef, MIDIEndpointRef, void *);
+OSStatus MIDIPortDisconnectSource(MIDIPortRef, MIDIEndpointRef);
+OSStatus MIDISend(MIDIPortRef, MIDIEndpointRef, const MIDIPacketList *);
+OSStatus MIDIReceived(MIDIEndpointRef, const MIDIPacketList *);
+MIDIPacket *MIDIPacketListInit(MIDIPacketList *);
+MIDIPacket *MIDIPacketListAdd(MIDIPacketList *, ByteCount, MIDIPacket *, MIDITimeStamp, ByteCount, const Byte *);
+#ifdef __cplusplus
+}
+#endif
 
 /* Identification */
-extern const CFStringRef kMIDIPropertyName                        API_AVAILABLE(macos(10.0));
-// extern const CFStringRef kMIDIPropertyModel                       API_AVAILABLE(macos(10.0));
-extern const CFStringRef kMIDIPropertyManufacturer                API_AVAILABLE(macos(10.0));
-extern const CFStringRef kMIDIPropertyUniqueID                    API_AVAILABLE(macos(10.0));
-// extern const CFStringRef kMIDIPropertyDeviceID                    API_AVAILABLE(macos(10.0));
-
-/* Capabilities */
-// extern const CFStringRef kMIDIPropertySupportsMMC                 API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertySupportsGeneralMIDI         API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertySupportsShowControl         API_AVAILABLE(macos(10.4));
-
-/* Configuration */
-// extern const CFStringRef kMIDIPropertyNameConfigurationDictionary API_AVAILABLE(macos(10.15));
-// extern const CFStringRef kMIDIPropertyMaxSysExSpeed               API_AVAILABLE(macos(10.0));
-// extern const CFStringRef kMIDIPropertyDriverDeviceEditorApp       API_AVAILABLE(macos(10.3));
-// extern const CFStringRef kMIDIPropertyNameConfiguration           API_AVAILABLE(macos(10.2)); // @deprecated at macos >= 10.15 && ios >= 13.0
-
+extern const CFStringRef kMIDIPropertyName API_AVAILABLE(macos(10.0));
+extern const CFStringRef kMIDIPropertyManufacturer API_AVAILABLE(macos(10.0));
+extern const CFStringRef kMIDIPropertyUniqueID API_AVAILABLE(macos(10.0));
 /* Presentation */
-// extern const CFStringRef kMIDIPropertyImage                       API_AVAILABLE(macos(10.2));
-extern const CFStringRef kMIDIPropertyDisplayName                 API_AVAILABLE(macos(10.4));
-
-/* Audio */
-// extern const CFStringRef kMIDIPropertyPanDisruptsStereo           API_AVAILABLE(macos(10.2));
-
-/* Protocols */
-// extern const CFStringRef kMIDIPropertyProtocolID                  API_AVAILABLE(macos(11.0));
-
+extern const CFStringRef kMIDIPropertyDisplayName API_AVAILABLE(macos(10.4));
 /* Timing */
-// extern const CFStringRef kMIDIPropertyTransmitsMTC                API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyReceivesMTC                 API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyTransmitsClock              API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyReceivesClock               API_AVAILABLE(macos(10.2));
-extern const CFStringRef kMIDIPropertyAdvanceScheduleTimeMuSec    API_AVAILABLE(macos(10.0));
-
-/* Roles */
-// extern const CFStringRef kMIDIPropertyIsMixer                     API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyIsSampler                   API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyIsEffectUnit                API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyIsDrumMachine               API_AVAILABLE(macos(10.2));
-
-/* Status */
-// extern const CFStringRef kMIDIPropertyOffline                     API_AVAILABLE(macos(10.1));
-// extern const CFStringRef kMIDIPropertyPrivate                     API_AVAILABLE(macos(10.2));
-
+extern const CFStringRef kMIDIPropertyAdvanceScheduleTimeMuSec API_AVAILABLE(macos(10.0));
 /* Drivers */
-// extern const CFStringRef kMIDIPropertyDriverOwner                 API_AVAILABLE(macos(10.1));
-extern const CFStringRef kMIDIPropertyDriverVersion               API_AVAILABLE(macos(10.2));
-
+extern const CFStringRef kMIDIPropertyDriverVersion API_AVAILABLE(macos(10.2));
 /* Connections */
-// extern const CFStringRef kMIDIPropertyCanRoute                    API_AVAILABLE(macos(10.0));
-// extern const CFStringRef kMIDIPropertyIsBroadcast                 API_AVAILABLE(macos(10.2));
-extern const CFStringRef kMIDIPropertyConnectionUniqueID          API_AVAILABLE(macos(10.1));
-// extern const CFStringRef kMIDIPropertyIsEmbeddedEntity            API_AVAILABLE(macos(10.1));
-// extern const CFStringRef kMIDIPropertySingleRealtimeEntity        API_AVAILABLE(macos(10.2));
+extern const CFStringRef kMIDIPropertyConnectionUniqueID API_AVAILABLE(macos(10.1));
 
-/* Channels */
-// extern const CFStringRef kMIDIPropertyReceiveChannels             API_AVAILABLE(macos(10.0));
-// extern const CFStringRef kMIDIPropertyTransmitChannels            API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyMaxReceiveChannels          API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyMaxTransmitChannels         API_AVAILABLE(macos(10.2));
-
-/* Banks */
-// extern const CFStringRef kMIDIPropertyReceivesBankSelectLSB       API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyReceivesBankSelectMSB       API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyTransmitsBankSelectLSB      API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyTransmitsBankSelectMSB      API_AVAILABLE(macos(10.2));
-
-/* Notes */
-// extern const CFStringRef kMIDIPropertyReceivesNotes               API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyTransmitsNotes              API_AVAILABLE(macos(10.2));
-
-/* Program Changes */
-// extern const CFStringRef kMIDIPropertyReceivesProgramChanges      API_AVAILABLE(macos(10.2));
-// extern const CFStringRef kMIDIPropertyTransmitsProgramChanges     API_AVAILABLE(macos(10.2));
-
-#endif // __MIDIServices_h__
+#endif
