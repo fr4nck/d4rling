@@ -107,7 +107,18 @@ A callback invoked by the session pump cannot unsubscribe or close
 that same session until the pump returns; the regression checks both
 operations are refused during the callback.
 
+The same mocked session regression now checks
+`D4MIDIAlsaInputSessionPollDescriptors`, which exports POLLIN
+descriptors without blocking, polling, or reading events. A caller
+may use the returned descriptors in its own `poll()` loop and then
+call the existing bounded pump. The regression covers two descriptors,
+insufficient capacity with required-count reporting, failed
+descriptor queries, oversized counts, closed sessions, and attempts
+from a callback during active pumping. The real-sequencer smoke test
+also uses this API to prepare its `poll()` loop.
+
 Output markers:
+- `ALSA_INPUT_POLL_PASS`: session descriptor query, capacity and failure checks passed.
 - `ALSA_INPUT_RUNTIME_PASS`: native ALSA sender event reached the CoreMIDI callback.
 - `ALSA_INPUT_SESSION_PASS`: session open/subscribe/pump/unsubscribe/close and rollback checks passed.
 - `ALSA_INPUT_PUMP_PASS`: bounded nonblocking input adapter regression passed.

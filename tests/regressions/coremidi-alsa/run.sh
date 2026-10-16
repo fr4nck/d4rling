@@ -134,6 +134,8 @@ echo "ALSA_COMPILE_PASS: compiled against system ALSA development files"
     -Wl,--wrap=snd_seq_connect_from \
     -Wl,--wrap=snd_seq_disconnect_from \
     -Wl,--wrap=snd_seq_event_input \
+    -Wl,--wrap=snd_seq_poll_descriptors_count \
+    -Wl,--wrap=snd_seq_poll_descriptors \
     -Wl,--wrap=snd_seq_close \
     -o "$INPUT_SESSION" $(pkg-config --libs alsa)
 "$INPUT_SESSION"

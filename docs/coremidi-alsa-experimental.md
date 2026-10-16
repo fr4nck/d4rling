@@ -385,3 +385,29 @@ the sequencer handle before the pump finishes. This is an in-thread
 reentrancy guard, not cross-thread synchronization. The caller must
 still serialize use of a session across multiple threads.
 
+
+## Event loop descriptor handoff (new gate; native check pending)
+
+`D4MIDIAlsaInputSessionPollDescriptors` exports the input session's
+`POLLIN` file descriptors into a caller-owned `struct pollfd`
+array, without calling `poll()`, reading events, or starting
+threads. The caller keeps control over blocking timeouts and invokes
+`D4MIDIAlsaInputSessionPump` only when input is ready. The helper
+requires an opened, subscribed session, rejects reentrant access
+during pumping, caps the reported descriptor requirement at 64,
+and on inadequate buffer capacity returns `paramErr` with the
+required count while leaving the buffer unchanged.
+
+`host_input_session.c` intercepts only the two ALSA descriptor
+query functions in addition to its existing device-facing mocks,
+verifying successful output, invalid arguments, short capacity,
+ALSA failures, and callback-time rejection. The native
+`host_loopback.c` integration test now obtains poll descriptors
+through this interface. These changes do not qualify realtime
+dispatch, cross-thread session access, kernel ALSA reception or
+Darling runtime integration. The new tests are awaiting a 5700X
+native GCC run.
+
+The host regression emits a separate `ALSA_INPUT_POLL_PASS` marker
+after the session descriptor handoff and bounds checks succeed;
+`ALSA_INPUT_SESSION_PASS` remains as the existing lifecycle gate.

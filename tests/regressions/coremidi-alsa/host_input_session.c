@@ -12,6 +12,7 @@
 #include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <poll.h>
 #include <string.h>
 
 extern OSStatus D4MIDIAlsaRouteInputEvent(const snd_seq_event_t *);
@@ -21,6 +22,8 @@ static int open_calls, name_calls, create_calls, info_calls;
 static int connect_calls, disconnect_calls, close_calls, input_calls;
 static int fail_open, fail_name, fail_create, fail_info, fail_connect;
 static int fail_disconnect, fail_close, send_one_event;
+static int poll_count_calls, poll_fill_calls, poll_need = 2;
+static int fail_poll_count, fail_poll_fill;
 static unsigned int sender_caps =
     SND_SEQ_PORT_CAP_READ | SND_SEQ_PORT_CAP_SUBS_READ;
 static snd_seq_event_t incoming;
@@ -81,6 +84,29 @@ int __wrap_snd_seq_disconnect_from(snd_seq_t *seq, int local,
     return fail_disconnect ? -EIO : 0;
 }
 
+int __wrap_snd_seq_poll_descriptors_count(snd_seq_t *seq, short events)
+{
+    ++poll_count_calls;
+    assert(seq == fake && events == POLLIN);
+    return fail_poll_count ? -EIO : poll_need;
+}
+
+int __wrap_snd_seq_poll_descriptors(snd_seq_t *seq, struct pollfd *fds,
+                                    unsigned int space, short events)
+{
+    int i;
+    ++poll_fill_calls;
+    assert(seq == fake && events == POLLIN && fds != NULL);
+    assert(space >= (unsigned int)poll_need);
+    if (fail_poll_fill) return -EIO;
+    for (i = 0; i < poll_need; ++i) {
+        fds[i].fd = 20 + i;
+        fds[i].events = POLLIN;
+        fds[i].revents = 0;
+    }
+    return poll_need;
+}
+
 int __wrap_snd_seq_event_input(snd_seq_t *seq, snd_seq_event_t **event)
 {
     ++input_calls;
@@ -111,8 +137,13 @@ static void receive(const MIDIPacketList *list, void *context, void *connection)
     state->status = list->packet[0].data[0];
     state->connection = connection;
     if (state->during_pump) {
+        struct pollfd fds[2];
+        unsigned int count = 99;
         assert(D4MIDIAlsaInputSessionClose(state->during_pump) == paramErr);
         assert(D4MIDIAlsaInputSessionUnsubscribe(state->during_pump) == paramErr);
+        assert(D4MIDIAlsaInputSessionPollDescriptors(state->during_pump,
+                   fds, 2, &count) == paramErr);
+        assert(count == 0);
     }
 }
 
@@ -125,13 +156,18 @@ int main(void)
     D4MIDIAlsaInputSession session = {0}, other = {0};
     ItemCount delivered = 55;
     int previous;
+    struct pollfd fds[2] = {{.fd = -100}, {.fd = -101}};
+    unsigned int poll_count = 99;
 
     assert(D4MIDIAlsaInputSessionOpen(NULL) == paramErr);
     assert(D4MIDIAlsaInputSessionSubscribe(&session, 42, 7, 1) == paramErr);
     assert(D4MIDIAlsaInputSessionPump(&session, 1, &delivered) == paramErr);
     assert(delivered == 0);
     assert(D4MIDIAlsaInputSessionClose(&session) == paramErr);
-    assert(open_calls == 0);
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               fds, 2, &poll_count) == paramErr);
+    assert(poll_count == 0);
+    assert(open_calls == 0 && poll_count_calls == 0);
 
     fail_open = 1;
     assert(D4MIDIAlsaInputSessionOpen(&session) == kMIDIMessageSendErr);
@@ -185,6 +221,44 @@ int main(void)
     assert(session.subscribed == 1 && connect_calls == 2);
     assert(D4MIDIAlsaInputSessionSubscribe(&session, 42, 7, source) == paramErr);
     assert(D4MIDIAlsaInputSessionPump(&session, 0, &delivered) == paramErr);
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               NULL, 2, &poll_count) == paramErr);
+    assert(poll_count == 0 && poll_count_calls == 0);
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               fds, 2, NULL) == paramErr);
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               fds, 0, &poll_count) == paramErr);
+    assert(poll_count == 0 && poll_count_calls == 0);
+
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               fds, 1, &poll_count) == paramErr);
+    assert(poll_count == 2 && poll_count_calls == 1);
+    assert(poll_fill_calls == 0 && fds[0].fd == -100);
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               fds, 2, &poll_count) == noErr);
+    assert(poll_count == 2 && poll_count_calls == 2 && poll_fill_calls == 1);
+    assert(fds[0].fd == 20 && fds[1].fd == 21);
+    assert(fds[0].events == POLLIN && fds[1].events == POLLIN);
+    fail_poll_count = 1;
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               fds, 2, &poll_count) == kMIDIMessageSendErr);
+    assert(poll_count == 0);
+    fail_poll_count = 0;
+    fail_poll_fill = 1;
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               fds, 2, &poll_count) == kMIDIMessageSendErr);
+    assert(poll_count == 2);
+    fail_poll_fill = 0;
+    poll_need = 0;
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               fds, 2, &poll_count) == kMIDIMessageSendErr);
+    assert(poll_count == 0);
+    poll_need = 65; /* Fail safely instead of overflowing the caller's buffer. */
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               fds, 2, &poll_count) == kMIDIMessageSendErr);
+    assert(poll_count == 0);
+    poll_need = 2;
+
     assert(D4MIDIAlsaInputSessionPump(&session, 4097, &delivered) == paramErr);
     assert(D4MIDIAlsaInputSessionPump(&session, 1, NULL) == paramErr);
     assert(input_calls == 0);
@@ -223,6 +297,9 @@ int main(void)
     assert(session.sequencer == NULL && session.subscribed == 0);
     assert(D4MIDIAlsaRouteInputEvent(&incoming) == kMIDIUnknownEndpoint);
     assert(D4MIDIAlsaInputSessionClose(&session) == paramErr);
+    assert(D4MIDIAlsaInputSessionPollDescriptors(&session,
+               fds, 2, &poll_count) == paramErr);
+    assert(poll_count == 0);
 
     /* Even if ALSA disconnect fails, remove our binding and close. */
     assert(D4MIDIAlsaInputSessionOpen(&session) == noErr);
@@ -241,6 +318,7 @@ int main(void)
     fail_close = 0;
 
     assert(MIDIClientDispose(client) == noErr);
+    puts("ALSA_INPUT_POLL_PASS: session POLLIN descriptor handoff and bounds");
     puts("ALSA_INPUT_SESSION_PASS: open, subscribe, receive, rollback and teardown");
     return 0;
 }

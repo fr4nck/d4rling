@@ -15,6 +15,7 @@
 #include <alloca.h>
 #include <alsa/asoundlib.h>
 #include <errno.h>
+#include <poll.h>
 #include <pthread.h>
 
 static pthread_mutex_t g_alsa_lock = PTHREAD_MUTEX_INITIALIZER;
@@ -567,6 +568,38 @@ OSStatus D4MIDIAlsaInputSessionUnsubscribe(D4MIDIAlsaInputSession *session)
     (void)D4MIDIAlsaUnbindSourceAddress(session->sender_client,
                                         session->sender_port);
     session->subscribed = 0;
+    return noErr;
+}
+
+/*
+ * Export the currently subscribed input session's poll descriptors to a
+ * caller-owned array. Only POLLIN is requested. No poll() is performed, so
+ * event-loop ownership and timeout policy stay with the caller.
+ *
+ * On insufficient capacity the required count is returned via *count and
+ * the descriptor buffer is unchanged. Caller must serialize operations.
+ */
+OSStatus D4MIDIAlsaInputSessionPollDescriptors(
+    D4MIDIAlsaInputSession *session, struct pollfd *fds,
+    unsigned int capacity, unsigned int *count)
+{
+    int required, filled;
+    if (count) *count = 0;
+    if (!session || !session->sequencer || !session->subscribed ||
+        session->pumping || !fds || !count || !capacity)
+        return paramErr;
+
+    required = snd_seq_poll_descriptors_count(session->sequencer, POLLIN);
+    if (required <= 0 || required > 64)
+        return kMIDIMessageSendErr;
+
+    *count = (unsigned int)required;
+    if (capacity < (unsigned int)required)
+        return paramErr;
+    filled = snd_seq_poll_descriptors(session->sequencer, fds,
+                                      (unsigned int)required, POLLIN);
+    if (filled != required)
+        return kMIDIMessageSendErr;
     return noErr;
 }
 

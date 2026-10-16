@@ -1,6 +1,9 @@
 #ifndef D4R_COREMIDI_ALSA_BRIDGE_H
 #define D4R_COREMIDI_ALSA_BRIDGE_H
 #include <CoreMIDI/MIDIServices.h>
+#ifdef DARLING_COREMIDI_WITH_ALSA
+#include <poll.h>
+#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -42,6 +45,13 @@ OSStatus D4MIDIAlsaInputSessionSubscribe(D4MIDIAlsaInputSession *session,
                                         int client, int port,
                                         MIDIEndpointRef source);
 OSStatus D4MIDIAlsaInputSessionUnsubscribe(D4MIDIAlsaInputSession *session);
+/* Return pollable input descriptors; caller owns the event loop.
+ * When capacity is too small, *count reports the required capacity.
+ * This never calls poll() or reads a MIDI event.
+ */
+OSStatus D4MIDIAlsaInputSessionPollDescriptors(
+    D4MIDIAlsaInputSession *session, struct pollfd *fds,
+    unsigned int capacity, unsigned int *count);
 OSStatus D4MIDIAlsaInputSessionPump(D4MIDIAlsaInputSession *session,
                                    ItemCount budget, ItemCount *delivered);
 OSStatus D4MIDIAlsaInputSessionClose(D4MIDIAlsaInputSession *session);

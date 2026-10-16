@@ -33,7 +33,8 @@ static int test_native_input(MIDIClientRef client,
     MIDIPortRef port = 0;
     snd_seq_event_t event;
     struct pollfd fds[8];
-    int count, tries, result = -1;
+    unsigned int count = 0;
+    int tries, result = -1;
     if (MIDISourceCreate(client, NULL, &source) != noErr ||
         MIDIInputPortCreate(client, NULL, input_callback, NULL, &port) != noErr ||
         MIDIPortConnectSource(port, source, NULL) != noErr)
@@ -50,10 +51,8 @@ static int test_native_input(MIDIClientRef client,
     snd_seq_ev_set_direct(&event);
     if (snd_seq_event_output_direct(sender, &event) < 0)
         goto done;
-    count = snd_seq_poll_descriptors_count(session.sequencer, POLLIN);
-    if (count <= 0 || count > (int)(sizeof(fds) / sizeof(fds[0])) ||
-        snd_seq_poll_descriptors(session.sequencer, fds, (unsigned int)count,
-                                 POLLIN) < 0)
+    if (D4MIDIAlsaInputSessionPollDescriptors(&session, fds,
+                (unsigned int)(sizeof(fds) / sizeof(fds[0])), &count) != noErr)
         goto done;
     for (tries = 0; tries < 10 && !input_callback_count; ++tries) {
         ItemCount delivered = 0;
