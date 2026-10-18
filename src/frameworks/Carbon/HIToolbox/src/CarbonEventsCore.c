@@ -116,13 +116,16 @@ static OSStatus AllocateParameter(EventRef event, EventParamName name,
     if (size != 0 && !bytes)
         return paramErr;
 
-    const size_t offset = offsetof(struct EventParameter, data);
+    /* sizeof includes any trailing structure padding. A zero-byte payload
+     * must still allocate a complete EventParameter object.
+     */
+    const size_t baseSize = sizeof(struct EventParameter);
     /* CFAllocatorAllocate receives a signed CFIndex. Do not wrap that size. */
-    if ((uintmax_t)size > (uintmax_t)PTRDIFF_MAX - offset)
+    if ((uintmax_t)size > (uintmax_t)PTRDIFF_MAX - baseSize)
         return memFullErr;
 
     struct EventParameter* param =
-        CFAllocatorAllocate(event->allocator, (CFIndex)(offset + (size_t)size), 0);
+        CFAllocatorAllocate(event->allocator, (CFIndex)(baseSize + (size_t)size), 0);
     if (!param)
         return memFullErr;
     param->next = NULL;
