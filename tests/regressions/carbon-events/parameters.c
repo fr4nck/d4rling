@@ -108,7 +108,7 @@ int main(void)
     CHECK(CopyEvent(copy) == NULL);
     CHECK(test_references(def) == 3);
 
-    if ((uintmax_t)(ByteCount)-1 > (uintmax_t)PTRDIFF_MAX - 64u)
+    if ((uintmax_t)((ByteCount)-1) > (uintmax_t)PTRDIFF_MAX - 64u)
         CHECK(SetEventParameter(copy, NAME_A, TYPE_A, (ByteCount)-1, replacement)
               == memFullErr);
 
