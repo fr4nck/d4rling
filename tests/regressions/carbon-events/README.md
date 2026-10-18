@@ -1,7 +1,9 @@
-# Carbon event metadata and lifetime
+# Carbon event objects, metadata, lifetime and parameters
 
-This batch implements event creation, immutable class/kind/time metadata and
-retain/release ownership. It does not implement an event queue or dispatch.
+The original 2026-10-15 batch implemented event creation, immutable
+class/kind/time metadata and retain/release ownership. The subsequent
+2026-10-18 parameter/copy extension is documented below. Neither batch
+implements an event queue or dispatch.
 
 ## Behavior
 
@@ -22,10 +24,10 @@ retain/release ownership. It does not implement an event queue or dispatch.
   Invalid pointers, double release and retaining an already destroyed event are
   unsupported.
 
-The attributes input is stored for future work. Parameter get/set, event copies,
-queue ownership and handler APIs are outside this batch and remain incomplete.
-In particular, existing queue/handler/parameter stubs must not be mistaken for
-functional implementations.
+The original 2026-10-15 batch stored attributes but did not yet implement event
+parameters or copies. The later parameter/copy extension is described below;
+queue ownership and event handler APIs remain incomplete. Existing queue and
+handler stubs must not be mistaken for working implementations.
 
 ## Reproduce the host checks
 
@@ -112,7 +114,9 @@ functions in CarbonEventsCore.h. The redundant SetEventParameter declaration in
 Events.h has been removed. Carbon's missing-parameter error is -9870.
 
 An event owns all parameter storage, including independent copies of binary
-bytes. Replacement allocates before dropping old data, preserving the old value
+bytes. Each allocation reserves at least sizeof(struct EventParameter), including
+potential tail padding even for zero-length values. Replacement allocates
+before dropping old data, preserving the old value
 on out-of-memory errors. Zero-length values, multiple names, deletion and
 size/type query (NULL buffer only with zero buffer size) are implemented.
 GetEventParameter supports exact type and OSType wildcard '****'. It rejects
