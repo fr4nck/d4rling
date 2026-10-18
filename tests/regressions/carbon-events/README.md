@@ -102,3 +102,49 @@ No external implementation was copied.
 - [Pinned Darling Libc time.h](https://github.com/darlinghq/darling-Libc/blob/5a38c8dabf9e76b39407c24bc13134e33e5594e6/include/time.h):
   clock declarations available in the dependency.
 - See root CREDITS.md and docs/logic8-progress.md for earlier work.
+
+
+## Typed parameters and event copies (2026-10-18, GitHub-only)
+
+The second lot replaces the false-success GetEventParameter stub, implements
+SetEventParameter, RemoveEventParameter and CopyEvent, and declares the historical
+functions in CarbonEventsCore.h. The redundant SetEventParameter declaration in
+Events.h has been removed. Carbon's missing-parameter error is -9870.
+
+An event owns all parameter storage, including independent copies of binary
+bytes. Replacement allocates before dropping old data, preserving the old value
+on out-of-memory errors. Zero-length values, multiple names, deletion and
+size/type query (NULL buffer only with zero buffer size) are implemented.
+GetEventParameter supports exact type and OSType wildcard '****'. It rejects
+undersized buffers without partial copying and reports a nonzero error on
+incompatible types. AppleEvent type coercion handlers are NOT implemented.
+The error mappings for failed coercion (errAECoercionFail) and small buffers
+(errAEBufferTooSmall) are provisional pending comparison with real macOS.
+
+CopyEvent uses the original allocator and creates an independent event and
+parameter records with initial retain count 1. Copy failure releases all
+partially copied records. Final ReleaseEvent frees every parameter before its
+event. Pointer-valued payloads are copied as raw bytes; objects they point to
+are not deep-copied. Apple's contract does not make concurrent mutation of
+the *same* event thread-safe. The existing atomic event retain/release semantics
+are not changed. Invalid/dangling EventRef addresses cannot be safely checked.
+
+Host reproduction, with pinned real Darling headers and the test-only
+CoreFoundation allocator adapter (NOT the real CF runtime):
+
+    CC=clang-19 sh tests/regressions/carbon-events/run.sh
+
+The runner now includes an independent parameters.c test executable covering
+binary data, replacement, wrong type, removal, zero data, size queries,
+insufficient buffers, allocator failure injection, copy independence and cleanup.
+Optional ASan invocation above also applies to both executables.
+
+NEW VERIFICATION STATUS: NON EXÉCUTÉ. This GitHub-only session cannot compile
+or run the submitted tests. Earlier 54 successful checks and ASan results
+belong to 2026-10-15; they are not newly claimed. Full Darling/Mach-O builds,
+actual CoreFoundation integration, 32-bit ABI, event dispatch and Logic Studio 8
+remain out of scope.
+
+Sources: Apple MacOSX10.6.sdk CarbonEventsCore.h (as preserved by
+phracker/MacOSX-SDKs), and the archived Apple Carbon Event Manager Reference
+linked above. Licences and original source notices are preserved.

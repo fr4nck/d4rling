@@ -118,3 +118,19 @@ identified CF allocator adapter. Real CoreFoundation integration, full Darling
 and Mach-O builds, i386 guest validation, queues/dispatch and graphics remain
 pending. No Logic/audio/MIDI result is claimed.
 See [event regression details](../tests/regressions/carbon-events/README.md).
+
+
+## Carbon parameters and event cloning (2026-10-18, GitHub-only)
+
+On work/carbon-event-contracts (draft PR #2), SetEventParameter,
+GetEventParameter, RemoveEventParameter and CopyEvent now manage typed
+byte-owned records, error reporting, atomic lifetime integration and deep
+copies of parameter bytes using the original allocator. The existing host
+test runner includes a new parameter/clone regression suite and controlled
+allocation failure cases. AppleEvent type conversions remain unsupported.
+The short-buffer/type-mismatch error selection is provisional.
+
+NEW TESTS: NON EXÉCUTÉS in this GitHub-only session; previous 54 checks
+and AddressSanitizer belong to the 2026-10-15 run. No CoreFoundation runtime,
+Mach-O, i386, event dispatch, UI, MIDI/ALSA or Logic test is claimed.
+See tests/regressions/carbon-events/README.md.

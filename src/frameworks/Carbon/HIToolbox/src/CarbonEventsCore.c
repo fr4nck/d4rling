@@ -21,12 +21,25 @@
 #include <CarbonCore/MacErrors.h>
 
 #include <stdatomic.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <string.h>
 #include <time.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 
-/* Event metadata is immutable; only ownership changes after creation. */
+/* The event owns every parameter allocation. Carbon does not promise that
+ * simultaneous mutation of the same EventRef is thread-safe.
+ */
+struct EventParameter {
+    struct EventParameter* next;
+    EventParamName name;
+    EventParamType type;
+    ByteCount size;
+    unsigned char data[];
+};
+
 struct OpaqueEventRef {
     CFAllocatorRef allocator;
     _Atomic(ItemCount) retainCount;
@@ -34,6 +47,7 @@ struct OpaqueEventRef {
     UInt32 eventKind;
     EventTime time;
     EventAttributes attributes;
+    struct EventParameter* parameters;
 };
 
 static int verbose = 0;
@@ -76,6 +90,7 @@ OSStatus CreateEvent(CFAllocatorRef inAllocator, OSType inClassID, UInt32 kind,
     event->eventKind = kind;
     event->time = when;
     event->attributes = flags;
+    event->parameters = NULL;
     *outEvent = event;
     return noErr;
 }
@@ -90,10 +105,129 @@ UInt32 GetEventKind(EventRef a)
     return a ? a->eventKind : 0;
 }
 
-OSStatus GetEventParameter(EventRef a, EventParamName b, EventParamType c, EventParamType* d, ByteCount e, ByteCount* f, void* g)
+/* OSType '****', as declared for the Carbon Event Manager wildcard. */
+#define CARBON_TYPE_WILDCARD ((EventParamType)0x2a2a2a2au)
+
+static OSStatus AllocateParameter(EventRef event, EventParamName name,
+                                  EventParamType type, ByteCount size,
+                                  const void* bytes, struct EventParameter** out)
 {
-    if (verbose) puts("STUB: GetEventParameter called");
-	return 0;
+    *out = NULL;
+    if (size != 0 && !bytes)
+        return paramErr;
+
+    const size_t offset = offsetof(struct EventParameter, data);
+    /* CFAllocatorAllocate receives a signed CFIndex. Do not wrap that size. */
+    if ((uintmax_t)size > (uintmax_t)PTRDIFF_MAX - offset)
+        return memFullErr;
+
+    struct EventParameter* param =
+        CFAllocatorAllocate(event->allocator, (CFIndex)(offset + (size_t)size), 0);
+    if (!param)
+        return memFullErr;
+    param->next = NULL;
+    param->name = name;
+    param->type = type;
+    param->size = size;
+    if (size != 0)
+        memcpy(param->data, bytes, (size_t)size);
+    *out = param;
+    return noErr;
+}
+
+OSStatus SetEventParameter(EventRef inEvent, EventParamName inName,
+                           EventParamType inType, ByteCount inSize, const void* inDataPtr)
+{
+    if (!inEvent || (inSize != 0 && !inDataPtr))
+        return paramErr;
+
+    struct EventParameter* replacement = NULL;
+    OSStatus status = AllocateParameter(inEvent, inName, inType,
+                                        inSize, inDataPtr, &replacement);
+    if (status != noErr)
+        return status; /* An allocation failure cannot corrupt old data. */
+
+    struct EventParameter** slot = &inEvent->parameters;
+    while (*slot && (*slot)->name != inName)
+        slot = &(*slot)->next;
+    if (*slot) {
+        struct EventParameter* old = *slot;
+        replacement->next = old->next;
+        *slot = replacement;
+        CFAllocatorDeallocate(inEvent->allocator, old);
+    } else {
+        *slot = replacement;
+    }
+    return noErr;
+}
+
+OSStatus GetEventParameter(EventRef inEvent, EventParamName inName,
+                           EventParamType inDesiredType, EventParamType* outActualType,
+                           ByteCount inBufferSize, ByteCount* outActualSize, void* outData)
+{
+    if (outActualType)
+        *outActualType = 0;
+    if (outActualSize)
+        *outActualSize = 0;
+    if (!inEvent || (!outData && inBufferSize != 0))
+        return paramErr;
+
+    const struct EventParameter* param = inEvent->parameters;
+    while (param && param->name != inName)
+        param = param->next;
+    if (!param)
+        return eventParameterNotFoundErr;
+
+    if (outActualType)
+        *outActualType = param->type;
+    if (outActualSize)
+        *outActualSize = param->size;
+
+    /* Apple can invoke AppleEvent coercion handlers; these are not yet
+     * available here. Never return success for a mismatched requested type.
+     */
+    if (inDesiredType != param->type && inDesiredType != CARBON_TYPE_WILDCARD)
+        return errAECoercionFail;
+    if (!outData)
+        return noErr; /* NULL output is legal for a zero-buffer size query. */
+    if (inBufferSize < param->size)
+        return errAEBufferTooSmall;
+    if (param->size != 0)
+        memcpy(outData, param->data, (size_t)param->size);
+    return noErr;
+}
+
+OSStatus RemoveEventParameter(EventRef inEvent, EventParamName inName)
+{
+    if (!inEvent)
+        return paramErr;
+    struct EventParameter** slot = &inEvent->parameters;
+    while (*slot && (*slot)->name != inName)
+        slot = &(*slot)->next;
+    if (!*slot)
+        return eventParameterNotFoundErr;
+    struct EventParameter* removed = *slot;
+    *slot = removed->next;
+    CFAllocatorDeallocate(inEvent->allocator, removed);
+    return noErr;
+}
+
+EventRef CopyEvent(EventRef inOther)
+{
+    if (!inOther)
+        return NULL;
+    EventRef copy = NULL;
+    if (CreateEvent(inOther->allocator, inOther->eventClass, inOther->eventKind,
+                    inOther->time, inOther->attributes, &copy) != noErr)
+        return NULL;
+    for (const struct EventParameter* param = inOther->parameters; param; param = param->next) {
+        if (SetEventParameter(copy, param->name, param->type,
+                              param->size, param->data) != noErr) {
+            ReleaseEvent(copy); /* Releases the partially populated event. */
+            return NULL;
+        }
+    }
+    return copy;
 }
 
 EventQueueRef GetMainEventQueue()
@@ -150,6 +284,12 @@ void ReleaseEvent(EventRef inEvent)
         return;
     if (atomic_fetch_sub_explicit(&inEvent->retainCount, 1, memory_order_acq_rel) == 1) {
         CFAllocatorRef allocator = inEvent->allocator;
+        struct EventParameter* param = inEvent->parameters;
+        while (param) {
+            struct EventParameter* next = param->next;
+            CFAllocatorDeallocate(allocator, param);
+            param = next;
+        }
         CFAllocatorDeallocate(allocator, inEvent);
         CFRelease(allocator);
     }

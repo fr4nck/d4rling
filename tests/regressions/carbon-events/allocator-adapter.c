@@ -12,7 +12,8 @@ struct TestAllocator {
 static struct TestAllocator defaultAllocator = {1, 0, 0};
 static struct TestAllocator customAllocator = {1, 0, 0};
 static struct TestAllocator* currentDefault = &defaultAllocator;
-static int failNext;
+/* -1 disabled, 0 fail next allocation, N allow N then fail. */
+static int failAfter = -1;
 
 static struct TestAllocator* checked(const void* allocator)
 {
@@ -23,7 +24,8 @@ static struct TestAllocator* checked(const void* allocator)
 CFAllocatorRef test_default_allocator(void) { return (CFAllocatorRef)&defaultAllocator; }
 CFAllocatorRef test_custom_allocator(void) { return (CFAllocatorRef)&customAllocator; }
 void test_set_default(CFAllocatorRef allocator) { currentDefault = checked(allocator); }
-void test_fail_next_allocation(void) { failNext = 1; }
+void test_fail_next_allocation(void) { failAfter = 0; }
+void test_fail_allocation_after(unsigned successes) { failAfter = (int)successes; }
 unsigned test_allocations(CFAllocatorRef allocator) { return checked(allocator)->allocations; }
 unsigned test_frees(CFAllocatorRef allocator) { return checked(allocator)->frees; }
 unsigned test_references(CFAllocatorRef allocator) { return checked(allocator)->references; }
@@ -44,7 +46,8 @@ void* CFAllocatorAllocate(CFAllocatorRef value, CFIndex size, CFOptionFlags hint
 {
     (void)hint;
     struct TestAllocator* allocator = checked(value);
-    if (failNext) { failNext = 0; return NULL; }
+    if (failAfter == 0) { failAfter = -1; return NULL; }
+    if (failAfter > 0) --failAfter;
     void* allocation = malloc((size_t)size);
     if (allocation) ++allocator->allocations;
     return allocation;

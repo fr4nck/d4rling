@@ -39,9 +39,15 @@ typedef struct HICommand {
 } HICommand;
 typedef UInt32 KeyMap[4];
 
+/* Historical Carbon Event Manager error, not in CarbonCore/MacErrors.h. */
+enum { eventParameterNotFoundErr = -9870 };
+
 
 OSStatus CallNextEventHandler(EventHandlerCallRef a, EventRef b);
 OSStatus CreateEvent(CFAllocatorRef a, OSType b, UInt32 c, EventTime d, EventAttributes e, EventRef* f);
+EventRef CopyEvent(EventRef inOther);
+OSStatus SetEventParameter(EventRef inEvent, EventParamName inName, EventParamType inType, ByteCount inSize, const void* inDataPtr);
+OSStatus RemoveEventParameter(EventRef inEvent, EventParamName inName);
 OSType GetEventClass(EventRef a);
 UInt32 GetEventKind(EventRef a);
 OSStatus GetEventParameter(EventRef a, EventParamName b, EventParamType c, EventParamType* d, ByteCount e, ByteCount* f, void* g);
