@@ -83,3 +83,54 @@ is configured. All 149 sibling submodule URLs are made absolute under darlinghq
 without changing their pinned revisions. See CREDITS.md for imported work and
 attribution. Being integrated into this development fork does not imply that a
 full application or full build has been validated.
+
+## Carbon event contract follow-up (2026-10-15)
+
+Based on master b932d448bbb317654a45640717925823d2fd3fb0, a focused work branch
+corrects the public callback/UPP types and GetWindowEventTarget's return type.
+The unavailable window target now returns null. The original window fixture and
+one assertion follow this corrected contract.
+
+Real-header host checks with Clang 19.1.7 fail on the old signatures and pass
+in C11/C++17 after correction; incompatible callbacks are rejected. Both host
+executables return exit 0, and the updated standalone GCC window checks report
+25 checks / 0 failures. The delivered regression runner was executed as well.
+Details, sources, commands and limitations are in
+[the contract regression record](../tests/regressions/carbon-contracts/README.md).
+No GUI, event dispatch, full Darling build, i386 guest ABI or Logic runtime
+validation is claimed. This does not complete the event-core milestone.
+
+## Carbon event objects follow-up (2026-10-15)
+
+Parent c003abfdad4adebc327d8c5c1875d9761ef5b4d2, on the same work branch/PR.
+CreateEvent now allocates metadata-bearing event objects with allocator ownership;
+class/kind/time accessors and atomic reference counting are implemented.
+GetCurrentEventTime uses the monotonic clock for zero-time creation.
+
+The source-level creation probe reproduces false success on the parent and
+passes after correction. The delivered host regression runner reports 54 checks /
+0 failures, including four-thread retain/release stress and injected allocation
+failure. The same checks pass with AddressSanitizer and leak detection. The
+previous C/C++ signature checks still pass. Host nm shows the expected C names.
+
+These tests compile real production source/headers but substitute a small,
+identified CF allocator adapter. Real CoreFoundation integration, full Darling
+and Mach-O builds, i386 guest validation, queues/dispatch and graphics remain
+pending. No Logic/audio/MIDI result is claimed.
+See [event regression details](../tests/regressions/carbon-events/README.md).
+
+
+## Carbon parameters and event cloning (2026-10-18, GitHub-only)
+
+On work/carbon-event-contracts (draft PR #2), SetEventParameter,
+GetEventParameter, RemoveEventParameter and CopyEvent now manage typed
+byte-owned records, error reporting, atomic lifetime integration and deep
+copies of parameter bytes using the original allocator. The existing host
+test runner includes a new parameter/clone regression suite and controlled
+allocation failure cases. AppleEvent type conversions remain unsupported.
+The short-buffer/type-mismatch error selection is provisional.
+
+NEW TESTS: NON EXÉCUTÉS in this GitHub-only session; previous 54 checks
+and AddressSanitizer belong to the 2026-10-15 run. No CoreFoundation runtime,
+Mach-O, i386, event dispatch, UI, MIDI/ALSA or Logic test is claimed.
+See tests/regressions/carbon-events/README.md.

@@ -54,8 +54,11 @@ compatibility remain untested.
 
 ## Scope limits
 
-The existing `GetWindowEventTarget` declaration returns `OSStatus`; this change
-preserves that declaration and does not establish Apple API compatibility.
+The original lot 1 preserved an incorrect OSStatus return type for
+GetWindowEventTarget. The follow-up contract correction uses EventTargetRef and
+expects a null target without a backend; the minimal fixture and one assertion
+were updated accordingly. The 25-check results above describe the original lot;
+the follow-up verification is recorded in ../carbon-contracts/README.md.
 The disabled X11 branch is retained but has not been compiled or tested.
 `CreateNewWindow` rejects null arguments before clearing the output; the supplied
 tests do not assert output clearing for a null rectangle. Broader API contract

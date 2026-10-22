@@ -20,10 +20,11 @@ typedef void* EventTargetRef;
 typedef OSType EventParamName;
 typedef struct EventTypeSpec { OSType eventClass; UInt32 eventKind; } EventTypeSpec;
 typedef EventTime EventTimeout;
-typedef void* EventHandlerProcPtr;
+typedef OSStatus (*EventHandlerProcPtr)(EventHandlerCallRef inHandlerCallRef,
+                                       EventRef inEvent, void* inUserData);
 typedef UInt32 EventAttributes;
 typedef struct OpaqueEventQueueRef* EventQueueRef;
-typedef void* EventHandlerUPP;
+typedef EventHandlerProcPtr EventHandlerUPP;
 typedef SInt16 EventPriority;
 typedef void* EventHandlerRef;
 
@@ -38,9 +39,15 @@ typedef struct HICommand {
 } HICommand;
 typedef UInt32 KeyMap[4];
 
+/* Historical Carbon Event Manager error, not in CarbonCore/MacErrors.h. */
+enum { eventParameterNotFoundErr = -9870 };
+
 
 OSStatus CallNextEventHandler(EventHandlerCallRef a, EventRef b);
 OSStatus CreateEvent(CFAllocatorRef a, OSType b, UInt32 c, EventTime d, EventAttributes e, EventRef* f);
+EventRef CopyEvent(EventRef inOther);
+OSStatus SetEventParameter(EventRef inEvent, EventParamName inName, EventParamType inType, ByteCount inSize, const void* inDataPtr);
+OSStatus RemoveEventParameter(EventRef inEvent, EventParamName inName);
 OSType GetEventClass(EventRef a);
 UInt32 GetEventKind(EventRef a);
 OSStatus GetEventParameter(EventRef a, EventParamName b, EventParamType c, EventParamType* d, ByteCount e, ByteCount* f, void* g);
@@ -54,6 +61,8 @@ OSStatus PostEventToQueue(EventQueueRef a, EventRef b, EventPriority c);
 
 OSStatus ReceiveNextEvent(ItemCount a, const EventTypeSpec* b, EventTimeout c, Boolean d, EventRef* e);
 
+EventRef RetainEvent(EventRef inEvent);
+ItemCount GetEventRetainCount(EventRef inEvent);
 void ReleaseEvent(EventRef a);
 OSStatus RemoveEventHandler(EventHandlerRef a);
 
@@ -61,6 +70,7 @@ OSStatus SendEventToEventTarget(EventRef a, EventTargetRef b);
 
 UInt32 GetCurrentKeyModifiers(void);
 EventTime GetEventTime(EventRef inEvent);
+EventTime GetCurrentEventTime(void);
 
 #ifdef __cplusplus
 }
