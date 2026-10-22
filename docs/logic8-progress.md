@@ -134,3 +134,21 @@ NEW TESTS: NON EXÉCUTÉS in this GitHub-only session; previous 54 checks
 and AddressSanitizer belong to the 2026-10-15 run. No CoreFoundation runtime,
 Mach-O, i386, event dispatch, UI, MIDI/ALSA or Logic test is claimed.
 See tests/regressions/carbon-events/README.md.
+
+
+## Post-merge Carbon queue and bounded dispatch (2026-10-22)
+
+Starting at master `10d0e885ffd8133256d6e657065d35ba64b8deb7`, a first lot now
+implements prioritized main-queue posting, no-wait filtered receiving, borrowed
+peeks/owned pulls and synchronous application-target handlers. Handler snapshots
+preserve storage through removal and nested delivery. Nonzero receive timeouts,
+per-thread loops and window/dispatcher propagation remain unsupported.
+
+Executed in an isolated Linux container: GCC C11 246 PASS / 0 FAIL and GCC
+ASan+UBSan 246 PASS / 0 FAIL (leak detection off); GCC static analysis is clean.
+These compile production source and CarbonEventsCore.h with minimal dependency
+fixtures and a test-only CF adapter, not the full Darling SDK/CF runtime.
+LeakSanitizer was attempted but blocked by the container; Clang and the
+real-dependency runner were not available. No download or install was performed.
+See [scope, commands, evidence and remaining limits](carbon-queue-dispatch-2026-10-22.md).
+This is not a full Darling build or a Logic Studio 8 compatibility result.

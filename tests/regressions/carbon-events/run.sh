@@ -16,7 +16,7 @@ set -- -std=c11 -D_POSIX_C_SOURCE=200809L -D__APPLE_CC__=1 \
 if [ "${SANITIZE:-}" = address ]; then
     set -- "$@" -fsanitize=address -fno-omit-frame-pointer
 fi
-for unit in events parameters allocator-adapter; do
+for unit in events parameters queue-dispatch allocator-adapter; do
     "$cc" "$@" -c "$repo/tests/regressions/carbon-events/$unit.c" -o "$build/$unit.o"
 done
 "$cc" "$@" -c "$repo/src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c" -o "$build/core.o"
@@ -34,3 +34,12 @@ else
     "$linker" -pthread "$build/parameters.o" "$build/allocator-adapter.o" "$build/core.o" -o "$build/parameters"
 fi
 "$build/parameters"
+
+
+# Third executable covers the bounded queue/application-target implementation.
+if [ "${SANITIZE:-}" = address ]; then
+    "$linker" -fsanitize=address -pthread "$build/queue-dispatch.o" "$build/allocator-adapter.o" "$build/core.o" -o "$build/queue-dispatch"
+else
+    "$linker" -pthread "$build/queue-dispatch.o" "$build/allocator-adapter.o" "$build/core.o" -o "$build/queue-dispatch"
+fi
+"$build/queue-dispatch"

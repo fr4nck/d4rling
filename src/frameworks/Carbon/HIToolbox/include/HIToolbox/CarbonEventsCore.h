@@ -40,7 +40,18 @@ typedef struct HICommand {
 typedef UInt32 KeyMap[4];
 
 /* Historical Carbon Event Manager error, not in CarbonCore/MacErrors.h. */
-enum { eventParameterNotFoundErr = -9870 };
+enum {
+    eventAlreadyPostedErr = -9860,
+    eventTargetBusyErr = -9861,
+    eventHandlerAlreadyInstalledErr = -9866,
+    eventParameterNotFoundErr = -9870,
+    eventNotHandledErr = -9874,
+    eventLoopTimedOutErr = -9875
+};
+enum { kEventPriorityLow = 0, kEventPriorityStandard = 1, kEventPriorityHigh = 2 };
+enum { kEventLeaveInQueue = 0, kEventRemoveFromQueue = 1 };
+#define kEventDurationNoWait ((EventTimeout)0)
+#define kEventDurationForever ((EventTimeout)-1)
 
 
 OSStatus CallNextEventHandler(EventHandlerCallRef a, EventRef b);
@@ -53,6 +64,7 @@ UInt32 GetEventKind(EventRef a);
 OSStatus GetEventParameter(EventRef a, EventParamName b, EventParamType c, EventParamType* d, ByteCount e, ByteCount* f, void* g);
 
 EventQueueRef GetMainEventQueue();
+EventTargetRef GetApplicationEventTarget(void);
 OSStatus InstallEventHandler(EventTargetRef a, EventHandlerUPP b, ItemCount c, const EventTypeSpec* d, void* e, EventHandlerRef* f);
 
 
@@ -77,3 +89,4 @@ EventTime GetCurrentEventTime(void);
 #endif
 
 #endif
+

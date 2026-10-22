@@ -5,9 +5,11 @@
 CFAllocatorRef test_default_allocator(void);
 CFAllocatorRef test_custom_allocator(void);
 void test_set_default(CFAllocatorRef allocator);
+void test_set_allocation_hook(void (*hook)(void*), void* context);
 void test_fail_next_allocation(void);
 void test_fail_allocation_after(unsigned successes);
 unsigned test_allocations(CFAllocatorRef allocator);
 unsigned test_frees(CFAllocatorRef allocator);
 unsigned test_references(CFAllocatorRef allocator);
 #endif
+
