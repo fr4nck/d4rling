@@ -25,6 +25,7 @@
 #include <stdint.h>
 #include <string.h>
 #include <time.h>
+#include <pthread.h>
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -57,11 +58,6 @@ static void initme(void) {
     verbose = getenv("STUB_VERBOSE") != NULL;
 }
 
-OSStatus CallNextEventHandler(EventHandlerCallRef a, EventRef b)
-{
-    if (verbose) puts("STUB: CallNextEventHandler called");
-	return 0;
-}
 
 OSStatus CreateEvent(CFAllocatorRef inAllocator, OSType inClassID, UInt32 kind,
                      EventTime when, EventAttributes flags, EventRef* outEvent)
@@ -233,35 +229,10 @@ EventRef CopyEvent(EventRef inOther)
     return copy;
 }
 
-EventQueueRef GetMainEventQueue()
-{
-    if (verbose) puts("STUB: GetMainEventQueue called");
-	return 0;
-}
 
-OSStatus InstallEventHandler(EventTargetRef a, EventHandlerUPP b, ItemCount c, const EventTypeSpec* d, void* e, EventHandlerRef* f)
-{
-    if (verbose) puts("STUB: InstallEventHandler called");
-	return 0;
-}
 
-EventHandlerUPP NewEventHandlerUPP(EventHandlerProcPtr a)
-{
-    if (verbose) puts("STUB: NewEventHandlerUPP called");
-	return (EventHandlerUPP)0;
-}
 
-OSStatus PostEventToQueue(EventQueueRef a, EventRef b, EventPriority c)
-{
-    if (verbose) puts("STUB: PostEventToQueue called");
-	return 0;
-}
 
-OSStatus ReceiveNextEvent(ItemCount a, const EventTypeSpec* b, EventTimeout c, Boolean d, EventRef* e)
-{
-    if (verbose) puts("STUB: ReceiveNextEvent called");
-	return 0;
-}
 
 EventRef RetainEvent(EventRef inEvent)
 {
@@ -298,17 +269,7 @@ void ReleaseEvent(EventRef inEvent)
     }
 }
 
-OSStatus RemoveEventHandler(EventHandlerRef a)
-{
-    if (verbose) puts("STUB: RemoveEventHandler called");
-	return 0;
-}
 
-OSStatus SendEventToEventTarget(EventRef a, EventTargetRef b)
-{
-    if (verbose) puts("STUB: SendEventToEventTarget called");
-	return 0;
-}
 
 UInt32 GetCurrentKeyModifiers()
 {
@@ -327,4 +288,312 @@ EventTime GetCurrentEventTime(void)
     if (clock_gettime(CLOCK_MONOTONIC, &now) != 0)
         return 0;
     return (EventTime)now.tv_sec + (EventTime)now.tv_nsec / 1000000000.0;
+}
+
+
+/* One process queue and application target only. No CFRunLoop/window pump.
+ * Queue operations serialize membership; handler operations are confined to
+ * their installing thread. Callbacks never run while the queue lock is held.
+ */
+struct QueueEntry {
+    struct QueueEntry* next;
+    EventRef event;
+    EventPriority priority;
+};
+struct OpaqueEventQueueRef {
+    pthread_mutex_t lock;
+    struct QueueEntry* first;
+};
+static struct OpaqueEventQueueRef mainQueue = { PTHREAD_MUTEX_INITIALIZER, NULL };
+static char applicationTarget;
+
+struct Handler {
+    struct Handler* next;
+    CFAllocatorRef allocator;
+    EventHandlerUPP callback;
+    void* userData;
+    ItemCount count;
+    size_t references;
+    int removed;
+    EventTypeSpec types[];
+};
+/* Installation/removal/dispatch deliberately support the initial thread only.
+ * The first target getter binds it once; other threads return unimpErr from
+ * handler APIs. Posting and pulling the main queue are independently locked.
+ */
+static pthread_once_t targetOnce = PTHREAD_ONCE_INIT;
+static pthread_t targetThread;
+static struct Handler* handlers;
+static int handlerStorageBusy;
+static void BindTargetThread(void) { targetThread = pthread_self(); }
+
+static int IsTargetThread(void)
+{
+    pthread_once(&targetOnce, BindTargetThread);
+    return pthread_equal(targetThread, pthread_self());
+}
+
+static int Matches(EventRef event, ItemCount count, const EventTypeSpec* types)
+{
+    for (ItemCount i = 0; i < count; ++i)
+        if (types[i].eventClass == event->eventClass &&
+            types[i].eventKind == event->eventKind)
+            return 1;
+    return 0;
+}
+
+EventTargetRef GetApplicationEventTarget(void)
+{
+    pthread_once(&targetOnce, BindTargetThread);
+    return &applicationTarget;
+}
+
+EventQueueRef GetMainEventQueue(void)
+{
+    return &mainQueue;
+}
+
+OSStatus PostEventToQueue(EventQueueRef queue, EventRef event, EventPriority priority)
+{
+    if (queue != &mainQueue || !event || priority < kEventPriorityLow ||
+        priority > kEventPriorityHigh)
+        return paramErr;
+    pthread_mutex_lock(&queue->lock);
+    for (struct QueueEntry* p = queue->first; p; p = p->next) {
+        if (p->event == event) {
+            pthread_mutex_unlock(&queue->lock);
+            return eventAlreadyPostedErr;
+        }
+    }
+    pthread_mutex_unlock(&queue->lock);
+    /* Custom allocator callbacks must not run inside the queue lock. */
+    struct QueueEntry* entry = CFAllocatorAllocate(event->allocator, sizeof(*entry), 0);
+    if (!entry)
+        return memFullErr;
+    if (!RetainEvent(event)) {
+        CFAllocatorDeallocate(event->allocator, entry);
+        return memFullErr;
+    }
+    pthread_mutex_lock(&queue->lock);
+    /* Another poster, or a reentrant allocator, may have posted meanwhile. */
+    for (struct QueueEntry* p = queue->first; p; p = p->next) {
+        if (p->event == event) {
+            pthread_mutex_unlock(&queue->lock);
+            CFAllocatorDeallocate(event->allocator, entry);
+            ReleaseEvent(event);
+            return eventAlreadyPostedErr;
+        }
+    }
+    entry->event = event;
+    entry->priority = priority;
+    struct QueueEntry** slot = &queue->first;
+    while (*slot && (*slot)->priority >= priority)
+        slot = &(*slot)->next;
+    entry->next = *slot;
+    *slot = entry;
+    pthread_mutex_unlock(&queue->lock);
+    return noErr;
+}
+
+OSStatus ReceiveNextEvent(ItemCount count, const EventTypeSpec* types,
+                         EventTimeout timeout, Boolean pull, EventRef* out)
+{
+    if (!out)
+        return paramErr;
+    *out = NULL;
+    if (count && !types)
+        return paramErr;
+    /* Waiting would require running timers/native sources. Do not fake it. */
+    if (timeout != kEventDurationNoWait)
+        return unimpErr;
+    pthread_mutex_lock(&mainQueue.lock);
+    struct QueueEntry** slot = &mainQueue.first;
+    while (*slot && count && !Matches((*slot)->event, count, types))
+        slot = &(*slot)->next;
+    if (!*slot) {
+        pthread_mutex_unlock(&mainQueue.lock);
+        return eventLoopTimedOutErr;
+    }
+    struct QueueEntry* entry = *slot;
+    *out = entry->event;
+    if (pull) {
+        *slot = entry->next;
+        /* Transfer the queue's reference. A peek is borrowed, not retained. */
+    }
+    pthread_mutex_unlock(&mainQueue.lock);
+    if (pull)
+        CFAllocatorDeallocate((*out)->allocator, entry);
+    return noErr;
+}
+
+EventHandlerUPP NewEventHandlerUPP(EventHandlerProcPtr callback)
+{
+    return callback;
+}
+
+static void ReleaseHandler(struct Handler* handler)
+{
+    if (--handler->references == 0) {
+        CFAllocatorRef allocator = handler->allocator;
+        CFAllocatorDeallocate(allocator, handler);
+        CFRelease(allocator);
+    }
+}
+
+OSStatus InstallEventHandler(EventTargetRef target, EventHandlerUPP callback,
+                            ItemCount count, const EventTypeSpec* types,
+                            void* userData, EventHandlerRef* out)
+{
+    if (out)
+        *out = NULL;
+    if (target != &applicationTarget || !callback || (count && !types))
+        return paramErr;
+    if (!IsTargetThread())
+        return unimpErr;
+    if (handlerStorageBusy)
+        return eventTargetBusyErr;
+    size_t typeBytes = (size_t)count * sizeof(EventTypeSpec);
+    if (typeBytes / sizeof(EventTypeSpec) != count ||
+        typeBytes > (size_t)PTRDIFF_MAX - sizeof(struct Handler))
+        return memFullErr;
+    for (struct Handler* h = handlers; h; h = h->next) {
+        if (h->callback != callback)
+            continue;
+        for (ItemCount i = 0; i < count; ++i)
+            for (ItemCount j = 0; j < h->count; ++j)
+                if (types[i].eventClass == h->types[j].eventClass &&
+                    types[i].eventKind == h->types[j].eventKind)
+                    return eventHandlerAlreadyInstalledErr;
+    }
+    handlerStorageBusy = 1;
+    CFAllocatorRef allocator = CFAllocatorGetDefault();
+    CFRetain(allocator);
+    struct Handler* h = CFAllocatorAllocate(allocator,
+        sizeof(*h) + typeBytes, 0);
+    if (!h) {
+        CFRelease(allocator);
+        handlerStorageBusy = 0;
+        return memFullErr;
+    }
+    h->allocator = allocator;
+    h->callback = callback;
+    h->userData = userData;
+    h->count = count;
+    h->references = 1;
+    h->removed = 0;
+    if (count)
+        memcpy(h->types, types, (size_t)count * sizeof(EventTypeSpec));
+    h->next = handlers;
+    handlers = h;
+    handlerStorageBusy = 0;
+    if (out)
+        *out = h;
+    return noErr;
+}
+
+OSStatus RemoveEventHandler(EventHandlerRef ref)
+{
+    if (!ref)
+        return paramErr;
+    if (!IsTargetThread())
+        return unimpErr;
+    if (handlerStorageBusy)
+        return eventTargetBusyErr;
+    struct Handler** slot = &handlers;
+    while (*slot && *slot != ref)
+        slot = &(*slot)->next;
+    if (!*slot)
+        return paramErr;
+    struct Handler* h = *slot;
+    *slot = h->next;
+    h->removed = 1;
+    ReleaseHandler(h); /* A dispatch snapshot may still own it. */
+    return noErr;
+}
+
+struct HandlerCall {
+    struct HandlerCall* previous;
+    struct Handler** snapshot;
+    size_t count, next;
+    EventRef event;
+    int calledNext;
+    OSStatus nextResult;
+};
+static _Thread_local struct HandlerCall* currentCall;
+static OSStatus InvokeHandlers(struct Handler** snapshot, size_t count,
+                               size_t start, EventRef event)
+{
+    for (size_t i = start; i < count; ++i) {
+        struct Handler* h = snapshot[i];
+        if (h->removed)
+            continue;
+        struct HandlerCall call = { currentCall, snapshot, count, i + 1,
+                                    event, 0, eventNotHandledErr };
+        currentCall = &call;
+        OSStatus result = h->callback(&call, event, h->userData);
+        currentCall = call.previous;
+        if (result != eventNotHandledErr || call.calledNext)
+            return result;
+    }
+    return eventNotHandledErr;
+}
+
+OSStatus CallNextEventHandler(EventHandlerCallRef ref, EventRef event)
+{
+    /* Never dereference an arbitrary or expired call token. */
+    if (!currentCall || ref != currentCall || event != currentCall->event)
+        return paramErr;
+    if (!currentCall->calledNext) {
+        currentCall->calledNext = 1;
+        currentCall->nextResult = InvokeHandlers(currentCall->snapshot,
+            currentCall->count, currentCall->next, event);
+    }
+    return currentCall->nextResult;
+}
+
+OSStatus SendEventToEventTarget(EventRef event, EventTargetRef target)
+{
+    if (!event || target != &applicationTarget)
+        return paramErr;
+    if (!IsTargetThread())
+        return unimpErr;
+    if (handlerStorageBusy)
+        return eventTargetBusyErr;
+    size_t count = 0;
+    for (struct Handler* h = handlers; h; h = h->next)
+        if (Matches(event, h->count, h->types))
+            ++count;
+    if (!count)
+        return eventNotHandledErr;
+    if (count > (size_t)PTRDIFF_MAX / sizeof(struct Handler*))
+        return memFullErr;
+    /* Keep allocator reentry from changing the counted handler list. */
+    handlerStorageBusy = 1;
+    CFAllocatorRef allocator = CFAllocatorGetDefault();
+    CFRetain(allocator);
+    struct Handler** snapshot = CFAllocatorAllocate(allocator,
+        count * sizeof(*snapshot), 0);
+    if (!snapshot) {
+        CFRelease(allocator);
+        handlerStorageBusy = 0;
+        return memFullErr;
+    }
+    size_t index = 0;
+    for (struct Handler* h = handlers; h; h = h->next) {
+        if (Matches(event, h->count, h->types)) {
+            ++h->references;
+            snapshot[index++] = h;
+        }
+    }
+    handlerStorageBusy = 0;
+    OSStatus result = memFullErr;
+    if (RetainEvent(event)) {
+        result = InvokeHandlers(snapshot, count, 0, event);
+        ReleaseEvent(event);
+    }
+    for (size_t i = 0; i < count; ++i)
+        ReleaseHandler(snapshot[i]);
+    CFAllocatorDeallocate(allocator, snapshot);
+    CFRelease(allocator);
+    return result;
 }

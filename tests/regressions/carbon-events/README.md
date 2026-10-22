@@ -152,3 +152,27 @@ remain out of scope.
 Sources: Apple MacOSX10.6.sdk CarbonEventsCore.h (as preserved by
 phracker/MacOSX-SDKs), and the archived Apple Carbon Event Manager Reference
 linked above. Licences and original source notices are preserved.
+
+
+## Main queue and bounded synchronous dispatch (2026-10-22)
+
+The post-PR #2 lot adds a prioritized process queue, no-wait receive (borrowed
+peek / owned pull), and synchronous application-target handlers. This supersedes
+the earlier description of these APIs as success-returning stubs, within the
+explicit scope of the [qualification record](../../../docs/carbon-queue-dispatch-2026-10-22.md).
+
+Executed here: GCC C11 **246 PASS / 0 FAIL**; GCC ASan+UBSan **246 PASS / 0 FAIL**
+with leak detection disabled. Each row comprises 54 original event checks,
+67 parameter checks and 125 queue/dispatch checks. Production source and the
+real CarbonEventsCore.h are compiled, but this new isolated runner substitutes
+small dependency headers and the test-only CF adapter. It does not establish
+SDK/ABI or real CF compatibility. LeakSanitizer was attempted but blocked by the
+container. Clang and the full real-dependency runner were not executed here.
+
+    CC=gcc sh tests/regressions/carbon-events/run-isolated.sh
+
+The existing `run.sh` includes the new executable for future qualification with
+the real pinned dependencies. The isolated fixture headers are never included
+by the production CMake build or the real-dependency runner. The dated 2026-10-18
+NON EXÉCUTÉ section above records the original submission session; it is not the
+current result of this isolated follow-up.

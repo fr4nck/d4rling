@@ -1,0 +1,44 @@
+Final observed host results — 2026-10-22
+Base master: 10d0e885ffd8133256d6e657065d35ba64b8deb7
+Environment: isolated Linux x86_64; GCC 13.3.0 Ubuntu 13.3.0-6ubuntu2~24.04
+Production CarbonEventsCore.c and CarbonEventsCore.h; isolated dependency fixtures
+and test-only CF allocator adapter. NOT a Darling SDK/CF runtime qualification.
+
+$ CC=gcc sh tests/regressions/carbon-events/run-isolated.sh
+Checks: 54 | Failures: 0
+Carbon parameters checks: 67 | Failures: 0
+Carbon queue/dispatch checks: 125 | Failures: 0
+exit 0
+
+$ CC=gcc SANITIZE=address,undefined ASAN_OPTIONS=detect_leaks=0:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 sh tests/regressions/carbon-events/run-isolated.sh
+Checks: 54 | Failures: 0
+Carbon parameters checks: 67 | Failures: 0
+Carbon queue/dispatch checks: 125 | Failures: 0
+exit 0; no ASan/UBSan diagnostics
+
+$ gcc -std=c11 -D_POSIX_C_SOURCE=200809L -Wall -Wextra -Werror -fanalyzer -pthread -Itests/regressions/carbon-events/isolated -Isrc/frameworks/Carbon/HIToolbox/include -c src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c -o /tmp/d4rling-carbon-analyzer.o
+exit 0; no diagnostics (static analysis only)
+
+Queue-baseline-probe.c compiled against parent and patched production source,
+using the same fixtures and adapter, GCC C11 and -Wno-unused-parameter for both:
+parent Queue behavior probe: 4 checks, 3 failures exit 1
+patched Queue behavior probe: 4 checks, 0 failures exit 0
+Parent's unused stub arguments otherwise fail -Werror before execution.
+
+LeakSanitizer ATTEMPTED, BLOCKED — not a passing leak check:
+ASan+UBSan runner, ASAN_OPTIONS=detect_leaks=1:halt_on_error=1
+==24==Can't open /proc/19/task for reading.
+==19==LeakSanitizer has encountered a fatal error.
+==19==HINT: For debugging, try setting environment variable LSAN_OPTIONS=verbosity=1:log_threads=1
+==19==HINT: LeakSanitizer does not work under ptrace (strace, gdb, etc)
+exit 1 (earlier attempt, before final added reentry/overflow cases)
+
+Not executed: Clang, real-dependency run.sh, full Darling build, Mach-O exports,
+actual CoreFoundation runtime, i386, graphical events, Logic Studio 8, audio/MIDI.
+
+Final tested file SHA-256:
+d3afaec4f56778bfa2a16a453b25540bb88f7432aa03725d83c15a5b5ad9d438  src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c
+462088444bebfdc3fcdd29ebbf50d272ca0afc9ce5ec75347519bd15a7cead31  src/frameworks/Carbon/HIToolbox/include/HIToolbox/CarbonEventsCore.h
+c0262067b5e4e33e474d7e5127e7e222dd4b89d5e171ece3fc1ae6a14d6a148a  tests/regressions/carbon-events/queue-dispatch.c
+7fc403405fb3cc1363ac0a9d1f81df2eaa1a7cd6b13516bdbb7be951d587ec2b  tests/regressions/carbon-events/allocator-adapter.c
+837dc3d559b199d3de9cf2c385bcf8cc98201b898fd2dba7d77901b3e8ff6bab  tests/regressions/carbon-events/run-isolated.sh
