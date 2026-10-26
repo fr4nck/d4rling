@@ -578,3 +578,26 @@ Without Git checkout or package installation: disclose an **exact 6,923-byte rea
 **Convergence decision:** `GO` for isolated C++17 prototype development, `NO-GO` for calling it a functional JACK/CoreAudio backend. Retain the shipped PulseAudio prototype and all Ninja-built artifacts. Do not install JACK or start/stop any audio daemon without separate authorization.
 
 **Next verification gate (JACK-01E3):** use **only** `/home/Deniel/d4rling-audio/qualif` for sanitizer test outputs. Check the already-downloaded source hash again; conditionally compile with an existing compiler and `-fsanitize=address,undefined` when supported (no packages or downloads); run under timeout; record exact stderr and 11/11 counts. Address/Undefined sanitizers are a memory diagnostic, **not** a proof of real-time behavior or race freedom. ThreadSanitizer, if ever used, requires a separate isolated and supported runtime qualification. In parallel, source-side RT review of preallocation, `std::atomic<uint64_t>` lock-freedom on **i386**, bounded `nframes`, memory ordering, caller-buffer lifetime and stop quiescence; do not modify the active HAL or CA-12 runtime for this.
+
+## 29. JACK-01E3 — ASan/UBSan 11/11 PASS on the 5700X (2026-10-26)
+
+**Provenance:** user-pasted terminal stdout from `Deniel@5700X` (Debian 13 WSL2), run with `cd "$HOME/d4rling-audio/qualif"`. These commands were run on the user's machine; this GitHub update did not itself execute that host command.
+
+| Gate | Evidence in terminal log | Status |
+| --- | --- | --- |
+| Canonical directory | `/home/Deniel/d4rling-audio/qualif` | PASS |
+| Source integrity | `SOURCE_HASH=PASS`, pinned C++ source blob `ee719b7514743081c04d255f3ae66cf9f1c54fe5` (as configured in script) | PASS |
+| Compiler | `/usr/bin/clang++-19` | PRESENT |
+| Sanitizer build | `ASAN_BUILD=PASS`, C++17 `-fsanitize=address,undefined -fno-omit-frame-pointer -fno-sanitize-recover=all` | PASS |
+| Native self-tests | 11 named PASS, including 50,000 ordered SPSC frames | **11/11 PASS** |
+| Run exit | `TEST_EXIT=0` | PASS |
+| ASan / UBSan diagnostics | No diagnostics in printed `asan_test.log` and `JACK01E3_STATUS=PASS_ASAN_UBSAN` | PASS on observed tests |
+| Real JACK | `REAL_JACK_TEST=NOT_EXECUTED` | SKIP |
+
+**Artifacts stay under this one directory only:** `pcm_spsc_native_contract.cpp`, the existing native probe, `pcm_spsc_native_contract_asan`, `asan_build.log` and `asan_test.log`. No extra `d4rling-*` folders were introduced; no package downloads, JACK server execution, changes to the Ninja build directories or host installation were reported.
+
+**Important limits:** ASan checks address issues and UBSan checks configured undefined behavior in exercised paths; neither establishes thread race freedom, real-time bounded scheduling, JACK callback compatibility, actual audio output, i386 runtime or CA-12 RPC recovery. The SPSC test has one producer, one consumer, with quiescent start/stop; it is not a concurrent shutdown test.
+
+**Next lot JACK-01E4:** optional `-fsanitize=thread` concurrency diagnosis, with the **same already downloaded source** and output files only under `/home/Deniel/d4rling-audio/qualif`. First qualify whether the existing toolchain's TSan runtime works on WSL2, then run the 50,000-frame SPSC test. If toolchain compilation or sanitizer runtime is unsupported, report `SKIP_TOOLCHAIN`/`INCONCLUSIVE`, not a code FAIL. TSan must not be combined with ASan in the same executable; no installation, downloads, no `darling exec`, no JACK daemon start, no alteration of the existing PulseAudio/i386/Carbon sources.
+
+**Verdict:** **PASS for JACK-01E3 instrumented isolated native model**. **NO-GO for functional JACK HAL or any Logic Studio 8 claim**.
