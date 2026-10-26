@@ -683,3 +683,27 @@ User-printed verdict: `ALIGNED_EXTERNAL_HELPER=NO`, `INLINE_CMPXCHG8B=PASS`, `JA
 Generate a **headerless C11 i686 ELF32 object** in the same `~/d4rling-audio/qualif` from stdin. Define a `RingCounters` struct with `_Alignas(8)` on both `uint64`-equivalent fields (use `unsigned long long` without libc headers) and `_Static_assert` checks for struct alignment and member offsets. Compile `__atomic_load_n(..., __ATOMIC_ACQUIRE)`, `__atomic_store_n(..., __ATOMIC_RELEASE)` and `__atomic_fetch_add(..., __ATOMIC_ACQ_REL)`; inspect `llvm-nm-19 -u`, `llvm-objdump-19 -dr`. Verdict if no `__atomic_*` undefined references plus inline `cmpxchg8b` for RMW: **PASS_CODEGEN_ONLY**. Any helper reference should be reported and reviewed rather than linked into a callback by default. Do not claim an i386 runtime pass. No download, package install, guest execution, new directory, full Ninja build, or audio backend changes.
 
 **Decision:** GO for validating i686 aligned counter ABI as a *candidate*; prefer Linux x86_64 JACK helper across a well-defined shared-memory/IPC boundary to avoid loading x86_64 libjack into a 32-bit Mach-O process. Real-time and cross-process correctness are separate gates.
+
+## 34. JACK-01E5D — PCM counter structure i686 codegen PASS (2026-10-26)
+
+**Host evidence:** User-supplied stdout, Debian 13 WSL2 on `5700X`, command run with `cd "$HOME/d4rling-audio/qualif"` from a different starting directory. The canonical output directory remained `/home/Deniel/d4rling-audio/qualif`. No change to Ninja build directories, PulseAudio, CA-12 or Darling runtime.
+
+| Qualification | Evidence | Status |
+| --- | --- | --- |
+| Freestanding C11 code generation | `clang-19 -m32 -march=i686 -std=c11 -O2 -ffreestanding -nostdinc -fno-stack-protector` | `STRUCT_LAYOUT_BUILD=PASS` |
+| ELF format | `ELF 32-bit LSB relocatable`, `readelf` class `ELF32`, machine `Intel 80386` | PASS object-only |
+| Layout and alignment | `_Static_assert(_Alignof(RingCounters)>=8)`, `offsetof(rd)==0`, `offsetof(wr)==8`, `sizeof(RingCounters)==24` compiled | PASS **for this C11 i686 target** |
+| External symbols | `llvm-nm-19 -u` emitted nothing | **0 undefined symbols** |
+| Atomic increment | Disassembly contains `lock` + `cmpxchg8b 0x8(%ebp)` in `add_wr` and loop `jne` | `INLINE_CMPXCHG8B=YES`, PASS codegen |
+| Audit summary | `JACK01E5D_STATUS=PASS_CODEGEN_ONLY`, `ATOMIC_EXTERNAL_HELPER=NO` | PASS limited to generated object |
+| Execution | `I386_EXECUTED=NO`, `REAL_JACK=NOT_EXECUTED` | SKIP |
+
+**Interpretation:** A deliberately 8-byte-aligned C11 structure can lower `__atomic_load_n` (acquire), `__atomic_store_n` (release) and `__atomic_fetch_add` (acq_rel) into 32-bit ELF object code with **no external atomics helper** under the tested i686 target. The excerpt explicitly demonstrates `lock cmpxchg8b` for the read-modify-write path; the other operations are inferred only from the empty undefined-symbol list and successful compilation, not individually disassembled. This is **not** a lock-free/run-time/concurrency proof for any shared-memory placement, i386 Mach-O ABI or JACK callback. C++ i386 `<atomic>` header still unavailable from the earlier JACK-01E5 preflight.
+
+### Next gate JACK-01E6 — shared IPC header across target ABIs (not execution)
+
+Create no new directory. Pipe one common **headerless C11 structure definition** into `clang-19` three times, generating independent objects within `/home/Deniel/d4rling-audio/qualif`: Linux ELF32 i686, Linux ELF64 x86_64, and optional Mach-O i386 Darwin target. Use fixed-width-equivalent `unsigned short/int/long long`, explicitly `_Alignas(8)` for 64-bit counters, and compile-time assertions for an explicitly versioned 64-byte header (`magic`, `version`, `flags`, `frame_capacity`, `channels`, `read_frames`, `write_frames`, `sample_rate`, `format`, `state`, `reserved`). Verify identical offsets (16/24) and total size; inspect object architectures, undefined atomics helpers and at least the i686 `cmpxchg8b` codegen.
+
+If Mach-O cross-target codegen is unavailable, report `SKIP_TARGET_MACHO` without overwriting the ELF qualifications. **Object-only** results do not prove runtime cross-process mapping, endian/interoperability on a different CPU, actual permission or pointer handling, signal safety, time synchronization, real JACK, Logic Studio 8 or Darling CA-12. Adopt the IPC schema only after independent review of ring payload layout, shared-memory lifetime, version negotiation, 32/64-bit process interaction and audio callback constraints.
+
+**Decision:** GO for isolated cross-ABI **layout** qualification; NO-GO for claiming an operational 32-bit JACK backend. PR #5 stays draft on `work/coreaudio-ninja-convergence`, `[skip ci]` documentation update only.
