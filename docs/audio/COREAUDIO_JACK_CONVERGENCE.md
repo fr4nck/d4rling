@@ -340,3 +340,26 @@ The local tool reported `PULSE_INVENTORY=PASS`, `CORE_INVENTORY=PASS`, `CA11H_ST
 **Not yet validated:** whether host-installed libraries match the symbols/ABI referenced by isolated new binaries, the precise Darling runtime filesystem mount layering, dyld load behavior, and Logic Studio 8 / JACK. CA-12 still failed RPC -111.
 
 **Next CA-11I:** perform **read-only** symbol-resolution preflight against the host-installed four direct libraries plus the staged new libpulse. Verify each installed candidate's Mach-O x86_64 architecture and its LC_ID_DYLIB against the requested name; enumerate defined global exports and unresolved imports, but do not equate unresolved imports with runtime failures (loader-level, weak or indirect symbol resolution can intervene). Do not copy/install or execute Darling until the independent CA-12 runtime problem is addressed.
+
+## 18. CA-11I / CA-11I-B — CoreFoundation universal Mach-O preflight (2026-10-26)
+
+**Evidence:** exact user terminal output on 5700X / Debian 13 WSL2. No local installed library, runtime prefix, or audio source changed.
+
+### CA-11I stopped before finishing — parser false negative
+
+- libSystem.B.dylib: install ID PASS, 46 defined global symbols.
+- libc++.1.dylib: install ID PASS, 1,837 defined global symbols.
+- libc++abi.dylib: install ID PASS, 365 defined global symbols.
+- Check for installed CoreFoundation aborted with `Unexpected Mach-O format` because the verifier assumed a little-endian thin x86_64 MH_DYLIB header at byte zero. Actual FAT container was not supported by this verifier.
+- CoreFoundation symbol count, staged libpulse symbol count, and the PulseAudio/CoreAudio import match comparison **were not executed** by CA-11I.
+
+### CA-11I-B diagnostic result — PASS for universal Mach-O architecture
+
+- Installed CoreFoundation: Mach-O universal binary; `FAT_MAGIC=cafebabe`, 1 architecture, entire file 3,511,980 bytes.
+- x86_64 slice: `CPU_TYPE=0x01000007`, start offset 4,096, slice length 3,507,884 bytes; valid little-endian Mach-O 64-bit dylib `FILE_TYPE=6`, 20 load commands.
+- User output: `CA11IB_STATUS=PASS_X86_64_DYLIB` and `FILES_MODIFIED=NO`.
+- Root cause: a **thin-only verifier false negative**, not a demonstrated CoreFoundation error. The successful CA-11G PulseAudio/CoreAudio links remain valid as link-stage milestones.
+
+### Next CA-11I-C (strict read-only, no installs)
+
+Accept thin and FAT binaries with a bounds-checked x86_64 Mach-O dylib slice, inspect its ID_DYLIB and global symbols. For CoreFoundation FAT, use a temporary extracted thin slice for llvm-nm-19; ensure only the disposable file is created and cleaned up, never the installed library. Compare imports against directly declared library exports, but treat misses as unresolved **static preflight observations**, not proof of failure under Darling dyld. CA-12 RPC -111 remains independently blocked.
