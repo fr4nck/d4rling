@@ -662,3 +662,24 @@ After three successful native sanitizer gates, **do not rerun them unnecessarily
 Read-only source piped to `clang-19` with `-m32 -march=i686 -std=c11 -ffreestanding -nostdinc -O2` to generate a separate object *within* `~/d4rling-audio/qualif`. Use `file`, `readelf`, `llvm-nm-19 -u`, `llvm-objdump-19 -d` to compare whether the code still calls `__atomic_compare_exchange` versus inlining `lock cmpxchg8b`. Report `INLINE_CMPXCHG8B` or `EXTERNAL_HELPER` only from actual object; no linker or i386 execution. Do not force a CPU ISA in production without checking the guest target CPU and Darling ABI. Regardless of outcome, do not load in-process 64-bit libjack into i386 and keep `CA-12` untouched.
 
 **Verdict:** JACK-01E5B **PASS_OBJECT_CODEGEN**, C++ i386 tests **SKIP_TOOLCHAIN**, lock-free operations **not yet qualified**; JACK real transport and Logic Studio 8 **NO-GO**.
+
+## 33. JACK-01E5C — i686 atomic64 codegen: explicit alignment removes external helper (2026-10-26)
+
+**Evidence:** user-reported terminal stdout from Debian 13 WSL2 / 5700X, `cd /home/Deniel/d4rling-audio/qualif`; no commands were executed on the user host by GitHub tools. No changes to the current Ninja builds, runtime CA-12, or audio backend.
+
+| Variant | Compilation | Undefined externals (`llvm-nm-19 -u`) | Observed instructions |
+| --- | --- | --- | --- |
+| `inc_arg(unsigned long long* p)`, no explicit 8-byte alignment guarantee | `ARG_BUILD=PASS`, ELF32 Intel i386 | `_GLOBAL_OFFSET_TABLE_` + `__atomic_compare_exchange` | External helper remains; not an inline-only atomic proof |
+| `inc_aligned()` on an `__attribute__((aligned(8))) unsigned long long slot` | `ALIGNED_BUILD=PASS`, ELF32 Intel i386 | `_GLOBAL_OFFSET_TABLE_` only | **`lock` + `cmpxchg8b (%esi)`**, retry `jne` present in disassembly |
+
+User-printed verdict: `ALIGNED_EXTERNAL_HELPER=NO`, `INLINE_CMPXCHG8B=PASS`, `JACK01E5C_STATUS=CODEGEN_INSPECTED`, `I386_EXECUTED=NO`, `REAL_JACK=NOT_EXECUTED`.
+
+**Interpretation:** Target flags `clang-19 -m32 -march=i686 -std=c11 -O2 -ffreestanding -nostdinc -fno-stack-protector` generated an **inlined atomic 64-bit read-modify-write** for the specifically aligned global. Source-level alignment changes the generated dependency behavior. `_GLOBAL_OFFSET_TABLE_` is the ELF position-independent addressing symbol, not an `__atomic_*` helper. The unaligned/ordinary pointer variant still **references `__atomic_compare_exchange`**; do not hide or normalize that difference.
+
+**Boundary:** `CMPXCHG8B` exists in the emitted object but the code has **not been linked or executed as i386**. Neither a one-off aligned global nor a compiler builtin implies that arbitrary heap-allocated PCM counters or Mach-O shared-memory IPC fields have correct alignment or cross-ABI memory semantics. C++ i386 standard-library headers remain unavailable; previous JACK-01E5 `SKIP_I386_TOOLCHAIN` still applies. No real JACK library, Linux JACK daemon or Logic Studio 8 runtime test. CA-12 RPC `-111` is unchanged.
+
+### Next gate JACK-01E5D — source-level PCM counter layout codegen only
+
+Generate a **headerless C11 i686 ELF32 object** in the same `~/d4rling-audio/qualif` from stdin. Define a `RingCounters` struct with `_Alignas(8)` on both `uint64`-equivalent fields (use `unsigned long long` without libc headers) and `_Static_assert` checks for struct alignment and member offsets. Compile `__atomic_load_n(..., __ATOMIC_ACQUIRE)`, `__atomic_store_n(..., __ATOMIC_RELEASE)` and `__atomic_fetch_add(..., __ATOMIC_ACQ_REL)`; inspect `llvm-nm-19 -u`, `llvm-objdump-19 -dr`. Verdict if no `__atomic_*` undefined references plus inline `cmpxchg8b` for RMW: **PASS_CODEGEN_ONLY**. Any helper reference should be reported and reviewed rather than linked into a callback by default. Do not claim an i386 runtime pass. No download, package install, guest execution, new directory, full Ninja build, or audio backend changes.
+
+**Decision:** GO for validating i686 aligned counter ABI as a *candidate*; prefer Linux x86_64 JACK helper across a well-defined shared-memory/IPC boundary to avoid loading x86_64 libjack into a 32-bit Mach-O process. Real-time and cross-process correctness are separate gates.
