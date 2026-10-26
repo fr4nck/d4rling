@@ -518,3 +518,22 @@ Current explicit CA-12 guest smoke remains **FAIL**, `mach_msg_overwrite` / RPC 
 Without `libjack`, prefer a **pure standard-library PCM ring/callback contract model** on the 5700X (no repository or system modifications). Test fixed/preconfigured capacity, stereo planar float32, zero frames, exact input/output sequences, wraparound, overflow atomicity, underrun zero-fill, start/stop and restart, per-cycle `nframes` and frame clock for 44.1/48/96 kHz. Record exact test pass/fail counts and prevent presenting these mock tests as real-time memory-safety or actual JACK execution. **No downloads** and do not touch concurrent Ninja builds.
 
 After that, read-only i386 `file`, `readelf -l` and `ldd` against `mldr32` can establish runtime *dependencies and ELF interpreter presence* but not guest startup. Do not run loader or restart Darling while CA-12 remains blocked. Actual JACK library install or host daemon startup requires separate user authorization.
+
+## 26. JACK-01E1 — Offline PCM ring-buffer model: 12/12 PASS (2026-10-26)
+
+**Evidence provenance:** user's actual 5700X Debian 13 WSL2 terminal output, running a **Python standard-library-only inline script**, not JACK. Executed inside `~/d4rling-carbon-qualif` without changing files, installing packages, compiling, or starting the Darling runtime.
+
+| Qualification | User-reported observed result |
+| --- | --- |
+| Python unittest methods | **12 executed / 12 PASS / 0 failures**; `Ran 12 tests in 0.001s`, `OK` |
+| Final result | `JACK01E1_STATUS=PASS_MODEL_ONLY` |
+| Real JACK or PipeWire | `REAL_JACK_TEST=NOT_EXECUTED` |
+| File side effects | `FILES_MODIFIED=NO` |
+
+**Qualified logical behavior in the Python model only:** frame cycle lengths 0/1/64/128/1024; mono and stereo independent planar channels; 44.1/48/96 kHz virtual frame clock; ring wraparound; atomic reject on overflow; silence zero-fill on underrun with counter; stop/restart and no write while stopped; monotone counting of processed frames; invalid/negative input rejection. `test_frame_sizes` and `test_sample_rates` each perform multiple `subTest`s inside one of the 12 methods.
+
+**Persistent regression artifact published separately on this convergence branch:** [`tests/regressions/jack-transport/test_pcm_contract_model.py`](../../tests/regressions/jack-transport/test_pcm_contract_model.py), Git blob `b66c0fa435bde544a0221162ac28a6b58e676ab9`, 12 `test_` methods. The published file reproduces the user's tested model and adds a module guard/header. The exact committed file **has not yet been executed on the 5700X**; its on-host 12/12 must not be stated as tested from the GitHub branch until run. No GitHub CI was launched (`[skip ci]`).
+
+**Explicit limits and risks:** this Python model allocates lists during `cycle()`, holds no thread synchronization, does not model cache coherence / actual SPSC atomic order, buffer ownership after stop, dynamic JACK buffer changes, cross-ABI calls, device/stream enumeration, xrun timing or real PCM playback. Thus the 12/12 PASS is an *executable specification*, not a RT-safe transport or JACK adapter. Never reuse Python `PCM` for real callbacks.
+
+**Next native gate JACK-01E2:** strictly isolated C++17 native SPSC ring-buffer prototype and test runner in a disposable directory, with preallocated storage, bounded planar floats, clearly single producer/single consumer, explicit errors and counters, no callback-path allocation/blocking/logging, and start/stop only under quiescence. Check compiler/toolchain availability first; keep Ninja/CoreAudio/i386 build trees untouched and do not install or download JACK. The first C++ prototype must be tested on the 5700X before any PASS claim; add separate concurrent/thread-sanitizer qualification later. Neither CA-12 nor Logic Studio 8 is touched.
