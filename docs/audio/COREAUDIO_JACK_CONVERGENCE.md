@@ -537,3 +537,25 @@ After that, read-only i386 `file`, `readelf -l` and `ldd` against `mldr32` can e
 **Explicit limits and risks:** this Python model allocates lists during `cycle()`, holds no thread synchronization, does not model cache coherence / actual SPSC atomic order, buffer ownership after stop, dynamic JACK buffer changes, cross-ABI calls, device/stream enumeration, xrun timing or real PCM playback. Thus the 12/12 PASS is an *executable specification*, not a RT-safe transport or JACK adapter. Never reuse Python `PCM` for real callbacks.
 
 **Next native gate JACK-01E2:** strictly isolated C++17 native SPSC ring-buffer prototype and test runner in a disposable directory, with preallocated storage, bounded planar floats, clearly single producer/single consumer, explicit errors and counters, no callback-path allocation/blocking/logging, and start/stop only under quiescence. Check compiler/toolchain availability first; keep Ninja/CoreAudio/i386 build trees untouched and do not install or download JACK. The first C++ prototype must be tested on the 5700X before any PASS claim; add separate concurrent/thread-sanitizer qualification later. Neither CA-12 nor Logic Studio 8 is touched.
+
+## 27. JACK-01E2 — Isolated native C++17 SPSC PCM contract prototype (2026-10-26)
+
+**Source:** `tests/regressions/jack-transport/pcm_spsc_native_contract.cpp`, Git blob **`ee719b7514743081c04d255f3ae66cf9f1c54fe5`** (6,923 bytes). The Git blob was compared to the exact locally tested source and matched. Published to **convergence branch only**, not `work/core-audio`, not an audio engine implementation.
+
+### Execution provenance and evidence
+
+- In the assistant's **isolated Linux container** (not the 5700X): C++17 compile with `c++ -std=c++17 -O2 -pthread -Wall -Wextra -Werror`; binary ran under `timeout 20s`.
+- **11/11 native self-test checks PASS**: frame sizes 0/1/64/128/1024; mono; ring wraparound; atomic overflow-rejection behavior (logical); zero-filled underrun; stop+restart with buffer flush; virtual frame clock and rates; stopped write rejected; invalid repeated stop; invalid config; **50,000 frames in sequence in a 2-thread SPSC producer/consumer stress scenario**.
+- Assistant container also compiled and ran the **exact same source** with `-fsanitize=address,undefined -fno-omit-frame-pointer`; output remained **11/11 PASS**, no sanitizer diagnostics reported. **Not** a ThreadSanitizer run, not a real-time deadline benchmark and not a formal concurrency proof.
+- `JACK01E2_STATUS=PASS_NATIVE_MODEL_ONLY`; `REAL_JACK_TEST=NOT_EXECUTED`. **The published C++ probe has not yet been run on the user's 5700X**; do not report a 5700X PASS.
+- The previously user-executed JACK-01E1 Python suite remains **12/12 PASS on 5700X**, distinct from the C++ prototype.
+
+### Native prototype contract and limits
+
+`PCMQueue` preallocates a planar interleaved-in-memory buffer at construction, uses release/acquire atomic head/tail counters for **one producer and one consumer**, stores monotone frame counts and xrun counters and zero-fills shortages. `write()`/`read()` have no explicit allocation or blocking operations and are declared `noexcept`. The test's use of `std::thread::yield()` is limited to the non-realtime stress-test harness; it is **not** part of the callback API.
+
+**Important:** stop/start, destruction and constructor are valid only when producer and consumer are quiescent; this has not been extended to concurrent shutdown. Caller buffers must be valid and sized for `nframes`; these are explicit preconditions and not fully checked. A native container PASS does not establish scheduling, priority inversion freedom, callback-domain ABI safety, `std::atomic` implementation on all targets, dynamic buffer reconfiguration, latency/xrun performance, JACK protocol compatibility, or i386 support. Keep this code in `tests/regressions` as a **nonproduction experiment** until separate review and qualification.
+
+### Next on-host JACK-01E2H gate
+
+Without Git checkout or package installation: disclose an **exact 6,923-byte read** from the pinned GitHub source, verify Git blob SHA `ee719b7514743081c04d255f3ae66cf9f1c54fe5`, then compile using existing C++17 host compiler in a new isolated folder outside Ninja build directories and run 11 native self-tests. If the user does not explicitly choose to execute/download, do not fetch. On-host sanitizer checks are optional and should run only if compiler runtimes are already installed. CA-12 RPC remains FAIL and is not exercised. Real JACK unavailable per JACK-01E0.
