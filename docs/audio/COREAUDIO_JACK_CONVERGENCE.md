@@ -844,3 +844,29 @@ After ELF32 execution is demonstrated, implement the mixed ELF32/ELF64 memfd+soc
 **Result labeling:** PASS requires both `JACK01E8_SERVER_STATUS=PASS` and `JACK01E10_CLIENT_STATUS=PASS_ELF32_MIXED_IPC`, `SERVER_EXIT=0`, `CLIENT_EXIT=0`, and 50,000 frame counters. If it fails, retain logs and classify source of `socketcall`, CMSG/compat, mmap2 or atomic discrepancy rather than calling JACK failed. It tests mixed-bitness *Linux ELF32 ↔ Linux ELF64* only, **NOT Mach-O i386 ↔ ELF64 Darling**, and not JACK/ALSA/Logic Studio 8. CA-12 RPC failure still independent.
 
 **State:** host JACK-01E9 **PASS_ELF32_NATIVE_EXEC**, native JACK-01E8H **PASS_LINUX_MEMFD_FDPASS**, new client JACK-01E10 **BUILD_PASS in assistant isolated container / HOST_RUNTIME_PENDING**, real JACK **NOT_EXECUTED**. PR #5 remains draft; `[skip ci]`; no Ninja build/prefix modifications.
+
+## 42. JACK-01E10H — mixed ELF32 client / ELF64 server PCM IPC PASS on 5700X (2026-10-26)
+
+**Evidence provenance:** exact terminal stdout supplied by user from `Deniel@5700X` Debian 13 WSL2, under canonical `/home/Deniel/d4rling-audio/qualif`. This GitHub update did not execute any commands on that machine.
+
+| Gate | User-observed result |
+| --- | --- |
+| Source authenticity | User-initiated `SOURCE_FETCH=7660_BYTES`; `SOURCE_HASH=PASS`, expected Git blob `94a2d53c082a0f1883742912ddce7a1a184386cf` from convergence commit `4354d72b58b7076d7f6ab843382748178bba2df8` |
+| ELF32 build | `BUILD_ELF32=PASS`, `ELF 32-bit LSB executable, Intel i386, statically linked`, ELF class 32, `Type EXEC`, `Machine Intel 80386` |
+| Independent ELF64 server | Existing `jack01e8_linux_ipc_fdpass` started in `server` mode; 64-byte shared header |
+| FD delivery over AF_UNIX socket | `IPC_ELF32_CLIENT_RECEIVED_FD=YES`, server accepted and transmitted Linux memfd via `SCM_RIGHTS` |
+| Data validation | Server `IPC_SERVER_WRITE_FRAMES=50000`, `IPC_SERVER_READ_FRAMES=50000`; ELF32 client `IPC_ELF32_READ_FRAMES=50000` |
+| Terminal handshakes | `IPC_SERVER_ACK=PASS`, `JACK01E8_SERVER_STATUS=PASS`, `JACK01E10_CLIENT_STATUS=PASS_ELF32_MIXED_IPC` |
+| Exit codes | `SERVER_EXIT=0`, `CLIENT_EXIT=0` |
+| Final marker | `JACK01E10H_STATUS=PASS_MIXED_ELF32_ELF64_IPC` |
+| Deferred runtime | `MACHO_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED` |
+
+**Qualification:** PASS of a real end-to-end **Linux ELF32 i386 process ↔ Linux ELF64 x86_64 process**, with a 64-byte layout-stable `SharedPCM` header, cross-process Linux `memfd` and Unix `SCM_RIGHTS` descriptor passing, and **50,000 ordered synthetic stereo float32 frames checked by the client**. Static i386 binary required no C++ multilib or i386 libc. This establishes *mixed Linux bitness IPC on the target machine*, not only compiler codegen.
+
+**Limits and next engineering decision:** This is NOT a Mach-O i386 guest. The client uses native Linux i386 syscalls (`socketcall`/`mmap2`); these cannot simply be assumed compatible with Darling's Darwin guest syscall and libc ABI. JACK, ALSA, real PCM playback, scheduling deadlines, recovery after disconnect, clock sync, and Logic Studio 8 were never exercised. The previously reported Darling CA-12 Mach-O guest RPC failure (`mach_msg_overwrite`/dserver error `-111`) is still an **independent runtime blocker**, not repaired by this Linux IPC success.
+
+**Next focused gate JACK-01E11:** STOP creating more synthetic transport/codegen variants. Coordinate with the concurrent Ninja/runtime owner to restore or at least reproduce guest process boot / CA-12 with a safe, read-only preflight before any Mach-O-to-ELF IPC experiment. Audit how guest Mach-O i386 can invoke a Darwin-side minimal socket/FD mapping/client contract through the existing Darling `libsystem_kernel`, syscall translation and `mldr32`, then prepare a *compile-only* isolated Mach-O guest adapter if and only if the available headers and loader ABI are grounded. Keep actual runtime launch behind a host-safe explicit gate, with no touching active prefixes or replacing CoreAudio/PulseAudio.
+
+**Directory and publication rule:** all host tests belong inside the existing `/home/Deniel/d4rling-audio/qualif`. Existing `d4rling-core`, `d4rling-audio`, `d4rling-ui` build trees and runtime prefixes remain untouched; no package installs, no JACK daemon, no CI, `[skip ci]`; PR #5 stays draft from `work/coreaudio-ninja-convergence` into `work/core-audio`.
+
+**Verdict:** `JACK-01E10H=PASS_MIXED_ELF32_ELF64_IPC` **on 5700X**, `MACHO_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`, **GO** for targeted guest-boundary analysis only; **NO-GO** for end-to-end CoreAudio/JACK/Logic Studio 8.
