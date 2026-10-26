@@ -221,3 +221,35 @@ A single command adapted from Ninja's link line, changing the output path to a d
 The source audit already established 11 CoreAudio Mach-O objects and four direct library paths: `libc++.1.dylib`, `CoreFoundation`, the just-built `libpulse.dylib`, and `libSystem.B.dylib`. Use the actual unmodified Ninja link command with only these exact direct paths and the validated Carbon `ld64` redirected to existing locations. Keep output isolated outside all build trees and verify Mach-O x86_64 plus defined API exports. Any linker failure is a diagnostic **FAIL/BLOCKED**, never a reason to copy unknown binaries or rebuild thousands of targets automatically.
 
 An entirely separate CA-12 Darling RPC smoke still fails (-111, timed-out exit 137). Do **not** mix runtime shellspawn fixes with CoreAudio linking.
+
+## 13. CA-11D — Linked CoreAudio Mach-O image (2026-10-26)
+
+**Evidence provenance:** output pasted by the user from their **5700X Debian 13 / WSL2** terminal. This GitHub documentation commit did not execute the linker locally. Earlier CA-11C PulseAudio wrapper is at `/home/Deniel/d4rling-ca11c-ci_c19yl/libpulse.dylib`.
+
+### Observed local results — PASS for link and defined exports only
+
+| Gate | Observed output |
+| --- | --- |
+| CoreAudio compilation inputs | `COREAUDIO_OBJECTS=11/11 PASS` |
+| Direct library input candidates | `DIRECT_LIBRARIES=4/4 PASS` (Carbon libc++, CoreFoundation, libSystem; isolated CA-11C libpulse) |
+| Reused linker | `LD64=PASS` |
+| Redirected Carbon linker mappings | `CARBON_MAPPINGS=45` (**path mappings**, not evidence all were loaded) |
+| Link exit | `LINK_EXIT=0` |
+| Mach-O output | `Mach-O 64-bit x86_64 dynamically linked shared library`, flags `NOUNDEFS|DYLDLINK|TWOLEVEL|WEAK_DEFINES|BINDS_TO_WEAK|NO_REEXPORTED_DYLIBS` |
+| File size | `OUTPUT_BYTES=268316` |
+| Defined export check | `EXPORTS_PASS=6/6`, `llvm-nm-19 -g --defined-only` |
+| Gate verdict | `CA11D_STATUS=LINK_AND_EXPORTS_PASS` |
+| Output path | `/home/Deniel/d4rling-ca11d-kz4obkta/CoreAudio` |
+| Log | `/home/Deniel/d4rling-ca11d-kz4obkta/link.log` |
+
+**Six defined symbols verified:** `_AudioObjectGetPropertyData`, `_AudioObjectGetPropertyDataSize`, `_AudioDeviceCreateIOProcID`, `_AudioDeviceStart`, `_AudioDeviceStop`, `_AudioGetCurrentHostTime`.
+
+This is a successfully linked **Mach-O image for the CoreAudio framework target**, not yet a complete installed `.framework` bundle. Link success and symbol definition **do not imply** API correctness; `AudioGetCurrentHostTime` remains a known zero-return stub (CA01-F02), despite being exported. No Darling load or PCM execution attempted (CA-12 runtime RPC failure remains independent).
+
+### Next isolated CA-11E — inspect Mach-O load commands, not execute guest
+
+Read-only inspect *both* actual images with `file`, `llvm-objdump-19 --macho --dylibs-used` (if tool supports this) or `llvm-otool-19 -L`, `llvm-objdump-19 --macho --private-headers`, `llvm-nm-19 --undefined-only`, `llvm-nm-19 -g --defined-only`. Verify installation IDs, logical dependency names, architecture, unresolved imports and absence of hardcoded paths to temporary build directories. Compare expected dependency paths against the runtime layout **without** copying/installing anything into the live Darling prefix. Limit verbose command output and store exact command/result logs. Only after this audit design loader/runtime tests; do not retry the failing `darling exec` loop until CA-12 RPC is diagnosed.
+
+### Convergence decision
+
+**Build track:** first CoreAudio Mach-O link + six exports PASS, a significant and reproducible linker milestone. **Runtime/JACK track:** SKIP pending loader and backend; do not claim Logic Studio 8 or JACK support. Preserve PulseAudio, ALSA and Carbon work unchanged. The PR remains a draft, targeting `work/core-audio` rather than default `master`.
