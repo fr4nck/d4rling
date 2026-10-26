@@ -1,6 +1,6 @@
 # CoreAudio / Ninja / JACK convergence
 
-**Status (2026-10-26):** CA-10B wrapper generation and object compilation PASS **on the user's reported 5700X terminal log**; CoreAudio link and audio runtime NOT TESTED. GitHub source audit and a separate mocked verifier test suite are distinct evidence. Do not infer Logic Studio 8 compatibility.
+**Status (2026-10-26):** CA-10C PASS on the user's 5700X terminal: source contract, generated PulseAudio C, Mach-O wrapper object and 13/13 isolated-fixture regression tests. CoreAudio / libpulse linkage is NOT TESTED. Separate Darling runtime CA-12 launch test FAILED (RPC error and timeout), cause pending; do not infer Logic Studio 8 compatibility.
 
 ## 1. Shared objective and architecture
 
@@ -65,7 +65,7 @@ python3 -m unittest discover \
   -s tests/regressions/coreaudio-wrapgen -p 'test_*.py' -v
 ```
 
-The separately executed isolated-host suite uses **synthetic fixtures** for optional headers and Mach-O headers. It must never be reported as a real Darling build, load or playback test.
+The test suite uses **synthetic fixtures** for optional headers and Mach-O headers. The user executed 13/13 cases on the 5700X in CA-10C; this proves the verifier's local control flow, not the real Darling loader or audio playback.
 
 ## 4. Source-level CoreAudio API matrix (N2)
 
@@ -130,7 +130,7 @@ A JACK2 server and PipeWire-JACK client-library substitute must be treated as **
 
 | Priority | Gate | Required evidence | State |
 | --- | --- | --- | --- |
-| P0 | N1 reproducible wrapper contract | Source rule + optional header + Mach-O object | PASS user CA-10B; isolated verifier mocks PASS; verifier not run on 5700X |
+| P0 | N1 reproducible wrapper contract | Source rule + optional header + Mach-O object | PASS on 5700X CA-10C; 13/13 mock-fixture unit tests PASS on 5700X |
 | P0 | CA-11 wrapper link | `libpulse.dylib` Mach-O, dependent libs and symbols | SKIP |
 | P0 | CA-12 CoreAudio link | Real Mach-O x86_64 framework and expected symbols, no broken dependencies | SKIP |
 | P0 | Loader smoke | Darling loads CoreAudio and resolves system/default output ID | SKIP |
@@ -147,3 +147,30 @@ Next: inspect `ninja -t commands src/CoreAudio/libpulse.dylib` and compare **fir
 At the start of each audio or JACK lot, read the latest committed version of this document from GitHub, record current branch/HEAD, compare touched files and check other open PRs. Record observation, patch, tested environment, PASS/FAIL/SKIP, commit SHA and unresolved dependency. If updates race, re-read and integrate content; never overwrite or force-push. Merge into the active audio work branch only after review; default branch is `master` and must not be modified without explicit approval.
 
 This file is a technical handoff, not an assertion that the second chat has already delivered a JACK implementation.
+
+## 10. Field qualification update (2026-10-26, CA-10C / CA-12)
+
+Evidence origin: terminal output pasted by the user from **Debian 13 / WSL2 on the 5700X**. GitHub does not have access to the live filesystem or runtime; the branch update here is documentation-only, not a new local execution.
+
+### CA-10C — PASS, local verifier actually executed
+
+- Retrieval integrity: `HASH_PASS: verify.py`, `HASH_PASS: test_verify.py`; expected pinned Git blob SHA values were checked by the user's script.
+- `CA10_CONTRACT=PASS`: repository `wrap_elf.cmake` and `wrapgen.cpp` support an optional variable header.
+- `CA10_PULSE_C=PASS`: generated `pulse.c` is **63,102 bytes**.
+- `CA10_PULSE_VARS=SKIP_OPTIONAL`: no `pulse_vars.h`, which is valid for this build.
+- `CA10_OBJECT_MACHO=PASS`: x86_64 MH_OBJECT file verified.
+- `CA10_VERDICT=PASS`.
+- `python3 -m unittest discover -s "$HOME/d4rling-ca10c-tests" -p "test_verify.py" -v`: **13 tests run, 0 failures, PASS** on the 5700X; fixture tests do not demonstrate linker success.
+- `libpulse.dylib`, linked CoreAudio, exports, JACK audio and actual Logic 8: **SKIP**.
+
+### CA-12 — FAIL, Darling runtime, distinct from the audio build
+
+The user's `/usr/local/bin/darling exec` smoke for `echo` ended with `CA12_echo_RC=137`, `mach_msg_overwrite failed (internally): -111`, repeated `dserver_rpc_interrupt_enter failed with code -111`, and an explicit timeout/forced-termination marker. It is **not** evidence of CoreAudio or JACK malfunction. The root cause is **unknown** until server/prefix state, guest executable availability and shellspawn launch / exit-status behavior are inspected without destructive cleanup.
+
+An earlier local `shellspawn.c` excerpt has `close(shellfd[0])` inside a loop over `i`, and uses `WEXITSTATUS` without a successful `waitpid` + `WIFEXITED` guard. These are separately actionable source concerns, but **not** yet proven to cause CA-12. Do not combine the shellspawn fix with the CoreAudio wrapper PR.
+
+### Next gates
+
+1. **Audio CA-11** (read-only initial gate): inspect wrapper dynamic link command and enumerate direct/implicit tool/library artifacts from Carbon and Audio, checking compatible Mach-O or ELF formats and exact target paths. Do not unconditionally trigger the 2,590-action Ninja graph or copy the 46 reusable files.
+2. **Runtime CA-12R** (independent): capture Darling process list, `DPREFIX` effective path, guest binary existence and non-destructive logs. Do not run `killall`, `rm -rf`, reinstall or modify live prefixes while testing the audio link.
+3. **JACK N3**: isolate backend design and mock RT callback/lifecycle tests. JACK remains HYPOTHESIS.
