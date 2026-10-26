@@ -559,3 +559,22 @@ After that, read-only i386 `file`, `readelf -l` and `ldd` against `mldr32` can e
 ### Next on-host JACK-01E2H gate
 
 Without Git checkout or package installation: disclose an **exact 6,923-byte read** from the pinned GitHub source, verify Git blob SHA `ee719b7514743081c04d255f3ae66cf9f1c54fe5`, then compile using existing C++17 host compiler in a new isolated folder outside Ninja build directories and run 11 native self-tests. If the user does not explicitly choose to execute/download, do not fetch. On-host sanitizer checks are optional and should run only if compiler runtimes are already installed. CA-12 RPC remains FAIL and is not exercised. Real JACK unavailable per JACK-01E0.
+
+## 28. JACK-01E2H — Verified on 5700X: native PCM SPSC 11/11 PASS (2026-10-26)
+
+**Evidence:** exact stdout supplied by user from Debian 13 WSL2 on machine `5700X` (the assistant did not directly execute these commands on that host). The earlier §27 container-only evidence is now supplemented with a host run of the pinned source.
+
+**Canonical single qualification directory:** `/home/Deniel/d4rling-audio/qualif`. No future scattered `~/d4rling-jack-*`, no new independent build trees and no relocation of the existing i386/Carbon/audio build trees. Keep these files in this **single directory**: `pcm_spsc_native_contract.cpp`, `pcm_spsc_native_contract`, `build.log`, `test.log`.
+
+### Actual JACK-01E2H host transcript
+
+- Source retrieval: **explicit one-time GitHub fetch**, declared 6,923 bytes. Terminal printed `SOURCE_ABSENTE: recuperation GitHub 6923 octets`; future runs should **reuse** the local source instead of downloading it again.
+- `git hash-object` matched the pinned Git blob `ee719b7514743081c04d255f3ae66cf9f1c54fe5`: `HASH_PASS`.
+- C++17 compiler invocation completed: `BUILD_PASS`.
+- All **11** native checks printed `PASS`: frame sizes, mono, wraparound, overflow atomicity, underrun zero fill, stop and restart, rates and monotonic frame clock, stopped write refused, invalid double stop, invalid configuration, SPSC 50,000 frames in order.
+- Native summary: `JACK01E2_PASS=11/11`, `JACK01E2_STATUS=PASS_NATIVE_MODEL_ONLY`, `JACK01E2H_STATUS=PASS_NATIVE_MODEL_ONLY`.
+- Explicit `REAL_JACK_TEST=NOT_EXECUTED`. No evidence of actual PipeWire/JACK runtime, real audio output, valid i386 callback ABI, deterministic real-time deadlines, or success of Darling CA-12. This host run was **not** an ASan/UBSan/TSan run.
+
+**Convergence decision:** `GO` for isolated C++17 prototype development, `NO-GO` for calling it a functional JACK/CoreAudio backend. Retain the shipped PulseAudio prototype and all Ninja-built artifacts. Do not install JACK or start/stop any audio daemon without separate authorization.
+
+**Next verification gate (JACK-01E3):** use **only** `/home/Deniel/d4rling-audio/qualif` for sanitizer test outputs. Check the already-downloaded source hash again; conditionally compile with an existing compiler and `-fsanitize=address,undefined` when supported (no packages or downloads); run under timeout; record exact stderr and 11/11 counts. Address/Undefined sanitizers are a memory diagnostic, **not** a proof of real-time behavior or race freedom. ThreadSanitizer, if ever used, requires a separate isolated and supported runtime qualification. In parallel, source-side RT review of preallocation, `std::atomic<uint64_t>` lock-freedom on **i386**, bounded `nframes`, memory ordering, caller-buffer lifetime and stop quiescence; do not modify the active HAL or CA-12 runtime for this.
