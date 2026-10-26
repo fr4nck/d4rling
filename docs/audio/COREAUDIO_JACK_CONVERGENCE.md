@@ -783,3 +783,31 @@ Keep **all** new local sources, compiled probes and logs under `/home/Deniel/d4r
 **Next on-host gate JACK-01E8H:** reuse ONLY `/home/Deniel/d4rling-audio/qualif`, with an explicitly disclosed **8,902-byte GitHub source download if and only if the source is absent**, pinned to commit `15de3ec8a90223ec304f947c26b4aadb3eb25312`; verify `git hash-object` equals `4fca9b6e36a7a245a89965ebd103be7ff6be1537`. Compile with already-present Clang 19, run a bounded server in the background and bounded client in the foreground with unique temporary UNIX socket pathname **inside the existing qualif directory**, capture separate logs and exit codes, and clean only the temporary socket owned by that run. Do not overwrite mismatching sources, do not delete other users' files/sockets, do not install packages, invoke Ninja/CA-12/Darling/real JACK, or create further `~/d4rling-*` directories.
 
 **Decision:** `JACK-01E7H=PASS` on 5700X; `JACK-01E8=PASS` in assistant's Linux isolated container only; **JACK-01E8H=NOT_EXECUTED** on the 5700X until user runs it. Real JACK/Logic Studio 8 **NO-GO**.
+
+## 39. JACK-01E8H — 5700X Linux memfd + SCM_RIGHTS stereo PCM IPC PASS (2026-10-26)
+
+**Evidence provenance:** user's actual Debian 13 WSL2 terminal stdout on `Deniel@5700X`, not a command executed by the GitHub agent. User started in `/mnt/c/Users/Ordi` but explicitly `cd` to the one canonical test directory `/home/Deniel/d4rling-audio/qualif`.
+
+| Gate | Actual terminal evidence | Status |
+| --- | --- | --- |
+| Published source integrity | `SOURCE_FETCH=8902_BYTES`, `SOURCE_HASH=PASS`; expected Git blob `4fca9b6e36a7a245a89965ebd103be7ff6be1537` | PASS |
+| Native C11 compilation | `BUILD=PASS` | PASS |
+| IPC header | `IPC_HEADER_SIZE=64` | PASS |
+| Process topology | `IPC_PROCESS_COUNT=2`; server and client launched as separate Linux x86_64 processes | PASS |
+| `memfd` transfer | `IPC_CLIENT_RECEIVED_FD=YES` via Unix-domain socket `SCM_RIGHTS` | PASS |
+| Stereo frames | `IPC_SERVER_WRITE_FRAMES=50000`, `IPC_SERVER_READ_FRAMES=50000`, `IPC_CLIENT_READ_FRAMES=50000` | PASS |
+| Acknowledgement and exit status | `IPC_SERVER_ACK=PASS`, `JACK01E8_SERVER_STATUS=PASS`, `JACK01E8_CLIENT_STATUS=PASS`, `SERVER_EXIT=0`, `CLIENT_EXIT=0` | PASS |
+| Final sentinel | `JACK01E8H_STATUS=PASS_LINUX_MEMFD_FDPASS` | PASS |
+| Excluded runtime | `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED` | SKIP |
+
+**Qualified:** 50,000 stereo float32 frames passed in order between two distinct Linux x86_64 process images using a named Unix-domain socket, `sendmsg`/`recvmsg` with `SCM_RIGHTS`, and a Linux `memfd` mapped `MAP_SHARED` by both. The server remained bounded and temporary. The test binary uses user-owned socket/log paths exclusively in the existing `qualif` directory. No evidence of unrelated process interference.
+
+**Not yet qualified:** ELF32-to-ELF64 *runtime* sharing, Mach-O i386 guest-to-native Linux process mapping, handling across Darling's loader and thread setup, audio callback deadlines/RT lock freedom, real JACK client/server, ALSA, AudioUnit/AudioToolbox, or Logic Studio 8 execution. CA-12 `mach_msg_overwrite`/dserver `-111` remains independently blocked.
+
+### Next gate JACK-01E9 — 32-bit Linux runtime and mixed-architecture IPC
+
+Move to an actual ELF32 Linux process exchanging data with a separate ELF64 Linux process. Before attempting `SCM_RIGHTS` cross-architecture, run a **single bounded no-libc ELF32 smoke probe** that uses the existing Clang 19 `-m32`, an i386 `_start` and an explicit Linux `exit` syscall. This tests whether WSL2 can execute a 32-bit binary despite missing i386 C++ multilib headers, without installing packages or touching the existing `mldr32`. Report execution unsupported as `SKIP_I386_RUNTIME`, not JACK regression.
+
+After ELF32 execution is demonstrated, implement the mixed ELF32/ELF64 memfd+socket test with a fixed-width 64-byte header, strict untrusted header validation, safe lifecycle and no pointer values in the shared ABI. Continue using **only** `/home/Deniel/d4rling-audio/qualif` and no new source/build directories; do not rebuild existing Ninja/i386/Carbon/Audio trees. Defer guest Mach-O IPC until the independent Darling CA-12 runtime gate can be traversed; do not install JACK or its development libraries automatically.
+
+**Verdict:** **JACK-01E8H=PASS on 5700X**; GO to bounded ELF32 runtime feasibility; NO-GO for asserting a working JACK/CoreAudio/Logic integration.
