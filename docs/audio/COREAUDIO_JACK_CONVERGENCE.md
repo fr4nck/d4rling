@@ -493,3 +493,28 @@ Current explicit CA-12 guest smoke remains **FAIL**, `mach_msg_overwrite` / RPC 
 **JACK-01F coordination:** This source comparison and stage plan are published only in the shared document on PR #5, with no source import. Ownership: Ninja retains i386, CA-12 and current builds; JACK branch may prepare isolated tests without modifying Ninja-owned source files, and must requalify/coordinate before any future merge.
 
 **Overall verdict: GO SOUS RÉSERVES for JACK architecture research and isolated offline tests; NO-GO for an installed JACK backend, claimed PCM playback, i386 JACK runtime or Logic Studio 8.**
+
+## 25. JACK-01E0 — 5700X host preflight; no JACK runtime available (2026-10-26)
+
+**Source:** user-pasted output from Bash on the 5700X under Debian 13 WSL2, running a read-only preflight in `~/d4rling-carbon-qualif`. This GitHub-only update did not run host commands.
+
+| Gate | User-reported observation |
+| --- | --- |
+| JACK commands | `jackd` ABSENT; `jack_lsp` ABSENT |
+| PipeWire compatibility and server commands | `pw-jack` ABSENT; `pipewire` ABSENT |
+| Core inspection utilities | `pkg-config`, `ldconfig`, `readelf` PRESENT |
+| Dynamic linker cache | `libjack.so` / `libjack.so.0` NOT LISTED |
+| Build metadata | `pkg-config --modversion jack` returned absent |
+| Process sample | No process named `jackd`, `pipewire`, `wireplumber` found in the `ps` snapshot |
+| i386 loader | `~/d4rling-build-i386/src/startup/mldr/mldr32` exists; Linux ELF **32-bit i386 PIE**; interpreter `/lib/ld-linux.so.2` named by `file` |
+| Side effects | `NO_BUILD_NO_DOWNLOAD_NO_RUNTIME_CHANGE=PASS`; no daemon started or installed |
+
+`JACK01E0_STATUS=PREFLIGHT_COMPLETE` is a **test execution PASS**, but **JACK availability is BLOCKED** for real client/PCM tests. `ldconfig -p` not listing libjack is not a machine-wide filesystem search, and absence of current processes does not rule out a later/externally provided audio server. Do not claim a runtime JACK test or automatic install.
+
+**i386 distinction:** `mldr32` is an actual constructed ELF 32-bit host executable, distinct from previously confirmed Mach-O FAT `libsystem_kernel.dylib` x86_64+i386. The loader exists as a file but **has not been executed successfully**; CA-12 remains FAIL on guest process RPC `-111`, timeout exit 137. A build artifact is not a working guest loader.
+
+### Next offline gate JACK-01E1
+
+Without `libjack`, prefer a **pure standard-library PCM ring/callback contract model** on the 5700X (no repository or system modifications). Test fixed/preconfigured capacity, stereo planar float32, zero frames, exact input/output sequences, wraparound, overflow atomicity, underrun zero-fill, start/stop and restart, per-cycle `nframes` and frame clock for 44.1/48/96 kHz. Record exact test pass/fail counts and prevent presenting these mock tests as real-time memory-safety or actual JACK execution. **No downloads** and do not touch concurrent Ninja builds.
+
+After that, read-only i386 `file`, `readelf -l` and `ldd` against `mldr32` can establish runtime *dependencies and ELF interpreter presence* but not guest startup. Do not run loader or restart Darling while CA-12 remains blocked. Actual JACK library install or host daemon startup requires separate user authorization.
