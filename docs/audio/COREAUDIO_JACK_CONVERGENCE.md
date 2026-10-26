@@ -314,3 +314,29 @@ The `-Wl,-rpath,` flags are the demonstrable link-time source of absolute host p
 Use each new image's `LC_ID_DYLIB` / `LC_LOAD_DYLIB` values to enumerate candidate files under the configured Darling installation root (often `/usr/local/libexec/darling`, verify locally), and **separately** under `DPREFIX=/home/Deniel/d4rling-prefix-runtime-01`. Both are candidate roots, not a promise that Darling dyld resolves names through both locations. Classify `PRESENT_MACHO`, `PRESENT_OTHER`, `BROKEN_SYMLINK`, `MISSING` per dependency. Do not install/copy files into either location, manipulate symlinks, run the loader or delete any prefix data. Keep CA-12 RPC fault separately blocked.
 
 The documentation branch remains `work/coreaudio-ninja-convergence` targeting `work/core-audio` in draft PR #5; no merge/rebase to `master` is authorized.
+
+
+## 17. CA-11H — Darling host image and prefix inventory (2026-10-26)
+
+**Evidence source:** user-supplied stdout executed on the 5700X / Debian 13 WSL2. The check was read-only; no runtime execution, installation or file modification.
+
+Both candidate roots exist: **host installation** `/usr/local/libexec/darling` and **runtime state prefix** `/home/Deniel/d4rling-prefix-runtime-01`. These locations are *not* proven to be interchangeable guest filesystem roots; absence of a file directly under DPREFIX is not automatically an error.
+
+| Load install name / self path | Host-install candidate | Direct DPREFIX candidate |
+| --- | --- | --- |
+| PulseAudio self `/usr/lib/native/libpulse.dylib` | MISSING (new staged library not installed) | MISSING |
+| PulseAudio dependency `/usr/lib/libSystem.B.dylib` | PRESENT_MACHO | MISSING |
+| CoreAudio self `/System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio` | MISSING (new staged framework image not installed) | MISSING |
+| CoreAudio dependency `/usr/lib/libc++.1.dylib` | PRESENT_MACHO | MISSING |
+| CoreAudio dependency `/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation` | PRESENT_MACHO | MISSING |
+| CoreAudio dependency `/usr/lib/native/libpulse.dylib` | MISSING (staged image available) | MISSING |
+| CoreAudio dependency `/usr/lib/libSystem.B.dylib` | PRESENT_MACHO | MISSING |
+| CoreAudio dependency `/usr/lib/libc++abi.dylib` | PRESENT_MACHO | MISSING |
+
+**Exact assessment:** four of CoreAudio's five direct dependency install names already resolve to physical Mach-O files in the **host installation**; the fifth is newly linked PulseAudio in isolated staging. The PulseAudio image's one direct dependency, libSystem, is already physically installed. Both new binaries themselves remain isolated at `/home/Deniel/d4rling-ca11g-yw99dhbq`.
+
+The local tool reported `PULSE_INVENTORY=PASS`, `CORE_INVENTORY=PASS`, `CA11H_STATUS=INVENTORY_COMPLETE`, `RUNTIME_EXECUTED=NO`, and `INSTALLATION_MODIFIED=NO`.
+
+**Not yet validated:** whether host-installed libraries match the symbols/ABI referenced by isolated new binaries, the precise Darling runtime filesystem mount layering, dyld load behavior, and Logic Studio 8 / JACK. CA-12 still failed RPC -111.
+
+**Next CA-11I:** perform **read-only** symbol-resolution preflight against the host-installed four direct libraries plus the staged new libpulse. Verify each installed candidate's Mach-O x86_64 architecture and its LC_ID_DYLIB against the requested name; enumerate defined global exports and unresolved imports, but do not equate unresolved imports with runtime failures (loader-level, weak or indirect symbol resolution can intervene). Do not copy/install or execute Darling until the independent CA-12 runtime problem is addressed.
