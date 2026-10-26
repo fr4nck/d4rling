@@ -811,3 +811,23 @@ Move to an actual ELF32 Linux process exchanging data with a separate ELF64 Linu
 After ELF32 execution is demonstrated, implement the mixed ELF32/ELF64 memfd+socket test with a fixed-width 64-byte header, strict untrusted header validation, safe lifecycle and no pointer values in the shared ABI. Continue using **only** `/home/Deniel/d4rling-audio/qualif` and no new source/build directories; do not rebuild existing Ninja/i386/Carbon/Audio trees. Defer guest Mach-O IPC until the independent Darling CA-12 runtime gate can be traversed; do not install JACK or its development libraries automatically.
 
 **Verdict:** **JACK-01E8H=PASS on 5700X**; GO to bounded ELF32 runtime feasibility; NO-GO for asserting a working JACK/CoreAudio/Logic integration.
+
+## 40. JACK-01E9 — Linux ELF32 static executable launched on 5700X (2026-10-26)
+
+**Provenance:** user-pasted stdout from Debian 13 WSL2 (`Deniel@5700X`), executing inside the single existing `/home/Deniel/d4rling-audio/qualif` directory. This proof originates from the user's machine and has not been independently rerun via GitHub tools.
+
+| Check | User terminal evidence | Verdict |
+| --- | --- | --- |
+| Compilation and linking | `BUILD_ELF32=PASS`, `clang-19 -m32 -nostdlib -static -no-pie -Wl,-e,_start -x assembler` | PASS |
+| ELF format | `ELF 32-bit LSB executable, Intel i386, statically linked`; `readelf`: `Class ELF32`, `Type EXEC`, `Machine Intel 80386` | PASS |
+| Native WSL2 i386 execution | Program invokes Linux i386 `exit(0)` using `int $0x80`; terminal `EXEC_EXIT=0` | PASS |
+| Final verdict | `JACK01E9_STATUS=PASS_ELF32_NATIVE_EXEC` | PASS |
+| Exclusions | `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED` | NOT EXECUTED |
+
+**Meaning:** The x86_64 Linux WSL2 host can execute a genuine 32-bit Linux ELF program *without i386 libc, dynamic loader or C++ standard-library headers*. This is separate from earlier i386 static/object codegen and independently built Darling `mldr32`. It **does not prove 32-bit C++ library availability, Mach-O guest runtime, or CoreAudio JACK operation**.
+
+**Next gate JACK-01E10:** cross-bitness IPC using an *existing* 64-bit Linux `memfd`/`SCM_RIGHTS` server (JACK-01E8H) and a new **statically linked libc-free ELF32 client** compiled with the already-installed `clang-19 -m32`, operating on the same 64-byte SharedPCM header and 256-frame stereo float32 payload. The ELF32 client must perform Linux i386 socket syscalls, receive a memfd, validate ancillary metadata and header, mmap the shared region, verify ordered 50,000 stereo frames, advance 64-bit counters with acquire/release instructions, acknowledge completion and exit cleanly. Bound both processes via `timeout` and capture separate exit statuses. Before the host run, test the exact source against the known server in an isolated environment and pin the Git blob checksum. This test does not install multilib, JACK or touch Darling.
+
+**Filesystem rule:** only `/home/Deniel/d4rling-audio/qualif`; no new `/home/Deniel/d4rling-*` working directories, no modifications to Ninja's build trees, no restart or installation of any Darling runtime/prefix, no CI (`[skip ci]`).
+
+**Overall status:** JACK-01E9 **PASS_ELF32_NATIVE_EXEC**, JACK-01E8H **PASS_LINUX_MEMFD_FDPASS**, JACK-01E10 **PENDING**; actual Mach-O-to-ELF and JACK audio callback **NO-GO**.
