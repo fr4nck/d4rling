@@ -195,3 +195,29 @@ The huge \`-dylib_file\` map is *not* evidence that 99 dylibs are unconditional 
 Separate CA-12 replay remains **FAIL**: echo command exit 137 after timeout, RPC \`-111\`; no new runtime root cause. Do not alter shellspawn or kill the live server as part of the audio link lot.
 
 **Next CA-11B gate**: print the exact direct Ninja inputs, inspect \`-fuse-ld\` and auxiliary tool paths, check current existing \`libSystem.B.dylib\` candidate format, and identify any link command side effects. Only after this preflight consider a one-shot controlled Mach-O linker probe, with a non-production output name and no downloads.
+
+## 12. CA-11B / CA-11C — First isolated Mach-O dynamic library (2026-10-26)
+
+**Evidence:** exact stdout pasted by the user from the 5700X, Debian 13 / WSL2; GitHub tooling did **not** execute the local link.
+
+### CA-11B — PASS, direct inputs audited
+`ninja -t query src/CoreAudio/libpulse.dylib` identifies **one** object (`pulse.c.o` in Audio) and **one** directly linked Mach-O `libSystem.B.dylib` (already in Carbon); order-only prerequisites include ld64, lipo, libSystem and wrapgen. `ninja -t commands` reports 144 `-dylib_file` mappings. These are linker maps, not 144 proven direct dependencies. Tools: `ld64` from Carbon is an ELF x86_64 host executable (expected); `libSystem.B.dylib` is Mach-O x86_64.
+
+### CA-11C — LINK_PASS, user-executed isolated link
+A single command adapted from Ninja's link line, changing the output path to a distinct temporary directory, using Carbon ld64 and libSystem and redirecting 45 existing mapping paths, **exited 0**:
+
+- Output: `/home/Deniel/d4rling-ca11c-ci_c19yl/libpulse.dylib`
+- `LINK_EXIT=0`
+- `OUTPUT_FORMAT=Mach-O 64-bit x86_64 dynamically linked shared library, flags:<NOUNDEFS|DYLDLINK|TWOLEVEL|NO_REEXPORTED_DYLIBS>`
+- `OUTPUT_BYTES=83196`
+- `SYMBOL__pa_context_new=PASS`, `SYMBOL__pa_stream_write=PASS`, tested with `llvm-nm-19 -g`
+- `CARBON_MAPPINGS_REUSED=45` means 45 mapping arguments were redirected to Carbon candidates; it does **not** prove that ld64 consumed all 45.
+- No file in the original Carbon or Audio build tree was overwritten. The isolated result is **not** installed into Darling.
+
+**Gate outcome: CA-11C = PASS for Mach-O shared-library linking and named-symbol presence only.** Load commands, install name, runtime loader, PulseAudio PCM and JACK are still SKIP. Presence in `llvm-nm -g` alone does not formally establish defined-vs-undefined symbol status until a `--defined-only` check is run.
+
+### Next: isolated CoreAudio framework link
+
+The source audit already established 11 CoreAudio Mach-O objects and four direct library paths: `libc++.1.dylib`, `CoreFoundation`, the just-built `libpulse.dylib`, and `libSystem.B.dylib`. Use the actual unmodified Ninja link command with only these exact direct paths and the validated Carbon `ld64` redirected to existing locations. Keep output isolated outside all build trees and verify Mach-O x86_64 plus defined API exports. Any linker failure is a diagnostic **FAIL/BLOCKED**, never a reason to copy unknown binaries or rebuild thousands of targets automatically.
+
+An entirely separate CA-12 Darling RPC smoke still fails (-111, timed-out exit 137). Do **not** mix runtime shellspawn fixes with CoreAudio linking.
