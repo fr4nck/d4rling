@@ -743,3 +743,29 @@ The next IPC test establishes only a **Linux x86_64 parent/child process-sharing
 **Next on-host JACK-01E7H:** use the already present `/home/Deniel/d4rling-audio/qualif` directory and a user-initiated **5,698-byte** fetch of the *pinned commit* source only if absent. Verify Git blob SHA `a4012803720134254f98ea304588caacb3a8390c`, compile using installed `clang-19` (no install or download except the disclosed source), run under timeout, and record stdout/exit status. Do not overwrite a local source that differs in hash. Repeat the test under sanitizers later only as a separate gate. Next after an on-host pass: actual Linux independent process+fd passing IPC or mixed ELF32/ELF64 test; no more atomic codegen microtests.
 
 **Decision:** cross-target JACK-01E6 CODEGEN_AUDITED **PASS** on user host, JACK-01E7 Linux IPC test **PASS in isolated assistant container**, host JACK-01E7H **PENDING**, runtime JACK/Darling/Logic **NO-GO**.
+
+## 37. JACK-01E7H — 5700X Linux two-process PCM IPC PASS (2026-10-26)
+
+**Evidence provenance:** stdout pasted by the user after running a read/compile/run probe on `Deniel@5700X`, Debian 13 WSL2, with `cd "$HOME/d4rling-audio/qualif"`. The GitHub agent did not execute the command on that host. User shell's starting path `/mnt/c/Users/Ordi` was incidental; `WORKDIR=/home/Deniel/d4rling-audio/qualif` is the actual location.
+
+| Probe checkpoint | Actual user stdout |
+| --- | --- |
+| Source | `SOURCE_FETCH=5698_BYTES`, `SOURCE_HASH=PASS`; checked pinned Git blob `a4012803720134254f98ea304588caacb3a8390c` |
+| C11 native build | `BUILD=PASS` |
+| Shared header | `IPC_HEADER_SIZE=64` |
+| Two-channel count | `IPC_CHANNELS=2` |
+| Process topology | `IPC_PROCESS_COUNT=2` (parent producer + child consumer via `fork`) |
+| Stereo frames sent/received | `IPC_FRAME_COUNT=50000`, `IPC_WRITE_FRAMES=50000`, `IPC_READ_FRAMES=50000` |
+| Child | `IPC_CHILD_STATUS=0` |
+| Verdict | `JACK01E7_STATUS=PASS_IPC_LINUX64_TWO_PROCESSES`, `JACK01E7H_STATUS=PASS` |
+| Unperformed | `MACHO_RUNTIME=NOT_EXECUTED`, `REAL_JACK_TEST=NOT_EXECUTED` |
+
+**Qualified result:** PASS of the isolated C11 **Linux x86_64 parent-child IPC test on the actual 5700X host**. Shared anonymous `mmap` was created before `fork`, then transferred 50,000 ordered float32 stereo frames across two processes using SPSC acquire/release counters, with tested queue overflow/empty-queue preflight. User's exit status is consistent with completion of the `set -euo pipefail` probe and final marker. The later official backend integration remains untouched.
+
+**Limits:** This does not test a separately launched process opening an existing mapping; shared-memory fd transfer (`SCM_RIGHTS`), `memfd_create`, Linux ELF32↔ELF64 runtime sharing, guest Mach-O↔ELF64 IPC, `mldr32`, JACK audio graph, ALSA, Logic Studio 8, realtime deadlines, or the unrelated Darling CA-12 RPC error. Do not advertise those as PASS.
+
+### Next gate JACK-01E8 — independent Linux exec + FD passing
+
+Implement a bounded offline program where a Linux x86_64 producer creates a **memfd** backed 64-byte SharedPCM + 256-frame stereo ring, then **passes the fd over a UNIX-domain socket with `SCM_RIGHTS`** to a child after `exec` of the same test binary (separate program image), which uses `mmap(MAP_SHARED)` and consumes 50,000 ordered frames. Distinguish a socketpair passed across exec from an independently launched listener: only claim the topology actually tested. Bound waits and process lifetime, validate ancillary header/fd/capacity/version, and never create a persistent JACK daemon. Report terminal stdout plus exact test counts.
+
+Keep **all** new local sources, compiled probes and logs under `/home/Deniel/d4rling-audio/qualif` with no new directory. No JACK installation/downloads without user action, no run of Darling/CA-12, no replacing PulseAudio, no Ninja builds, no CI. PR #5 remains draft against `work/core-audio`.
