@@ -285,3 +285,32 @@ Five CoreAudio direct dependency IDs: `/usr/lib/libc++.1.dylib`, `/System/Librar
 The `-Wl,-rpath,` flags are the demonstrable link-time source of absolute host paths in `LC_RPATH`. Mach-O carries one load command per image, whose value has a colon-delimited string: do not claim Darwin interprets each colon segment as a separate independent RPATH. Neither link command was executed in CA-11F. Existing prior images remain untouched.
 
 **Next gate CA-11G:** re-link both images with the single host-specific `-Wl,-rpath,` argument removed, separate outputs outside build trees, re-use only previously verified object/library candidates from Carbon and CA-11C; compare `LC_RPATH` absence, identical `LC_ID_DYLIB` and `LC_LOAD_DYLIB` identities, and 2+6 defined exports. Do not install, change source/CMake, run the broad Ninja dependency graph or retry Darling runtime. Any link failures remain BLOCKED, not a runtime PASS.
+
+
+## 16. CA-11G — Two isolated Mach-O dylibs linked without host RPATH (2026-10-26)
+
+**Source of evidence:** user's actual Debian 13 / WSL2 terminal output on the 5700X. This GitHub documentation update did not rerun the compiler, linker or runtime.
+
+| Gate | PulseAudio | CoreAudio |
+| --- | --- | --- |
+| New isolated linker execution | `PULSE_LINK_EXIT=0` | `CORE_LINK_EXIT=0` |
+| RPATH load commands, old → new | `1 → 0` | `1 → 0` |
+| Install ID unchanged | PASS | PASS |
+| Direct Mach-O dependencies unchanged | PASS | PASS |
+| Defined symbol probes | 2/2 | 6/6 |
+| New file size | 83,196 bytes | 268,316 bytes |
+| Overall local gate | `PULSE_STATUS=PASS` | `CORE_STATUS=PASS` |
+
+- Work directory: `/home/Deniel/d4rling-ca11g-yw99dhbq`
+- Newly generated binaries: `libpulse.dylib`, `CoreAudio`.
+- The exact link commands and diagnostic logs were stored in that work directory. Existing CA-11C/CA-11D binaries and original Carbon/Audio build directories were not replaced.
+- `CA11G_STATUS=PASS`, `DARLING_RUNTIME=NOT_EXECUTED`.
+- File sizes remaining unchanged is not inherently suspicious, given Mach-O alignment/padding. This alone is not a bytewise equivalence check or evidence of runtime behavior.
+
+**Interpretation:** two usable *link-stage candidates*, with no `LC_RPATH` commands and unchanged `LC_ID_DYLIB` / load-dependency names relative to the earlier outputs. **Not qualified:** full `.framework` bundle packaging, runtime dependency presence/resolution, correct CoreAudio HAL semantics, JACK backend, user PCM or Logic Studio 8. The known host-time zero-return stub is unchanged.
+
+### Next CA-11H — runtime-layout inventory, read-only
+
+Use each new image's `LC_ID_DYLIB` / `LC_LOAD_DYLIB` values to enumerate candidate files under the configured Darling installation root (often `/usr/local/libexec/darling`, verify locally), and **separately** under `DPREFIX=/home/Deniel/d4rling-prefix-runtime-01`. Both are candidate roots, not a promise that Darling dyld resolves names through both locations. Classify `PRESENT_MACHO`, `PRESENT_OTHER`, `BROKEN_SYMLINK`, `MISSING` per dependency. Do not install/copy files into either location, manipulate symlinks, run the loader or delete any prefix data. Keep CA-12 RPC fault separately blocked.
+
+The documentation branch remains `work/coreaudio-ninja-convergence` targeting `work/core-audio` in draft PR #5; no merge/rebase to `master` is authorized.
