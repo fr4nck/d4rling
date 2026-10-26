@@ -707,3 +707,25 @@ Create no new directory. Pipe one common **headerless C11 structure definition**
 If Mach-O cross-target codegen is unavailable, report `SKIP_TARGET_MACHO` without overwriting the ELF qualifications. **Object-only** results do not prove runtime cross-process mapping, endian/interoperability on a different CPU, actual permission or pointer handling, signal safety, time synchronization, real JACK, Logic Studio 8 or Darling CA-12. Adopt the IPC schema only after independent review of ring payload layout, shared-memory lifetime, version negotiation, 32/64-bit process interaction and audio callback constraints.
 
 **Decision:** GO for isolated cross-ABI **layout** qualification; NO-GO for claiming an operational 32-bit JACK backend. PR #5 stays draft on `work/coreaudio-ninja-convergence`, `[skip ci]` documentation update only.
+
+## 35. JACK-01E6 — One SharedPCM header compiled for ELF32, ELF64 and Mach-O i386 (2026-10-26)
+
+**Provenance:** exact terminal stdout pasted by the user from the 5700X host (Debian 13 WSL2), with the working directory switched to the sole existing `/home/Deniel/d4rling-audio/qualif`. The following are compiler/object inspection results, **not** runtime IPC results. The GitHub agent did not execute the user-host command.
+
+| Target | Build and object | Undefined `__atomic*` helpers | Observed RMW code | Layout checks |
+| --- | --- | --- | --- | --- |
+| `elf32` (`i386-linux-gnu`, `-march=i686`) | `BUILD_PASS`, ELF32 Intel 80386 | `ATOMIC_HELPER=NO_elf32` | `lock cmpxchg8b` at `write_frames` offset 0x18 | `LAYOUT_PASS=elf32` |
+| `elf64` (`x86_64-linux-gnu`, `-march=x86-64`) | `BUILD_PASS`, ELF64 x86-64 | `ATOMIC_HELPER=NO_elf64` | `lock xaddq` at offset 0x18 | `LAYOUT_PASS=elf64` |
+| `macho32` (`i386-apple-darwin`, `-march=i686`) | `BUILD_PASS`, Mach-O i386 object | `ATOMIC_HELPER=NO_macho32` | `lock cmpxchg8b` at offset 0x18 | `LAYOUT_PASS=macho32` |
+
+**Compile-time contract assertions passed for all three objects**: `sizeof(SharedPCM)==64`, `_Alignof(SharedPCM)==8`, `read_frames` at byte 16, `write_frames` at byte 24, `state` at byte 40, and expected pointer widths for each compilation target. Header schema also contains `magic`, `version`, `flags`, `capacity_frames`, `channels`, `sample_rate`, `format`, and `reserved[5]`. `llvm-nm -u` produced no undefined symbols in this test and the disassembly showed architecture-specific inline atomic RMW instructions.
+
+User printed `JACK01E6_STATUS=CODEGEN_AUDITED`, `SHARED_MEMORY_RUNTIME=NOT_EXECUTED`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`. **Verdict: PASS for cross-target object compilation and static header layout, NOT a shared-memory runtime pass.** Do not claim `mldr32` can load this Mach-O, actual i386 Mach-O linkage, Linux-to-Darwin process interaction, JACK graph operation, or Logic Studio 8.
+
+### Next meaningful gate: JACK-01E7, actual Linux-to-Linux PCM IPC
+
+Do not continue repeating atomic code-generation microtests. Create and run one bounded **two-process** producer/consumer synthetic PCM ring test on native Linux x86_64 with a `MAP_SHARED` mapping, the already-qualified 64-byte `SharedPCM` header, bounded capacity, 50,000 ordered stereo float32 frames, wraparound, under/overrun counters where feasible, guarded startup/shutdown, and a real process exit status. First verify with the native host C compiler; optionally sanitize subsequent runs without modifying the HAL. **Keep every test/source/log/binary inside `/home/Deniel/d4rling-audio/qualif`**, reusing the current directory rather than creating `~/d4rling-*` directories. No additional downloads, JACK packages, JACK server, new Ninja builds, Darling prefixes, or CA-12 changes.
+
+The next IPC test establishes only a **Linux x86_64 parent/child process-sharing result**, not 32/64 process ABI interoperability and not the JACK callback/RT interface. For independent helper processes, fd passing, PCM clock and lifecycle, cross-ABI tests must follow with explicit preconditions and evidence.
+
+**Coordination:** PR #5 remains draft `work/coreaudio-ninja-convergence` → `work/core-audio`; preserve active Ninja work and the existing PulseAudio backend. `[skip ci]` documentation only.
