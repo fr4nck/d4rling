@@ -272,3 +272,16 @@ Five CoreAudio direct dependency IDs: `/usr/lib/libc++.1.dylib`, `/System/Librar
 **Verdict:** `CA11E_STRUCTURE=PASS` (load-command structure and named symbol checks); **packaging portability = NEEDS_ACTION**, **runtime = SKIP**. Do not install either library into the active Darling prefix yet.
 
 **Next CA-11F:** inspect the *exact* `-rpath` linker argument(s) from the saved CA-11D `command.txt` and extracted CA-11C Ninja command; count host path segments, check all install-name dependencies; then formulate a **separate, isolated** one-shot relink omitting host-only RPATH. Preserve original CA-11C/CA-11D artifacts and record both old/new signatures and symbols. No full Ninja graph, installs, runtime restart, or speculative source patches.
+
+## 15. CA-11F — RPATH link-argument audit (2026-10-26)
+
+**Evidence:** exact terminal stdout provided by user, Debian 13 / WSL2, 5700X; read-only and no link performed.
+
+| Image | RPATH linker arguments | Unrecognized RPATH forms | Colon-delimited segments in single argument |
+| --- | ---: | ---: | ---: |
+| PulseAudio | 1 | 0 | 2 (`src/external/libsystem`, `src/external/libmalloc` in Audio build) |
+| CoreAudio | 1 | 0 | 6 (`libcxx`, `corefoundation`, `CoreAudio`, `libcxxabi`, `libsystem`, `libmalloc` within Audio build) |
+
+The `-Wl,-rpath,` flags are the demonstrable link-time source of absolute host paths in `LC_RPATH`. Mach-O carries one load command per image, whose value has a colon-delimited string: do not claim Darwin interprets each colon segment as a separate independent RPATH. Neither link command was executed in CA-11F. Existing prior images remain untouched.
+
+**Next gate CA-11G:** re-link both images with the single host-specific `-Wl,-rpath,` argument removed, separate outputs outside build trees, re-use only previously verified object/library candidates from Carbon and CA-11C; compare `LC_RPATH` absence, identical `LC_ID_DYLIB` and `LC_LOAD_DYLIB` identities, and 2+6 defined exports. Do not install, change source/CMake, run the broad Ninja dependency graph or retry Darling runtime. Any link failures remain BLOCKED, not a runtime PASS.
