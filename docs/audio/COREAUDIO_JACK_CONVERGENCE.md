@@ -638,3 +638,27 @@ After three successful native sanitizer gates, **do not rerun them unnecessarily
 4. Continue independent architecture feasibility analysis for an x86_64 ELF JACK-helper IPC bridge to i386 Mach-O applications. Keep current Ninja builds, CA-12 runtime and CoreAudio/PulseAudio code untouched; no new folders outside the canonical `qualif` directory.
 
 **Verdict:** PASS for JACK-01E5 preflight/error classification, **SKIP** for attempted i386 PCM run. Previously verified native x86_64 JACK-01E2H/01E3/01E4 PASS results remain valid; **real JACK, Mach-O i386 guest and Logic Studio 8 remain unqualified**.
+
+## 32. JACK-01E5B — Freestanding i386 C11 64-bit atomic codegen (2026-10-26)
+
+**Source:** terminal stdout pasted by the user from 5700X / Debian 13 WSL2, existing qualification directory `/home/Deniel/d4rling-audio/qualif/`. No compile or execution on the user host was initiated from the GitHub connector.
+
+| Evidence | Observation | Qualified result |
+| --- | --- | --- |
+| Host toolchain | `clang-19`, `clang++-19`, `gcc`, `g++`, `readelf`, `llvm-nm-19`, `llvm-objdump-19` all present | Tool inventory PASS |
+| i386 C++ stdlib header | `/usr/include/i386-linux-gnu/c++/14/bits/c++config.h` ABSENT; x86_64 counterpart PRESENT; `/usr/include/c++/v1/atomic` ABSENT | C++ i386 toolchain gap remains |
+| `g++-multilib` | `unknown ok not-installed` | No automatic install |
+| Freestanding C object | `clang-19 -m32 -std=c11 -O2 -ffreestanding -nostdinc -fno-stack-protector -x c -c` | `CODEGEN_PASS`, ELF32 Intel 80386 relocatable |
+| Lock-free builtin | `atomic64_lockfree` contains `movl $1,%eax; ret` | **Compile-time declaration true only**; not a runtime or full-operation guarantee |
+| RMW helper | `llvm-nm-19 -u` shows `__atomic_compare_exchange` and `_GLOBAL_OFFSET_TABLE_`; disassembly contains an external `calll` during `atomic64_increment` | 64-bit fetch-add lowering in this compiled configuration **depends on an external libatomic-style compare-exchange helper**; definitely not fully inlined code |
+| Tests executed | `JACK01E5B_STATUS=OBJECT_I386_GENERATED`, `I386_EXECUTED=NO`, `CPP_I386_EXECUTED=NO` | No i386 native PCM, runtime or audio PASS |
+
+**Key interpretation:** Do not convert `__atomic_always_lock_free(8,0)==1` into an assertion that the compiled read-modify-write path contains no library call. The object is unlinked, the existence/behavior of the helper on that host was not checked, and there was no executed i386 atomic code. `_GLOBAL_OFFSET_TABLE_` is expected in position-independent i386 object code, not automatically a missing audio runtime dependency. The helper may itself be lock-free or may take locks; **not determined**. It is unsafe to assume arbitrary helper calls are acceptable on a real-time audio callback.
+
+**External reference:** LLVM's X86 feature table distinguishes `cx8`/`CMPXCHG8B` support for i686 from strict older i386 targets; compiler builtins or a compile-time constant alone cannot substitute for inspecting the actual generated code. The next gate compares explicit target flags rather than changing compiler packages.
+
+### Next gate JACK-01E5C (same canonical directory, no downloads)
+
+Read-only source piped to `clang-19` with `-m32 -march=i686 -std=c11 -ffreestanding -nostdinc -O2` to generate a separate object *within* `~/d4rling-audio/qualif`. Use `file`, `readelf`, `llvm-nm-19 -u`, `llvm-objdump-19 -d` to compare whether the code still calls `__atomic_compare_exchange` versus inlining `lock cmpxchg8b`. Report `INLINE_CMPXCHG8B` or `EXTERNAL_HELPER` only from actual object; no linker or i386 execution. Do not force a CPU ISA in production without checking the guest target CPU and Darling ABI. Regardless of outcome, do not load in-process 64-bit libjack into i386 and keep `CA-12` untouched.
+
+**Verdict:** JACK-01E5B **PASS_OBJECT_CODEGEN**, C++ i386 tests **SKIP_TOOLCHAIN**, lock-free operations **not yet qualified**; JACK real transport and Logic Studio 8 **NO-GO**.
