@@ -390,3 +390,106 @@ The current `src/libelfloader/wrapgen/wrapgen.cpp` generates `extern struct elf_
 ### Next gate CA-11J: import ordinals and reexport diagnosis
 
 Inspect `LC_SYMTAB` nlist64 of staged PulseAudio and CoreAudio, including `n_desc` two-level-library ordinals, weak-import flags, and the `LC_LOAD_DYLIB` / `LC_REEXPORT_DYLIB` ordering. Report imports per **expected provider**, plus special dynamic_lookup / executable cases. This is more meaningful than merging all direct libraries' exports. Read-only, bounded output; no downloads, installs, full Ninja builds, or `darling exec`. Runtime CA-12 remains blocked by RPC -111.
+
+## 20. Field sync JACK-01A: i386-13 and CA-11J (2026-10-26)
+
+**Origin:** terminal stdout pasted by the user from the 5700X; neither the i386 build directory nor the isolated CoreAudio dylibs are accessible through GitHub. These are host-reported artifacts, not remote reproducibility claims.
+
+### i386-13: actual built universal `libsystem_kernel.dylib`
+
+- Build path: `~/d4rling-build-i386/src/external/xnu/darling/src/libsystem_kernel/libsystem_kernel.dylib`.
+- `file` and `llvm-lipo-19 -info`: a **two-architecture FAT Mach-O dylib** with slices **x86_64 and i386**.
+- `llvm-objdump-19 --macho --arch=i386 --private-headers`: **i386 `MH_DYLIB`, 17 load commands, `sizeofcmds=1732`**.
+- Listed i386 dependencies: `/usr/lib/system/libsystem_kernel.dylib` (self ID), `libsystem_c.dylib`, `libcompiler_rt.dylib`, `libdyld.dylib`.
+- Verified by output of `llvm-nm-19 --arch=i386 -g`: `_mach_msg`, `_mach_port_allocate`, `___thread_selfid`, `_sys_thread_selfid`, `_kernelrpc_mach_port_allocate`. Do not confuse `___thread_selfid` with the literal symbol `_thread_selfid`.
+- User-reported `sha256sum`: `430337295ac6cb0167a6e2272c243b00496179b38e0cf51a5cf4bb153fc70586`.
+- **PASS for FAT output, i386 header and listed exports.** **SKIP** for a successful i386 guest launch, syscall contract, `mldr32` runtime or Logic Studio 8.
+
+### CA-11J: exact recorded two-level ordinal grouping
+
+`CA11J_STATUS=ORDINAL_AUDIT_PASS`; 3 undefined externals in PulseAudio, 107 in CoreAudio; zero weak imports in either. These are **Mach-O imports attributed to a library ordinal**, not verified bindings under dyld.
+
+| Image | Ordinal provider | Undefined externals |
+| --- | --- | ---: |
+| PulseAudio | `/usr/lib/libSystem.B.dylib` (LIB_1) | 3 |
+| CoreAudio | `/usr/lib/libc++.1.dylib` (LIB_1) | 25 |
+| CoreAudio | `CoreFoundation.framework/Versions/A/CoreFoundation` (LIB_2) | 8 |
+| CoreAudio | `/usr/lib/native/libpulse.dylib` (LIB_3) | 25 |
+| CoreAudio | `/usr/lib/libSystem.B.dylib` (LIB_4) | 33 |
+| CoreAudio | `/usr/lib/libc++abi.dylib` (LIB_5) | 16 |
+
+PulseAudio's three entries assigned to libSystem are `___cxa_atexit`, `__elfcalls` and `dyld_stub_binder`; CoreAudio's 33 assigned to libSystem include Blocks, Dispatch, `__Unwind_Resume`, `___cxa_atexit` and other runtime support symbols. **Caution:** earlier 33 name-only direct-provider misses aligned with this libSystem ordinal group, but absence of these names in a tiny libSystem umbrella export list is not proof that reexports or custom dyld mechanisms will fail. Investigate bind/reexport/loader semantics before concluding either PASS or FAIL of actual resolution.
+
+Current explicit CA-12 guest smoke remains **FAIL**, `mach_msg_overwrite` / RPC code `-111`, exit `137` on timeout; source root cause unproven. Do not restart the server or edit shellspawn in this JACK lot.
+
+### GitHub coordination preflight
+
+- Verified remote audio branch `work/core-audio` HEAD `e05f18ab851fe676039903c66a26a4c3f137317e`; default branch is `master`, not `main`.
+- At analysis start, `work/coreaudio-ninja-convergence` HEAD `2c24a3735a7647a61e1498489410db5c2ba38fc6`, PR #5 open **draft** targeting `work/core-audio`.
+- Compare at that HEAD: **11 commits ahead, 0 behind, three file paths only**: `docs/audio/COREAUDIO_JACK_CONVERGENCE.md` and two `tests/regressions/coreaudio-wrapgen` Python files. New sync commit here changes **only this existing shared document**.
+- No i386 branch with `i386` in its name surfaced from the GitHub branch-name search; that does **not** imply no i386 work in local build trees or other branches.
+
+## 21. JACK-01B: historical JackRouter / JACK2 / alternative fork study
+
+**Pinned inspected upstream refs:**
+
+- Legacy `jackaudio/jack-router` main `97ce963f7684c33c15132ed0eb7a899654b30a3a`; historical-only, unmaintained per [README](https://github.com/jackaudio/jack-router/blob/main/README.md).
+- `jackaudio/jack2` develop `17959465a722225a36a8b612aed26764036f258e` (official server/client API reference).
+- `thestk/rtaudio` master `06f97b633c06ea747d6478f0e87b6e1178104511`; `mozilla/cubeb-coreaudio-rs` trailblazer `076ecf68dbf20087d2fa8e9210a1965e341f66d0`.
+
+**Source findings:**
+
+- [Legacy `JackRouter.cpp`](https://github.com/jackaudio/jack-router/blob/main/macOS/jackrouter/JackRouter.cpp) implements an **`AudioHardwarePlugIn` factory** for actual macOS HAL (`CoreFoundation`, `IOKit`); `TJackClient.cpp` uses `jack_client_open`, `jack_set_process_callback`, JACK ports and `jack_port_get_buffer` to invoke Mac `AudioDeviceIOProc` callbacks. JACK drives the audio cycle.
+- [Second historical implementation](https://github.com/jackaudio/jack-router/blob/main/macOS/jackrouter2/Source/JackRouterDevice.cpp) uses CoreAudio HAL object/device/stream machinery and a JACK process callback; it uses a try-lock that can drop cycles when contended. It is a **behavioral study reference**, not RT-correct code ready for a Linux Mach-O runtime.
+- [Design note](https://github.com/jackaudio/jack-router/blob/main/macOS/docs/JackRouter-AudioServerPlugin.md) explicitly says old `AudioHardwarePlugIn` no longer works since macOS Catalina and proposes `AudioServerPlugin`: `coreaudiod` subprocess, graph activation, shared memory, semaphores, sockets or RPC, and `jack_cycle_wait` / `jack_cycle_signal`. It is a **design proposal**, not an implemented portable d4rling HAL.
+- [JACK official non-callback API](https://jackaudio.org/api/group__NonCallbackAPI.html) documents `jack_set_process_thread` with `jack_cycle_wait` / `jack_cycle_signal` and strict real-time limits. A one-client simple `jack_set_process_callback` is a lower-risk first proof than reproducing a synchronous multi-client HAL activation graph.
+- [madhatter68/JackRouter](https://github.com/madhatter68/JackRouter): `JackBridge`, MIT license, experimental user-space driver + daemon; README specifies 44.1/48 kHz and independent CoreAudio app callbacks outside the JACK graph.
+- [TreeFallSound/JackRouter](https://github.com/TreeFallSound/JackRouter): MIT-licensed downstream `JackBridge`, **Apple Silicon arm64/macOS**, `AudioServerPlugIn` + Linux-style JACK client daemon and POSIX shared-memory ring (clock-domain guidance in `docs/architecture.md`). Valuable **separation and clock/latency** reference, but no x86_64/i386 or Darling compatibility shown; do not install or execute their macOS scripts.
+- [RtAudio](https://github.com/thestk/rtaudio) includes JACK + ALSA + PulseAudio backends (MIT license) but is a generic cross-platform API rather than an Apple HAL replacement. [cubeb-coreaudio-rs](https://github.com/mozilla/cubeb-coreaudio-rs) is macOS-specific with an ISC-style permission grant; useful for state/format tests but not a ready Linux JACK backend.
+
+**Licensing check is per file, not just repo badge:** legacy `JackRouter.cpp` declares GPL **v2 or later**; `TJackClient.cpp` declares GNU Library GPL **v2 or later**; `jackrouter2` files carry original Apple sample-specific notices and conditions; `JackLibAPI.cpp` in JACK2 declares LGPL **v2.1 or later** even though JACK2 root `COPYING` reproduces GPL v2. Darling CoreAudio files declare GPL **v3 or later**. No third-party code has been imported. Review each prospective copied component individually before licensing decision; prefer fresh implementation using publicly documented APIs.
+
+## 22. JACK-01C: source-grounded d4rling HAL gap matrix
+
+| Contract | Current source on `work/core-audio` | Verified implementation state | JACK integration implication |
+| --- | --- | --- | --- |
+| Mach-O CoreAudio API exports | `src/CoreAudio/CoreAudio/AudioHardware.cpp` | `AudioObjectGetPropertyData*`, `AudioDeviceCreateIOProcID`, `AudioDeviceStart/Stop` exported; CA-11D/11G prove link/defined exports, **not API runtime** | Reuse one public HAL surface; do not ship a second Mac plug-in API |
+| AudioObject registry and device enumeration | `AudioHardware.cpp::initObjects` | PulseAudio system, output and input instantiated; **duplicate map key** `kAudioObjectSystemObject+1` for extra event output intended at `+3`, so extra device insert is discarded | Add JACK device/backend only through existing registry after explicit selection; fix ID contract separately with tests |
+| Device properties and PCM format | `AudioHardwareImpl.cpp` | **Demonstrated source bug**: `mBytesPerFrame` multiplies by `mSampleRate`; expected bytes per frame depend on channels and bits, not sample frequency | Correct with targeted characterization before linking JACK; validate interleaved/non-interleaved stereo and exact bytes |
+| IOProc lifecycle | `AudioHardwareImpl.{cpp,h}` | `m_proc`/`m_streams`, create/start/stop; stop accesses `m_streams` without the start-side lock; lifecycle/reentrancy not qualified | Require callback-safe ownership, bounded stop and no RT lock inversion |
+| Backend abstraction | `AudioHardwareStream.h`, `pulse/AudioHardwareStreamPA.h` | Polymorphic `AudioHardwareStream`; PulseAudio-specific subclass contains `AudioDeviceIOProc`, stream and lock | Natural insertion for independent `AudioHardwareImplJACK`/`AudioHardwareStreamJACK` or transport interface, not wholesale HAL replacement |
+| Output callback & copying | `pulse/AudioHardwareStreamPAOutput.cpp` | Uses `pa_stream_begin_write`, calls guest IOProc then `pa_stream_write`; error/size/callback audit not completed | JACK needs planar `float` port buffers, bounded frames, no malloc or mutex in callback; do not transplant PA buffer assumptions |
+| Input and duplex | `pulse/AudioHardwareImplPAInput.cpp`, `AudioToolbox/AudioQueue.cpp` | PulseAudio input class exists; `AudioQueueNewInput` explicitly returns `unimpErr` | Recording and duplex integration/AudioToolbox gaps remain independent acceptance gates |
+| Time and latency | `HostTime.mm`, `AudioHardwareImpl.cpp` | `AudioGetCurrentHostTime()` exported but **stub returns zero**; time getters return zero/placeholder | JACK frame_time, monotonic host ticks, buffer scheduling, latency/safety offset must be reconciled before a valid DAW claim |
+| Build/ELF wrapper | `cmake/wrap_elf.cmake`, `src/libelfloader/wrapgen/wrapgen.cpp` | 64-bit C function wrapper exists (`_elfcalls`/ELF dlopen+dlsym); header says **TODO: wrapgen32**, not present as a qualified i386 JACK path | 64-bit wrapper experiment possible; do not claim i386 JACK or callback reentry support |
+| Loader and 32-bit launch | `src/startup/mldr/mldr.c`, `elfcalls/elfcalls.c` | FAT/thin dispatch and 32-bit `reexec32` path in source; native ELF calls supplied to guest; **CA-12 guest runtime FAIL** | Must qualify host JACK thread invoking guest Mach-O callback, TLS/register/stack lifetime, and i386 mode separately |
+| CoreMIDI / ALSA | Existing `work/core-audio` and parallel CoreMIDI work | Independent MIDI path; no JACK PCM integration proven | Preserve ALSA sequencer routing; do not couple JACK PCM success with MIDI tests |
+
+## 23. JACK-01D: candidate architecture tradeoffs and gate decision
+
+| Option | Advantages | Blocking costs | Status |
+| --- | --- | --- | --- |
+| A. Rehost historic `AudioHardwarePlugIn`/`AudioServerPlugIn` | Historic parity and HAL device behavior reference | Duplicates d4rling HAL, depends on macOS `coreaudiod`/IOKit/plugin environment, licensing and obsolete APIs | **NO-GO for direct port** |
+| B. Native JACK backend under existing d4rling HAL | One CoreAudio API, reuse device/stream lifecycle, easiest to compare with existing PulseAudio | In-process Mach-O → ELF JACK symbols and Linux JACK RT callback → Mach-O IOProc; `wrapgen32` absent for i386; runtime CA-12 FAIL | **Preferred design, GO UNDER CONDITIONS** |
+| C. RtAudio/cubeb mediation | Generic API / existing audio state-management patterns | Extra indirection; still requires HAL contracts and cross-ABI callbacks; cubeb is macOS-specific | **Reference only** |
+| B2. Native Linux ELF JACK **helper process** under the same d4rling HAL | One HAL; 64-bit ELF daemon can serve i386 clients via versioned shared-memory + control IPC, avoiding in-process 32-bit libjack | Explicit ring-buffer latency, xrun, clock drift, crash/reconnect, serialization, security, IPC lifecycle required | **Fallback/possible primary for i386, research gate** |
+
+**Architecture choice:** keep a single Mach-O CoreAudio API and a backend-neutral PCM stream contract. Retain the working PulseAudio backend. For the first safe JACK feasibility gate, test a **Linux-side JACK client** separately, then decide whether a direct 64-bit wrapper can register a callback safely. If not, use a host ELF helper and shared memory without trying to load 64-bit libjack into a 32-bit guest. No automatic network fetch or runtime installation.
+
+**Target invariants (not yet implemented):** JACK graph controls `nframes`/sample rate; default playback must emit silence on underrun or stopped stream; no allocation, logging, I/O, blocking mutex, dynamic library loading, teardown or guest RPC inside the JACK process callback; preallocate all buffers; explicit state transitions; no callbacks after stop/free; planar/interleaved mapping specified; independent input/output streams; counters for xruns, overrun, underrun, time drift; all sample time and host time valid and monotonic; no implicit promised zero-latency; keep PulseAudio as fallback.
+
+**Mach-O / ELF mechanism evidence:** `wrapgen.cpp` emits `extern struct elf_calls* _elfcalls` and ELF symbol resolvers; `elfcalls.c` provides host `dlopen_fatal` and `dlsym_fatal` plus host-thread APIs. This provides a plausible *calling direction Mach-O → ELF*, but reverse reentry on arbitrary JACK RT threads and bridge lifecycle are **not qualified**. A 32-bit application cannot call a 64-bit in-process JACK shared object; requiring a 32-bit wrapper/runtime or out-of-process transport is not optional.
+
+## 24. JACK-01E / JACK-01F: prototype criteria and convergence
+
+**JACK-01E actual PCM prototype: SKIP (not safe to assert a real JACK buffer handoff).** With CA-12 failing and no local terminal exposed to this GitHub-only analysis, do not create an untested production HAL patch or claim JACK runtime PASS. Prepare bounded gates:
+
+1. On the 5700X *read-only only*, inspect available `libjack.so.0`, `jackd`, `pw-jack`, `pkg-config`, architecture (`file`/`readelf`), and active user audio sockets. No downloads/install/start/stop daemon.
+2. Mock lifecycle and buffer conversions **outside** the existing build trees: 0, 1, 64, 128, 1024 frames; mono/stereo, 44.1/48/96 kHz, planar float32/interleaved; callback stop/restart; zero-fill underrun; bounded ring; sample-time monotonicity. Tests must be genuinely run before PASS.
+3. Once CA-12 guest runtime is independently healthy, qualify a minimal Mach-O guest to host libjack registration in an isolated prefix; verify Linux → guest callback reentry, thread-specific Darling setup and teardown with no audio hardware dependence. For i386, verify the separate bridge path or stop.
+4. Only then route a known synthetic buffer through a JACK dummy server/port and read it back, quantify samples, xrun and latency; preserve PulseAudio fallback. No real user audio or Logic tests before loader/ABI gate.
+5. Phase later: actual JACK2 or PipeWire-JACK routing and ALSA, CoreAudio AudioUnit/AudioToolbox, MIDI synchronization and Logic Studio 8 guest. Each remains **SKIP** now.
+
+**JACK-01F coordination:** This source comparison and stage plan are published only in the shared document on PR #5, with no source import. Ownership: Ninja retains i386, CA-12 and current builds; JACK branch may prepare isolated tests without modifying Ninja-owned source files, and must requalify/coordinate before any future merge.
+
+**Overall verdict: GO SOUS RÉSERVES for JACK architecture research and isolated offline tests; NO-GO for an installed JACK backend, claimed PCM playback, i386 JACK runtime or Logic Studio 8.**
