@@ -174,3 +174,24 @@ An earlier local `shellspawn.c` excerpt has `close(shellfd[0])` inside a loop ov
 1. **Audio CA-11** (read-only initial gate): inspect wrapper dynamic link command and enumerate direct/implicit tool/library artifacts from Carbon and Audio, checking compatible Mach-O or ELF formats and exact target paths. Do not unconditionally trigger the 2,590-action Ninja graph or copy the 46 reusable files.
 2. **Runtime CA-12R** (independent): capture Darling process list, `DPREFIX` effective path, guest binary existence and non-destructive logs. Do not run `killall`, `rm -rf`, reinstall or modify live prefixes while testing the audio link.
 3. **JACK N3**: isolate backend design and mock RT callback/lifecycle tests. JACK remains HYPOTHESIS.
+
+
+## 11. CA-11 exact wrapper link preflight (2026-10-26)
+
+Evidence origin: another user's terminal report from Debian 13 / WSL2 on 5700X; **read-only inspection**, no dynamic link executed.
+
+| Check | Actual observation |
+| --- | --- |
+| \`ninja -t commands src/CoreAudio/libpulse.dylib\` | One shared-library link command identified |
+| Command SHA-256 | \`c65d3d5e2df45afaa7d3bc2c31377d72e49bf3cd860efe0e623fc55fc8eea3a9\` |
+| Wrapper Mach-O object | 1/1 exists in Audio tree |
+| "Direct libs" from *heuristic token scanner* | 2 paths: 1 is a Carbon build candidate; **the other is the output \`src/CoreAudio/libpulse.dylib\` itself, which must not count as a missing input** |
+| \`-Wl,-dylib_file\` target paths | 144 supplied; 45 exist in Carbon, 99 absent from both trees |
+| Darling \`ld64\` | Missing in Audio tree; present in Carbon tree as **Linux x86_64 ELF host executable**, as expected |
+| Actual \`libpulse.dylib\` | NOT LINKED; no PASS claim |
+
+The huge \`-dylib_file\` map is *not* evidence that 99 dylibs are unconditional link-time inputs. First establish the exact direct Ninja target inputs (\`ninja -t query\`) and which mappings the link actually consumes. **Do not copy 45 Carbon artifacts, start a full Ninja dependency tree, or interpret \`-o\` output as an input.** Carbon configuration has \`COMPONENTS=core\` and Clang-19 explicit paths, whereas Audio has \`COMPONENTS=gui\` and generic Clang paths. Confirm tool compatibility before a single targeted link in a separate output path.
+
+Separate CA-12 replay remains **FAIL**: echo command exit 137 after timeout, RPC \`-111\`; no new runtime root cause. Do not alter shellspawn or kill the live server as part of the audio link lot.
+
+**Next CA-11B gate**: print the exact direct Ninja inputs, inspect \`-fuse-ld\` and auxiliary tool paths, check current existing \`libSystem.B.dylib\` candidate format, and identify any link command side effects. Only after this preflight consider a one-shot controlled Mach-O linker probe, with a non-production output name and no downloads.
