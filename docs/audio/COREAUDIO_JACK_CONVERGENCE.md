@@ -363,3 +363,30 @@ The local tool reported `PULSE_INVENTORY=PASS`, `CORE_INVENTORY=PASS`, `CA11H_ST
 ### Next CA-11I-C (strict read-only, no installs)
 
 Accept thin and FAT binaries with a bounds-checked x86_64 Mach-O dylib slice, inspect its ID_DYLIB and global symbols. For CoreFoundation FAT, use a temporary extracted thin slice for llvm-nm-19; ensure only the disposable file is created and cleaned up, never the installed library. Compare imports against directly declared library exports, but treat misses as unresolved **static preflight observations**, not proof of failure under Darling dyld. CA-12 RPC -111 remains independently blocked.
+
+## 19. CA-11I-C — FAT-aware symbol inventory (2026-10-26)
+
+**Evidence origin:** 5700X / Debian 13 WSL2 stdout supplied by the user. Read-only host audit; temporary x86_64 CoreFoundation slice automatically cleaned. No test of the Darling runtime or loader.
+
+| Direct provider candidate | Format | ID match | Global defined symbols |
+| --- | --- | --- | ---: |
+| `/usr/lib/libSystem.B.dylib` | THIN | PASS | 46 |
+| `/usr/lib/libc++.1.dylib` | THIN | PASS | 1,837 |
+| `/usr/lib/libc++abi.dylib` | THIN | PASS | 365 |
+| `/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation` | FAT x86_64 | PASS | 2,251 |
+| staged `/usr/lib/native/libpulse.dylib` | THIN | PASS | 378 |
+
+`ID_MISMATCHES=0`, `CA11IC_STATUS=PASS`, `TEMPORARY_SLICE=AUTO_CLEANUP`, `DARLING_RUNTIME=NOT_EXECUTED`.
+
+**Preliminary name-only undefined-symbol comparison** (not a real Darwin two-level lookup or dyld runtime test):
+- PulseAudio: 3 imports; 0 matched among *direct* libSystem global defined exports; pending `___cxa_atexit`, `__elfcalls`, `dyld_stub_binder`.
+- CoreAudio: 107 imports; 74 matched among the union of four installed direct providers plus staged PulseAudio; 33 pending. Examples: Blocks (`__Block_copy`, `__Block_release`, `__NSConcrete*`), dispatch (`_dispatch_async`, `_dispatch_once`, `_dispatch_source_*`), runtime C/C++ (`__Unwind_Resume`, `___cxa_atexit`, `___stack_chk_*`, `___stderrp`).
+- Missing from this *direct name-only* lookup does **not** establish unresolved dyld imports. `libSystem` may be an umbrella with dependencies/reexports, and special Mach-O ordinals can designate dyld or dynamic lookup. Do not report 33 broken ABI symbols.
+
+### Source-grounded wrapper insight
+
+The current `src/libelfloader/wrapgen/wrapgen.cpp` generates `extern struct elf_calls* _elfcalls;` and dynamically resolves ELF symbols through `_elfcalls->dlsym_fatal`, so the `__elfcalls` Mach-O import in `libpulse.dylib` is **expected from the wrapper architecture**. Its provider during actual Darling loading remains to be qualified; a standard dylib export census alone cannot validate the custom loader contract.
+
+### Next gate CA-11J: import ordinals and reexport diagnosis
+
+Inspect `LC_SYMTAB` nlist64 of staged PulseAudio and CoreAudio, including `n_desc` two-level-library ordinals, weak-import flags, and the `LC_LOAD_DYLIB` / `LC_REEXPORT_DYLIB` ordering. Report imports per **expected provider**, plus special dynamic_lookup / executable cases. This is more meaningful than merging all direct libraries' exports. Read-only, bounded output; no downloads, installs, full Ninja builds, or `darling exec`. Runtime CA-12 remains blocked by RPC -111.
