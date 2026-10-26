@@ -253,3 +253,22 @@ Read-only inspect *both* actual images with `file`, `llvm-objdump-19 --macho --d
 ### Convergence decision
 
 **Build track:** first CoreAudio Mach-O link + six exports PASS, a significant and reproducible linker milestone. **Runtime/JACK track:** SKIP pending loader and backend; do not claim Logic Studio 8 or JACK support. Preserve PulseAudio, ALSA and Carbon work unchanged. The PR remains a draft, targeting `work/core-audio` rather than default `master`.
+
+## 14. CA-11E — Mach-O load-command and dependency audit (2026-10-26)
+
+**Provenance:** stdout supplied by the user from the 5700X (Debian 13 / WSL2). GitHub tools did not inspect the binaries directly. Read-only command; **no guest runtime execution**.
+
+| Binary | Size | Mach-O load cmds | LC_ID_DYLIB | LC_LOAD_DYLIB | LC_RPATH | Defined exports | nm undefined-symbol lines |
+| --- | ---: | ---: | --- | ---: | ---: | ---: | ---: |
+| `libpulse.dylib` | 83,196 | 15 | `/usr/lib/native/libpulse.dylib` | 1 (`/usr/lib/libSystem.B.dylib`) | 1 | 2/2 | 3 |
+| CoreAudio | 268,316 | 19 | `/System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio` | 5 | 1 | 6/6 | 107 |
+
+Five CoreAudio direct dependency IDs: `/usr/lib/libc++.1.dylib`, `/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation`, `/usr/lib/native/libpulse.dylib`, `/usr/lib/libSystem.B.dylib`, and `/usr/lib/libc++abi.dylib`.
+
+**Portability concern:** both images embed a single `LC_RPATH` string containing absolute host build paths. The scanner reported `HOST_PATH_LEAKS=1` per file because it counted one command, **not** each colon-separated directory. PulseAudio lists two build directories, CoreAudio lists six. These paths are host-specific and need justification/removal before distribution; they are **not**, by themselves, proof that the linker or dyld failed. Mach-O `LC_RPATH` is a load-command path, not automatically identical to Linux's colon-separated `LD_LIBRARY_PATH` semantics.
+
+`llvm-nm-19 --undefined-only` reported 3 and 107 *lines*, respectively, including expected dependencies (`__elfcalls` and CoreFoundation/Blocks/C++ helpers); unresolved-import existence is not equivalent to unresolved runtime failure. Real runtime dependency resolution remains **SKIP**, CA-12 RPC server still **FAIL**. No conclusion on Logic Studio 8 or JACK.
+
+**Verdict:** `CA11E_STRUCTURE=PASS` (load-command structure and named symbol checks); **packaging portability = NEEDS_ACTION**, **runtime = SKIP**. Do not install either library into the active Darling prefix yet.
+
+**Next CA-11F:** inspect the *exact* `-rpath` linker argument(s) from the saved CA-11D `command.txt` and extracted CA-11C Ninja command; count host path segments, check all install-name dependencies; then formulate a **separate, isolated** one-shot relink omitting host-only RPATH. Preserve original CA-11C/CA-11D artifacts and record both old/new signatures and symbols. No full Ninja graph, installs, runtime restart, or speculative source patches.
