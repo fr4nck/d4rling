@@ -601,3 +601,21 @@ Without Git checkout or package installation: disclose an **exact 6,923-byte rea
 **Next lot JACK-01E4:** optional `-fsanitize=thread` concurrency diagnosis, with the **same already downloaded source** and output files only under `/home/Deniel/d4rling-audio/qualif`. First qualify whether the existing toolchain's TSan runtime works on WSL2, then run the 50,000-frame SPSC test. If toolchain compilation or sanitizer runtime is unsupported, report `SKIP_TOOLCHAIN`/`INCONCLUSIVE`, not a code FAIL. TSan must not be combined with ASan in the same executable; no installation, downloads, no `darling exec`, no JACK daemon start, no alteration of the existing PulseAudio/i386/Carbon sources.
 
 **Verdict:** **PASS for JACK-01E3 instrumented isolated native model**. **NO-GO for functional JACK HAL or any Logic Studio 8 claim**.
+
+## 30. JACK-01E4 — ThreadSanitizer PASS on 5700X (2026-10-26)
+
+**Evidence:** user-pasted terminal output from the existing Debian 13 WSL2 host `5700X`. This result was not executed remotely by the GitHub assistant.
+
+- Working directory **unchanged**: `/home/Deniel/d4rling-audio/qualif`. Reused existing `pcm_spsc_native_contract.cpp`, pinned Git blob SHA `ee719b7514743081c04d255f3ae66cf9f1c54fe5`; `SOURCE_HASH=PASS`.
+- C++17 compilation with the **existing** `clang++-19` and `-fsanitize=thread -O1 -g -pthread -fno-omit-frame-pointer -Wall -Wextra -Werror` succeeded (`TSAN_BUILD=PASS`).
+- **11/11 PASS** including the **50,000-frame one-producer/one-consumer stress**. Runtime exited with `TEST_EXIT=0`; the user log did not contain any ThreadSanitizer warning or fatal error.
+- Exact reported verdict: `JACK01E4_STATUS=PASS_TSAN`; `REAL_JACK_TEST=NOT_EXECUTED`. Log path: `/home/Deniel/d4rling-audio/qualif/tsan_test.log`.
+- Prior on-host gates remain independent: JACK-01E1 Python 12/12, JACK-01E2H C++ native 11/11, JACK-01E3 ASan+UBSan 11/11.
+
+**Verdict:** **PASS for ThreadSanitizer-instrumented, exercised SPSC model tests on the 5700X**. This is not proof of race freedom in arbitrary interleavings; **stop and restart were tested only with producer and consumer quiescent**, not with concurrent shutdown. The loop's `yield()` occurs only in the test driver, not in a JACK callback. No real-time deadlines, Mach-O/ELF callback crossing, JACK graph or Logic Studio 8 were exercised; CA-12 RPC `-111` remains independently blocked.
+
+### Next gate JACK-01E5: i386 feasibility without changing directory structure
+
+After three successful native sanitizer gates, **do not rerun them unnecessarily**. Use only the existing `/home/Deniel/d4rling-audio/qualif` to attempt a separate *32-bit Linux* build of the already pinned C++17 test (`clang++-19 -m32`) using already installed headers/libraries. If multilib development packages or the dynamic loader are missing, report **SKIP_TOOLCHAIN** or **INCONCLUSIVE_RUNTIME**, not an audio-code FAIL, and **do not install packages automatically**. If successful, verify the executable is i386 ELF, run the original 11 tests, and examine `std::atomic<uint64_t>` lock-free guarantees on that platform before placing any such counters inside a prospective guest callback. A 32-bit Linux ELF test is not a substitute for a Mach-O i386/dyld/`mldr32` smoke test; direct Mach-O-to-ELF JACK callbacks and CA-12 remain unqualified.
+
+**Folders and branch coordination:** no temporary `~/d4rling-*` directories, no changes to the existing Ninja build trees, Carbon/UI, audio/PulseAudio or i386 source. PR #5 stays draft, no CI and no merge. No downloads or new JACK daemon.
