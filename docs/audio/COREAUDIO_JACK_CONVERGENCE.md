@@ -619,3 +619,22 @@ Without Git checkout or package installation: disclose an **exact 6,923-byte rea
 After three successful native sanitizer gates, **do not rerun them unnecessarily**. Use only the existing `/home/Deniel/d4rling-audio/qualif` to attempt a separate *32-bit Linux* build of the already pinned C++17 test (`clang++-19 -m32`) using already installed headers/libraries. If multilib development packages or the dynamic loader are missing, report **SKIP_TOOLCHAIN** or **INCONCLUSIVE_RUNTIME**, not an audio-code FAIL, and **do not install packages automatically**. If successful, verify the executable is i386 ELF, run the original 11 tests, and examine `std::atomic<uint64_t>` lock-free guarantees on that platform before placing any such counters inside a prospective guest callback. A 32-bit Linux ELF test is not a substitute for a Mach-O i386/dyld/`mldr32` smoke test; direct Mach-O-to-ELF JACK callbacks and CA-12 remain unqualified.
 
 **Folders and branch coordination:** no temporary `~/d4rling-*` directories, no changes to the existing Ninja build trees, Carbon/UI, audio/PulseAudio or i386 source. PR #5 stays draft, no CI and no merge. No downloads or new JACK daemon.
+
+## 31. JACK-01E5 — i386 C++ toolchain preflight SKIP (2026-10-26)
+
+**Evidence:** output supplied from `Deniel@5700X` Debian 13 WSL2, command executed within the single canonical directory `/home/Deniel/d4rling-audio/qualif`. The GitHub agent did not execute this host command.
+
+- `SOURCE_HASH=PASS`: C++ SPSC source unmodified, pinned Git blob `ee719b7514743081c04d255f3ae66cf9f1c54fe5`.
+- `clang++-19 -m32 -std=c++17` failed during **the preliminary atomic-header test**, before attempting to compile or run the native i386 PCM prototype.
+- Exact diagnostic: `fatal error: 'bits/c++config.h' file not found`, included from `/usr/lib/gcc/x86_64-linux-gnu/14/../../../../include/c++/14/bits/version.h`, via `<atomic>`. This indicates that the compiler's selected **32-bit libstdc++ target headers/configuration are unavailable through that include search path**. This does not prove 32-bit code generation, ELF loader, C compiler, or Darling i386 are nonfunctional.
+- Printed verdict: **`JACK01E5_STATUS=SKIP_I386_TOOLCHAIN`**. No i386 atomic `is_lock_free()` outputs, no i386 PCM binary, no 11/11 i386 model tests, no JACK runtime. Do **not** count this as an audio source regression.
+- Distinguish earlier **PASS** of built `mldr32` ELF i386 and Mach-O FAT `libsystem_kernel.dylib` i386 slice (I386-13) from this C++ `<atomic>` dependency gap. Those are independent qualifications.
+
+### Next safe gate JACK-01E5B — targeted toolchain diagnosis
+
+1. Read-only inspect installed `clang-19`, C/C++ compilers, target-specific `bits/c++config.h`, `libstdc++` development packages (e.g. 32-bit/multilib) and relevant headers; **do not substitute x86_64 `bits/c++config.h` into the i386 build**, as that could mask ABI incompatibility.
+2. If helpful, compile a single freestanding **C11, headerless** ELF i386 atomic *object* using existing `clang-19` (`-m32 -ffreestanding -nostdinc -c`) in `/home/Deniel/d4rling-audio/qualif`. Record `readelf -h`, `llvm-nm-19 -u`, and generated code/lock-free declaration. Such an object-only test is **not** a linked or executed i386 atomic test and must not be represented as one.
+3. Only if a usable 32-bit C++ stdlib and loader are already present, repeat the previously blocked i386 C++ tests. Otherwise report and retain SKIP; do not download or install dependencies without separate user authorization.
+4. Continue independent architecture feasibility analysis for an x86_64 ELF JACK-helper IPC bridge to i386 Mach-O applications. Keep current Ninja builds, CA-12 runtime and CoreAudio/PulseAudio code untouched; no new folders outside the canonical `qualif` directory.
+
+**Verdict:** PASS for JACK-01E5 preflight/error classification, **SKIP** for attempted i386 PCM run. Previously verified native x86_64 JACK-01E2H/01E3/01E4 PASS results remain valid; **real JACK, Mach-O i386 guest and Logic Studio 8 remain unqualified**.
