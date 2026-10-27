@@ -988,3 +988,32 @@ Exactly **one matching build-tree candidate** was found by the user script's bas
 3. Keep CA-12 RPC/dserver `-111` separate. No install/copy into `/opt`, no rebuild of active Ninja trees, no Darling execution, no JACK install/start, no CI; only existing qualif directory for any logs.
 
 **State:** `JACK-01E11J=PASS_INVENTORY`, `FAT_LIBSYSTEM_KERNEL_I386=YES`, `INSTALLED_SYSTEM_I386=NO (three inspected dylibs)`, `GUEST_DYLIB_COHERENCE=BLOCKED`, `JACK_REAL=NOT_EXECUTED`; PR #5 remains draft. Candidate Mach-O i386 object `JACK-01E11H=PASS_BUILD`, but link and runtime unresolved.
+
+## 47. JACK-01E11K — i386 `libsystem_kernel` defines all six required guest socket/mapping functions (2026-10-27)
+
+**Provenance:** Actual `Deniel@5700X` Debian 13 WSL2 stdout supplied by user, from `/home/Deniel/d4rling-audio/qualif`. No operations were executed on the user's WSL2 host by the GitHub agent. All host inspection was read-only.
+
+**Input binary:** `/home/Deniel/d4rling-core/d4rling-build-i386/src/external/xnu/darling/src/libsystem_kernel/libsystem_kernel.dylib`. `file -L` identified a two-architecture universal Mach-O shared library (`x86_64` and `i386`), `llvm-lipo-19 -archs` printed `ARCHS=x86_64 i386`; final `I386_SLICE=PASS`.
+
+**Guest i386 defined symbols**, obtained by `llvm-nm-19 --arch=i386 -g --defined-only`: `NM_I386=PASS`, with **all six** checks positive:
+
+| Symbol required by JACK-01E11H guest object | Actual audit |
+| --- | --- |
+| `_socket` | `KERNEL_EXPORT=YES:_socket` |
+| `_connect` | `KERNEL_EXPORT=YES:_connect` |
+| `_recvmsg` | `KERNEL_EXPORT=YES:_recvmsg` |
+| `_mmap` | `KERNEL_EXPORT=YES:_mmap` |
+| `_munmap` | `KERNEL_EXPORT=YES:_munmap` |
+| `_close` | `KERNEL_EXPORT=YES:_close` |
+
+**Interpretation:** The i386 slice contains the six required **globally defined symbols**. This reconciles the six undefined Mach-O i386 object imports with an actual matching-architecture *build artifact*. It is **NOT yet** proof of dyld export-trie visibility, successful Mach-O linker resolution, availability in the installed guest runtime, nor execution inside Darling. The installed `/opt/d4rling-qt-i386` prefix's `libSystem.B.dylib`, `libsystem_kernel.dylib` and `libsystem_c.dylib` were separately shown thin x86_64 only by JACK-01E11J.
+
+**Ninja manifest inspection:** The user's `awk` stopped after the first 12 `build` lines containing the strings `libSystem.B.dylib` or `libsystem_c.dylib` in *any* position. It printed one direct `C_SHARED_LIBRARY_LINKER__system_c_Debug` rule for `src/external/libc/libsystem_c.dylib`, plus multiple **consumer/dependency rules** referring to `libSystem.B.dylib` or `libsystem_c.dylib`. These 12 lines **do not establish whether** the defining `build src/external/libsystem/libSystem.B.dylib: ...` rule exists or whether either output is buildable under current flags. Nor do they demonstrate that any of the two missing binaries actually exists on disk. User terminal ended `JACK01E11K_STATUS=STATIC_AUDIT_COMPLETE`, `NINJA_EXECUTED=NO`, `BUILD_FILES_MODIFIED=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`.
+
+### Next safe gate JACK-01E11L — precise target availability, *no build*
+
+From `/home/Deniel/d4rling-audio/qualif`, read only `/home/Deniel/d4rling-core/d4rling-build-i386/CMakeCache.txt` and `build.ninja`. Query **exact output rules** for `src/external/libsystem/libSystem.B.dylib` and `src/external/libc/libsystem_c.dylib`, clearly distinguishing target definitions (`^build <output>:`) from other rules that merely mention those paths as dependencies. Also check on-disk existence and file formats for those exact two target paths, and relevant `BUILD_TARGET_32BIT`, `BUILD_TARGET_64BIT`, `TARGET_i386` cache values. Do not make false claims from `grep`/`awk` first-12 truncation; use `RULE=NOT_FOUND` or `FILE=ABSENT` only for the specified paths, not the entire repository.
+
+**Next decision:** If the umbrella and libc Mach-O i386 outputs are absent but their build rules exist, coordinate a future **targeted, safely isolated** build with the concurrent Ninja owner; do not start it from this lot. If build rules are missing, first inspect CMake config. Do **not** copy the FAT kernel into `/opt`, restart guest prefixes, run Ninja, modify existing build trees, install packages, start JACK or execute guest Mach-O. CA-12 dserver RPC `-111` remains a separate runtime blocker.
+
+**Verdict:** `JACK-01E11K=PASS_6_OF_6_DEFINED_I386_KERNEL_SYMBOLS` (host evidence); `LIBSYSTEM_C_TARGET_RULE=OBSERVED`, `LIBSYSTEM_B_TARGET_RULE=UNRESOLVED`, `GUEST_DYNAMIC_LINK=NOT_EXECUTED`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`. Draft PR #5 (`work/coreaudio-ninja-convergence` → `work/core-audio`) remains unmerged; `[skip ci]` documentation only.
