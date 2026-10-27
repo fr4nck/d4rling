@@ -1,6 +1,6 @@
 #!/bin/sh
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Host-only fixture verification. Does not start Darling or run the Mach-O.
+# Host-only fixture and symbol-inventory verification. No Darling runtime.
 set -eu
 umask 077
 
@@ -8,6 +8,7 @@ root=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 python=${PYTHON:-python3}
 
 "$python" -B "$root/test_generate.py"
+"$python" -B "$root/test_symbol_providers.py"
 
 work=$(mktemp -d "${TMPDIR:-/tmp}/d4rling-macho-i386.XXXXXXXX")
 trap 'rm -rf "$work"' EXIT HUP INT TERM
