@@ -10,6 +10,7 @@ python=${PYTHON:-python3}
 "$python" -B "$root/test_generate.py"
 "$python" -B "$root/test_symbol_providers.py"
 "$python" -B "$root/test_source_contract.py"
+"$python" -B "$root/test_fetch_pinned_sources.py"
 
 work=$(mktemp -d "${TMPDIR:-/tmp}/d4rling-macho-i386.XXXXXXXX")
 trap 'rm -rf "$work"' EXIT HUP INT TERM

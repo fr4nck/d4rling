@@ -28,3 +28,43 @@ jobs:
 
       - name: Run standard-library-only fixture tests
         run: sh tests/regressions/macho-i386/run.sh
+
+  pinned-source-contract:
+    name: Check pinned i386 source contracts (read-only network)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out tests without submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Verify pinned source hashes and dynamic/static relationships
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          work=$(mktemp -d "${RUNNER_TEMP}/qt112-pinned-XXXXXXXX")
+          python3 -B tests/regressions/macho-i386/fetch_pinned_sources.py \
+            --output-dir "$work/src"
+          python3 -B tests/regressions/macho-i386/source_contract.py \
+            --checkout "$work/src" --output "$RUNNER_TEMP/qt112-source-contract.json"
+          python3 - "$RUNNER_TEMP/qt112-source-contract.json" <<'PY'
+          import json
+          import sys
+          result = json.load(open(sys.argv[1], encoding="utf-8"))
+          print("PINNED_SOURCE_CONTRACT=" + ("PASS" if result["all_checks_pass"] else "FAIL"))
+          print("CHECKS=" + str(len(result["checks"])))
+          for name, status in sorted(result["checks"].items()):
+              print(name + "=" + ("PASS" if status else "FAIL"))
+          PY
+
+      - name: Save source-only qualification report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qt112-source-contract
+          path: ${{ runner.temp }}/qt112-source-contract.json
+          retention-days: 7
+          if-no-files-found: ignore

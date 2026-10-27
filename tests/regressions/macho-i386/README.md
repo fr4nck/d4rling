@@ -11,8 +11,8 @@ On any Linux development host with Python 3 and optionally the `file` tool:
 sh tests/regressions/macho-i386/run.sh
 ```
 
-The runner executes **46 Python `unittest` cases** (17 generator, 13 symbol-analysis,
-and 16 source-contract checks), generates two one-page Mach-O i386 files in a
+The runner executes **54 Python `unittest` cases** (17 generator, 13 symbol-analysis,
+16 source-contract and 8 pinned-fetch integrity checks), generates two one-page Mach-O i386 files in a
 temporary directory, optionally checks the format with `file`, and removes
 the temporary files. It never starts Darling or executes the guest
 instructions on the host. No network, compiler, linker, root privilege, SDK or
@@ -154,6 +154,34 @@ References at pinned commits:
 - [libmalloc C functions](https://github.com/darlinghq/darling-libmalloc/blob/a57991e2651226a675654bd96e5d9ab6bec288c5/src/malloc.c)
 - [libSystem reexports](https://github.com/darlinghq/darling-Libsystem/blob/08df454b6eb0df9400aa4c39839a7efd6efd2c3c/CMakeLists.txt)
 
+
+### GitHub-only verification of the **actual pinned sources**
+
+The source-contract unit tests use deliberately small synthetic CMake
+inputs. A **separate** GitHub Actions job, `pinned-source-contract`,
+downloads six precise files from the fork's pinned XNU, libmalloc and
+Libsystem commits, checks each against its expected Git blob SHA, then
+runs `source_contract.py` on those files. No downloaded code is
+executed. The job does not build Darling or need the 5700X.
+
+This verification uses network access on the GitHub runner; if it fails to
+download, it reports an incomplete check rather than fabricating a pass.
+The regular host-only test job remains fully offline.
+
+To reproduce independently, in a temporary workspace:
+
+```sh
+WORK=$(mktemp -d)
+python3 -B tests/regressions/macho-i386/fetch_pinned_sources.py \
+  --output-dir "$WORK/pinned"
+python3 -B tests/regressions/macho-i386/source_contract.py \
+  --checkout "$WORK/pinned" --output "$WORK/source-contract.json"
+```
+
+The script refuses a pre-existing output directory and fails on mismatched
+Git blob hashes. These source-code checks cannot establish the availability
+of i386 build artifacts, dynamic linking or a working runtime. The corresponding
+production build and test of `libSystem` i386 still require the 5700X.
 
 ## Earlier evidence (not a fresh run of this fixture)
 
