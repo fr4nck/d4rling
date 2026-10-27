@@ -1038,3 +1038,34 @@ Probe terminal: `JACK01E11L_STATUS=TARGET_AUDIT_COMPLETE`, `NINJA_EXECUTED=NO`, 
 From the single pre-existing `~/d4rling-audio/qualif` directory, inspect exact `build.ninja` defining rules for those two output paths and list counts of direct object prerequisites (present vs absent) using a **read-only Python standard-library parser**. Report a *few example missing objects*, not entire logs. Check whether a `ninja` process is already running (`pgrep -a -x ninja` if installed); its presence is advisory and does not identify a specific build tree. **Do not run Ninja, even as dry-run**, or rebuild/link/install, while the separate Ninja/runtime work is active.
 
 **Decision:** GO for precise dependency readiness and coordination with the active Ninja owner, then for an explicitly scheduled targeted `system_c` / `system` build in an isolated, approved window. NO-GO for copies into `/opt`, modifications of live prefixes, guest execution before CA-12, or real JACK/Logic Studio 8 claims. PR #5 remains draft, documentation-only `[skip ci]`.
+
+## 49. JACK-01E11M — object readiness of two missing i386 guest dylib targets (2026-10-27)
+
+**Evidence provenance:** actual stdout supplied by the user from the `Deniel@5700X` Debian 13 WSL2 host, run from `/home/Deniel/d4rling-audio/qualif` in a read-only probe over `/home/Deniel/d4rling-core/d4rling-build-i386/build.ninja` and existing object files. The GitHub agent did not run Ninja or any process on the host.
+
+| Exact output target from existing Debug/core i386-enabled Ninja manifest | Direct `.o` prerequisites | Present | Missing | Target output present |
+| --- | ---: | ---: | ---: | --- |
+| `src/external/libc/libsystem_c.dylib` | **677** | **677** | **0** | `NO` |
+| `src/external/libsystem/libSystem.B.dylib` | **20** | **17** | **3** | `NO` |
+
+**Missing three direct objects for `libSystem.B.dylib`:**
+
+```text
+src/external/libsystem/CMakeFiles/system_obj.dir/init.c.o
+src/external/libsystem/CMakeFiles/system_obj.dir/darling/src/dummy.c.o
+src/external/libsystem/CMakeFiles/system_obj.dir/CompatibilityHacks.c.o
+```
+
+Associated exact Ninja link rules (previous JACK-01E11L): `C_SHARED_LIBRARY_LINKER__system_c_Debug` and `C_SHARED_LIBRARY_LINKER__system_Debug`. The CMake configuration in that same tree is `TARGET_i386=ON`, `COMPONENTS=core`, `CMAKE_BUILD_TYPE=Debug`; two linked outputs absent, but FAT `libsystem_kernel.dylib` i386+x86_64 already produced, its i386 slice defining all six needed Darwin symbols `_socket`, `_connect`, `_recvmsg`, `_mmap`, `_munmap`, `_close` (JACK-01E11K).
+
+**Process observation:** `NINJA_PROCESS=NOT_DETECTED` from `pgrep -a -x ninja` **at that particular instant**; this is only an observed snapshot and **not a guarantee that no other builder is active elsewhere** or that this build tree has no pending work. Final `JACK01E11M_STATUS=READ_ONLY_AUDIT_COMPLETE`, `NINJA_EXECUTED=NO`, `BUILD_MODIFIED=NO`, `DARLING_RUNTIME=NOT_EXECUTED`.
+
+**Precise inference:** The libc dylib **direct object set** is complete. This **does not prove link readiness**, because dependent dylibs, archives, generated files and configuration/linker flags are not included in the `OBJECT_TOTAL` count. The umbrella `libSystem.B` has only three missing direct objects, but their source/build rules and all *other direct and order-only* link prerequisites are still unqualified. Current physical disk contains no two output dylibs in this build tree, and the installed `/opt/d4rling-qt-i386` system dylibs remain thin x86_64. **Guest Mach-O dynamic linking and CA-12 are still unqualified.**
+
+### Next safe gate JACK-01E11N — inspect non-object link prerequisites and missing three object rules
+
+Perform one **read-only** pass parsing the actual two `build` edges and count for each target **existing/missing file prerequisites beyond `.o`** in explicit and implicit link inputs. Also check that exact defining edges exist for the three named missing `.o` files and that their source paths are present. Mark `RULE=NOT_FOUND` when absent, do not confuse a nonexistent dependency artifact with an absent rule. Summarize counts with up to eight examples, no executable/linker invocation. Recheck whether any Ninja builder is running at test time, but never treat its absence as coordination permission.
+
+**Coordination gate:** share this dependency inventory with the separate Ninja owner before any targeted build of the existing `system_c` and `system` CMake targets. No `ninja` (including dry-run), `cmake --build`, copying dylibs to `/opt`, editing prefixes, new build directories, package installs, guest execution, or real JACK in this lot. User-approved qualification remains confined to `/home/Deniel/d4rling-audio/qualif`; PR #5 draft, doc-only `[skip ci]`.
+
+**Verdict:** `JACK-01E11M=PASS_READ_ONLY_OBJECT_INVENTORY`, `SYSTEM_C_DIRECT_OBJECTS=677/677`, `LIBSYSTEM_B_DIRECT_OBJECTS=17/20`, `MISSING_DIRECT_OBJECTS=3`, `LINK_READINESS=NOT_QUALIFIED`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`.
