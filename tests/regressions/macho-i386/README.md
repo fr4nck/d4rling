@@ -11,8 +11,8 @@ On any Linux development host with Python 3 and optionally the `file` tool:
 sh tests/regressions/macho-i386/run.sh
 ```
 
-The runner executes **30 Python `unittest` cases** (17 generator checks and
-13 symbol-analysis checks), generates two one-page Mach-O i386 files in a
+The runner executes **46 Python `unittest` cases** (17 generator, 13 symbol-analysis,
+and 16 source-contract checks), generates two one-page Mach-O i386 files in a
 temporary directory, optionally checks the format with `file`, and removes
 the temporary files. It never starts Darling or executes the guest
 instructions on the host. No network, compiler, linker, root privilege, SDK or
@@ -94,6 +94,66 @@ The new candidate-name filter explicitly includes `libmalloc`, a separate
 Darling submodule that was outside the earlier QT-111 filename selection.
 Actual provider coverage on the 5700X has **not been rerun** with the new
 tool; no QT-111 numbers are reinterpreted as new scan results.
+
+
+## Source-level explanation of the QT-110 static i386 link failure (QT-112)
+
+Inspection of the **fork-pinned submodules** (not the latest unpinned
+upstream trees) explains the missing three symbols:
+
+- `__libkernel_functions`: C global `_libkernel_functions` is defined
+  in `libsyscall/wrappers/_libkernel_init.c` (Darling XNU pin
+  `fa29287aa2f0115271e091f1031f53c9e024005d`). That file is
+  assigned to `syscall_dynamic_sources` and the object target
+  `libsyscall_dynamic`. The `system_kernel_static32` archive instead
+  lists `libsyscall_32`, `libsyscall` and `emulation_dyld`, without
+  `libsyscall_dynamic`. The normal dynamic `system_kernel` does list
+  `libsyscall_dynamic`. This explains why trying to link the static
+  archive alone leaves the initializer state unresolved; it does not
+  establish that Darling lacks the symbol.
+- `_malloc` and `_free`: C functions `malloc` and `free` exist
+  in `src/malloc.c` in the pinned `darling-libmalloc` source
+  (`a57991e2651226a675654bd96e5d9ab6bec288c5`). Its CMake build
+  adds this file to the `system_malloc` circular dynamic target, not
+  to a standalone kernel static archive.
+- The pinned `darling-Libsystem` CMake source
+  (`08df454b6eb0df9400aa4c39839a7efd6efd2c3c`) expressly
+  reexports `system_malloc` and `system_kernel` via `libSystem.B.dylib`.
+
+Therefore the next **actual** i386 validation should close the dynamic
+`system_kernel` + `system_malloc` + `libSystem` dependency graph,
+rather than artificially declaring the static kernel archive a complete
+application library. The circular build may still have further missing
+dependencies; the source inventory cannot prove a successful i386 build.
+
+Pinned source inspection is recorded as analysis, **not** a fresh
+5700X execution, build, ABI test or demonstration of 32-bit libSystem.
+
+### Recheck the pinned source contract offline
+
+On an existing checkout containing the initialized XNU, Libsystem and
+libmalloc submodules, the following read-only command validates nine
+specific source relationships and can create a reproducible JSON report:
+
+```sh
+python3 -B tests/regressions/macho-i386/source_contract.py \
+  --checkout /path/to/d4rling-checkout \
+  --output /path/to/new-qt112-source-contract.json
+```
+
+The JSON target must not already exist. This source-only check requires
+Python 3 but no compiler, no runtime and no linker; incomplete submodules
+fail explicitly rather than being treated as evidence that definitions
+are absent.
+
+References at pinned commits:
+- [Darling XNU kernel build](https://github.com/darlinghq/darling-xnu/blob/fa29287aa2f0115271e091f1031f53c9e024005d/darling/src/libsystem_kernel/CMakeLists.txt)
+- [Darling XNU syscall object-group assignment](https://github.com/darlinghq/darling-xnu/blob/fa29287aa2f0115271e091f1031f53c9e024005d/libsyscall/CMakeLists.txt)
+- [Darling XNU kernel initializer](https://github.com/darlinghq/darling-xnu/blob/fa29287aa2f0115271e091f1031f53c9e024005d/libsyscall/wrappers/_libkernel_init.c)
+- [libmalloc CMake](https://github.com/darlinghq/darling-libmalloc/blob/a57991e2651226a675654bd96e5d9ab6bec288c5/CMakeLists.txt)
+- [libmalloc C functions](https://github.com/darlinghq/darling-libmalloc/blob/a57991e2651226a675654bd96e5d9ab6bec288c5/src/malloc.c)
+- [libSystem reexports](https://github.com/darlinghq/darling-Libsystem/blob/08df454b6eb0df9400aa4c39839a7efd6efd2c3c/CMakeLists.txt)
+
 
 ## Earlier evidence (not a fresh run of this fixture)
 
