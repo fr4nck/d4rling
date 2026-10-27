@@ -939,3 +939,29 @@ echo JACK01E11H_IMPORTS=PASS_6_OF_6
 **Evidence-backed source-level next step:** In the fork's pinned `darlinghq/darling-Libsystem` submodule `08df454b6eb0df9400aa4c39839a7efd6efd2c3c`, `CMakeLists.txt` defines `/usr/lib/libSystem.B.dylib` as a **reexporter** of `libsystem_c.dylib` and `libsystem_kernel.dylib` (among others). The `darling-xnu` submodule `fa29287aa2f0115271e091f1031f53c9e024005d` builds `libsystem_kernel.dylib` with 32-bit `libsyscall_32` objects. Therefore the correct next gate is a **read-only inspection of the actual i386 Mach-O exports and reexports in the already installed `/opt/d4rling-qt-i386/libexec/darling/usr/lib` tree** on the 5700X, not another test of Linux atomics or a blind `darling exec` run. Do not assume an apparent absence in the umbrella dylib means an underlying reexport is missing. The prior CA-12 RPC -111 problem remains independent.
 
 **Verdict:** `JACK-01E11H=PASS_BUILD_MACHO_I386_OBJECT`, expected six undefined imports observed (original checker FAIL due to wrong output parsing); symbol **resolution/linking=UNQUALIFIED**, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`. PR #5 remains draft; no Ninja changes, no CI, no JACK install, no additional host directories.
+
+## 45. JACK-01E11I — Guest-imports PASS; installed QT i386-prefix system dylibs are x86_64-only in inspected paths (2026-10-27)
+
+**Provenance:** exact stdout pasted by user from `Deniel@5700X` Debian 13 WSL2. Command used `cd "$HOME/d4rling-audio/qualif"` and inspected preexisting files under `/opt/d4rling-qt-i386/libexec/darling/usr/lib`. No command was issued to the host from GitHub.
+
+**Corrected import verifier:** `grep -Fxq -- "$symbol" jack01e11_imports.log` printed `IMPORT_PASS=` for **all six** `_socket`, `_connect`, `_recvmsg`, `_mmap`, `_munmap`, `_close`, followed by `JACK01E11H_STATUS=PASS_6_IMPORTS`. This corrects the previous false negative in JACK-01E11H; the object still contains six **undefined references**, not proven resolved exports.
+
+**Actual installed prefix:**
+
+| Inspected existing path relative to `/opt/d4rling-qt-i386/libexec/darling/usr/lib` | `file -L` observation | i386 inspection |
+| --- | --- | --- |
+| `libSystem.B.dylib` | Mach-O **64-bit x86_64** dynamically linked shared library, non-FAT as printed | `llvm-nm-19 --arch=i386 -g --defined-only` exited `NM_READ=INCONCLUSIVE`; printed `No architecture specified` |
+| `system/libsystem_kernel.dylib` | Mach-O **64-bit x86_64** dynamically linked shared library, non-FAT as printed | same `NM_READ=INCONCLUSIVE`, same diagnostic |
+| `system/libsystem_c.dylib` | Mach-O **64-bit x86_64** dynamically linked shared library, non-FAT as printed | same `NM_READ=INCONCLUSIVE`, same diagnostic |
+
+User script ended `JACK01E11I_STATUS=STATIC_INSPECTION_COMPLETE`; `LINK=NOT_EXECUTED`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`.
+
+**Precise interpretation:** The inspected files in the **installed QT prefix** do not expose an i386 Mach-O slice according to `file`. Do NOT mistake the prefix's label `qt-i386` for an installation guarantee. The `llvm-nm --arch=i386` errors **do not prove absence of the symbols in the repository** and should not be counted as six export failures. Export lookup/linking on the actual i386 runtime remains **BLOCKED / UNQUALIFIED** for these specific paths. Earlier I386-13 evidence reported a **FAT i386+x86_64 `libsystem_kernel.dylib` produced by an i386 build**, independently of this installed prefix. Locate that artifact and check the matching `libSystem.B.dylib`/`libsystem_c.dylib` in the existing inactive/active build tree by **read-only file-format inspection**, not by copying/installing over `/opt`.
+
+### Next safe gate JACK-01E11J — compare installed prefix vs build artifacts, read-only
+
+Inspect `file -L` (and `llvm-lipo-19 -info` only if installed) for the same three names under `/opt/d4rling-qt-i386/libexec/darling/usr/lib`, and run a targeted `find` within `/home/Deniel/d4rling-core/d4rling-build-i386` with `-maxdepth` and exact file basenames to locate candidates. Report **which exact files have a genuine i386 Mach-O slice**; do not run `llvm-nm --arch=i386` on a thin x86_64 file or infer that a missing result is a linker failure. Retain all artifacts in place, no new folders, no Ninja/relink/install, no guest execution or JACK daemon.
+
+If only `libsystem_kernel.dylib` has an i386 slice but `libSystem.B.dylib` or `libsystem_c.dylib` do not, the guest dynamic linking path remains blocked; it requires a **coherent i386 guest runtime set**. The earlier static ELF32 Linux memfd client success **cannot substitute for missing Darwin dylibs**. CA-12's RPC `-111` remains an independent blocker even after successful linking.
+
+**Verdict:** `JACK-01E11H_IMPORTS=PASS_6_OF_6`, installed x86_64 dylib architecture **CONFIRMED for three paths**, `I386_LINK_EXPORTS=NOT_QUALIFIED`, `MACHO_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`. PR #5 draft, `[skip ci]` documentation only.
