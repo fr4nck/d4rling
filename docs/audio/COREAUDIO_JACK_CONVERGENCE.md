@@ -1097,3 +1097,41 @@ The build directory path is `/home/Deniel/d4rling-core/d4rling-build-i386`. This
 On `5700X`, perform **one final read-only** check of the CMake cache's `CMAKE_HOME_DIRECTORY`, the real source Git root and HEAD, presence of defining rules for missing `*_firstpass.dylib` paths, and whether those rule output files have appeared. Capture a compact reproducible report under the **existing** `/home/Deniel/d4rling-audio/qualif`, without rewriting any files in source, build or prefix trees. The resulting report can be pasted into chat or added to the PR after review. `pgrep` absence alone is not permission to run Ninja; coordinate subsequent targeted compilation with concurrent Ninja owner.
 
 **Decision:** `JACK-01E11N=PASS_READ_ONLY_PREREQUISITE_AUDIT`, `SYSTEM_C_NON_OBJECT_LINK_INPUTS=15/18_ABSENT`, `SYSTEM_B_NON_OBJECT_LINK_INPUTS=1/1_ABSENT`, `SOURCE_TREE_PROVENANCE=NEEDS_CONFIRMATION`, `I386_LINK=NOT_EXECUTED`, `CA-12=BLOCKED_SEPARATELY`, `REAL_JACK=NOT_EXECUTED`. Keep PR #5 draft against `work/core-audio`; `[skip ci]`, no installs/builds or `darling exec`.
+
+## 51. JACK-01E11O — final 5700X handoff: firstpass rules all present; build rooted in alternate Carbon source tree (2026-10-27)
+
+**Evidence provenance:** user-pasted stdout after a bounded read-only Python standard-library audit on the actual `Deniel@5700X` Debian 13 WSL2 host; `WORKDIR=/home/Deniel/d4rling-audio/qualif`. Terminal ends `JACK01E11O_STATUS=PROVENANCE_AND_FIRSTPASS_AUDITED`, `NINJA_EXECUTED=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`, `BUILD_MODIFIED=NO`, `=== SESSION 5700X TERMINEE ===`. The user-retained local report (its contents were **not uploaded as a complete file**) is `/home/Deniel/d4rling-audio/qualif/jack01e11o-N8M32Z6f`.
+
+### Definitive CMake-cache source provenance
+
+```text
+CMAKE_HOME_DIRECTORY=/home/Deniel/d4rling-ui/d4rling-carbon-qualif
+CMAKE_BUILD_TYPE=Debug
+COMPONENTS=core
+TARGET_i386=ON
+SOURCE_EXISTS=True
+SOURCE_GIT_ROOT=NOT_AVAILABLE
+SOURCE_GIT_HEAD=b7d0cb6a79fe196657deb9711647f8486bcc5e5e
+SOURCE_DIFFERS_FROM_CORE=True
+```
+
+**Interpretation:** The CMake build tree located at `/home/Deniel/d4rling-core/d4rling-build-i386` is configured against the **different** source tree `/home/Deniel/d4rling-ui/d4rling-carbon-qualif`. Its source directory exists; a `git rev-parse HEAD` produced `b7d0cb6a79fe196657deb9711647f8486bcc5e5e`, but `git rev-parse --show-toplevel` returned a nonzero error (the script emitted `NOT_AVAILABLE`, without capturing explanatory stderr). This is a **source provenance / configuration warning**, not proof of invalid checkout or wrong revision. Coordinate with the Carbon/Ninja owner. Do not reconfigure with `cmake -S` based on the path name alone.
+
+### Defining rules for missing prerequisites
+
+| Link target | Missing implicit non-object paths | Missing implicit paths with producer rule | Missing order-only non-object paths | Missing order-only paths with producer rule |
+| --- | ---: | ---: | ---: | ---: |
+| `src/external/libc/libsystem_c.dylib` | **15** | **15/15** | **59** | **59/59** |
+| `src/external/libsystem/libSystem.B.dylib` | **1** | **1/1** | **35** | **35/35** |
+
+For `libsystem_c`, all 15 missing implicit inputs are `*_firstpass.dylib`, each with a matching generated Ninja producer rule. Among the printed samples: `libsystem_kernel_firstpass.dylib` → `C_SHARED_LIBRARY_LINKER__system_kernel_firstpass_Debug`; `libsystem_malloc_firstpass.dylib` → `C_SHARED_LIBRARY_LINKER__system_malloc_firstpass_Debug`; `libsystem_pthread_firstpass.dylib` → `C_SHARED_LIBRARY_LINKER__system_pthread_firstpass_Debug`; `libsystem_blocks_firstpass.dylib` → `CXX_SHARED_LIBRARY_LINKER__system_blocks_firstpass_Debug`; `libsystem_m_firstpass.dylib` → `C_SHARED_LIBRARY_LINKER__system_m_firstpass_Debug`; `liblaunch_firstpass.dylib` → `C_SHARED_LIBRARY_LINKER__launch_firstpass_Debug`; `libsystem_notify_firstpass.dylib` → `C_SHARED_LIBRARY_LINKER__system_notify_firstpass_Debug`; `liblibdispatch_shared_firstpass.dylib` → `CXX_SHARED_LIBRARY_LINKER__libdispatch_shared_firstpass_Debug`.
+
+For `libSystem.B`, the sole missing implicit input `src/external/libmalloc/libsystem_malloc_firstpass.dylib` has a producer rule `C_SHARED_LIBRARY_LINKER__system_malloc_firstpass_Debug`. The same target also appears in its order-only inputs; **do not double count it as a distinct missing file**. The entire set of 59 missing order-only paths for `libsystem_c` and 35 for `libSystem.B` has producer rules. These rules alone **do not prove** their transitive dependencies can be built, that the build is free of cycles, or that any i386 output link succeeds.
+
+### Final handoff and next controlled step
+
+Prior qualifications on actual host: `JACK-01E10H=PASS_MIXED_ELF32_ELF64_IPC` (50,000 checked stereo PCM frames); `JACK-01E11H=PASS_MACHO_I386_OBJECT` (six undefined Darwin imports identified); `JACK-01E11K=PASS_6_DEFINED_I386_KERNEL_SYMBOLS` (existing FAT kernel x86_64+i386); `JACK-01E11L=PASS_TARGET_RULES_EXIST` but `libsystem_c` and `libSystem.B` absent; `JACK-01E11M` direct object counts `677/677` and `17/20`. Now `JACK-01E11O=PASS_READ_ONLY_FIRSTPASS_RULE_AUDIT`: producer rules exist for all immediate missing non-object paths.
+
+**Stop all additional 5700X host work for this session.** Next work can proceed *in normal ChatGPT* by publishing a handoff for the separate Carbon/Ninja maintainer or analyzing versioned source and manifest contracts on GitHub. Any future targeted build requires verifying why the configured source root is the alternate Carbon tree, source Git metadata, current build ownership/processes, and dependency integrity. **Do not run Ninja (not even dry-run), CMake reconfigure, copy/install dylibs in `/opt`, modify existing prefix, restart Darling, or run actual JACK/Logic 8 as part of this handoff.** The CA-12 dserver RPC issue `-111` remains separate.
+
+**Verdict:** `JACK-01E11O=PASS_PROVENANCE_AND_FIRSTPASS_AUDIT` (host stdout); `CMAKE_SOURCE=/home/Deniel/d4rling-ui/d4rling-carbon-qualif`, `SOURCE_GIT_ROOT=UNRESOLVED`, `MISSING_FIRSTPASS_WITH_PRODUCERS=YES`, `LINK_READINESS=NOT_YET_QUALIFIED`, `MACHO_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`. PR #5 stays draft against `work/core-audio`; docs-only commit `[skip ci]`.
