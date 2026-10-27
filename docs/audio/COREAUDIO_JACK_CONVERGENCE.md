@@ -1017,3 +1017,24 @@ From `/home/Deniel/d4rling-audio/qualif`, read only `/home/Deniel/d4rling-core/d
 **Next decision:** If the umbrella and libc Mach-O i386 outputs are absent but their build rules exist, coordinate a future **targeted, safely isolated** build with the concurrent Ninja owner; do not start it from this lot. If build rules are missing, first inspect CMake config. Do **not** copy the FAT kernel into `/opt`, restart guest prefixes, run Ninja, modify existing build trees, install packages, start JACK or execute guest Mach-O. CA-12 dserver RPC `-111` remains a separate runtime blocker.
 
 **Verdict:** `JACK-01E11K=PASS_6_OF_6_DEFINED_I386_KERNEL_SYMBOLS` (host evidence); `LIBSYSTEM_C_TARGET_RULE=OBSERVED`, `LIBSYSTEM_B_TARGET_RULE=UNRESOLVED`, `GUEST_DYNAMIC_LINK=NOT_EXECUTED`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`. Draft PR #5 (`work/coreaudio-ninja-convergence` → `work/core-audio`) remains unmerged; `[skip ci]` documentation only.
+
+## 48. JACK-01E11L — i386 system and libc build rules confirmed; outputs not yet present (2026-10-27)
+
+**Evidence provenance:** terminal stdout provided by the user from the `Deniel@5700X` Debian 13 WSL2 host, running with `WORKDIR=/home/Deniel/d4rling-audio/qualif`. The GitHub agent did not run any command on the host. The probe inspected the already-existing `/home/Deniel/d4rling-core/d4rling-build-i386/build.ninja`, `CMakeCache.txt`, and two candidate outputs in read-only mode.
+
+**CMake-cache entries observed**: `CMAKE_BUILD_TYPE:STRING=Debug`, `CMAKE_INSTALL_PREFIX:PATH=/usr/local`, `COMPONENTS:STRING=core`, `TARGET_i386:BOOL=ON`. There was no output for `BUILD_TARGET_32BIT` or `BUILD_TARGET_64BIT` because the cache scan did not find matching entries; do not infer their computed values.
+
+| Exact Ninja output path relative to `d4rling-build-i386` | Defining build rule | On-disk output |
+| --- | --- | --- |
+| `src/external/libsystem/libSystem.B.dylib` | `TARGET_RULE=YES`; `C_SHARED_LIBRARY_LINKER__system_Debug` | `OUTPUT_EXISTS=NO` |
+| `src/external/libc/libsystem_c.dylib` | `TARGET_RULE=YES`; `C_SHARED_LIBRARY_LINKER__system_c_Debug` | `OUTPUT_EXISTS=NO` |
+
+Probe terminal: `JACK01E11L_STATUS=TARGET_AUDIT_COMPLETE`, `NINJA_EXECUTED=NO`, `FILES_MODIFIED=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`.
+
+**Conclusion:** The two missing dylib outputs have real *exact* build rules in the already-configured Debug/core i386-enabled Ninja manifest. The missing output files are **not evidence of missing CMake targets or impossible i386 builds**; they indicate that these exact outputs do not currently exist in this build tree. The host already has a FAT `libsystem_kernel.dylib` (`x86_64 i386`) and that built i386 slice globally defines all six `socket/connect/recvmsg/mmap/munmap/close` symbols required by the guest object. However the `libSystem.B` and `libsystem_c` outputs have not been built/qualified, their direct prerequisites and any active Ninja task are unverified, and the installed `/opt/d4rling-qt-i386` versions are thin x86_64. **Do not claim a complete guest runtime, link success, or working audio.**
+
+### JACK-01E11M — read-only prerequisites / active build inventory
+
+From the single pre-existing `~/d4rling-audio/qualif` directory, inspect exact `build.ninja` defining rules for those two output paths and list counts of direct object prerequisites (present vs absent) using a **read-only Python standard-library parser**. Report a *few example missing objects*, not entire logs. Check whether a `ninja` process is already running (`pgrep -a -x ninja` if installed); its presence is advisory and does not identify a specific build tree. **Do not run Ninja, even as dry-run**, or rebuild/link/install, while the separate Ninja/runtime work is active.
+
+**Decision:** GO for precise dependency readiness and coordination with the active Ninja owner, then for an explicitly scheduled targeted `system_c` / `system` build in an isolated, approved window. NO-GO for copies into `/opt`, modifications of live prefixes, guest execution before CA-12, or real JACK/Logic Studio 8 claims. PR #5 remains draft, documentation-only `[skip ci]`.
