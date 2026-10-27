@@ -11,9 +11,10 @@ On any Linux development host with Python 3 and optionally the `file` tool:
 sh tests/regressions/macho-i386/run.sh
 ```
 
-The runner executes 17 Python `unittest` cases, generates two one-page Mach-O
-i386 files in a temporary directory, optionally checks the format with `file`,
-and removes the temporary files. It never starts Darling or executes the guest
+The runner executes **30 Python `unittest` cases** (17 generator checks and
+13 symbol-analysis checks), generates two one-page Mach-O i386 files in a
+temporary directory, optionally checks the format with `file`, and removes
+the temporary files. It never starts Darling or executes the guest
 instructions on the host. No network, compiler, linker, root privilege, SDK or
 submodule is required.
 
@@ -60,6 +61,39 @@ initialized, disposable test prefix**:
 Guest invocation is deliberately manual because `darling exec` can spawn
 background launchd/mldr descendants even after the foreground command exits.
 These steps must not be enabled by default in GitHub Actions.
+
+## Bounded i386 linker-symbol inventory (read-only)
+
+The optional `symbol_providers.py` helper examines an existing linker-error
+log and locally compiled build artifacts. It requires `llvm-lipo-19` and
+`llvm-nm-19` **only when running this actual scan**, not for the 30 unit tests.
+
+Example on a machine with the QT-110 build tree and linker log:
+
+```sh
+LOG=/path/to/qt110/link-1.log
+BUILD=/path/to/d4rling-build-i386
+OUT=/path/to/new-i386-symbol-report.json
+python3 -B tests/regressions/macho-i386/symbol_providers.py \
+  --link-log "$LOG" --build-dir "$BUILD" --output "$OUT"
+```
+
+The scanner reads ld64's quoted unresolved symbols, enumerates candidate
+`.a`/`.dylib` artifacts under `build/src`, verifies each candidate has an
+i386 slice, and records global definitions in a JSON report. Fat files are
+thinned into a temporary location for `llvm-nm`, without changing their
+source. A target report must not already exist.
+
+The default scan is bounded to 200 candidate artifacts, and records
+`truncated`, failures and `no-i386-slice` outcomes. A symbol appearing in
+a candidate does **not** prove the archive is self-contained, that the
+library's link order is correct, or that runtime calls work. Symbols listed
+as not found are only unlocated **within the scanned candidate set**.
+
+The new candidate-name filter explicitly includes `libmalloc`, a separate
+Darling submodule that was outside the earlier QT-111 filename selection.
+Actual provider coverage on the 5700X has **not been rerun** with the new
+tool; no QT-111 numbers are reinterpreted as new scan results.
 
 ## Earlier evidence (not a fresh run of this fixture)
 
