@@ -965,3 +965,26 @@ Inspect `file -L` (and `llvm-lipo-19 -info` only if installed) for the same thre
 If only `libsystem_kernel.dylib` has an i386 slice but `libSystem.B.dylib` or `libsystem_c.dylib` do not, the guest dynamic linking path remains blocked; it requires a **coherent i386 guest runtime set**. The earlier static ELF32 Linux memfd client success **cannot substitute for missing Darwin dylibs**. CA-12's RPC `-111` remains an independent blocker even after successful linking.
 
 **Verdict:** `JACK-01E11H_IMPORTS=PASS_6_OF_6`, installed x86_64 dylib architecture **CONFIRMED for three paths**, `I386_LINK_EXPORTS=NOT_QUALIFIED`, `MACHO_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`. PR #5 draft, `[skip ci]` documentation only.
+
+## 46. JACK-01E11J — i386 FAT kernel built, but installed guest System libraries are x86_64-only (2026-10-27)
+
+**Provenance:** User-pasted stdout from `Deniel@5700X`, Debian 13 WSL2. Command explicitly `cd` into sole canonical `/home/Deniel/d4rling-audio/qualif`, inspected `/opt/d4rling-qt-i386/libexec/darling/usr/lib` and `/home/Deniel/d4rling-core/d4rling-build-i386` **read-only**. No user machine commands run by this documentation update.
+
+| Existing artifact / relative path | `file -L` and `llvm-lipo-19 -archs` result |
+| --- | --- |
+| `/opt/d4rling-qt-i386/libexec/darling/usr/lib/libSystem.B.dylib` | thin `x86_64`, **no i386 slice** |
+| `/opt/d4rling-qt-i386/libexec/darling/usr/lib/system/libsystem_kernel.dylib` | thin `x86_64`, **no i386 slice** |
+| `/opt/d4rling-qt-i386/libexec/darling/usr/lib/system/libsystem_c.dylib` | thin `x86_64`, **no i386 slice** |
+| `/home/Deniel/d4rling-core/d4rling-build-i386/src/external/xnu/darling/src/libsystem_kernel/libsystem_kernel.dylib` | **FAT universal Mach-O with `x86_64 i386` slices**, `I386_SLICE=YES` |
+
+Exactly **one matching build-tree candidate** was found by the user script's basename-restricted `find -maxdepth 18` (`BUILD_CANDIDATES=1`); **no** `libSystem.B.dylib` nor `libsystem_c.dylib` was found by that scan. The scan's scope is *not* a proof of global absence, nor does an existing FAT kernel demonstrate an operational guest system library set. Terminal verdict `JACK01E11J_STATUS=ARCH_INVENTORY_COMPLETE`, `FILES_MODIFIED=NO`, `NINJA=NOT_EXECUTED`, `DARLING_RUNTIME=NOT_EXECUTED`.
+
+**Interpretation:** The i386 kernel Mach-O is **already produced** by the i386 Ninja build and can be read without rebuilding or installing. The named `/opt/d4rling-qt-i386` installation is **not yet an i386 guest System stack** for the three inspected dylibs, regardless of directory naming. The guest `libSystem.B` normally **reexports** `libsystem_kernel` and `libsystem_c`; reexports and direct symbols must be distinguished. The `libsystem_kernel` CMake target in pinned Darling XNU uses conditional `$<TARGET_OBJECTS:libsyscall_32>` and a FAT library (`make_fat(system_kernel)`), which is consistent with the observed universal artifact. No need to rerun any JACK transport/codegen microtests.
+
+### Next gate JACK-01E11K — binary exports and build-target availability, no Ninja
+
+1. Read the **FAT i386 slice** of the existing `/home/Deniel/d4rling-core/d4rling-build-i386/src/external/xnu/darling/src/libsystem_kernel/libsystem_kernel.dylib`; inspect exported `_socket`, `_connect`, `_recvmsg`, `_mmap`, `_munmap`, `_close` with an architecture-aware `llvm-nm-19` (if necessary `llvm-lipo-19 -thin i386` only to an owned file in `/home/Deniel/d4rling-audio/qualif`, never into a build or prefix directory). These are **defined exports** and must not be confused with the six **undefined imports** in `jack01e11_darwin32_socket_abi.o`. The six may be split among kernel and libc, and reexports should be accounted for.
+2. Inspect existing `build.ninja` metadata **without executing Ninja** for the two absent target output paths (`libSystem.B.dylib`, `libsystem_c.dylib`) to determine whether outputs are planned, disabled or renamed; do not interpret a missing output file as proof of a configuration bug. Avoid reading large binary files recursively.
+3. Keep CA-12 RPC/dserver `-111` separate. No install/copy into `/opt`, no rebuild of active Ninja trees, no Darling execution, no JACK install/start, no CI; only existing qualif directory for any logs.
+
+**State:** `JACK-01E11J=PASS_INVENTORY`, `FAT_LIBSYSTEM_KERNEL_I386=YES`, `INSTALLED_SYSTEM_I386=NO (three inspected dylibs)`, `GUEST_DYLIB_COHERENCE=BLOCKED`, `JACK_REAL=NOT_EXECUTED`; PR #5 remains draft. Candidate Mach-O i386 object `JACK-01E11H=PASS_BUILD`, but link and runtime unresolved.
