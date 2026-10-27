@@ -1,0 +1,30 @@
+name: Mach-O i386 fixture (host-only)
+
+on:
+  push:
+    paths:
+      - "tests/regressions/macho-i386/**"
+      - ".github/workflows/macho-i386-fixture.yml"
+  pull_request:
+    paths:
+      - "tests/regressions/macho-i386/**"
+      - ".github/workflows/macho-i386-fixture.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fixture:
+    name: Validate i386 Mach-O structure (no Darling runtime)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out source without submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          persist-credentials: false
+
+      - name: Run standard-library-only fixture tests
+        run: sh tests/regressions/macho-i386/run.sh
