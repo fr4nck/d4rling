@@ -62,11 +62,9 @@ void FlushEvents(EventMask a, EventMask b)
     if (verbose) puts("STUB: FlushEvents called");
 }
 
-EventTargetRef GetApplicationEventTarget(void)
-{
-    if (verbose) puts("STUB: GetApplicationEventTarget called");
-	return (EventTargetRef)0;
-}
+/* GetApplicationEventTarget is implemented in HIToolbox and reexported by Carbon.
+ * Keep a single authoritative implementation instead of returning NULL here.
+ */
 
 OSStatus GetEventDispatcherTarget()
 {
@@ -146,11 +144,10 @@ OSStatus SetEventMask(EventMask a)
 	return 0;
 }
 
-OSStatus SetEventParameter(EventRef a, EventParamName b, EventParamType c, UInt32 d, const void * e)
-{
-    if (verbose) puts("STUB: SetEventParameter called");
-	return 0;
-}
+/* SetEventParameter is implemented in HIToolbox's CarbonEventsCore.c.
+ * Carbon reexports HIToolbox; a false-success stub also conflicts with the
+ * ByteCount parameter type on some architectures.
+ */
 
 void ShowMenuBar(void)
 {

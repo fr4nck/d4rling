@@ -1,0 +1,38 @@
+name: Carbon to HIToolbox symbol contract
+
+on:
+  push:
+    paths:
+      - "src/frameworks/Carbon/src/Carbon.c"
+      - "src/frameworks/Carbon/CMakeLists.txt"
+      - "src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c"
+      - "src/frameworks/Carbon/HIToolbox/include/HIToolbox/CarbonEventsCore.h"
+      - "src/frameworks/Carbon/HIToolbox/CMakeLists.txt"
+      - "tests/regressions/carbon-reexports/**"
+      - ".github/workflows/carbon-reexport-abi.yml"
+  pull_request:
+    paths:
+      - "src/frameworks/Carbon/src/Carbon.c"
+      - "src/frameworks/Carbon/CMakeLists.txt"
+      - "src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c"
+      - "src/frameworks/Carbon/HIToolbox/include/HIToolbox/CarbonEventsCore.h"
+      - "src/frameworks/Carbon/HIToolbox/CMakeLists.txt"
+      - "tests/regressions/carbon-reexports/**"
+      - ".github/workflows/carbon-reexport-abi.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out tracked sources only
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+          persist-credentials: false
+      - name: Verify Carbon/HIToolbox source contracts
+        run: sh tests/regressions/carbon-reexports/run.sh
