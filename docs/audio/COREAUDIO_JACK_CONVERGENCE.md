@@ -870,3 +870,39 @@ After ELF32 execution is demonstrated, implement the mixed ELF32/ELF64 memfd+soc
 **Directory and publication rule:** all host tests belong inside the existing `/home/Deniel/d4rling-audio/qualif`. Existing `d4rling-core`, `d4rling-audio`, `d4rling-ui` build trees and runtime prefixes remain untouched; no package installs, no JACK daemon, no CI, `[skip ci]`; PR #5 stays draft from `work/coreaudio-ninja-convergence` into `work/core-audio`.
 
 **Verdict:** `JACK-01E10H=PASS_MIXED_ELF32_ELF64_IPC` **on 5700X**, `MACHO_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`, **GO** for targeted guest-boundary analysis only; **NO-GO** for end-to-end CoreAudio/JACK/Logic Studio 8.
+
+## 43. JACK-01E11A — Darwin i386 guest socket ABI compilation probe (2026-10-27)
+
+**Motivation / completed prior gate:** On the user `5700X` host, JACK-01E10H demonstrated **50,000 stereo frames** transferred between independent **Linux ELF32 i386** and **Linux ELF64 x86_64** processes through Linux `memfd` + `SCM_RIGHTS` (`PASS_MIXED_ELF32_ELF64_IPC`, process RCs 0/0). This does NOT exercise Darling/Mach-O. The next useful gate is a **source-level Darwin ABI adapter**, not more Linux SPSC model stress.
+
+### Pinned ABI source inspection (not guesses)
+
+Audited `src/external/xnu` gitlink on `work/core-audio` at commit `fa29287aa2f0115271e091f1031f53c9e024005d` (`darlinghq/darling-xnu`):
+
+- [`bsd/sys/socket.h`](https://github.com/darlinghq/darling-xnu/blob/fa29287aa2f0115271e091f1031f53c9e024005d/bsd/sys/socket.h) declares Darwin `SOL_SOCKET=0xffff` (Linux is `1`), `SCM_RIGHTS=1`, `MSG_TRUNC=0x10`, `MSG_CTRUNC=0x20` and a **28-byte i386 `msghdr`** with **12-byte `cmsghdr`**. The `msg_controllen`/`msg_iovlen` types must be honored rather than assuming the Linux i386 `socketcall` ABI.
+- [`bsd/sys/un.h`](https://github.com/darlinghq/darling-xnu/blob/fa29287aa2f0115271e091f1031f53c9e024005d/bsd/sys/un.h) defines Darwin `sockaddr_un` with an **8-bit `sun_len` preceding `sun_family`**, and `sun_path[104]`, total **106 bytes** for the i386 layout. Linux `sockaddr_un` is not wire- or source-layout-identical.
+- [`bsd/sys/mman.h`](https://github.com/darlinghq/darling-xnu/blob/fa29287aa2f0115271e091f1031f53c9e024005d/bsd/sys/mman.h) defines `PROT_READ=1`, `PROT_WRITE=2`, `MAP_SHARED=1`, required for a guest mapping request. Handling a **Linux memfd passed into a Darwin Mach-O process remains unproven**.
+
+### New code and independent compile-only qualification
+
+Published `tests/regressions/jack-transport/test_darwin32_socket_abi.c` on the PR branch, commit `cd656607f0d2a2657d025f81808b264185479878`. Exact Git blob SHA **`82f0efb7606fe3119eb1c9465857a9c27b4ed2a5`**, **5,500 bytes**. This is a freestanding i386-only **Mach-O object probe**, not a runnable client, without SDK headers or i386 multilib. It statically asserts Darwin socket structure sizes and offsets plus the shared PCM header 64-byte alignment/layout and full payload 2,112 bytes.
+
+**Independently tested in the assistant isolated Linux environment** (Clang 17, NOT user WSL2):
+
+```sh
+clang -target i386-apple-darwin -march=i686 -std=c11 -O2 -ffreestanding -nostdinc \
+  -fno-stack-protector -fno-builtin -fno-pie -Wall -Wextra -Werror \
+  -c test_darwin32_socket_abi.c -o test_darwin32_socket_abi.o
+```
+
+Compiler exit 0; `file` reported **`Mach-O i386 object`**. `llvm-objdump --macho --syms` showed defined `_jack01e11_darwin32_socket_probe` and `_memset`; six intentionally **undefined Darwin userspace imports** `_socket`, `_connect`, `_recvmsg`, `_mmap`, `_munmap`, `_close`. The test is not link-qualified and has **never run in Darling**. The user-host Clang 19 compile is still PENDING.
+
+### Behavioral boundary
+
+The probe's function prepares a Darwin `sockaddr_un`, calls Darwin userspace `socket/connect/recvmsg`, validates `SOL_SOCKET`/`SCM_RIGHTS` and a candidate 2,112-byte `MAP_SHARED` region with the 64-byte `SharedPCM` header. It deliberately performs **no PCM consumption and sends no acknowledgement**: **NEVER RUN IT AGAINST A LIVE JACK-01E8 SERVER**, because that server would wait for a consumer/ACK. Both the Linux-to-Darwin translation of ancillary `cmsg_level` and transfer/mapping of a Linux memfd into a Darling guest are **unqualified**. Missing guest runtime linkage, alias symbols, virtual filesystem pathname handling and CA-12 `mach_msg_overwrite` / dserver `-111` remain separate blockers.
+
+### Next safe action
+
+Run the **compile-only** test on the 5700X in the existing `/home/Deniel/d4rling-audio/qualif` directory using `clang-19 -target i386-apple-darwin ... -c`, verify pinned Git blob SHA and Mach-O i386 format; inspect undefined imports with `llvm-nm-19 -u`. **No executable or dylib link and no Darling/CA-12 runtime invocation**, no audio or JACK daemon, no new directories, no Ninja edits, no package installs or CI. If the host result is PASS, review the available Darling Mach-O i386 libSystem export/alias contract and launchability **separately** before any guest-to-Linux IPC integration.
+
+**Verdict:** GO for the code-audited **Mach-O i386 ABI object** path; **NO-GO for guest↔Linux runtime, JACK CoreAudio or Logic Studio 8 claims**. PR #5 remains draft (`work/coreaudio-ninja-convergence` → `work/core-audio`).
