@@ -1069,3 +1069,31 @@ Perform one **read-only** pass parsing the actual two `build` edges and count fo
 **Coordination gate:** share this dependency inventory with the separate Ninja owner before any targeted build of the existing `system_c` and `system` CMake targets. No `ninja` (including dry-run), `cmake --build`, copying dylibs to `/opt`, editing prefixes, new build directories, package installs, guest execution, or real JACK in this lot. User-approved qualification remains confined to `/home/Deniel/d4rling-audio/qualif`; PR #5 draft, doc-only `[skip ci]`.
 
 **Verdict:** `JACK-01E11M=PASS_READ_ONLY_OBJECT_INVENTORY`, `SYSTEM_C_DIRECT_OBJECTS=677/677`, `LIBSYSTEM_B_DIRECT_OBJECTS=17/20`, `MISSING_DIRECT_OBJECTS=3`, `LINK_READINESS=NOT_QUALIFIED`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`.
+## 50. JACK-01E11N — firstpass dependency chain and source-tree provenance warning (2026-10-27)
+
+**Evidence provenance:** User-pasted terminal output from `Deniel@5700X` under `/home/Deniel/d4rling-audio/qualif`, inspecting the existing `/home/Deniel/d4rling-core/d4rling-build-i386` Ninja manifest and source paths. No build, install, or Darling runtime was executed. The report below records the *filesystem snapshot only*; missing files may have producer rules and are not necessarily permanently unavailable.
+
+| Exact target | Explicit non-object inputs | Implicit non-object inputs absent / total | Order-only non-object inputs absent / total |
+| --- | ---: | ---: | ---: |
+| `src/external/libc/libsystem_c.dylib` | 0 | **15 / 18** | **59 / 64** |
+| `src/external/libsystem/libSystem.B.dylib` | 0 | **1 / 1** | **35 / 38** |
+
+**Representative missing implicit `libsystem_c` inputs:** `libsystem_kernel_firstpass.dylib`, `libsystem_malloc_firstpass.dylib`, `libsystem_pthread_firstpass.dylib`, `libsystem_blocks_firstpass.dylib`, `libsystem_m_firstpass.dylib`, `liblaunch_firstpass.dylib`; missing `libSystem.B` implicit input `libsystem_malloc_firstpass.dylib`. There are also many absent order-only prerequisites, including e.g. `libsystem_duct_firstpass`, `libsystem_info_firstpass`, `libmacho_firstpass`, and `libsystem_duct.dylib`. **Do not naively run only the two link commands** without resolving their transitive Ninja dependencies.
+
+**Provenance discovery:** all three missing direct `libSystem.B` objects have **existing producer rules** (`OBJECT_RULE=C_COMPILER__system_obj_unscanned_Debug`) and existing source files, but their rule inputs reference an unexpectedly different source checkout:
+
+```text
+/home/Deniel/d4rling-ui/d4rling-carbon-qualif/src/external/libsystem/init.c
+/home/Deniel/d4rling-ui/d4rling-carbon-qualif/src/external/libsystem/darling/src/dummy.c
+/home/Deniel/d4rling-ui/d4rling-carbon-qualif/src/external/libsystem/CompatibilityHacks.c
+```
+
+The build directory path is `/home/Deniel/d4rling-core/d4rling-build-i386`. This may be intentional CMake reuse or a stale/misdirected source configuration; **read the cached `CMAKE_HOME_DIRECTORY` and repo/source Git HEAD before proceeding**. No source-root error is asserted until confirmed. Never force `cmake -S` or reconfigure the build in response to this observation.
+
+**User terminal verdict:** `JACK01E11N_STATUS=READ_ONLY_PREFLIGHT_COMPLETE`, `NINJA_EXECUTED=NO`, `BUILD_MODIFIED=NO`. Earlier milestones: `libsystem_c` 677/677 direct objects available; `libSystem.B` 17/20; both precise output files absent; installed `/opt` system dylibs x86_64-only; build-tree FAT `libsystem_kernel.dylib` has i386 slice and 6 defined guest exports.
+
+### Final host departure gate JACK-01E11O — noninvasive source-root/firstpass triage
+
+On `5700X`, perform **one final read-only** check of the CMake cache's `CMAKE_HOME_DIRECTORY`, the real source Git root and HEAD, presence of defining rules for missing `*_firstpass.dylib` paths, and whether those rule output files have appeared. Capture a compact reproducible report under the **existing** `/home/Deniel/d4rling-audio/qualif`, without rewriting any files in source, build or prefix trees. The resulting report can be pasted into chat or added to the PR after review. `pgrep` absence alone is not permission to run Ninja; coordinate subsequent targeted compilation with concurrent Ninja owner.
+
+**Decision:** `JACK-01E11N=PASS_READ_ONLY_PREREQUISITE_AUDIT`, `SYSTEM_C_NON_OBJECT_LINK_INPUTS=15/18_ABSENT`, `SYSTEM_B_NON_OBJECT_LINK_INPUTS=1/1_ABSENT`, `SOURCE_TREE_PROVENANCE=NEEDS_CONFIRMATION`, `I386_LINK=NOT_EXECUTED`, `CA-12=BLOCKED_SEPARATELY`, `REAL_JACK=NOT_EXECUTED`. Keep PR #5 draft against `work/core-audio`; `[skip ci]`, no installs/builds or `darling exec`.
