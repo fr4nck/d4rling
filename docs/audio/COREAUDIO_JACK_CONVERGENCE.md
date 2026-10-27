@@ -906,3 +906,36 @@ The probe's function prepares a Darwin `sockaddr_un`, calls Darwin userspace `so
 Run the **compile-only** test on the 5700X in the existing `/home/Deniel/d4rling-audio/qualif` directory using `clang-19 -target i386-apple-darwin ... -c`, verify pinned Git blob SHA and Mach-O i386 format; inspect undefined imports with `llvm-nm-19 -u`. **No executable or dylib link and no Darling/CA-12 runtime invocation**, no audio or JACK daemon, no new directories, no Ninja edits, no package installs or CI. If the host result is PASS, review the available Darling Mach-O i386 libSystem export/alias contract and launchability **separately** before any guest-to-Linux IPC integration.
 
 **Verdict:** GO for the code-audited **Mach-O i386 ABI object** path; **NO-GO for guest↔Linux runtime, JACK CoreAudio or Logic Studio 8 claims**. PR #5 remains draft (`work/coreaudio-ninja-convergence` → `work/core-audio`).
+
+## 44. JACK-01E11H — 5700X Darwin i386 Mach-O ABI object BUILD PASS; import-check false negative (2026-10-27)
+
+**Actual user-host evidence:** `Deniel@5700X`, Debian 13 WSL2; actual `WORKDIR=/home/Deniel/d4rling-audio/qualif`. Source Git blob `82f0efb7606fe3119eb1c9465857a9c27b4ed2a5`: `SOURCE_HASH=PASS`. `clang-19 -target i386-apple-darwin ... -c` reported `BUILD=PASS`; `file` reported `jack01e11_darwin32_socket_abi.o: Mach-O i386 object`. Thus this is a **verified user-host compile-only PASS**, not a link/runtime pass.
+
+**Actual output of `llvm-nm-19 -u`:**
+
+```text
+_close
+_connect
+_mmap
+_munmap
+_recvmsg
+_socket
+```
+
+The prior Bash verifier then emitted `IMPORT_MISSING=_socket` and exited early. This was **a test-harness false negative**: it used `grep -Eq " U ${symbol}$"`, which assumes nm prints a ` U ` type field, whereas this version of `llvm-nm-19 -u` **prints only symbol names**. All six expected undefined imports are visibly present. Do **not** label this as a missing Mach-O symbol or a failed compilation.
+
+**Correct minimal check (reusing preexisting log, no rebuild):**
+
+```sh
+cd "$HOME/d4rling-audio/qualif" || exit 1
+for symbol in _socket _connect _recvmsg _mmap _munmap _close; do
+    grep -Fxq -- "$symbol" jack01e11_imports.log || { echo "IMPORT_MISSING=$symbol"; exit 1; }
+done
+echo JACK01E11H_IMPORTS=PASS_6_OF_6
+```
+
+**Scope:** `llvm-nm -u` displays **undefined imports referenced by the object**. It proves neither that those functions are exported by the installed guest i386 dylibs nor that the Mach-O linker and Darling runtime can resolve them. The probe performs no real PCM loop, no acknowledgment, no guest runtime test and no JACK execution.
+
+**Evidence-backed source-level next step:** In the fork's pinned `darlinghq/darling-Libsystem` submodule `08df454b6eb0df9400aa4c39839a7efd6efd2c3c`, `CMakeLists.txt` defines `/usr/lib/libSystem.B.dylib` as a **reexporter** of `libsystem_c.dylib` and `libsystem_kernel.dylib` (among others). The `darling-xnu` submodule `fa29287aa2f0115271e091f1031f53c9e024005d` builds `libsystem_kernel.dylib` with 32-bit `libsyscall_32` objects. Therefore the correct next gate is a **read-only inspection of the actual i386 Mach-O exports and reexports in the already installed `/opt/d4rling-qt-i386/libexec/darling/usr/lib` tree** on the 5700X, not another test of Linux atomics or a blind `darling exec` run. Do not assume an apparent absence in the umbrella dylib means an underlying reexport is missing. The prior CA-12 RPC -111 problem remains independent.
+
+**Verdict:** `JACK-01E11H=PASS_BUILD_MACHO_I386_OBJECT`, expected six undefined imports observed (original checker FAIL due to wrong output parsing); symbol **resolution/linking=UNQUALIFIED**, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`. PR #5 remains draft; no Ninja changes, no CI, no JACK install, no additional host directories.
