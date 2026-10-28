@@ -1389,7 +1389,7 @@ Inspect the **new isolated dylib** and recursively traverse each `LC_LOAD_DYLIB`
 | Traversal maximum (`MAX_REFERENCES=512`) reached | **NO** |
 | Probe verdict | `TRANSITIVE_I386_CANDIDATES=PASS` |
 
-After resolving `libSystem.B`'s 33 direct references, transitively discovered five further dylib install names with matching i386 build outputs: `/usr/lib/libobjc.A.dylib`, `/usr/lib/libresolv.9.dylib`, `/usr/lib/libc++.1.dylib`, `/usr/lib/libc++abi.dylib`, and one additional name already introduced outside the immediate umbrella reference set (dedup yields 38 total including `libSystem.B` itself). The 38 exact identities, not the 317 non-unique references, are the **closure count**. The probe's own LC_ID is **not counted as one of the 38 dependency libraries**.
+The 38 libraries comprise **the `libSystem.B` root itself**, its **33 distinct immediate dependencies**, and **four additional transitively discovered install names** with matching i386 build outputs: `/usr/lib/libobjc.A.dylib`, `/usr/lib/libresolv.9.dylib`, `/usr/lib/libc++.1.dylib`, and `/usr/lib/libc++abi.dylib`. The 38 exact identities, not the 317 non-unique references, are the **closure count**. The probe's own LC_ID is **not counted as one of the 38 dependency libraries**.
 
 **All named targets were found in the existing build tree**, including kernel, libc, System umbrella, launch, malloc, pthread, dispatch, dyld, objc, libc++, libc++abi and core crypto. No new builds were performed to obtain them. The script reported `UNRESOLVED_LIBRARIES=0`, `GRAPH_LIMIT_REACHED=NO`, `JACK01E12G_STATUS=READ_ONLY_AUDIT_COMPLETE`, `NINJA_EXECUTED=NO`, `BUILD_MODIFIED=NO`, `INSTALLED_PREFIX_MODIFIED=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`.
 
