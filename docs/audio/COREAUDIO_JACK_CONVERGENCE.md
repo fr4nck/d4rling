@@ -1369,3 +1369,34 @@ JACK01E12F_STATUS=PASS_MACHO_I386_DYLIB_LINK
 Inspect the **new isolated dylib** and recursively traverse each `LC_LOAD_DYLIB` / `LC_REEXPORT_DYLIB` install name (as presented by `llvm-otool-19 -arch i386 -L`), resolving only unique build-tree i386 candidates with exact `LC_ID_DYLIB` matches. Record missing/ambiguous, cycles, `@rpath` or non-standard references, and the number of distinct reachable libraries; **do not modify** source/build/prefix or execute linker, Ninja, CMake, dyld, Darling, JACK or Logic. Archive results under the existing `/home/Deniel/d4rling-audio/qualif`. This distinguishes *link succeeded* from *guest runtime dependencies complete*. Keep CA-12 RPC `-111` an independent runtime blocker.
 
 **Verdict:** `JACK-01E12F=PASS_FIRST_I386_MACHO_DYLIB_LINK`, `DIRECT_INSTALL_NAMES_VERIFIED=33`, `LINK_EXIT=0`, `LOADER_RUNTIME=NOT_QUALIFIED`, `TRANSITIVE_CLOSURE=NOT_QUALIFIED`, `GUEST_JACK=NOT_EXECUTED`. PR #5 stays **draft** against `work/core-audio`; docs-only `[skip ci]`.
+## 60. JACK-01E12G — complete static i386 transitive build-tree dependency candidate closure, 38/38 (2026-10-28)
+
+**Evidence provenance:** stdout pasted from user's actual `Deniel@5700X` Debian 13 WSL2 execution, run under `/home/Deniel/d4rling-audio/qualif`. Local report path is `/home/Deniel/d4rling-audio/qualif/jack01e12g-0iSc0bTe.log`. This documentation entry does **not** claim that the GitHub agent executed the probe or uploaded its raw local report.
+
+**Root of traversal:** existing successful JACK-01E12F probe dylib `/home/Deniel/d4rling-audio/qualif/jack01e12f-1h47hlbq/libjack01e12f_probe.dylib`, itself a Mach-O i386 dylib with ID `/usr/local/lib/libjack01e12f_probe.dylib` and exactly one direct dependency, `/usr/lib/libSystem.B.dylib`.
+
+### Read-only host results
+
+| Property | Observed result |
+| --- | --- |
+| Anchor SHA-256 and i386 arch rechecks (probe, system_c, libSystem.B, kernel) | `ANCHORS=PASS_4` at start; `ANCHORS_UNCHANGED=PASS` at end |
+| Build-tree `.dylib` paths indexed under `d4rling-build-i386/src` | **65** |
+| Distinct indexed `.dylib` basenames | **65** |
+| Unique guest install names discovered transitively | **38** |
+| Matched exact install name to a unique candidate with i386 slice + matching i386 Mach-O dylib ID | **38/38** |
+| Missing, ambiguous or unsupported install names | **0** |
+| Direct dependency-reference edges summed across resolved libraries | **317** |
+| Traversal maximum (`MAX_REFERENCES=512`) reached | **NO** |
+| Probe verdict | `TRANSITIVE_I386_CANDIDATES=PASS` |
+
+After resolving `libSystem.B`'s 33 direct references, transitively discovered five further dylib install names with matching i386 build outputs: `/usr/lib/libobjc.A.dylib`, `/usr/lib/libresolv.9.dylib`, `/usr/lib/libc++.1.dylib`, `/usr/lib/libc++abi.dylib`, and one additional name already introduced outside the immediate umbrella reference set (dedup yields 38 total including `libSystem.B` itself). The 38 exact identities, not the 317 non-unique references, are the **closure count**. The probe's own LC_ID is **not counted as one of the 38 dependency libraries**.
+
+**All named targets were found in the existing build tree**, including kernel, libc, System umbrella, launch, malloc, pthread, dispatch, dyld, objc, libc++, libc++abi and core crypto. No new builds were performed to obtain them. The script reported `UNRESOLVED_LIBRARIES=0`, `GRAPH_LIMIT_REACHED=NO`, `JACK01E12G_STATUS=READ_ONLY_AUDIT_COMPLETE`, `NINJA_EXECUTED=NO`, `BUILD_MODIFIED=NO`, `INSTALLED_PREFIX_MODIFIED=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`.
+
+**Scope limitation (do not overstate):** This is *static candidate closure within `d4rling-build-i386/src`*, based on `llvm-otool-19 -arch i386 -L` and `llvm-lipo-19 -archs`. It does **not** prove that Darling's installed guest filesystem contains these files at their intended paths, that dyld's full real loading algorithm succeeds, that any initializers execute, or that the separate CA-12 `mach_msg_overwrite`/dserver RPC `-111` blocker is resolved. `CANDIDATE_CONTENT_HASHES=NOT_CAPTURED` except for the four anchors; i386 candidate bytes might change under an independently active Ninja owner.
+
+### Next bounded gate — JACK-01E12H: installed guest-prefix coverage (read-only)
+
+Enumerate the same reachable **38 exact absolute install names** in the current build's Mach-O i386 graph and map them to the already-installed guest prefix `/opt/d4rling-qt-i386/libexec/darling` + absolute Darwin path. For each, distinguish absent path, present but x86_64-only, present with i386 slice and **exact LC_ID_DYLIB**, and mismatched/unreadable files. Verify anchor hashes before and after; no writes except one log in the existing `~/d4rling-audio/qualif`. No copied `.dylib`, overlay, symlink replacement, Ninja, CMake, `darling exec`, JACK server or installation. If installed prefix proves lacking i386 artifacts (as prior sample checks suggest), **do not launch guest runtime**. Design a separately approved, isolated guest-prefix overlay later; never mutate an actively used prefix without a preservation/rollback and ownership plan.
+
+**Verdict:** `JACK-01E12G=PASS_STATIC_TRANSITIVE_38_OF_38`, `TRANSITIVE_REFERENCE_EDGES=317`, `INSTALLED_I386_CLOSURE=NOT_QUALIFIED`, `DYLD_EXECUTION=NOT_EXECUTED`, `CA12_RPC=UNRESOLVED`, `REAL_JACK=NOT_EXECUTED`. GitHub PR #5 remains draft (`work/coreaudio-ninja-convergence` → `work/core-audio`), docs-only `[skip ci]`.
