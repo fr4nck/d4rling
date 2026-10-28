@@ -1171,3 +1171,38 @@ STOP_SOURCE_TREE_DIRTY
 **Useful next qualification:** A bounded **read-only** check on 5700X should collect the tracked-diff path set (`git diff --name-only -z HEAD`, with Git optional locks disabled), identify the set of source paths reachable from the two exact final dylib targets using the already-generated Ninja manifest, and mark *declared dependency overlap* without using Ninja. Such graph inspection is advisory: no declared overlap does **not** establish that a build on a dirty checkout is reproducible or safe, because generated scripts/undiscovered dynamic dependencies and concurrent modifications could still matter. Record only paths/hashes/summary under `/home/Deniel/d4rling-audio/qualif` and confirm the producer owner of the nine modifications before any targeted compile. If ownership cannot be established, keep `NO-GO` and prepare a **separate isolated source+build** plan after explicit approval, not a blind override of the dirty-tree guard.
 
 **Preserved evidence:** `JACK-01E11K` six global i386 guest kernel exports PASS, `JACK-01E11M` direct objects system_c 677/677 and libSystem.B 17/20, `JACK-01E11N/O` firstpass producer rules identified, but `JACK-01E12` generated **no** i386 guest dylibs. PR #5 stays draft (`work/coreaudio-ninja-convergence` → `work/core-audio`), docs-only `[skip ci]`; no `/opt` installation, no Darling runtime or real JACK.
+
+## 54. JACK-01E12A — 9 dirty tracked files have zero declared dependency overlap with i386 System build targets (2026-10-28)
+
+**Provenance:** actual shell output pasted by user from `Deniel@5700X` / Debian 13 WSL2, script executed with `WORKDIR=/home/Deniel/d4rling-audio/qualif`. Log remains local at `/home/Deniel/d4rling-audio/qualif/jack01e12a-xsGZslnl.log` and its *full raw bytes were not uploaded to GitHub*. No host operations executed by the GitHub agent.
+
+**Source checks:** `SOURCE_HEAD=b7d0cb6a79fe196657deb9711647f8486bcc5e5e`, `GIT_ROOT=/home/Deniel/d4rling-ui/d4rling-carbon-qualif`, `SOURCE_PROVENANCE=PASS`. Exactly `TRACKED_CHANGED_COUNT=9` (based on the script's tracked Git `diff HEAD --name-only`, not untracked files):
+
+```text
+CREDITS.md
+src/frameworks/Carbon/HIToolbox/include/HIToolbox/CarbonEventsCore.h
+src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c
+src/shellspawn/shellspawn.c
+tests/regressions/carbon-contracts/run.sh
+tests/regressions/carbon-events/README.md
+tests/regressions/carbon-events/allocator-adapter.c
+tests/regressions/carbon-events/allocator-adapter.h
+tests/regressions/carbon-events/run.sh
+```
+
+**Static Ninja declared-graph analysis:** custom read-only Python graph traversal of `d4rling-build-i386/build.ninja`; `GRAPH_OUTPUT_EDGES=8130`. Starting at each actual output target, it traversed collected input paths recursively:
+
+| Target | `REACHABLE_NODES` | `CHANGED_SOURCE_OVERLAP` | Verdict |
+| --- | ---: | ---: | --- |
+| `src/external/libc/libsystem_c.dylib` | **5,180** | **0** | `DECLARED_GRAPH_IMPACT=NOT_DETECTED` |
+| `src/external/libsystem/libSystem.B.dylib` | **5,718** | **0** | `DECLARED_GRAPH_IMPACT=NOT_DETECTED` |
+
+Probe reports `STATIC_GRAPH_SCOPE=BUILD_NINJA_ONLY`, `DYNAMIC_DEPENDENCIES=NOT_QUALIFIED`, `BUILD_PERMISSION=NOT_GRANTED`, `NINJA_EXECUTED=NO`, `SOURCE_MODIFIED=NO`, `BUILD_MODIFIED=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `JACK01E12A_STATUS=READ_ONLY_COMPLETE`. The `SOURCE_MODIFIED=NO` line means this **probe did not modify sources**, **not** that the checkout is clean: the nine tracked files remain dirty.
+
+**Technical limitation:** The lightweight manifest parser was not a complete Ninja language implementation; it ignored some tokens beginning `$` and does not load `.ninja_deps` depfiles or other dynamic dependency sources. `ZERO DECLARED OVERLAP` is a useful scoped observation, not a mathematical proof that Carbon edits cannot affect generated headers, linker flags, or build behavior. This **does not retroactively waive** the earlier `STOP_SOURCE_TREE_DIRTY` or establish exclusive build ownership. The source checkout must not be reset/stashed/cleaned to bypass the safeguard.
+
+### Next controlled step
+
+Coordinate with the owner of `d4rling-carbon-qualif` and the existing Ninja build. If and only if owner confirms that the nine modifications are intentional, the specific build tree is reserved exclusively for this operation, Git/submodule identity and tracked path set remain unchanged, and the exact target outputs do not already exist, use a **targeted, graph-respecting** build for `src/external/libc/libsystem_c.dylib` first (including Ninja's legitimate firstpass prerequisites). Capture a full log in the existing `~/d4rling-audio/qualif` and identify target architecture with `llvm-lipo-19`. Handle any dependency/architecture failure before attempting `src/external/libsystem/libSystem.B.dylib`. Do not install/copy into `/opt`, merge branches, reconfigure CMake, or execute Darling. On any unidentified owner or concurrent builder, **NO-GO** and prefer an explicitly approved isolated source+build plan rather than ignoring the dirty tree.
+
+**State:** `JACK-01E12A=PASS_STATIC_GRAPH_SCOPE_ONLY`; `BUILD_EXECUTION=NOT_YET_STARTED`; `SYSTEM_C_AND_LIBSYSTEM_B=NOT_BUILT_IN_THIS_LOT`; `DARLING_RUNTIME=NOT_EXECUTED`; `REAL_JACK=NOT_EXECUTED`. PR #5 remains draft against `work/core-audio`; docs-only `[skip ci]`.
