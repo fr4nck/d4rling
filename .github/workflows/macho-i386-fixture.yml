@@ -29,6 +29,11 @@ jobs:
       - name: Run standard-library-only fixture tests
         run: sh tests/regressions/macho-i386/run.sh
 
+      - name: Validate QT-113 runner without executing host-dependent stages
+        run: |
+          bash -n tests/regressions/macho-i386/qt113-qualify.sh
+          bash tests/regressions/macho-i386/qt113-qualify.sh --help
+
   pinned-source-contract:
     name: Check pinned i386 source contracts (read-only network)
     runs-on: ubuntu-latest
