@@ -1326,3 +1326,46 @@ JACK01E12E_STATUS=LINK_FAILED
 Using only existing `ld64`, `llvm-otool-19`, `llvm-lipo-19`, existing unchanged object and FAT build-tree system dylibs, calculate **all 51 distinct-reference direct load/reexport paths** from the `libSystem.B` and `libsystem_c` i386 `-L` metadata (plus kernel's direct dependencies, deduplicating by install name). Resolve each requested **full install name** to the unique same-basename build candidate, require a real `i386` slice and confirm its i386 `LC_ID_DYLIB` equals the requested absolute install name. Construct a bounded, deterministic `-dylib_file name:path` list for the known direct set; do not assume transitive closure is complete. Preserve the original command's strict `-undefined error`, produce a new output only inside `/home/Deniel/d4rling-audio/qualif`, and record full linker output/status. If any ID mismatch, missing arch, or ambiguous candidate occurs, **STOP before executing ld64**. If ld64 still reports an unmapped indirect dependency, record that as a **new direct/transitive resolver diagnostic**, not an automatic second build attempt.
 
 **Non-goals:** no Ninja/CMake, reconfiguration, installation/copy to `/opt/d4rling-qt-i386`, deletion or overwrite of any previous logs/targets, `darling exec`, real JACK daemon, Logic Studio 8 runtime, or claim that guest shared fd / mapping works. PR #5 remains draft, docs-only `[skip ci]`. `JACK-01E12E=FAIL_MISSING_REEXPORT_PATH_MAPPING` pending qualified retry; `MACHO_LINK=NOT_YET_PROVEN`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`.
+
+## 59. JACK-01E12F — FIRST SUCCESSFUL Darwin i386 Mach-O dylib link, 33 exact-ID remappings (2026-10-28)
+
+**Evidence provenance:** Direct stdout pasted from user's `Deniel@5700X` Debian 13 WSL2 shell; script was executed under `/home/Deniel/d4rling-audio/qualif`. GitHub documentation was written from user-provided stdout, not from an independently executed linker in the connector. The local qualification log is `/home/Deniel/d4rling-audio/qualif/jack01e12f-AiFJGUXE.log`. All output paths below are on the user's workstation, not committed binary artifacts.
+
+### Pinned input integrity and ABI imports
+
+| Input | SHA-256 matched | Architecture |
+| --- | --- | --- |
+| `qualif/jack01e11_darwin32_socket_abi.o` | `fe740e2f00182bdcc4354b4bbeaca5bcf4df5fd5f0d841796183cbd2947393c8` | Mach-O i386 relocatable object, six expected undefined imports PASS |
+| `d4rling-build-i386/src/external/libc/libsystem_c.dylib` | `f7ea861e37a4bb6eac90bd5a09b6c9a6e40478cdb22027f996402ee15decda2b` | FAT `x86_64 i386` |
+| `d4rling-build-i386/src/external/libsystem/libSystem.B.dylib` | `d2bb750dc963c544da72b1d76c09f5af0b689c9091f12ebd9e6526c6ebb2adc7` | FAT `x86_64 i386` |
+| `d4rling-build-i386/src/external/xnu/darling/src/libsystem_kernel/libsystem_kernel.dylib` | `f94ab6955869ce4e91d6df1319764e84bb5d1925341fbf3b6372268ace85dd2e` | FAT `x86_64 i386` |
+
+**Validated LC_ID_DYLIB roots and load references** using `llvm-otool-19 -arch i386 -L`: `libSystem.B.dylib` ID `/usr/lib/libSystem.B.dylib`, **33** direct references; `libsystem_c.dylib` ID `/usr/lib/system/libsystem_c.dylib`, **18** direct references; `libsystem_kernel.dylib` ID `/usr/lib/system/libsystem_kernel.dylib`, **3** direct references. Their union has **33 distinct requested install names**, each matched to exactly one build-tree same-basename Mach-O artifact with an i386 slice and **exact matching i386 LC_ID_DYLIB**. `MAPPINGS_VALIDATED=33`; specifically `/usr/lib/system/libsystem_sandbox.dylib` mapped to `d4rling-build-i386/src/sandbox/libsystem_sandbox.dylib` (`SANDBOX_MAPPING=PASS`). This corrects the specific JACK-01E12E failure, which used only two manual remappings.
+
+### First successful Darwin i386 linking evidence
+
+The existing Darwin `ld64` at `d4rling-build-i386/src/external/cctools-port/cctools/ld64/src/x86_64-apple-darwin20-ld` was invoked **once** directly with `-arch i386 -dylib -Z -macosx_version_min 10.9 -undefined error` and the 33 exact-ID `-dylib_file` remappings, with the unchanged i386 object plus existing `libSystem.B.dylib`. Its full invocation and mapping list were recorded in the **isolated qualification output**:
+
+```text
+LINK_EXIT=0
+OUTPUT=/home/Deniel/d4rling-audio/qualif/jack01e12f-1h47hlbq/libjack01e12f_probe.dylib
+LINK_LOG=/home/Deniel/d4rling-audio/qualif/jack01e12f-1h47hlbq/link.log
+MAPPINGS_FILE=/home/Deniel/d4rling-audio/qualif/jack01e12f-1h47hlbq/mappings.tsv
+FILE=Mach-O i386 dynamically linked shared library, flags:<NOUNDEFS|DYLDLINK|TWOLEVEL|NO_REEXPORTED_DYLIBS>
+OUTPUT_ARCHS=i386
+LINKED_ID=/usr/local/lib/libjack01e12f_probe.dylib
+LINKED_DEPENDENCY=/usr/lib/libSystem.B.dylib
+PROBE_SYMBOL=PASS
+OUTPUT_SHA256=e3f7d8a537d85b0461e9a88964c5e7860f7d9b4c4d805e8d5bd270b5237d6793
+JACK01E12F_STATUS=PASS_MACHO_I386_DYLIB_LINK
+```
+
+**Interpretation:** This is a **real, successful link of an existing Darwin i386 object into a non-executable Mach-O dylib**, with a correctly identified linked dependency on the i386-capable `libSystem.B` umbrella and its six-source-import code exported as `_jack01e11_darwin32_socket_probe`. The output is **not** an executable JACK process, a guest loader test, a working PCM loop, or proof of IPC semantics on Darling. The probe implements only a read-only header handshake and has **no PCM ACK**, so do not connect it to the legacy JACK-01E8 transfer server. `LC_ID_DYLIB` mapping at link time is not the same as dyld runtime resolution; deeper transitive closure is not proven.
+
+**Post-link provenance:** The script hashed all provided link inputs before and after and reported no input change (otherwise it would have stopped). Explicit flags emitted: `INSTALL_NAME_RUNTIME_RESOLUTION=NOT_QUALIFIED`, `TRANSITIVE_DEPENDENCIES=NOT_QUALIFIED`, `NINJA_EXECUTED=NO`, `BUILD_TREE_MODIFIED=NO`, `INSTALLED_PREFIX_MODIFIED=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`.
+
+### Next milestone — JACK-01E12G, read-only transitive i386 link graph
+
+Inspect the **new isolated dylib** and recursively traverse each `LC_LOAD_DYLIB` / `LC_REEXPORT_DYLIB` install name (as presented by `llvm-otool-19 -arch i386 -L`), resolving only unique build-tree i386 candidates with exact `LC_ID_DYLIB` matches. Record missing/ambiguous, cycles, `@rpath` or non-standard references, and the number of distinct reachable libraries; **do not modify** source/build/prefix or execute linker, Ninja, CMake, dyld, Darling, JACK or Logic. Archive results under the existing `/home/Deniel/d4rling-audio/qualif`. This distinguishes *link succeeded* from *guest runtime dependencies complete*. Keep CA-12 RPC `-111` an independent runtime blocker.
+
+**Verdict:** `JACK-01E12F=PASS_FIRST_I386_MACHO_DYLIB_LINK`, `DIRECT_INSTALL_NAMES_VERIFIED=33`, `LINK_EXIT=0`, `LOADER_RUNTIME=NOT_QUALIFIED`, `TRANSITIVE_CLOSURE=NOT_QUALIFIED`, `GUEST_JACK=NOT_EXECUTED`. PR #5 stays **draft** against `work/core-audio`; docs-only `[skip ci]`.
