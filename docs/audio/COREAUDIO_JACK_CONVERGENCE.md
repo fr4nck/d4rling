@@ -1233,3 +1233,34 @@ The script passed source-root/HEAD checks (`b7d0cb6a79fe196657deb9711647f8486bcc
 From `/home/Deniel/d4rling-audio/qualif`, **read-only** inspect the newly present target path with `test -f`, `file -L`, `stat`, `sha256sum`, and `llvm-lipo-19 -archs`; if an `i386` slice exists, optionally inspect its load commands with `llvm-otool-19 -arch i386 -L`, treating unsupported commands as inconclusive. Compare presence/architectures for the existing build-tree `libsystem_kernel.dylib` and `libSystem.B.dylib` (the latter may still be absent), and the installed `/opt` guest `libsystem_c.dylib`. Report results without modification of source/build/prefix. If file is missing or non-Mach-O, stop and explicitly report uncertainty; do not remove or rebuild it. Do not assume that presence of libc implies a coherent `libSystem.B` or usable Darling runtime.
 
 **Verdict:** `JACK-01E12B=STOP_PREEXISTING_TARGET`, `SOURCE_IDENTITY=PASS`, `DIRTY_TRACKED_PATH_SET=PASS_9`, `PINNED_SUBMODULES=PASS_3`, `TARGET_FILE_ARCHITECTURE=UNQUALIFIED`, `TARGET_PRODUCER=UNKNOWN`, `NINJA_INVOKED_BY_THIS_LOT=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`. PR #5 draft (`work/coreaudio-ninja-convergence` → `work/core-audio`), documentation-only `[skip ci]`.
+## 56. JACK-01E12C — build-tree `libsystem_c`, `libSystem.B`, kernel all FAT x86_64+i386; umbrella reexports confirmed (2026-10-28)
+
+**Provenance:** Actual stdout pasted from the user's `Deniel@5700X` Debian 13 WSL2 session, running read-only checks from `/home/Deniel/d4rling-audio/qualif`. Local report: `/home/Deniel/d4rling-audio/qualif/jack01e12c-govKvzuE.log` (**report pathname only, not transferred in full**). Probe printed `JACK01E12C_STATUS=STATIC_AUDIT_COMPLETE`, `NINJA_EXECUTED=NO`, `BUILD_MODIFIED=NO`, `INSTALLED_PREFIX_MODIFIED=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`.
+
+### Existing binary evidence — actual file formats, architectures, hashes
+
+Build directory: `/home/Deniel/d4rling-core/d4rling-build-i386`. The three build-tree targets are **real, non-symlink, universal Mach-O dylibs with `x86_64 i386` slices**, as verified by `file -L` and `llvm-lipo-19 -archs`: 
+
+| Binary relative to build root | Size | Mtime (5700X Europe/Paris) | SHA-256 | i386 |
+| --- | ---: | --- | --- | --- |
+| `src/external/libc/libsystem_c.dylib` | 2,804,980 bytes | `2026-10-28 08:24:56.922573304 +0100` | `f7ea861e37a4bb6eac90bd5a09b6c9a6e40478cdb22027f996402ee15decda2b` | **YES** |
+| `src/external/libsystem/libSystem.B.dylib` | 232,104 bytes | `2026-10-28 09:54:35.846432087 +0100` | `d2bb750dc963c544da72b1d76c09f5af0b689c9091f12ebd9e6526c6ebb2adc7` | **YES** |
+| `src/external/xnu/darling/src/libsystem_kernel/libsystem_kernel.dylib` | 2,334,084 bytes | `2026-10-28 09:54:32.074432084 +0100` | `f94ab6955869ce4e91d6df1319764e84bb5d1925341fbf3b6372268ace85dd2e` | **YES** |
+
+**Timeline nuance:** `libsystem_c` mtime is before the attempted JACK-01E12B build, which deliberately stopped with `STOP_OUTPUT_ALREADY_EXISTS`. `libSystem.B` and kernel have later mtimes. The responsible process and associated commands **remain unknown**; do not attribute these outputs to our qualification script or claim they were built in this conversation. This audit did not rebuild or overwrite any file.
+
+### i386 Mach-O link metadata inspected
+
+`llvm-otool-19 -arch i386 -L` succeeded on all three FAT dylibs. On `libsystem_c`, the visible entries include its own install name `/usr/lib/system/libsystem_c.dylib`, and needed `libsystem_kernel`, `libcompiler_rt`, `libdyld`, `libsystem_malloc`, `libsystem_pthread`, `libsystem_blocks`, `libsystem_m`, `libsystem_platform`, `liblaunch`, `libsystem_notify`, `libdispatch`, `libsystem_info`, `libmacho`, `libsystem_duct`, `libsystem_asl`, `libxpc`, `libcorecrypto`, `libsystem_trace` (the probe displayed up to 25 lines, so **not a complete dependency closure**). Kernel's visible names include its own install name, `libsystem_c`, `libcompiler_rt`, `libdyld`.
+
+`libSystem.B.dylib` lists its own install name `/usr/lib/libSystem.B.dylib` and i386 **reexports** of sublibraries, including `/usr/lib/system/libsystem_c.dylib` and `/usr/lib/system/libsystem_kernel.dylib`, plus `libsystem_malloc`, `libsystem_m`, `libsystem_pthread`, `libdispatch`, `libdyld`, `libcompiler_rt`, `libsystem_platform` and many others. This verifies the **Mach-O reexport relationships in the i386 slice**, rather than merely relying on CMake source intent. Presence of this umbrella dylib is **not** a proof that each reexported library has a matching i386 slice on disk or that Darling/dyld can load them.
+
+### Installed prefix remains separate and x86_64-only in inspected path
+
+`/opt/d4rling-qt-i386/libexec/darling/usr/lib/system/libsystem_c.dylib`: non-symlink thin **Mach-O x86_64**, size 1,398,172 bytes, mtime `2026-10-17 10:48:03 +0200`, SHA-256 `4f77103e425943a1a2b3e9c7c9e26f315728b155a9037028ccff4b99ffe1e7f2`, `I386_SLICE=NO`. Earlier JACK-01E11J separately confirmed the installed `libSystem.B` and `libsystem_kernel` were also thin x86_64. **Do not replace/copy over this installed prefix** based on build-tree evidence alone.
+
+### Follow-up JACK-01E12D — identify i386 dependency coverage, read-only
+
+Capture the full **direct** `-L` dependency lists of both FAT `libsystem_c` and FAT `libSystem.B` i386 slices. For each distinct install-name basename, look for a candidate existing `.dylib` in the existing `d4rling-build-i386` tree, distinguish no match, multiple matches, and genuinely i386-containing candidates via `llvm-lipo-19 -archs`; report candidates but **never claim that basename matching proves runtime install-name resolution**. Keep this inspection bounded and read-only, log only under `/home/Deniel/d4rling-audio/qualif`, no Ninja, linking, guest execution or `/opt` writes. If all direct dependencies have candidate i386 artifacts, proceed in a separate lot to prove a Mach-O link against controlled build outputs. CA-12 RPC `-111` remains an independent guest-runtime blocker.
+
+**Verdict:** `JACK-01E12C=PASS_3_FAT_I386_SYSTEM_DYLIBS_IN_BUILD_TREE`; `LIBSYSTEM_B_I386_REEXPORTS_C_AND_KERNEL=YES`; `BUILT_ARTIFACT_PRODUCER=UNKNOWN`; `DIRECT_I386_DEPENDENCY_CLOSURE=NOT_QUALIFIED`; `INSTALLED_GUEST_I386_STACK=NOT_QUALIFIED`; `MACHO_APP_LINK=NOT_EXECUTED`; `DARLING_RUNTIME=NOT_EXECUTED`; `REAL_JACK=NOT_EXECUTED`. PR #5 remains draft (`work/coreaudio-ninja-convergence` → `work/core-audio`), documentation `[skip ci]` only.
