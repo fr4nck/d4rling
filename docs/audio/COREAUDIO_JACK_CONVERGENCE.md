@@ -1206,3 +1206,30 @@ Probe reports `STATIC_GRAPH_SCOPE=BUILD_NINJA_ONLY`, `DYNAMIC_DEPENDENCIES=NOT_Q
 Coordinate with the owner of `d4rling-carbon-qualif` and the existing Ninja build. If and only if owner confirms that the nine modifications are intentional, the specific build tree is reserved exclusively for this operation, Git/submodule identity and tracked path set remain unchanged, and the exact target outputs do not already exist, use a **targeted, graph-respecting** build for `src/external/libc/libsystem_c.dylib` first (including Ninja's legitimate firstpass prerequisites). Capture a full log in the existing `~/d4rling-audio/qualif` and identify target architecture with `llvm-lipo-19`. Handle any dependency/architecture failure before attempting `src/external/libsystem/libSystem.B.dylib`. Do not install/copy into `/opt`, merge branches, reconfigure CMake, or execute Darling. On any unidentified owner or concurrent builder, **NO-GO** and prefer an explicitly approved isolated source+build plan rather than ignoring the dirty tree.
 
 **State:** `JACK-01E12A=PASS_STATIC_GRAPH_SCOPE_ONLY`; `BUILD_EXECUTION=NOT_YET_STARTED`; `SYSTEM_C_AND_LIBSYSTEM_B=NOT_BUILT_IN_THIS_LOT`; `DARLING_RUNTIME=NOT_EXECUTED`; `REAL_JACK=NOT_EXECUTED`. PR #5 remains draft against `work/core-audio`; docs-only `[skip ci]`.
+## 55. JACK-01E12B — guarded build stopped because the expected `libsystem_c.dylib` output path already exists (2026-10-28)
+
+**Provenance:** User-pasted stdout of the *planned* controlled i386 `system_c` build script run from `/home/Deniel/d4rling-audio/qualif` on `Deniel@5700X`, Debian 13 WSL2. This outcome is a **preflight stop, not a build attempt**.
+
+```text
+=== JACK-01E12B : CONTROLLED SYSTEM_C BUILD ===
+=== SOURCE ===
+=== MODIFICATIONS AUTORISEES A RESTER EN PLACE ===
+DIRTY_PATHS=9
+DIRTY_PATHS_MATCH=PASS
+=== SOUS-MODULES ===
+SUBMODULE_PASS=src/external/xnu
+SUBMODULE_PASS=src/external/libsystem
+SUBMODULE_PASS=src/external/libc
+=== CONCURRENCE ===
+STOP_OUTPUT_ALREADY_EXISTS
+```
+
+The script's guard `test ! -e "$build/src/external/libc/libsystem_c.dylib"` returned false, so **the target path exists now**, whereas JACK-01E11L/M previously observed that same output path absent. **File type, Mach-O architecture, content hash, mtime, linker identity, whether a symlink, and which process produced it have NOT yet been checked**; do not label it `PASS_I386`, or claim that Ninja successfully linked it. This preflight stopped **before** displaying the manual `OUI` confirmation and before invoking any Ninja build. `libSystem.B.dylib` was not requested.
+
+The script passed source-root/HEAD checks (`b7d0cb6a79fe196657deb9711647f8486bcc5e5e`), verified that the set of nine dirty tracked paths matched the preceding snapshot, checked source files' relative mtime against the audit log, checked three pinned Git submodule HEADs, and reached the concurrency guard. The process-name checks for Ninja/CMake did not trip at that instant. **Neither this nor a lock within the qualification directory proves that another agent cannot use the build tree**, and the local dirty source tree must remain untouched.
+
+### Next gate JACK-01E12C — inspect the preexisting artifact only; no build
+
+From `/home/Deniel/d4rling-audio/qualif`, **read-only** inspect the newly present target path with `test -f`, `file -L`, `stat`, `sha256sum`, and `llvm-lipo-19 -archs`; if an `i386` slice exists, optionally inspect its load commands with `llvm-otool-19 -arch i386 -L`, treating unsupported commands as inconclusive. Compare presence/architectures for the existing build-tree `libsystem_kernel.dylib` and `libSystem.B.dylib` (the latter may still be absent), and the installed `/opt` guest `libsystem_c.dylib`. Report results without modification of source/build/prefix. If file is missing or non-Mach-O, stop and explicitly report uncertainty; do not remove or rebuild it. Do not assume that presence of libc implies a coherent `libSystem.B` or usable Darling runtime.
+
+**Verdict:** `JACK-01E12B=STOP_PREEXISTING_TARGET`, `SOURCE_IDENTITY=PASS`, `DIRTY_TRACKED_PATH_SET=PASS_9`, `PINNED_SUBMODULES=PASS_3`, `TARGET_FILE_ARCHITECTURE=UNQUALIFIED`, `TARGET_PRODUCER=UNKNOWN`, `NINJA_INVOKED_BY_THIS_LOT=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`. PR #5 draft (`work/coreaudio-ninja-convergence` → `work/core-audio`), documentation-only `[skip ci]`.
