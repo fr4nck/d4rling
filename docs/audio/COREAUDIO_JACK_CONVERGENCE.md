@@ -1144,3 +1144,30 @@ Prior qualifications on actual host: `JACK-01E10H=PASS_MIXED_ELF32_ELF64_IPC` (5
 **Firstpass source semantics verified at exactly `b7d0cb6`:** `cmake/darling_lib.cmake` `add_circular(name)` creates `${name}_firstpass` from the shared objects under `-flat_namespace -undefined,suppress` to break circular dependencies, and then creates the final dylib linking declared siblings' firstpass libraries. `cmake/architecture.cmake` derives `BUILD_TARGET_32BIT=TRUE` from cache `TARGET_i386=ON` (the former need not appear as a CMake-cache line). Thus numerous **firstpass output files absent on disk with available Ninja producer edges** are consistent with an uncompleted, intentional two-pass build. It remains **unproven that those edges build successfully or that their transitive prerequisites are complete**.
 
 **Disposition:** handoff prepared on GitHub with no new execution on the 5700X. Before initiating targeted `system_c` and `system` builds, the Carbon/Ninja owner must confirm source tree identity and `git --show-toplevel` failure cause, coordinate exclusive build ownership, assess transitive firstpass producers, then build only in an explicitly authorized controlled session. CA-12 RPC `-111`, guest-link runtime and JACK real audio remain unqualified. PR #5 remains draft against `work/core-audio`; this update is docs-only `[skip ci]`.
+
+## 53. JACK-01E12 — fail-closed before any Ninja execution: source checkout has active tracked modifications (2026-10-28)
+
+**Evidence:** user-pasted stdout of the controlled 5700X i386 build attempt. The command entered `/home/Deniel/d4rling-audio/qualif`, checked the configured build `/home/Deniel/d4rling-core/d4rling-build-i386`, and successfully resolved the sanitized Git worktree root and commit of the alternate Carbon source checkout:
+
+```text
+SOURCE=/home/Deniel/d4rling-ui/d4rling-carbon-qualif
+BUILD=/home/Deniel/d4rling-core/d4rling-build-i386
+GIT_ROOT=/home/Deniel/d4rling-ui/d4rling-carbon-qualif
+SOURCE_HEAD=b7d0cb6a79fe196657deb9711647f8486bcc5e5e
+STOP_SOURCE_TREE_DIRTY
+ M CREDITS.md
+ M src/frameworks/Carbon/HIToolbox/include/HIToolbox/CarbonEventsCore.h
+ M src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c
+ M src/shellspawn/shellspawn.c
+ M tests/regressions/carbon-contracts/run.sh
+ M tests/regressions/carbon-events/README.md
+ M tests/regressions/carbon-events/allocator-adapter.c
+ M tests/regressions/carbon-events/allocator-adapter.h
+ M tests/regressions/carbon-events/run.sh
+```
+
+**Verdict:** `JACK-01E12=STOP_SOURCE_TREE_DIRTY` is the intended security/provenance stop: **no Ninja build was launched**. The script aborted **before** its submodule verification, lock acquisition, concurrency check, and target build loop. Consequently no claim is made that the expected submodule HEADs match, that no other build is active, or that output dylibs were changed/preserved by other actors. The nine listed paths are *tracked worktree modifications*; no conclusion about untracked files or ownership. These may be intentional concurrent Carbon/shellspawn work. **Do not reset, checkout, stash, commit, or otherwise touch those modifications in order to make the build pass.**
+
+**Useful next qualification:** A bounded **read-only** check on 5700X should collect the tracked-diff path set (`git diff --name-only -z HEAD`, with Git optional locks disabled), identify the set of source paths reachable from the two exact final dylib targets using the already-generated Ninja manifest, and mark *declared dependency overlap* without using Ninja. Such graph inspection is advisory: no declared overlap does **not** establish that a build on a dirty checkout is reproducible or safe, because generated scripts/undiscovered dynamic dependencies and concurrent modifications could still matter. Record only paths/hashes/summary under `/home/Deniel/d4rling-audio/qualif` and confirm the producer owner of the nine modifications before any targeted compile. If ownership cannot be established, keep `NO-GO` and prepare a **separate isolated source+build** plan after explicit approval, not a blind override of the dirty-tree guard.
+
+**Preserved evidence:** `JACK-01E11K` six global i386 guest kernel exports PASS, `JACK-01E11M` direct objects system_c 677/677 and libSystem.B 17/20, `JACK-01E11N/O` firstpass producer rules identified, but `JACK-01E12` generated **no** i386 guest dylibs. PR #5 stays draft (`work/coreaudio-ninja-convergence` → `work/core-audio`), docs-only `[skip ci]`; no `/opt` installation, no Darling runtime or real JACK.
