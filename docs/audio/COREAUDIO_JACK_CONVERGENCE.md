@@ -1264,3 +1264,37 @@ Build directory: `/home/Deniel/d4rling-core/d4rling-build-i386`. The three build
 Capture the full **direct** `-L` dependency lists of both FAT `libsystem_c` and FAT `libSystem.B` i386 slices. For each distinct install-name basename, look for a candidate existing `.dylib` in the existing `d4rling-build-i386` tree, distinguish no match, multiple matches, and genuinely i386-containing candidates via `llvm-lipo-19 -archs`; report candidates but **never claim that basename matching proves runtime install-name resolution**. Keep this inspection bounded and read-only, log only under `/home/Deniel/d4rling-audio/qualif`, no Ninja, linking, guest execution or `/opt` writes. If all direct dependencies have candidate i386 artifacts, proceed in a separate lot to prove a Mach-O link against controlled build outputs. CA-12 RPC `-111` remains an independent guest-runtime blocker.
 
 **Verdict:** `JACK-01E12C=PASS_3_FAT_I386_SYSTEM_DYLIBS_IN_BUILD_TREE`; `LIBSYSTEM_B_I386_REEXPORTS_C_AND_KERNEL=YES`; `BUILT_ARTIFACT_PRODUCER=UNKNOWN`; `DIRECT_I386_DEPENDENCY_CLOSURE=NOT_QUALIFIED`; `INSTALLED_GUEST_I386_STACK=NOT_QUALIFIED`; `MACHO_APP_LINK=NOT_EXECUTED`; `DARLING_RUNTIME=NOT_EXECUTED`; `REAL_JACK=NOT_EXECUTED`. PR #5 remains draft (`work/coreaudio-ninja-convergence` → `work/core-audio`), documentation `[skip ci]` only.
+
+## 57. JACK-01E12D — 51/51 direct i386 dependency references have one matching build-tree candidate (2026-10-28)
+
+**Provenance:** full stdout pasted by user from `Deniel@5700X` Debian 13 WSL2, run under `/home/Deniel/d4rling-audio/qualif`. Local report `/home/Deniel/d4rling-audio/qualif/jack01e12d-gRd8Pwu2.log` (not independently uploaded to GitHub). This is an **on-host, read-only static qualification**, not an AI-executed build/link.
+
+### Three immutable anchor outputs revalidated
+
+| Existing i386+ x86_64 FAT Mach-O build artifact | SHA-256 (matched expected) | Architecture |
+| --- | --- | --- |
+| `src/external/libc/libsystem_c.dylib` | `f7ea861e37a4bb6eac90bd5a09b6c9a6e40478cdb22027f996402ee15decda2b` | `x86_64 i386` |
+| `src/external/libsystem/libSystem.B.dylib` | `d2bb750dc963c544da72b1d76c09f5af0b689c9091f12ebd9e6526c6ebb2adc7` | `x86_64 i386` |
+| `src/external/xnu/darling/src/libsystem_kernel/libsystem_kernel.dylib` | `f94ab6955869ce4e91d6df1319764e84bb5d1925341fbf3b6372268ace85dd2e` | `x86_64 i386` |
+
+Probe: `ARTIFACT_INTEGRITY=PASS_3` and `KERNEL_EXPORTS=PASS_6` for all six global defined i386 `_socket`, `_connect`, `_recvmsg`, `_mmap`, `_munmap`, `_close`.
+
+### Direct dylib dependencies from `llvm-otool-19 -arch i386 -L`
+
+| Referencing dylib | Direct dependencies excluding self-ID | Missing i386 candidates by basename scan | Ambiguous i386 candidates |
+| --- | ---: | ---: | ---: |
+| `libsystem_c.dylib` | **18** | **0** | **0** |
+| `libSystem.B.dylib` | **33** | **0** | **0** |
+| **Total direct references (not distinct libraries)** | **51** | **0** | **0** |
+
+All 51 direct references resolved to **exactly one** same-basename `.dylib` file containing an i386 slice under existing `d4rling-build-i386/src` according to this audit. The `libSystem.B` references are marked **REEXPORT=YES** and include `libsystem_c`, `libsystem_kernel`, `libsystem_malloc`, `libsystem_platform`, `libsystem_m`, `libsystem_pthread`, `libdispatch`, `libdyld`, etc. Other i386 candidates now include `libsystem_sandbox`, `libquarantine`, `libremovefile`, `libcopyfile`, `libsystem_coreservices`, `libsystem_coretls`, `libkeymgr`, `libcommonCrypto`, `libsystem_dnssd`, `libsystem_networkextension`, `libunwind`, `libsystem_darwin`, `libcache`, and `libsystem_configuration`.
+
+**Interpretation and limitations:** The candidate matching was by **basename plus `llvm-lipo -archs`**, not the Mach-O dylib's exact `LC_ID_DYLIB`/install-name, actual `LC_REEXPORT_DYLIB` path resolution, complete **transitive** dependency closure, or dyld runtime loader behavior. Do not mislabel `DIRECT_I386_CANDIDATES=PASS` as `INSTALL_NAME_RESOLUTION=PASS`. Existing installed `/opt/d4rling-qt-i386` guest System dylibs checked earlier remain thin `x86_64`, independent of the FAT build tree.
+
+**Exact terminal status:** `DIRECT_I386_CANDIDATES=PASS`, `INSTALL_NAME_RESOLUTION=NOT_QUALIFIED`, `TRANSITIVE_DEPENDENCIES=NOT_QUALIFIED`, `MACHO_LINK=NOT_EXECUTED`, `NINJA_EXECUTED=NO`, `BUILD_MODIFIED=NO`, `INSTALLED_PREFIX_MODIFIED=NO`, `DARLING_RUNTIME=NOT_EXECUTED`, `REAL_JACK=NOT_EXECUTED`, `JACK01E12D_STATUS=STATIC_AUDIT_COMPLETE`.
+
+### Next gate JACK-01E12E — isolated *actual* i386 Mach-O link, non-runnable dylib
+
+Given the 51/51 positive direct candidate results and six matching defined guest i386 kernel symbols, the next narrow proof should be to **link the already compiled `jack01e11_darwin32_socket_abi.o` against the known FAT build-tree `libSystem.B.dylib`**, producing a *non-executable* i386 Mach-O **dylib probe** only under the canonical `/home/Deniel/d4rling-audio/qualif`. Preflight must verify exact input SHA-256 for the three FAT System libraries, original object format/undefined six imports, existence and executable status of the existing Carbon/Darling `ld64` (do not download/rebuild linkers), and no existing output overwritten. Do not call Ninja or CMake and do not touch existing build artifacts/installed prefixes. Record full linker stdout/stderr, exit status, `file`, `llvm-lipo`, `llvm-otool -L` and `llvm-nm -m -u` if successful. Treat a linker failure as a precise **diagnostic**, not an invitation to bypass undefined symbols or perform automatic reinstalls.
+
+**Crucial warning:** Such a dylib-only link does **not** create a runnable client or prove Darwin runtime, `SCM_RIGHTS` guest/host mediation, 50,000 PCM frames in Mach-O, CA-12 RPC recovery, JACK playback or Logic Studio 8. The test source is a non-executed handshake/FD-read-only ABI probe with **NO PCM loop/ACK** and must never be connected to the original JACK-01E8 server. PR #5 remains **draft**, branch `work/coreaudio-ninja-convergence` into `work/core-audio`; docs-only `[skip ci]`.
