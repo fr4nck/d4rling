@@ -23,8 +23,7 @@ From an existing checkout of the PR's source, with pre-existing Python 3 and
 Clang + ASan/UBSan:
 
 ```sh
-python3 tests/regressions/mldr-socket-bitmap/run.py 
-  --expect-blob 2c05caaae9c13882cbc5d07fd3f3e4ebdee0687c
+python3 tests/regressions/mldr-socket-bitmap/run.py --expect-blob 2c05caaae9c13882cbc5d07fd3f3e4ebdee0687c
 ```
 
 Optional, if Ruby is already installed:
