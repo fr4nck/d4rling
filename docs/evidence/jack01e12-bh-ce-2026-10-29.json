@@ -1,0 +1,251 @@
+{
+  "schema": "d4rling.resume-summary.v1",
+  "recorded_on": "2026-10-29",
+  "scope": "Technical conclusions selected from 21 existing local reports. No qualification rerun. Full reports and detailed local inventory remain local. Public report path patterns are in the handoff note.",
+  "privacy": "No precise personal paths, per-process identifiers, runtime topology, local content hashes, environment dumps, raw logs or private binaries are included in this register.",
+  "verification": {
+    "protected_modified_files": 9,
+    "local_head_branch_index_status_and_contents_preserved": true,
+    "original_reports_verified_locally": true,
+    "cb_12_fixture_identities_verified_locally": true,
+    "cb_negative_control_differs_at_two_offsets": true,
+    "ay_duplicate_binaries_verified_locally": true
+  },
+  "qualification_boundaries": {
+    "x86_64_macho_output_observed_in_BK": true,
+    "i386_diagnostic_load_is_not_entry_execution": true,
+    "CB_i386_instruction_execution_differential_proof": true,
+    "CB_injected_payloads_use_Linux_i386_syscalls": true,
+    "i386_Darwin_API_runtime_qualified": false,
+    "full_i386_dyld_qualified": false,
+    "Qt_QuickTime_CoreAudio_JACK_Logic_qualified_by_these_campaigns": false,
+    "CE_observations": 100,
+    "CE_executions": 4,
+    "CE_PASS": 19,
+    "CE_INFO": 81,
+    "CE_FAIL": 0
+  },
+  "campaigns": [
+    {
+      "campaign": "JACK-01E12BH",
+      "lot": "JACK-01E12BH",
+      "verdict": "SUSPECT_MISSING_DARWIN_BASH",
+      "baseline_BG": "SHELLSPAWN_OR_SHELL_NEEDS_REVIEW"
+    },
+    {
+      "campaign": "JACK-01E12BI",
+      "lot": "JACK-01E12BI",
+      "verdict": "MISSING_BASH_IN_ACTIVE_OVERLAY",
+      "baseline_BH": "SUSPECT_MISSING_DARWIN_BASH"
+    },
+    {
+      "campaign": "JACK-01E12BJ-R2",
+      "lot": "JACK-01E12BJ-R2",
+      "expected_lots": 100,
+      "completed_lots": 100,
+      "statuses": {
+        "PASS": 69,
+        "CONFIRMED": 12,
+        "INFO": 17,
+        "REVIEW": 1,
+        "VERDICT": 1
+      },
+      "verdict": "MISSING_BASH_SEARCH_INCOMPLETE"
+    },
+    {
+      "campaign": "JACK-01E12BK",
+      "lot": "JACK-01E12BK",
+      "verdict": "DIRECT_MACHO_OUTPUT_OBSERVED",
+      "baseline": "JACK-01E12BJ-R2"
+    },
+    {
+      "campaign": "JACK-01E12BL",
+      "lot": "JACK-01E12BL",
+      "completed": 100,
+      "statuses": {
+        "PASS": 83,
+        "INFO": 14,
+        "CONFIRMED": 2,
+        "VERDICT": 1
+      },
+      "verdict": "X64_RUNTIME_PROVEN_I386_STAGING_REQUIRED"
+    },
+    {
+      "campaign": "JACK-01E12BM",
+      "lot": "JACK-01E12BM",
+      "completed": 100,
+      "statuses": {
+        "PASS": 95,
+        "INFO": 2,
+        "REVIEW": 2,
+        "VERDICT": 1
+      },
+      "verdict": "I386_NEGATIVE_BOUNDS_NEED_REVIEW",
+      "linux_elf32_executions_pass": 20,
+      "macho32_positive_loads_pass": 20,
+      "macho32_negative_rejections_pass": 19
+    },
+    {
+      "campaign": "JACK-01E12BN-R2",
+      "lot": "JACK-01E12BN-R2",
+      "completed": 100,
+      "verdict": "REVIEW_BOUNDARY_CASES",
+      "baseline_BM": "JACK-01E12BM",
+      "outcomes": {
+        "REJECTED": 46,
+        "LOAD_RETURNED": 53,
+        "CRASHED": 1
+      },
+      "classifications": {
+        "PASS_REJECTED": 30,
+        "OBSERVED_ACCEPTED_TRUNCATION": 19,
+        "PASS_COMPLETE_IMAGE": 11,
+        "OBSERVED_REJECTED_MUTATION": 16,
+        "OBSERVED_ACCEPTED_MUTATION": 23,
+        "REVIEW": 1
+      },
+      "accepted_incomplete_segments": 19,
+      "rejected_incomplete_segments": 0,
+      "first_accepted_truncation": 192,
+      "review_cases": [
+        "BN063"
+      ]
+    },
+    {
+      "campaign": "JACK-01E12BP",
+      "schema": "d4rling.jack01e12bp.static-provider.v1",
+      "verdict": "AUDIO_PROVIDER_AUDITED_RUNTIME_UNQUALIFIED",
+      "next_gate": "ISOLATED_BUILD_AND_FUNCTIONAL_TEST",
+      "source_files": 461,
+      "implementations": 207
+    },
+    {
+      "campaign": "JACK-01E12BQ",
+      "schema": "d4rling.jack01e12bq.deep-gates.v1",
+      "verdict": "SOURCE_GATE_AUDITED_BUILD_AND_RUNTIME_PENDING",
+      "source_files": 461,
+      "implementation_files": 207,
+      "hal_apis": 41,
+      "pulse_files": 7,
+      "evidence_cells": 429
+    },
+    {
+      "campaign": "JACK-01E12BR-REPRISE",
+      "schema": "d4rling.jack01e12br-reprise.v1",
+      "decision": "PREBUILD_ABI_REVIEW_REQUIRED",
+      "hal_api_count": 41,
+      "pulse_native_pkgconfig": true,
+      "pulse_i386_pkgconfig": false,
+      "pulse_elf32": false,
+      "pulse_elf64": true,
+      "compile_performed": false,
+      "runtime_performed": false
+    },
+    {
+      "campaign": "JACK-01E12BT",
+      "schema": "d4rling.jack01e12bt.v1",
+      "total": 50,
+      "counts": {
+        "PASS": 17,
+        "INFO": 31,
+        "FAIL": 2
+      }
+    },
+    {
+      "campaign": "JACK-01E12BU",
+      "schema": "d4rling.jack01e12bu.v1",
+      "total": 60,
+      "counts": {
+        "PASS": 8,
+        "INFO": 52
+      }
+    },
+    {
+      "campaign": "JACK-01E12BW",
+      "schema": "d4rling.jack01e12bw.v1",
+      "bv_original_preflight_compatible": true
+    },
+    {
+      "campaign": "JACK-01E12BX",
+      "schema": "d4rling.jack01e12bx.v1",
+      "counts": {
+        "PASS": 84,
+        "INFO": 16
+      },
+      "runtime_executed": false,
+      "production_qualified": false
+    },
+    {
+      "campaign": "JACK-01E12BZ",
+      "schema": "d4rling.jack01e12bz.v1",
+      "by_executed": false
+    },
+    {
+      "campaign": "JACK-01E12CA",
+      "schema": "d4rling.jack01e12ca.v1",
+      "marker_exit42_observed": true,
+      "entry_execution_proven": false,
+      "darwin_runtime_qualified": false
+    },
+    {
+      "campaign": "JACK-01E12CB",
+      "schema": "d4rling.jack01e12cb.v1",
+      "cases_total": 12,
+      "counts": {
+        "PASS": 10,
+        "INFO": 2
+      },
+      "strong_i386_entry_proof": true,
+      "dynamic_loader_fully_qualified": false,
+      "darwin_syscalls_qualified": false,
+      "quicktime_qualified": false,
+      "coreaudio_qualified": false
+    },
+    {
+      "campaign": "JACK-01E12CC",
+      "schema": "d4rling.jack01e12cc.v1",
+      "total": 100,
+      "counts": {
+        "PASS": 42,
+        "INFO": 58
+      },
+      "quicktime_qualified": false,
+      "dyld_initialization_qualified": false,
+      "strong_i386_entry_proof_previously_validated": true
+    },
+    {
+      "campaign": "JACK-01E12CD",
+      "schema": "d4rling.jack01e12cd.v1",
+      "total_metrics": 100,
+      "counts": {
+        "PASS": 7,
+        "INFO": 93
+      },
+      "quicktime_qualified": false,
+      "dyld_initialized_and_operational": false
+    },
+    {
+      "campaign": "JACK-01E12CD",
+      "schema": "d4rling.jack01e12cd.v1",
+      "total_metrics": 100,
+      "counts": {
+        "PASS": 7,
+        "INFO": 93
+      },
+      "quicktime_qualified": false,
+      "dyld_initialized_and_operational": false
+    },
+    {
+      "campaign": "JACK-01E12CE",
+      "schema": "d4rling.jack01e12ce.v1",
+      "observations": 100,
+      "cases": 4,
+      "counts": {
+        "PASS": 19,
+        "INFO": 81
+      },
+      "quicktime_qualified": false,
+      "dyld_operational": false
+    }
+  ]
+}

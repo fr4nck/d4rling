@@ -1,12 +1,20 @@
 # d4rling
 
+**Start here: [current project state](PROJECT_STATE.md) · [reproduce on another machine](reproduction/README.md)**
+
+The current resume state includes the historical local source overlay, the previously
+ignored Carbon test, pinned submodules/dependencies and executable recovery recipes.
+Read it before proposing new work; published branch heads and the historical local
+qualification checkout are different source states.
+
 Personal development fork of [Darling](https://github.com/darlinghq/darling),
 maintained by [fr4nck](https://github.com/fr4nck), including experimental work
 toward Logic Studio 8 compatibility.
 
 **[Credits and source provenance](CREDITS.md)** ·
 **[Recorded validation and remaining work](docs/logic8-progress.md)** ·
-**[Carbon UI architecture and next milestone](docs/carbon-ui-roadmap.md)**
+**[Carbon UI architecture and next milestone](docs/carbon-ui-roadmap.md)** ·
+**[D4RLING handoff: JACK BH–CE, evidence and remaining gates (2026-10-29)](docs/d4rling-reprise-2026-10-29.md)**
 
 The default `master` branch includes the latest upstream baseline imported on
 2026-10-15, `60ba801decee7a00782f74f6be4c8ffb013f79ff`, plus this fork's changes.
@@ -18,7 +26,8 @@ Upstream updates are integrated with Git merges, preserving upstream authors,
 history and our local changes. The upstream project is a source dependency;
 working on this fork does not submit contributions there.
 
-From a clean checkout, check for and integrate upstream changes before new work:
+Historical reproduction uses the pinned recipe above. Upstream integration is a
+separate maintenance operation on a clean checkout:
 
 ```sh
 git switch master

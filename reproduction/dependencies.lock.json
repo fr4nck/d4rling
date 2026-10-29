@@ -1,0 +1,342 @@
+{
+  "distribution": "Debian",
+  "distribution_version": "13.5",
+  "architecture": "amd64",
+  "packages": [
+    {
+      "package": "build-essential",
+      "version_observed": "12.12",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "git",
+      "version_observed": "1:2.47.3-0+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "git-lfs",
+      "version_observed": "3.6.1-1+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "ca-certificates",
+      "version_observed": "20250419",
+      "architecture": "all",
+      "installed_on_reference": true
+    },
+    {
+      "package": "curl",
+      "version_observed": "8.14.1-2+deb13u7",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "cmake",
+      "version_observed": "3.31.6-2",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "ninja-build",
+      "version_observed": "1.12.1-1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "clang-19",
+      "version_observed": "1:19.1.7-3+b1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "clang-tools-19",
+      "version_observed": "1:19.1.7-3+b1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "llvm-19",
+      "version_observed": "1:19.1.7-3+b1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "llvm-19-dev",
+      "version_observed": "1:19.1.7-3+b1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "bison",
+      "version_observed": "2:3.8.2+dfsg-1+b2",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "flex",
+      "version_observed": "2.6.4-8.2+b4",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "xz-utils",
+      "version_observed": "5.8.1-1+deb13u2",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "gzip",
+      "version_observed": "1.13-1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "file",
+      "version_observed": "1:5.46-5",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "make",
+      "version_observed": "4.4.1-2",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "patch",
+      "version_observed": "2.8-2",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "rsync",
+      "version_observed": "3.5.0+ds1-0+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "python3",
+      "version_observed": "3.13.5-1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "pkg-config",
+      "version_observed": "1.8.1-4",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libc6-dev-i386",
+      "version_observed": "2.41-12+deb13u4",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "gcc-multilib",
+      "version_observed": "4:14.2.0-1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libcap2-bin",
+      "version_observed": "1:2.75-10+deb13u1+b3",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libcap-dev",
+      "version_observed": "1:2.75-10+deb13u1+b3",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libfuse-dev",
+      "version_observed": "2.9.9-9",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libudev-dev",
+      "version_observed": "257.13-1~deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libcairo2-dev",
+      "version_observed": "1.18.4-1+b1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libgl1-mesa-dev",
+      "version_observed": "25.0.7-2+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libglu1-mesa-dev",
+      "version_observed": "9.0.2-1.1+b3",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libtiff-dev",
+      "version_observed": "4.7.0-3+deb13u3",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libfreetype-dev",
+      "version_observed": "2.13.3+dfsg-1+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libxml2-dev",
+      "version_observed": "2.12.7+dfsg+really2.9.14-2.1+deb13u3",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libegl1-mesa-dev",
+      "version_observed": "25.0.7-2+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libfontconfig1-dev",
+      "version_observed": "2.15.0-2.3",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libbsd-dev",
+      "version_observed": "0.12.2-2",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libxrandr-dev",
+      "version_observed": "2:1.5.4-1+b3",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libxcursor-dev",
+      "version_observed": "1:1.2.3-1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libgif-dev",
+      "version_observed": "5.2.2-1+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libpulse-dev",
+      "version_observed": "17.0+dfsg1-2+b1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libasound2-dev",
+      "version_observed": "1.2.14-1+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libavformat-dev",
+      "version_observed": "7:7.1.5-0+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libavcodec-dev",
+      "version_observed": "7:7.1.5-0+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libswresample-dev",
+      "version_observed": "7:7.1.5-0+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libavutil-dev",
+      "version_observed": "7:7.1.5-0+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libdbus-1-dev",
+      "version_observed": "1.16.2-2",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libxkbfile-dev",
+      "version_observed": "1:1.1.0-1+b4",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libssl-dev",
+      "version_observed": "3.5.7-1~deb13u3",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libvulkan-dev",
+      "version_observed": "1.4.309.0-1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libcurl4-openssl-dev",
+      "version_observed": "8.14.1-2+deb13u7",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libedit-dev",
+      "version_observed": "3.1-20250104-1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "libelf-dev",
+      "version_observed": "NOT_INSTALLED",
+      "architecture": "amd64",
+      "installed_on_reference": false
+    },
+    {
+      "package": "util-linux",
+      "version_observed": "2.41.5-0+deb13u1",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    },
+    {
+      "package": "coreutils",
+      "version_observed": "9.7-3",
+      "architecture": "amd64",
+      "installed_on_reference": true
+    }
+  ],
+  "optional_not_installed": [
+    "ruby",
+    "claude-code",
+    "libjack-jackd2-dev",
+    "libpulse-dev:i386"
+  ],
+  "notes": [
+    "Recorded package versions are observations, not proof that every historical binary used those exact packages.",
+    "Package unavailability must fail explicitly; never silently substitute a different version.",
+    "CoreAudio in-process i386 needs ELF32 audio providers; native amd64 libpulse is insufficient."
+  ]
+}

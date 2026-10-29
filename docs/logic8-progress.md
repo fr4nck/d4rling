@@ -152,3 +152,41 @@ LeakSanitizer was attempted but blocked by the container; Clang and the
 real-dependency runner were not available. No download or install was performed.
 See [scope, commands, evidence and remaining limits](carbon-queue-dispatch-2026-10-22.md).
 This is not a full Darling build or a Logic Studio 8 compatibility result.
+
+## D4RLING local qualification handoff (2026-10-29)
+
+[The structured BH–CE handoff](d4rling-reprise-2026-10-29.md) records the
+existing local campaign evidence, technical decisions, protected environment,
+report locations and next acceptance gates. It separates BK's observed x86_64
+Mach-O execution, BM/BN-R2's intercepted i386 loading and CB's differential
+i386 instruction-execution proof. CE contains 100 observations across four
+runs (19 PASS, 81 INFO), including a repeated marker control and dynamic timeouts;
+it does not establish 100 successful application executions or fully operational
+i386 dyld. The injected CB payloads use direct Linux i386 syscalls. Darwin APIs,
+Qt/QuickTime, CoreAudio/JACK and Logic compatibility remain unqualified by these
+campaigns. Earlier Carbon results above retain their original scope.
+
+The [selected evidence register](evidence/jack01e12-bh-ce-2026-10-29.json)
+contains technical conclusions and qualification boundaries. The handoff uses
+anonymized report path patterns; precise paths, content hashes, full raw reports,
+private binaries and prefixes remain local. The nine protected local changes remain
+uncommitted and outside this documentation publication. No qualification was
+rerun for this handoff; the current local checkout was read only.
+
+## Reproducible project consolidation (2026-10-29)
+
+[PROJECT_STATE.md](../PROJECT_STATE.md) is now the entry point for future work.
+[Reproduction instructions](../reproduction/README.md) preserve the historical
+b7d0cb6 local overlay and ignored parameters.c, 160 submodule pins, observed Debian
+package versions, Carbon witness sources and portable scripts. The latest audit
+also recovers QT-1980 dynamic Carbon (8/8 concurrent cases), QT-1993/1994, the
+PR6 scope and the completed static QT-2211–2710 reports. These complement the
+BH–CE handoff; they do not qualify a complete multimedia application.
+
+A fresh independent source copy passed 135 Carbon host checks and their ASan
+repeat, C11/C++17 contracts, and a 179-step native launcher/loader/server build.
+The rebuilt Carbon witness passed NORMAL/BYPASS with a missing-dylib negative
+control using the existing private system libraries. See the exact
+[validation scope](../reproduction/validation.md). The original nine-file local
+checkout remains unchanged. Private project archives and raw evidence remain
+separate from the public reproduction sources.

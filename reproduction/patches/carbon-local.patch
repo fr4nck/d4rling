@@ -1,0 +1,474 @@
+diff --git a/CREDITS.md b/CREDITS.md
+index 145113042..adef80a18 100644
+--- a/CREDITS.md
++++ b/CREDITS.md
+@@ -80,3 +80,19 @@ creation and ownership contracts; the pinned
+ was checked for clock declarations. No external implementation was copied.
+ Host tests use an explicitly identified test-only CF allocator adapter;
+ they do not validate the actual CoreFoundation runtime.
++
++## Carbon event parameter candidate (proposed, not executed)
++
++Analytical proposal prepared with ChatGPT GPT-6 for fr4nck at commit
++`b7d0cb6a79fe196657deb9711647f8486bcc5e5e` (draft PR #2).
++The original Darling and Lubos Dolezel copyright/GPL notices remain intact.
++Regression candidates retain SPDX GPL-3.0-or-later. Nothing was compiled,
++tested, committed, or published as part of this proposal.
++The API contracts were compared with Apple's Mac OS X 10.6 SDK headers:
++https://github.com/phracker/MacOSX-SDKs/blob/master/MacOSX10.6.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/CarbonEventsCore.h
++https://github.com/phracker/MacOSX-SDKs/blob/master/MacOSX10.6.sdk/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/Headers/CarbonEvents.h
++https://github.com/phracker/MacOSX-SDKs/blob/master/MacOSX10.6.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers/AEDataModel.h
++https://github.com/phracker/MacOSX-SDKs/blob/master/MacOSX10.6.sdk/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/Headers/AERegistry.h
++and Apple's archived Carbon Event Manager Reference:
++https://leopard-adc.pepas.com/documentation/Carbon/Reference/Carbon_Event_Manager_Ref/Reference/reference.html
++No third-party implementation has been copied.
+diff --git a/src/frameworks/Carbon/HIToolbox/include/HIToolbox/CarbonEventsCore.h b/src/frameworks/Carbon/HIToolbox/include/HIToolbox/CarbonEventsCore.h
+index 129cd498c..352b0b5cc 100644
+--- a/src/frameworks/Carbon/HIToolbox/include/HIToolbox/CarbonEventsCore.h
++++ b/src/frameworks/Carbon/HIToolbox/include/HIToolbox/CarbonEventsCore.h
+@@ -18,6 +18,8 @@ typedef UInt16 EventMask;
+ typedef UInt16 EventKind;
+ typedef void* EventTargetRef;
+ typedef OSType EventParamName;
++/* Apple HIToolbox CarbonEventsCore.h, Mac OS X 10.6 SDK. */
++enum { eventParameterNotFoundErr = -9870 };
+ typedef struct EventTypeSpec { OSType eventClass; UInt32 eventKind; } EventTypeSpec;
+ typedef EventTime EventTimeout;
+ typedef OSStatus (*EventHandlerProcPtr)(EventHandlerCallRef inHandlerCallRef,
+@@ -45,6 +47,10 @@ OSStatus CreateEvent(CFAllocatorRef a, OSType b, UInt32 c, EventTime d, EventAtt
+ OSType GetEventClass(EventRef a);
+ UInt32 GetEventKind(EventRef a);
+ OSStatus GetEventParameter(EventRef a, EventParamName b, EventParamType c, EventParamType* d, ByteCount e, ByteCount* f, void* g);
++OSStatus SetEventParameter(EventRef inEvent, EventParamName inName, EventParamType inType,
++                           ByteCount inSize, const void* inDataPtr);
++OSStatus RemoveEventParameter(EventRef inEvent, EventParamName inName);
++EventRef CopyEvent(EventRef inOther);
+ 
+ EventQueueRef GetMainEventQueue();
+ OSStatus InstallEventHandler(EventTargetRef a, EventHandlerUPP b, ItemCount c, const EventTypeSpec* d, void* e, EventHandlerRef* f);
+diff --git a/src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c b/src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c
+index 41378e9b5..b7c39a2ef 100644
+--- a/src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c
++++ b/src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c
+@@ -20,13 +20,24 @@
+ #include <HIToolbox/CarbonEventsCore.h>
+ #include <CarbonCore/MacErrors.h>
+ 
++#include <limits.h>
+ #include <stdatomic.h>
++#include <string.h>
+ #include <time.h>
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
+ 
+-/* Event metadata is immutable; only ownership changes after creation. */
++/* A parameter node and its bytes are allocated by the event's CF allocator. */
++typedef struct EventParameter {
++    struct EventParameter* next;
++    EventParamName name;
++    EventParamType type;
++    ByteCount size;
++    unsigned char data[];
++} EventParameter;
++
++/* Class/kind/time remain immutable in this batch; parameter lists are mutable. */
+ struct OpaqueEventRef {
+     CFAllocatorRef allocator;
+     _Atomic(ItemCount) retainCount;
+@@ -34,8 +45,62 @@ struct OpaqueEventRef {
+     UInt32 eventKind;
+     EventTime time;
+     EventAttributes attributes;
++    EventParameter* parameters;
+ };
+ 
++/* Four-character values checked against Apple 10.6 CarbonEvents/AE headers.
++ * The historical retention list is limited to the confirmed types below;
++ * typeHIAccessibleObjectRef is not handled until its exact code is verified.
++ */
++#define EVENT_OSTYPE(a,b,c,d) \
++    (((UInt32)(a) << 24) | ((UInt32)(b) << 16) | ((UInt32)(c) << 8) | (UInt32)(d))
++#define EVENT_WILDCARD EVENT_OSTYPE('*','*','*','*')
++#define EVENT_REF_TYPE EVENT_OSTYPE('e','v','r','f')
++
++static int isRetainedCFType(EventParamType type)
++{
++    switch (type) {
++    case EVENT_OSTYPE('c','f','s','t'): /* CFStringRef */
++    case EVENT_OSTYPE('c','f','m','s'): /* CFMutableStringRef */
++    case EVENT_OSTYPE('c','f','m','a'): /* CFMutableArrayRef */
++    case EVENT_OSTYPE('c','f','t','y'): /* CFTypeRef */
++    case EVENT_OSTYPE('c','f','a','r'): /* CFArrayRef */
++    case EVENT_OSTYPE('c','f','d','c'): /* CFDictionaryRef */
++    case EVENT_OSTYPE('c','f','m','d'): /* CFMutableDictionaryRef */
++    case EVENT_OSTYPE('s','h','a','p'): /* HIShapeRef */
++    case EVENT_OSTYPE('m','e','n','u'): /* MenuRef */
++    case EVENT_OSTYPE('c','t','f','r'): /* CTFontRef */
++    case EVENT_OSTYPE('c','t','g','i'): /* CTGlyphInfoRef */
++    case EVENT_OSTYPE('c','f','a','s'): /* CFAttributedStringRef */
++        return 1;
++    default:
++        return 0;
++    }
++}
++
++static EventParameter* findParameter(EventRef event, EventParamName name)
++{
++    for (EventParameter* p = event->parameters; p != NULL; p = p->next)
++        if (p->name == name)
++            return p;
++    return NULL;
++}
++
++static void disposeParameter(CFAllocatorRef allocator, EventParameter* p)
++{
++    if (isRetainedCFType(p->type) || p->type == EVENT_REF_TYPE) {
++        void* ref = NULL;
++        memcpy(&ref, p->data, sizeof(ref));
++        if (ref != NULL) {
++            if (p->type == EVENT_REF_TYPE)
++                ReleaseEvent((EventRef)ref);
++            else
++                CFRelease((CFTypeRef)ref);
++        }
++    }
++    CFAllocatorDeallocate(allocator, p);
++}
++
+ static int verbose = 0;
+ 
+ __attribute__((constructor))
+@@ -76,6 +141,7 @@ OSStatus CreateEvent(CFAllocatorRef inAllocator, OSType inClassID, UInt32 kind,
+     event->eventKind = kind;
+     event->time = when;
+     event->attributes = flags;
++    event->parameters = NULL;
+     *outEvent = event;
+     return noErr;
+ }
+@@ -90,10 +156,127 @@ UInt32 GetEventKind(EventRef a)
+     return a ? a->eventKind : 0;
+ }
+ 
+-OSStatus GetEventParameter(EventRef a, EventParamName b, EventParamType c, EventParamType* d, ByteCount e, ByteCount* f, void* g)
++OSStatus GetEventParameter(EventRef event, EventParamName name, EventParamType requestedType,
++                           EventParamType* actualType, ByteCount capacity,
++                           ByteCount* actualSize, void* outData)
+ {
+-    if (verbose) puts("STUB: GetEventParameter called");
+-	return 0;
++    if (!event || (!outData && capacity != 0))
++        return paramErr;
++    EventParameter* p = findParameter(event, name);
++    if (!p)
++        return eventParameterNotFoundErr;
++    /* Deliberate limitation: AppleEvent type coercion is not implemented. */
++    if (requestedType != EVENT_WILDCARD && requestedType != p->type)
++        return errAECoercionFail;
++    if (actualType)
++        *actualType = p->type;
++    if (actualSize)
++        *actualSize = p->size;
++    if (!outData)
++        return noErr; /* Apple permits capacity=0, outData=NULL size probes. */
++    if (capacity < p->size)
++        return errAEBufferTooSmall; /* Never partially copy. */
++    if (p->size)
++        memcpy(outData, p->data, (size_t)p->size);
++    return noErr;
++}
++
++OSStatus SetEventParameter(EventRef event, EventParamName name, EventParamType type,
++                           ByteCount size, const void* data)
++{
++    if (!event || (size != 0 && !data))
++        return paramErr;
++    if (size > (ByteCount)(LONG_MAX - sizeof(EventParameter)))
++        return memFullErr; /* CFAllocatorAllocate receives a signed CFIndex. */
++
++    const int cfType = isRetainedCFType(type);
++    const int eventType = type == EVENT_REF_TYPE;
++    if ((cfType || eventType) && size != sizeof(void*))
++        return paramErr;
++
++    EventParameter* fresh = CFAllocatorAllocate(event->allocator,
++                              (CFIndex)(sizeof(EventParameter) + size), 0);
++    if (!fresh)
++        return memFullErr;
++    fresh->next = NULL;
++    fresh->name = name;
++    fresh->type = type;
++    fresh->size = size;
++    if (size)
++        memcpy(fresh->data, data, (size_t)size);
++
++    /* Retain before publishing; replacement with the same object is safe.
++     * Ownership here applies only to types explicitly documented by Apple.
++     */
++    if (cfType || eventType) {
++        void* ref = NULL;
++        memcpy(&ref, fresh->data, sizeof(ref));
++        if (ref) {
++            if (eventType) {
++                if (RetainEvent((EventRef)ref) == NULL) {
++                    CFAllocatorDeallocate(event->allocator, fresh);
++                    return memFullErr;
++                }
++            } else {
++                CFRetain((CFTypeRef)ref);
++            }
++        }
++    }
++
++    /* Replace in place or append, preserving insertion order for copy rollback. */
++    EventParameter** slot = &event->parameters;
++    while (*slot && (*slot)->name != name)
++        slot = &(*slot)->next;
++    EventParameter* old = *slot;
++    fresh->next = old ? old->next : NULL;
++    *slot = fresh;
++    if (old)
++        disposeParameter(event->allocator, old);
++    return noErr;
++}
++
++OSStatus RemoveEventParameter(EventRef event, EventParamName name)
++{
++    if (!event)
++        return paramErr;
++    EventParameter** slot = &event->parameters;
++    while (*slot && (*slot)->name != name)
++        slot = &(*slot)->next;
++    if (!*slot)
++        return eventParameterNotFoundErr;
++    EventParameter* old = *slot;
++    *slot = old->next;
++    disposeParameter(event->allocator, old);
++    return noErr;
++}
++
++EventRef CopyEvent(EventRef other)
++{
++    if (!other)
++        return NULL;
++    /* Do not call CreateEvent: its zero-time path consults the clock. */
++    CFAllocatorRef allocator = other->allocator;
++    CFRetain(allocator);
++    EventRef copy = CFAllocatorAllocate(allocator, sizeof(*copy), 0);
++    if (!copy) {
++        CFRelease(allocator);
++        return NULL;
++    }
++    copy->allocator = allocator;
++    atomic_init(&copy->retainCount, 1);
++    copy->eventClass = other->eventClass;
++    copy->eventKind = other->eventKind;
++    copy->time = other->time;
++    copy->attributes = other->attributes;
++    copy->parameters = NULL;
++    for (EventParameter* p = other->parameters; p; p = p->next) {
++        if (SetEventParameter(copy, p->name, p->type, p->size,
++                              p->size ? p->data : NULL) != noErr) {
++            ReleaseEvent(copy); /* Roll back the partial copy. */
++            return NULL;
++        }
++    }
++    return copy;
+ }
+ 
+ EventQueueRef GetMainEventQueue()
+@@ -150,6 +333,12 @@ void ReleaseEvent(EventRef inEvent)
+         return;
+     if (atomic_fetch_sub_explicit(&inEvent->retainCount, 1, memory_order_acq_rel) == 1) {
+         CFAllocatorRef allocator = inEvent->allocator;
++        EventParameter* p = inEvent->parameters;
++        while (p) {
++            EventParameter* next = p->next;
++            disposeParameter(allocator, p);
++            p = next;
++        }
+         CFAllocatorDeallocate(allocator, inEvent);
+         CFRelease(allocator);
+     }
+diff --git a/src/shellspawn/shellspawn.c b/src/shellspawn/shellspawn.c
+index f5ba615bb..0c58fc779 100644
+--- a/src/shellspawn/shellspawn.c
++++ b/src/shellspawn/shellspawn.c
+@@ -322,7 +322,10 @@ void spawnShell(int fd)
+ 		EV_SET(&changes[1], shell_pid, EVFILT_PROC, EV_ADD | EV_ENABLE, NOTE_EXIT, 0, NULL);
+ 
+ 		if (kevent(kq, changes, 2, NULL, 0, NULL) == -1)
+-			goto err;
++		{
++		    perror("d4rling: kevent-register");
++		    goto err;
++		}
+ 	}
+ 
+ 	while (true)
+@@ -335,7 +338,7 @@ void spawnShell(int fd)
+ 				if (DBG) puts("kevent call interrupted; continuing...");
+ 				continue;
+ 			}
+-			if (DBG) puts("kevent fail");
++			perror("d4rling: kevent-wait");
+ 			goto err;
+ 		}
+ 
+diff --git a/tests/regressions/carbon-contracts/run.sh b/tests/regressions/carbon-contracts/run.sh
+index 6c0c10e9a..e93e46bb5 100644
+--- a/tests/regressions/carbon-contracts/run.sh
++++ b/tests/regressions/carbon-contracts/run.sh
+@@ -26,11 +26,11 @@ source="$repo/tests/regressions/carbon-contracts/contracts.c"
+ for language in c c++; do
+     if [ "$language" = c ]; then compiler=$cc; standard=c11; else compiler=$cxx; standard=c++17; fi
+     "$compiler" -x "$language" -std="$standard" \
+-        -Werror=incompatible-function-pointer-types "$@" -c "$source" -o "$build/contracts.o"
++        -Werror "$@" -c "$source" -o "$build/contracts.o"
+     "$cxx" "$build/contracts.o" "$build/windows.o" "$build/events.o" "$build/allocator.o" -o "$build/contracts"
+     "$build/contracts"
+     if "$compiler" -x "$language" -std="$standard" \
+-        -Werror=incompatible-function-pointer-types -DREJECT_BAD_HANDLER "$@" \
++        -Werror -DREJECT_BAD_HANDLER "$@" \
+         -fsyntax-only "$source" > "$build/rejected.txt" 2>&1; then
+         echo "FAIL: $language accepted an invalid callback" >&2
+         exit 1
+diff --git a/tests/regressions/carbon-events/README.md b/tests/regressions/carbon-events/README.md
+index 170ca0fb9..53196e9b3 100644
+--- a/tests/regressions/carbon-events/README.md
++++ b/tests/regressions/carbon-events/README.md
+@@ -102,3 +102,31 @@ No external implementation was copied.
+ - [Pinned Darling Libc time.h](https://github.com/darlinghq/darling-Libc/blob/5a38c8dabf9e76b39407c24bc13134e33e5594e6/include/time.h):
+   clock declarations available in the dependency.
+ - See root CREDITS.md and docs/logic8-progress.md for earlier work.
++
++## Parameter storage and CopyEvent (proposed; not executed)
++
++Candidate-only changes for commit `b7d0cb6a79fe196657deb9711647f8486bcc5e5e`:
++SetEventParameter, GetEventParameter, RemoveEventParameter and CopyEvent.
++Event nodes and payloads use the event's original CFAllocatorRef; replacements
++acquire the new value before releasing the old. Cloning rolls back on any
++allocation error. CopyEvent directly allocates through the original allocator,
++without invoking CreateEvent's clock-dependent zero-time path. Retained
++CoreFoundation pointers and typeEventRef are released
++with their respective APIs. Access to an event's parameter list, including
++CopyEvent, must be externally serialized; retain/release counts stay atomic.
++
++`parameters.c` adds proposed, non-executed regression cases for buffer bounds,
++zero-size payloads, replacement, original/copy independence, retain/release,
++allocation failures at successive clone stages, and allocator preservation.
++It uses the test-only allocator adapter, NOT the real CoreFoundation runtime.
++Apple documents type coercion through AppleEvent handlers, but this candidate
++does not implement it: only the original type and typeWildCard are accepted.
++The chosen errAECoercionFail and errAEBufferTooSmall results and the short-buffer
++no-write behavior are not claimed to be proven Mac OS X equivalence.
++This candidate has NOT qualified the complete historical retention matrix,
++including typeHIAccessibleObjectRef, whose numeric type code was not established.
++The test adapter proves no real MenuRef, HIShapeRef or CF object behavior.
++CopyEvent retains nested typeEventRef objects; it does not recursively copy them.
++Reference cycles must be broken by callers before final release.
++CFIndex/ByteCount sizes and exported ABI require i386 plus real runtime checks.
++The previous 54 checks are historical and do not qualify these changes.
+diff --git a/tests/regressions/carbon-events/allocator-adapter.c b/tests/regressions/carbon-events/allocator-adapter.c
+index 1fa22d84a..498a9b66b 100644
+--- a/tests/regressions/carbon-events/allocator-adapter.c
++++ b/tests/regressions/carbon-events/allocator-adapter.c
+@@ -12,7 +12,8 @@ struct TestAllocator {
+ static struct TestAllocator defaultAllocator = {1, 0, 0};
+ static struct TestAllocator customAllocator = {1, 0, 0};
+ static struct TestAllocator* currentDefault = &defaultAllocator;
+-static int failNext;
++static int failAfter = -1;
++static struct { unsigned references; } cfObject = { 1 };
+ 
+ static struct TestAllocator* checked(const void* allocator)
+ {
+@@ -23,7 +24,10 @@ static struct TestAllocator* checked(const void* allocator)
+ CFAllocatorRef test_default_allocator(void) { return (CFAllocatorRef)&defaultAllocator; }
+ CFAllocatorRef test_custom_allocator(void) { return (CFAllocatorRef)&customAllocator; }
+ void test_set_default(CFAllocatorRef allocator) { currentDefault = checked(allocator); }
+-void test_fail_next_allocation(void) { failNext = 1; }
++void test_fail_next_allocation(void) { failAfter = 0; }
++void test_fail_allocation_after(unsigned count) { failAfter = (int)count; }
++CFTypeRef test_cf_object(void) { return (CFTypeRef)&cfObject; }
++unsigned test_cf_references(void) { return cfObject.references; }
+ unsigned test_allocations(CFAllocatorRef allocator) { return checked(allocator)->allocations; }
+ unsigned test_frees(CFAllocatorRef allocator) { return checked(allocator)->frees; }
+ unsigned test_references(CFAllocatorRef allocator) { return checked(allocator)->references; }
+@@ -31,20 +35,29 @@ unsigned test_references(CFAllocatorRef allocator) { return checked(allocator)->
+ CFAllocatorRef CFAllocatorGetDefault(void) { return (CFAllocatorRef)currentDefault; }
+ CFTypeRef CFRetain(CFTypeRef value)
+ {
+-    ++checked(value)->references;
++    if (value == (CFTypeRef)&cfObject)
++        ++cfObject.references;
++    else
++        ++checked(value)->references;
+     return value;
+ }
+ void CFRelease(CFTypeRef value)
+ {
+-    struct TestAllocator* allocator = checked(value);
+-    assert(allocator->references > 1);
+-    --allocator->references;
++    if (value == (CFTypeRef)&cfObject) {
++        assert(cfObject.references > 1);
++        --cfObject.references;
++    } else {
++        struct TestAllocator* allocator = checked(value);
++        assert(allocator->references > 1);
++        --allocator->references;
++    }
+ }
+ void* CFAllocatorAllocate(CFAllocatorRef value, CFIndex size, CFOptionFlags hint)
+ {
+     (void)hint;
+     struct TestAllocator* allocator = checked(value);
+-    if (failNext) { failNext = 0; return NULL; }
++    if (failAfter == 0) { failAfter = -1; return NULL; }
++    if (failAfter > 0) --failAfter;
+     void* allocation = malloc((size_t)size);
+     if (allocation) ++allocator->allocations;
+     return allocation;
+diff --git a/tests/regressions/carbon-events/allocator-adapter.h b/tests/regressions/carbon-events/allocator-adapter.h
+index 888ead9b0..d2bc42e63 100644
+--- a/tests/regressions/carbon-events/allocator-adapter.h
++++ b/tests/regressions/carbon-events/allocator-adapter.h
+@@ -6,6 +6,9 @@ CFAllocatorRef test_default_allocator(void);
+ CFAllocatorRef test_custom_allocator(void);
+ void test_set_default(CFAllocatorRef allocator);
+ void test_fail_next_allocation(void);
++void test_fail_allocation_after(unsigned successful_allocations);
++CFTypeRef test_cf_object(void);
++unsigned test_cf_references(void);
+ unsigned test_allocations(CFAllocatorRef allocator);
+ unsigned test_frees(CFAllocatorRef allocator);
+ unsigned test_references(CFAllocatorRef allocator);
+diff --git a/tests/regressions/carbon-events/run.sh b/tests/regressions/carbon-events/run.sh
+index 160fb0376..583c26ce5 100644
+--- a/tests/regressions/carbon-events/run.sh
++++ b/tests/regressions/carbon-events/run.sh
+@@ -16,13 +16,15 @@ set -- -std=c11 -D_POSIX_C_SOURCE=200809L -D__APPLE_CC__=1 \
+ if [ "${SANITIZE:-}" = address ]; then
+     set -- "$@" -fsanitize=address -fno-omit-frame-pointer
+ fi
+-for unit in events allocator-adapter; do
++for unit in events parameters allocator-adapter; do
+     "$cc" "$@" -c "$repo/tests/regressions/carbon-events/$unit.c" -o "$build/$unit.o"
+ done
+ "$cc" "$@" -c "$repo/src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c" -o "$build/core.o"
+-if [ "${SANITIZE:-}" = address ]; then
+-    "$linker" -fsanitize=address -pthread "$build/events.o" "$build/allocator-adapter.o" "$build/core.o" -o "$build/events"
+-else
+-    "$linker" -pthread "$build/events.o" "$build/allocator-adapter.o" "$build/core.o" -o "$build/events"
+-fi
+-"$build/events"
++for test in events parameters; do
++    if [ "${SANITIZE:-}" = address ]; then
++        "$linker" -fsanitize=address -pthread "$build/$test.o" "$build/allocator-adapter.o" "$build/core.o" -o "$build/$test"
++    else
++        "$linker" -pthread "$build/$test.o" "$build/allocator-adapter.o" "$build/core.o" -o "$build/$test"
++    fi
++    "$build/$test"
++done

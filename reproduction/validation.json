@@ -1,0 +1,56 @@
+{
+  "schema": "d4rling.reproduction.validation.v1",
+  "date": "2026-10-29",
+  "source_base": "b7d0cb6a79fe196657deb9711647f8486bcc5e5e",
+  "materialized_submodules": 160,
+  "carbon_host": {
+    "events": 54,
+    "parameters": 81,
+    "failures": 0,
+    "sanitized_repeat_pass": true,
+    "contracts_C11": true,
+    "contracts_CXX17": true
+  },
+  "native_build": {
+    "targets": [
+      "darling",
+      "mldr",
+      "mldr32",
+      "darlingserver"
+    ],
+    "steps": 179,
+    "exit_code": 0,
+    "installation_replaced": false
+  },
+  "carbon_probe": {
+    "recompiled": true,
+    "system_dylibs_rebuilt_for_this_test": false,
+    "normal_exit": 0,
+    "normal_marker": true,
+    "bypass_exit": 0,
+    "bypass_marker": true,
+    "missing_dylib_negative_exit": 1,
+    "negative_marker": false
+  },
+  "archive": {
+    "private": true,
+    "verified_entries": 615224,
+    "content_mismatches": 0,
+    "missing_entries": 0,
+    "restricted_manifest_supplement": true
+  },
+  "protected_checkout": {
+    "head": true,
+    "status": true,
+    "index": true,
+    "diff": true,
+    "nine_file_contents": true
+  },
+  "remaining_gates": [
+    "fresh full framework build on a second host",
+    "new full private installation qualification",
+    "full i386 dyld qualification",
+    "Qt/QuickTime Player 7",
+    "CoreAudio/JACK hardware path"
+  ]
+}
