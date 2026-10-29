@@ -1,5 +1,12 @@
 # d4rling
 
+**Start here: [current project state](PROJECT_STATE.md) · [reproduce on another machine](reproduction/README.md)**
+
+The current resume state includes the historical local source overlay, the previously
+ignored Carbon test, pinned submodules/dependencies and executable recovery recipes.
+Read it before proposing new work; published branch heads and the historical local
+qualification checkout are different source states.
+
 Personal development fork of [Darling](https://github.com/darlinghq/darling),
 maintained by [fr4nck](https://github.com/fr4nck), including experimental work
 toward Logic Studio 8 compatibility.
@@ -19,7 +26,8 @@ Upstream updates are integrated with Git merges, preserving upstream authors,
 history and our local changes. The upstream project is a source dependency;
 working on this fork does not submit contributions there.
 
-From a clean checkout, check for and integrate upstream changes before new work:
+Historical reproduction uses the pinned recipe above. Upstream integration is a
+separate maintenance operation on a clean checkout:
 
 ```sh
 git switch master

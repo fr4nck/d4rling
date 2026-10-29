@@ -172,3 +172,21 @@ anonymized report path patterns; precise paths, content hashes, full raw reports
 private binaries and prefixes remain local. The nine protected local changes remain
 uncommitted and outside this documentation publication. No qualification was
 rerun for this handoff; the current local checkout was read only.
+
+## Reproducible project consolidation (2026-10-29)
+
+[PROJECT_STATE.md](../PROJECT_STATE.md) is now the entry point for future work.
+[Reproduction instructions](../reproduction/README.md) preserve the historical
+b7d0cb6 local overlay and ignored parameters.c, 160 submodule pins, observed Debian
+package versions, Carbon witness sources and portable scripts. The latest audit
+also recovers QT-1980 dynamic Carbon (8/8 concurrent cases), QT-1993/1994, the
+PR6 scope and the completed static QT-2211–2710 reports. These complement the
+BH–CE handoff; they do not qualify a complete multimedia application.
+
+A fresh independent source copy passed 135 Carbon host checks and their ASan
+repeat, C11/C++17 contracts, and a 179-step native launcher/loader/server build.
+The rebuilt Carbon witness passed NORMAL/BYPASS with a missing-dylib negative
+control using the existing private system libraries. See the exact
+[validation scope](../reproduction/validation.md). The original nine-file local
+checkout remains unchanged. Private project archives and raw evidence remain
+separate from the public reproduction sources.

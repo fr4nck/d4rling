@@ -1,0 +1,79 @@
+{
+  "schema": "d4rling.reproduction.refs.v1",
+  "recorded_on": "2026-10-29",
+  "historical_source": {
+    "repository": "https://github.com/fr4nck/d4rling.git",
+    "commit": "b7d0cb6a79fe196657deb9711647f8486bcc5e5e",
+    "overlay": "patches/carbon-local.patch",
+    "ignored_input": "snapshots/parameters.c",
+    "note": "The actual historical checkout was nine modified files on this older commit; current master is a different source state."
+  },
+  "published_work": [
+    {
+      "branch": "work/carbon-event-contracts",
+      "commit": "8744f2deba4ae053f4a27fb07bdb975791344ab8",
+      "purpose": "newer Carbon queues and dispatch; not the historical local snapshot"
+    },
+    {
+      "branch": "work/carbon-real-header-qualification",
+      "commit": "61b046b8db4d4c58b889282d4e76a8955c33d2e5",
+      "pr": 4,
+      "purpose": "real-header/CF runtime runners"
+    },
+    {
+      "branch": "work/core-audio",
+      "commit": "e05f18ab851fe676039903c66a26a4c3f137317e",
+      "purpose": "CoreAudio baseline and CoreMIDI work"
+    },
+    {
+      "branch": "work/coreaudio-ninja-convergence",
+      "commit": "a37da006c8f4b31460a712209bac9358f5214cd4",
+      "pr": 5,
+      "purpose": "audio/JACK design, IPC source prototypes and firstpass evidence"
+    },
+    {
+      "branch": "work/macho-i386-loader-qualification",
+      "commit": "dfacf834551aa22127bd1ceef2943f3023f2de59",
+      "purpose": "host fixture generator and pinned-source qualification"
+    },
+    {
+      "branch": "work/mldr-rpc-bitmap-neighbor",
+      "commit": "c32a86de80f9c123b4ecbf9f8aa41956404a08b5",
+      "pr": 6,
+      "purpose": "bounded RPC bitmap fix and deterministic runner"
+    }
+  ],
+  "rpc_fix_snapshot": {
+    "path": "snapshots/mldr-pr6.c",
+    "source_commit": "c32a86de80f9c123b4ecbf9f8aa41956404a08b5",
+    "git_blob": "2c05caaae9c13882cbc5d07fd3f3e4ebdee0687c",
+    "default_enabled": false
+  },
+  "profiles": {
+    "core-i386": {
+      "COMPONENTS": "core",
+      "TARGET_i386": "ON",
+      "TARGET_x86_64": "ON",
+      "CMAKE_BUILD_TYPE": "Debug"
+    },
+    "core-x64": {
+      "COMPONENTS": "core",
+      "TARGET_i386": "OFF",
+      "TARGET_x86_64": "ON",
+      "CMAKE_BUILD_TYPE": "Debug"
+    },
+    "audio-x64": {
+      "COMPONENTS": "gui",
+      "TARGET_i386": "OFF",
+      "TARGET_x86_64": "ON",
+      "CMAKE_BUILD_TYPE": "Debug",
+      "note": "A deliberate fresh Debug profile; the original audio cache had an empty build type."
+    }
+  },
+  "fresh_build_differences": [
+    "Private CMAKE_INSTALL_PREFIX instead of /usr/local.",
+    "COMPILE_PY2_BYTECODE=OFF and ENABLE_METAL=OFF are explicit reproducibility choices; the original caches used AUTO.",
+    "No install hook or shutdown script is invoked automatically.",
+    "DEBIAN_PACKAGING=ON disables the upstream shutdown-user.sh install hook; COMPONENTS remains explicit."
+  ]
+}

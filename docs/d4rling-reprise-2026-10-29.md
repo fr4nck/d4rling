@@ -1,5 +1,10 @@
 # D4RLING — note de reprise au 29 octobre 2026
 
+> Cette note conserve le périmètre historique BH–CE. Pour l’ensemble du projet,
+> les preuves Carbon dynamiques complémentaires et la reproduction sur un autre
+> poste, lire [PROJECT_STATE.md](../PROJECT_STATE.md) et le
+> [guide exécutable](../reproduction/README.md).
+
 ## Périmètre et provenance
 
 Cette note conserve les résultats et décisions techniques importants de la
