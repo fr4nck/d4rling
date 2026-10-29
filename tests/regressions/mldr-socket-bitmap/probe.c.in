@@ -1,0 +1,132 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+/* Host-only deterministic test; source helpers injected verbatim from mldr.c. */
+#define _GNU_SOURCE
+#include <assert.h>
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <sys/resource.h>
+
+@@BITMAP_TYPES@@
+
+@@BITMAP_FUNCS@@
+
+enum { MAX_ACTIVE = 256, TRACKED = 512, RANDOM_STEPS = 120000 };
+static int active[MAX_ACTIVE];
+static bool live[TRACKED];
+static size_t nactive = 0;
+static uint64_t prng_state = UINT64_C(0x9e3779b97f4a7c15);
+
+static unsigned next_random(void) {
+    prng_state ^= prng_state << 13;
+    prng_state ^= prng_state >> 7;
+    prng_state ^= prng_state << 17;
+    return (unsigned)(prng_state >> 32);
+}
+
+static size_t descriptor_index(int fd) {
+    long long index = (long long)socket_bitmap.highest - (long long)fd;
+    assert(index >= 0 && index < TRACKED);
+    return (size_t)index;
+}
+
+static void verify_bitmap(void) {
+    size_t highest_live_plus_one = 0;
+    size_t first_free = SIZE_MAX;
+    size_t live_count = 0;
+    for (size_t i = 0; i < TRACKED; ++i) {
+        if (live[i]) {
+            highest_live_plus_one = i + 1;
+            ++live_count;
+        }
+    }
+    assert(live_count == nactive);
+    assert(socket_bitmap.bit_length == highest_live_plus_one);
+    assert((socket_bitmap.bits == NULL) == (socket_bitmap.bit_length == 0));
+    for (size_t i = 0; i < socket_bitmap.bit_length; ++i) {
+        bool bit = (socket_bitmap.bits[i / 8] & (1u << (i % 8))) != 0;
+        assert(bit == live[i]);
+        if (!live[i] && first_free == SIZE_MAX) first_free = i;
+    }
+    assert(socket_bitmap.next_index ==
+           (first_free == SIZE_MAX ? socket_bitmap.bit_length : first_free));
+}
+
+static int take_descriptor(void) {
+    assert(nactive < MAX_ACTIVE);
+    int fd = socket_bitmap_get(&socket_bitmap);
+    assert(fd >= 0);
+    size_t index = descriptor_index(fd);
+    assert(!live[index]);  /* An existing descriptor must never be reissued. */
+    live[index] = true;
+    active[nactive++] = fd;
+    return fd;
+}
+
+static void release_at(size_t at) {
+    assert(at < nactive);
+    int fd = active[at];
+    size_t index = descriptor_index(fd);
+    assert(live[index]);
+    live[index] = false;
+    active[at] = active[--nactive];
+    socket_bitmap_put(&socket_bitmap, fd);
+}
+
+static void release_descriptor(int fd) {
+    for (size_t i = 0; i < nactive; ++i) {
+        if (active[i] == fd) {
+            release_at(i);
+            return;
+        }
+    }
+    assert(!"descriptor to release was not active");
+}
+
+int main(void) {
+    struct rlimit limit;
+    assert(getrlimit(RLIMIT_NOFILE, &limit) == 0);
+    if (limit.rlim_cur != RLIM_INFINITY &&
+        (limit.rlim_cur < MAX_ACTIVE + 16 || limit.rlim_cur > INT32_MAX)) {
+        fputs("SKIP: unsupported RLIMIT_NOFILE for deterministic bitmap test\n", stderr);
+        return 77;
+    }
+
+    int first[24];
+    for (int i = 0; i < 24; ++i) first[i] = take_descriptor();
+    verify_bitmap();
+    for (int i = 16; i < 24; ++i) release_descriptor(first[i]);
+    assert(socket_bitmap.bit_length == 16);  /* Regression #1: 16 live slots. */
+    verify_bitmap();
+    for (int i = 0; i < 12; ++i) (void)take_descriptor();
+    verify_bitmap();
+    while (nactive) release_at(nactive - 1);
+    verify_bitmap();  /* Regression #2: free+NULL when empty. */
+
+    /* Exact bit/byte boundaries, non-byte-aligned tails and zero->grow loops. */
+    const int widths[] = {1, 7, 8, 9, 15, 16, 17, 23, 24, 25, 31, 32, 33};
+    for (size_t round = 0; round < sizeof(widths)/sizeof(widths[0]); ++round) {
+        for (int i = 0; i < widths[round]; ++i) (void)take_descriptor();
+        verify_bitmap();
+        while (nactive) release_at(next_random() % nactive);
+        verify_bitmap();
+    }
+
+    /* Fixed-seed pseudo-random model exercise, reproducible across runs. */
+    for (int step = 0; step < RANDOM_STEPS; ++step) {
+        unsigned x = next_random() % 100u;
+        if (nactive == 0 || (nactive < MAX_ACTIVE && x < 55u)) {
+            (void)take_descriptor();
+        } else {
+            release_at(next_random() % nactive);
+        }
+        if ((step % 257) == 0) verify_bitmap();
+    }
+    while (nactive) release_at(next_random() % nactive);
+    verify_bitmap();
+    puts("PASS: deterministic mldr bitmap regression (120000 operations, ASan+UBSan)");
+    return 0;
+}
