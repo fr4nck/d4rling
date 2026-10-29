@@ -109,7 +109,11 @@ materialize() {
 }
 materialize "$SOURCE_SHA" "$REPORT/src/src/startup/mldr/mldr.c" "$FALLBACK"
 materialize "$PY_SHA" "$REPORT/runner/run.py" "$REPO/$TESTDIR/run.py"
-materialize "$RB_SHA" "$REPORT/runner/run.rb" "$REPO/$TESTDIR/run.rb"
+if command -v ruby >/dev/null; then
+  materialize "$RB_SHA" "$REPORT/runner/run.rb" "$REPO/$TESTDIR/run.rb"
+else
+  echo RUBY_RUNNER_OBJECT=NOT_REQUIRED
+fi
 materialize "$PROBE_SHA" "$REPORT/runner/probe.c.in" "$REPO/$TESTDIR/probe.c.in"
 
 python3 "$REPORT/runner/run.py" \
