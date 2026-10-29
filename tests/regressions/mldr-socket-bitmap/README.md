@@ -85,7 +85,8 @@ with old-source failure and patched-source success. PR6L-R2 extracted the
 official Ruby test's C body but did not actually execute Ruby. The new
 120,000-step test and two independent negative-control mutations were
 executed in an isolated host workspace outside the user's 5700X. **A
-new 5700X run of these newly versioned files is still pending.**
+subsequent pinned run of the newly committed Python runner on the actual
+5700X passed** (see PR6N below); no new Ruby execution is claimed.
 
 **(B) Built native source and linker tests.** PR6C and PR6D report that
 the patched `mldr` ELF64 and `mldr32` ELF32 compile/link succeeded on
@@ -107,16 +108,46 @@ provenance were posted as dated comments on PR #6. No invented CI result,
 Ruby-runner result, guest-RPC comparison, or merge authorization is
 implied by this README.
 
+## 5700X qualification PR6N — 2026-10-29 (terminal transcript)
+
+The user supplied the actual Windows PowerShell 5.1 → Debian 13 WSL2
+terminal output. This is **not** a connector-executed test or a GitHub
+Actions check. Execution took place as Linux user `Deniel` on `5700X`,
+from the pre-existing Carbon checkout at
+`/home/Deniel/d4rling-ui/d4rling-carbon-qualif` (branch
+`work/carbon-event-contracts`, HEAD `b7d0cb6a79fe196657deb9711647f8486bcc5e5e`).
+The pinned `verify-5700x.sh` was obtained from an existing local Git object
+(`SOURCE=LOCAL_GIT_OBJECT`); **no checkout, fetch or installation** was
+necessary. Output directory (private, on the user's host):
+`/home/Deniel/d4rling-pr6-qualif-92tSB4uz`.
+
+Verified Git blob SHA-1 values:
+
+- Production `mldr.c`: `2c05caaae9c13882cbc5d07fd3f3e4ebdee0687c`.
+- Python runner: `b3bf63fe23a1371e59e0eb9454807d772c1e0abc`.
+- Shared C probe: `db1397effea9c7d7b3f967e6949d1b320962151c`.
+
+Observed output: `BASH_SYNTAX=PASS`, `PATCHED_PYTHON=PASS`,
+`BASELINE=EXPECTED_FAILURE`, `PR6_DETERMINISTIC_HOST_STATUS=PASS`,
+`POSTFLIGHT=UNCHANGED`, `WSL_EXIT_CODE=0`. The Python runner compiles the
+pinned production function bodies with Clang ASan+UBSan and executes the
+fixed-seed 120,000-step model. The complete sanitizer trace remains in the
+private local report and was **not** independently attached to GitHub.
+`PATCHED_RUBY=NOT_EXECUTED_NO_INSTALLED_RUBY`,
+`DARLING_GUEST_RUNTIME=NOT_EXECUTED` (this new session), and
+`RPC_MINUS_111=NOT_TESTED`. Guest proof PR6H is historical and separate.
+
 ## Merge gate
 
-Keep PR #6 **draft** until (i) the user has run/inspected the current
-pinned deterministic regression in an existing complete checkout, (ii)
-the regression output and source hashes are added to the PR with provenance,
-(iii) the existing isolated ELF32/ELF64 and guest runtime evidence is
-reviewed, and (iv) a reviewer explicitly approves the bounded patch.
-A reproduced guest RPC `-111` regression is **not** a prerequisite to
-the bounded bitmap fix unless claimed as fixed — it must never be presented
-as a success without a controlled comparison.
+The pinned deterministic 5700X regression and negative baseline gate are
+now **PASS**, with source hashes and postflight attested in the terminal
+transcript. Keep PR #6 **draft** pending maintainer review of the bounded
+fix, the existing ELF64/ELF32 and isolated guest evidence, and any requested
+review of private sanitizer logs. Do **not** equate PR6N's host-only
+regression with an actual RPC `-111` reproduction/resolution; no comparable
+guest-RPC regression has passed. A reproduced `-111` regression is not a
+prerequisite for merging the narrowly scoped bitmap fix unless that remedy
+is claimed. No automatic merge is authorized.
 
 For a protected, no-installation read-only run on the 5700X, use
 `verify-5700x.sh` from this directory. It refuses missing pinned local
