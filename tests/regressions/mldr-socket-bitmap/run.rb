@@ -1,55 +1,36 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# Adapted from VibeDarling/darling tests/mldr-socket-bitmap-shrink.rb,
-# https://github.com/VibeDarling/darling/pull/1189
-# The original upstream runner assumes a prefork marker absent in fr4nck/d4rling.
-# Host regression test for mldr's socket bitmap shrink path.
-# usage: ruby tests/mldr-socket-bitmap-shrink.rb [REPO_ROOT]
-# The helpers are cut out of mldr.c and built with ASan and UBSan, so the test
-# follows the real source. It fails before the fix (a live slot is handed out
-# twice, then a double free after the last slot is released) and passes after.
+# Adapted from VibeDarling/darling tests/mldr-socket-bitmap-shrink.rb.
+# Extract production source helpers and compile the shared deterministic host probe.
+# Usage: ruby tests/regressions/mldr-socket-bitmap/run.rb [REPO_ROOT]
 require 'tmpdir'
 require 'open3'
+
 root = ARGV.fetch(0, File.expand_path('../../..', __dir__))
-loader = File.read("#{root}/src/startup/mldr/mldr.c")
+loader = File.read(File.join(root, 'src/startup/mldr/mldr.c'))
 types = loader[/typedef struct socket_bitmap \{.*?(?=static int socket_bitmap_get)/m] or abort 'bitmap types missing'
 funcs = loader[/static int socket_bitmap_get.*?^static void socket_bitmap_put.*?^\};\n/m] or abort 'bitmap helpers missing'
+template = File.read(File.join(__dir__, 'probe.c.in'))
+['@@BITMAP_TYPES@@', '@@BITMAP_FUNCS@@'].each do |mark|
+  abort "template marker #{mark} count incorrect" unless template.scan(mark).length == 1
+end
+harness = template.sub('@@BITMAP_TYPES@@', types).sub('@@BITMAP_FUNCS@@', funcs)
+compiler = ENV.fetch('CLANG', 'clang')
 Dir.mktmpdir('bitmap-shrink-') do |dir|
-  File.write("#{dir}/probe.c", <<~C)
-    #define _GNU_SOURCE
-    #include <assert.h>
-    #include <pthread.h>
-    #include <stdbool.h>
-    #include <stddef.h>
-    #include <stdint.h>
-    #include <stdio.h>
-    #include <stdlib.h>
-    #include <sys/resource.h>
-    #{types}
-    #{funcs}
-    static int slot[64];
-    int main(void) {
-      for (int i = 0; i < 24; i++) { slot[i] = socket_bitmap_get(&socket_bitmap); assert(slot[i] >= 0); }
-      /* release slots 16..22 (not the last), then the last one: slots 0..15 stay live */
-      for (int i = 16; i < 23; i++) socket_bitmap_put(&socket_bitmap, slot[i]);
-      socket_bitmap_put(&socket_bitmap, slot[23]);
-      assert(socket_bitmap.bit_length == 16);
-      for (int i = 0; i < 12; i++) {
-        int fd = socket_bitmap_get(&socket_bitmap);
-        for (int j = 0; j < 16; j++) assert(fd != slot[j]); /* a live descriptor was handed out again */
-        slot[16 + i] = fd;
-      }
-      for (int i = 0; i < 28; i++) socket_bitmap_put(&socket_bitmap, slot[i]);
-      /* releasing every slot frees the block; it must not dangle */
-      assert(socket_bitmap.bit_length == 0 && socket_bitmap.bits == NULL);
-      int fd = socket_bitmap_get(&socket_bitmap); assert(fd >= 0); /* regrow after shrink to zero */
-      socket_bitmap_put(&socket_bitmap, fd);
-      puts("PASS: bitmap shrink keeps live slots and frees cleanly");
-      return 0;
-    }
-  C
-  out, status = Open3.capture2e('clang', '-pthread', '-fsanitize=address,undefined', '-fno-sanitize-recover=undefined', '-w', "#{dir}/probe.c", '-o', "#{dir}/probe")
-  abort out unless status.success?
-  out, status = Open3.capture2e("#{dir}/probe", rlimit_core: 0)
+  src = File.join(dir, 'probe.c')
+  exe = File.join(dir, 'probe')
+  File.write(src, harness)
+  cmd = [compiler, '-pthread', '-g', '-O1', '-std=gnu11', '-Wall', '-Wextra',
+         '-fno-omit-frame-pointer', '-fsanitize=address,undefined',
+         '-fno-sanitize-recover=all', src, '-o', exe]
+  out, status = Open3.capture2e(*cmd)
+  abort "COMPILE=FAIL\n#{out}" unless status.success?
+  puts 'COMPILE=PASS'
+  puts out unless out.empty?
+  env = { 'ASAN_OPTIONS' => 'detect_leaks=1:halt_on_error=1:abort_on_error=1',
+          'UBSAN_OPTIONS' => 'halt_on_error=1:print_stacktrace=1' }
+  out, status = Open3.capture2e(env, exe, rlimit_core: 0)
   puts out
-  abort 'socket bitmap shrink regression' unless status.success?
+  abort 'FAIL: deterministic bitmap invariants or sanitizers' unless status.success? &&
+    out.include?('PASS: deterministic mldr bitmap regression')
+  puts 'MLDR_PR6_DETERMINISTIC=PASS'
 end
