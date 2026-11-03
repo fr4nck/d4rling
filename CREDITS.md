@@ -80,3 +80,24 @@ creation and ownership contracts; the pinned
 was checked for clock declarations. No external implementation was copied.
 Host tests use an explicitly identified test-only CF allocator adapter;
 they do not validate the actual CoreFoundation runtime.
+
+## mldr RPC socket bitmap shrink (neighbor port, 2026-10-28)
+
+- Original fix by **lucannez64 (Kalah)**, in
+  [lucannez64/darling-lol](https://github.com/lucannez64/darling-lol),
+  source commit `a96cdc6`.
+- Verified integration reference:
+  [VibeDarling/darling PR #1189](https://github.com/VibeDarling/darling/pull/1189),
+  merged on 2026-10-19. Its source patch is GPL-3.0-or-later.
+- Targeted port into `src/startup/mldr/mldr.c`: correct the inverted live-bit
+  shrinking condition and explicitly free/NULL a bitmap resized to zero.
+  Source copyright and notices are retained, with no other loader edits.
+- Regression:
+  `tests/regressions/mldr-socket-bitmap/run.rb`, adapted from the neighbor's
+  test (blob `c4de0d32f03d1673314abbdccb4a7be4dd7da0a4`) for this
+  pinned source layout. Its full-source qualification remains pending.
+- Isolated copied-code reproduction showed failure before and ASan+UBSan
+  success after; it was **not** a 5700X or installed Darling runtime test.
+  The earlier RPC `-111` failure is not attributed to this bug without
+  separate evidence. Integration history is retained on branch
+  `work/mldr-rpc-bitmap-neighbor` and its review PR.
