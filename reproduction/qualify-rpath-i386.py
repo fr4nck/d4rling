@@ -24,6 +24,7 @@ LIBRARY = "libD4CarbonEvents.dylib"
 BUILDER_BLOB = "90e5001a37aa27105ed5bd2c9ff4e74f47771787"
 RUNNER_BLOB = "7b654180dae2184433b799e81ec06ff60146a180"
 FIXTURE_BLOB = "67857751a333cbf1bb0f8ff1a8fd3ea101b239ab"
+ATOMIC_BLOB = "eec3c84883b37ffbf6f976b4f92d37ccca762bff"
 
 
 def stop(message):
@@ -125,7 +126,7 @@ def run_guest(runner, installation, program, mode, timeout_seconds, logfile):
     guest_err = (report / "stderr.log").read_text(errors="replace")
     (logfile.parent / (logfile.stem + "-guest.stdout")).write_text(guest_out)
     (logfile.parent / (logfile.stem + "-guest.stderr")).write_text(guest_err)
-    marker = MARKER in guest_out
+    marker = MARKER in guest_out.splitlines()
     return {"exit": p.returncode, "marker": marker, "stderr": guest_err,
             "report": str(report)}
 
@@ -182,6 +183,7 @@ def main():
         HERE / "build-carbon-probe.py": BUILDER_BLOB,
         HERE / "run-guest.sh": RUNNER_BLOB,
         HERE / "fixtures/carbon-event.c": FIXTURE_BLOB,
+        HERE / "fixtures/atomic-bridge.h": ATOMIC_BLOB,
     }
     for path, expected in fixed.items():
         if not path.is_file() or git_blob(path) != expected:
