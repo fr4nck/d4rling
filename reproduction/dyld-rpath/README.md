@@ -1,7 +1,9 @@
 # DYLD-RPATH-01 — i386 dynamic Carbon witness
 
-**Status:** new qualification harness, **NOT EXECUTED** on 5700X. No claimed
-rpath runtime fix. Branch: `work/dyld-i386-rpath-qualification`.
+**Status (3 November 2026):** Phase A **PASS** on 5700X for exact source
+transfers, Python syntax, three compiled/linked and inspected Mach-O i386
+variants, and protected input integrity. Phase B guest runtime **NOT EXECUTED**.
+No claimed rpath runtime fix. Branch: `work/dyld-i386-rpath-qualification`.
 No production source, CMake, Ninja, CoreAudio/JACK, Carbon source, host system
 installation, active Darling process, or shared prefix is modified by this lot.
 
@@ -95,6 +97,47 @@ Expected static marker `DYLD_RPATH_STATIC=PASS`, report at
 `.../result.json`, and `DARLING_GUEST_RUNTIME=NOT_EXECUTED`.
 If the linker rejects the rpath link, retain the error log and report
 `BUILD_BLOCKED` instead of claiming that dyld was executed.
+
+## Actual 5700X Phase A evidence — 2026-11-03
+
+The user supplied the terminal transcript from Debian 13 WSL2, user
+`Deniel`, Ryzen 5700X. All five explicit downloads completed and each
+Git blob hash check returned `HASH_PASS`; there is no evidence of any
+unrequested package/model download. The Python script passed `py_compile`
+then built/inspected the three Mach-O i386 variants using existing tools.
+The old protected checkout was used read-only.
+
+Observed terminal markers:
+
+```text
+SOURCE=reproduction/qualify-rpath-i386.py BYTES=14184
+HASH_PASS=reproduction/qualify-rpath-i386.py
+HASH_PASS=reproduction/build-carbon-probe.py
+HASH_PASS=reproduction/run-guest.sh
+HASH_PASS=reproduction/fixtures/carbon-event.c
+HASH_PASS=reproduction/fixtures/atomic-bridge.h
+PYTHON_SYNTAX=PASS
+WORKDIR=/home/Deniel/d4rling-dyld-rpath-01
+STATIC_LOADERPATH=PASS
+STATIC_RPATH=PASS
+STATIC_RPATH_NO_LC=PASS
+DYLD_RPATH_STATIC=PASS
+DARLING_GUEST_RUNTIME=NOT_EXECUTED
+INPUT_INTEGRITY=PASS
+REPORT=/home/Deniel/d4rling-dyld-rpath-01/result.json
+```
+
+**Interpretation:** exact production/fixture source-transfer identity,
+compiler/linker success, i386 Mach-O and `LC_RPATH` metadata gate,
+and unchanged hashed inputs are **PASS**. The report and raw linker/load-command
+logs remain in the private host directory, not committed. There was
+**no guest runtime invocation**; the `@rpath` positive and negative cases
+have not been judged from real dyld behavior, and historical RPC `-111`
+is not tested.
+
+Next stage, if explicitly authorized, is **a new invocation** with a
+different `--output` and `--run`. Do not overwrite the Phase A directory;
+do not patch dyld based only on its static metadata.
 
 ## Stage B: explicit isolated runtime (only after reviewing Stage A)
 
