@@ -180,3 +180,71 @@ expectations. A failed baseline is `BLOCKED_BASELINE`, not proof that
 Do not announce results before a 5700X execution transcript and locally
 preserved reports. Do not merge this draft into master before reviewing the
 actual case matrix, private installation layout and input integrity.
+
+
+## 2026-11-03 — B1/B2/B3/B4/B5 runtime findings
+
+Evidence was transcribed from the user's Debian 13 WSL2 shell, not run
+by the GitHub connector. Reports remain private under
+`/home/Deniel/d4rling-dyld-rpath-01-runtime`,
+`/home/Deniel/d4rling-dyld-rpath-b2`,
+`/home/Deniel/d4rling-dyld-rpath-b3`,
+`/home/Deniel/d4rling-dyld-rpath-b4`, and
+`/home/Deniel/d4rling-dyld-rpath-b5`.
+
+| Probe | Host result | Evidence |
+| --- | --- | --- |
+| B1 baseline `@loader_path` direct NORMAL + BYPASS | PASS 2/2 | exit 0, Carbon marker |
+| B1/B2 `LC_RPATH=@executable_path` | FAIL | exit 1, dyld library not loaded |
+| B2 `@rpath` without `LC_RPATH` | expected failure | exit 1, missing dylib; exact marker not rechecked in B2 summary |
+| B3 absolute guest `LC_RPATH=/Volumes/SystemRoot/...` | PASS | link, static contract, guest exit 0, exact marker and `RPATH successful expansion` |
+| B4 `LC_RPATH=@loader_path` | FAIL | link/static PASS, guest exit 1, missing dylib, input integrity PASS |
+| B5 guest i386 realpath of root, B4 and its own executable | FAIL/FAIL/FAIL | Mach-O i386 compile/link PASS, guest exit 0, `realpath()` returned NULL three times, input integrity PASS |
+
+B5 did **not** capture `errno`. It demonstrates NULL results for exactly
+three guest paths, not that all uses of Darwin `realpath()` fail.
+
+The pinned source submodule in `reproduction/submodules.lock.json` is
+`darlinghq/darling-dyld@63f667cf06d7ed59553adebb0c8d70a117135ac9`.
+Its `src/ImageLoaderMachO.cpp` function `ImageLoaderMachO::getRPaths()`
+uses `realpath()` as the only gateway for `@loader_path` and
+`@executable_path` in LC_RPATH. This is a strongly supported explanation
+for the B1/B2/B4 vs B3 differential. Why guest realpath fails remains open,
+and the installed dyld binary's exact source provenance still needs checking.
+
+## Unapplied candidate: bounded absolute loaded-path fallback
+
+`reproduction/patches/dyld-rpath-realpath-fallback.patch`
+is a **source-only experimental candidate**, NOT applied to production or
+installed dyld. It has two narrowly limited hunks targeting exactly
+`src/ImageLoaderMachO.cpp` at the above pinned commit:
+
+- Preserve the successful realpath branch unchanged.
+- Only when realpath fails, accept the absolute path of the *already-loaded*
+  image (loader image or main executable), provided that path is not NULL,
+  is absolute and fits strictly within `PATH_MAX` using `strlcpy`.
+- Preserve both existing `context.allowAtPaths` restrictions. No new
+  `DYLD_*` overrides, no global `realpath` interposition and no changes
+  to direct `@loader_path` or absolute `LC_RPATH` handling.
+- Accept that this changes fallback behavior for uncanonicalized loaded
+  images. Treat symlink, path normalization, relative-image, missing-image,
+  traversal, restricted-program and extremely long path cases as mandatory
+  review/negative tests before adoption. No security claim is made yet.
+
+**Static source-context proof only:** the two hunks' old context matches
+exactly the pinned original `ImageLoaderMachO.cpp` (two independent
+8-line hunks); a candidate text reconstruction was checked without
+executing C++ compiler, patch application on a host repository, or runtime.
+
+**Proposed next gate:** apply the patch only within a new, independently
+owned copy of the pinned dyld source, verify via `git apply --check`
+and a precisely scoped, explicitly approved private build, then run the
+same B1–B4 positive/negative matrix with baseline and candidate in
+otherwise identical namespace-isolated guest installations. Do not copy
+libraries into the active `/opt` prefix or overwrite any historical
+build tree. If a private dyld build or isolated guest installation cannot
+be obtained, report BLOCKED, not a PASS. The `realpath()` subsystem
+failure should be handled separately from this compatibility fallback.
+
+PR #8 remains draft and unmerged until direct patched guest runtime
+evidence and adversarial review are available.
