@@ -1,0 +1,119 @@
+# DYLD-RPATH-01 — i386 dynamic Carbon witness
+
+**Status:** new qualification harness, **NOT EXECUTED** on 5700X. No claimed
+rpath runtime fix. Branch: `work/dyld-i386-rpath-qualification`.
+No production source, CMake, Ninja, CoreAudio/JACK, Carbon source, host system
+installation, active Darling process, or shared prefix is modified by this lot.
+
+## Why this test
+
+PROJECT_STATE.md already records a genuine Carbon i386 guest that returns
+code 0 and writes `D4RLING-CARBON-EVENT-I386-OK` through `@loader_path`,
+including NORMAL/BYPASS and a missing-dylib negative control. Repeating it
+without changing the variable is not research. The remaining bounded question
+is whether the same program and same event implementation also work through
+`@rpath` with a declared executable rpath.
+
+The existing `reproduction/build-carbon-probe.py` and
+`reproduction/run-guest.sh` from merged PR #7 are pinned by Git blob IDs
+inside the new script; `fixtures/carbon-event.c` is also pinned. This
+keeps the C logic and original test conditions constant.
+
+## Variants (each in a new separate private subdirectory)
+
+| Variant | Library LC_ID_DYLIB / exe LC_LOAD_DYLIB | Exe LC_RPATH | Runtime criterion |
+| --- | --- | --- | --- |
+| `loaderpath` | `@loader_path/libD4CarbonEvents.dylib` | absent | NORMAL/BYPASS both exit 0 + exact Carbon marker |
+| `rpath` | `@rpath/libD4CarbonEvents.dylib` | `@executable_path` | NORMAL/BYPASS both exit 0 + exact Carbon marker |
+| `rpath_no_lc` | `@rpath/libD4CarbonEvents.dylib` | absent | explicitly reject with `Library not loaded` mentioning `@rpath` and no marker |
+
+This is intentionally a *comparative* diagnosis. Even if the positive rpath
+case fails, there is no automatic dyld patch or retry with changed flags.
+The stderr, exit codes and Mach-O load commands are evidence.
+
+## Local prerequisites and scope
+
+Target: Ryzen 5700X / Debian 13 WSL2 / user Deniel, no sudo.
+Existing, independently reviewed (do not replace):
+- Historical Carbon checkout:
+  `/home/Deniel/d4rling-ui/d4rling-carbon-qualif`
+- Existing i386 Ninja build tree (read inputs only):
+  `/home/Deniel/d4rling-core/d4rling-build-i386`
+- Existing **private experimental** installation (read inputs only):
+  `/home/Deniel/d4rling-qt432-438-rRJ1fhT1/installation`
+- Existing Python 3, clang-19, llvm-otool-19, llvm-lipo-19, linker
+  produced by the build. No package installation or download from this script.
+- The script and three pinned reproduction files must coexist in a
+  `reproduction/` directory within a separately staged copy of the recovery
+  kit. If missing, STOP; do not checkout/reset/fetch in the historical tree.
+
+The source checkout may have nine important uncommitted modifications. The
+script only reads it; compiled objects, Mach-O images and logs go to a newly
+created directory under `/home/Deniel`, never to a build tree or prefix.
+It preserves existing outputs on every outcome rather than removing evidence.
+
+## Stage A: compile + inspect (never executes guest)
+
+From **Bash inside Debian 13 WSL2** and from the separately staged recovery
+kit root containing `reproduction/qualify-rpath-i386.py`:
+
+```sh
+cd /home/Deniel/EXISTING_RECOVERY_KIT_COPY
+python3 reproduction/qualify-rpath-i386.py \
+  --source /home/Deniel/d4rling-ui/d4rling-carbon-qualif \
+  --build /home/Deniel/d4rling-core/d4rling-build-i386 \
+  --installation /home/Deniel/d4rling-qt432-438-rRJ1fhT1/installation \
+  --output /home/Deniel/d4rling-dyld-rpath-01
+```
+
+`/home/Deniel/EXISTING_RECOVERY_KIT_COPY` is illustrative, **not** a
+verified existing path; substitute the real directory if available.
+The destination must **not already exist** and must be outside the source,
+build, and installation paths. Do not run the example unedited.
+
+Expected static marker `DYLD_RPATH_STATIC=PASS`, report at
+`.../result.json`, and `DARLING_GUEST_RUNTIME=NOT_EXECUTED`.
+If the linker rejects the rpath link, retain the error log and report
+`BUILD_BLOCKED` instead of claiming that dyld was executed.
+
+## Stage B: explicit isolated runtime (only after reviewing Stage A)
+
+Re-run Stage A with a **different, new output path** and `--run` to enable
+runtime. This compiles its own probe instead of editing Stage A artifacts.
+Before starting anything, the runner checks that the private
+`darling` binary embeds the private `darlingserver` path, and that the
+server embeds the same private `mldr` loader path; mismatches block execution.
+The pinned `run-guest.sh` then uses a new user/mount/PID/network/IPC/UTS
+namespace, a fresh `DPREFIX`, stdin=/dev/null and bounded `timeout`.
+It must not contact, restart, kill, mount over or install into the active
+global Darling instance.
+
+```sh
+cd /home/Deniel/EXISTING_RECOVERY_KIT_COPY
+python3 reproduction/qualify-rpath-i386.py \
+  --source /home/Deniel/d4rling-ui/d4rling-carbon-qualif \
+  --build /home/Deniel/d4rling-core/d4rling-build-i386 \
+  --installation /home/Deniel/d4rling-qt432-438-rRJ1fhT1/installation \
+  --output /home/Deniel/d4rling-dyld-rpath-01-runtime \
+  --run --timeout 20
+```
+
+Accept `DYLD_RPATH_RUNTIME=PASS` only when both baseline modes, both
+positive rpath modes and the negative rpath mode satisfy their separate
+expectations. A failed baseline is `BLOCKED_BASELINE`, not proof that
+`@rpath` is broken. A new `@rpath` mismatch is
+`FAIL_RPATH_DIAGNOSTIC`, not a successful remediation.
+
+## Distinct proof levels and required follow-up
+
+1. C compiler/linker output and Mach-O `LC_ID_DYLIB`, `LC_LOAD_DYLIB`,
+   `LC_RPATH` inspection: source/link qualification only.
+2. Normal/BYPASS exited 0, exact marker and private namespace:
+   qualified guest execution for **this one Carbon witness**.
+3. The `rpath_no_lc` negative must fail with explicit dyld error.
+4. A complete dyld, QuickTime 7, Logic Studio 8, JACK, CoreAudio, all syscalls
+   and historical RPC `-111` are **not** qualified by this test.
+
+Do not announce results before a 5700X execution transcript and locally
+preserved reports. Do not merge this draft into master before reviewing the
+actual case matrix, private installation layout and input integrity.
