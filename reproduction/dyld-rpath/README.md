@@ -52,6 +52,26 @@ script only reads it; compiled objects, Mach-O images and logs go to a newly
 created directory under `/home/Deniel`, never to a build tree or prefix.
 It preserves existing outputs on every outcome rather than removing evidence.
 
+## Explicit source transfer, if needed
+
+The 5700X's old protected checkout is not expected to contain this new
+PR branch. Do **not** switch it or fetch branches into it. Instead stage
+the five small source files below in a new private directory. Any transfer
+from GitHub requires the user's **explicit action**, with progress and
+volume disclosed. The total expected transfer is **21,312 bytes**, not a
+dependency/model/package download.
+
+| File | Commit source | Git blob SHA-1 | Bytes |
+| --- | --- | --- | ---: |
+| `reproduction/qualify-rpath-i386.py` | PR #8 `7186dbb31a7e209eb48d2ad9e8b23f2593bd5a93` | `18f9cb60c650c21d07e07cf67dea0d6f10867cc0` | 14,184 |
+| `reproduction/build-carbon-probe.py` | merged PR #7 `e78f87723b3fd797abafaf7cd2b678c1b10ed4a9` | `90e5001a37aa27105ed5bd2c9ff4e74f47771787` | 3,158 |
+| `reproduction/run-guest.sh` | same | `7b654180dae2184433b799e81ec06ff60146a180` | 1,532 |
+| `reproduction/fixtures/carbon-event.c` | same | `67857751a333cbf1bb0f8ff1a8fd3ea101b239ab` | 1,508 |
+| `reproduction/fixtures/atomic-bridge.h` | same | `eec3c84883b37ffbf6f976b4f92d37ccca762bff` | 930 |
+
+All five must be checked against their Git blob hashes before execution.
+No remote source is executed automatically by a GitHub comment or this PR.
+
 ## Stage A: compile + inspect (never executes guest)
 
 From **Bash inside Debian 13 WSL2** and from the separately staged recovery
