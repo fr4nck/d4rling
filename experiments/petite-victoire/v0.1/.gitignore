@@ -1,0 +1,8 @@
+build/
+exports/
+*.o
+*.dylib
+*.a
+*.wav
+*.mid
+.DS_Store
