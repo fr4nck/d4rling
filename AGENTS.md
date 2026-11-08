@@ -6,6 +6,73 @@ travail ; sa lecture ne déclenche ni expérimentation ni publication.
 Objectif : livrer une amélioration bornée, prouvée et réutilisable sans
 endommager les travaux existants ni annoncer une compatibilité non démontrée.
 
+## Gouvernance transversale — PMSL-ARCH
+
+La **source de règles transversales de développement** est le dépôt privé
+[`fr4nck/PMSL-Arch`](https://github.com/fr4nck/PMSL-Arch), branche `main` :
+[`AGENTS.md`](https://github.com/fr4nck/PMSL-Arch/blob/main/AGENTS.md) et
+[`docs/GOUVERNANCE_AGENTS_OBJECTIFS.md`](https://github.com/fr4nck/PMSL-Arch/blob/main/docs/GOUVERNANCE_AGENTS_OBJECTIFS.md).
+Avant tout chantier technique significatif, l'agent ayant accès à ce dépôt
+consulte ces deux textes, en particulier **AGT-001 à AGT-014**, puis ce guide
+local et les instructions du sous-système. L'accès au dépôt privé n'est pas
+présumé pour un contributeur extérieur : ne jamais prétendre avoir consulté
+une règle inaccessible. Dans ce cas, appliquer au minimum les garde-fous
+autonomes ci-dessous et signaler toute règle non vérifiable dont dépend
+l'autorisation ou la sûreté d'une opération. En cas de conflit ou
+d'incertitude bloquante, **arrêter l'opération concernée et demander un
+arbitrage**, sans contournement tacite.
+
+**Contrat obligatoire avant création, développement, script ou délégation
+Claude Code / Codex :**
+
+1. Identifier le **dépôt canonique**, l'état réel de `master`, les éventuels
+   changements locaux, la source de vérité et les solutions déjà disponibles.
+2. Réutiliser sources, builds, tests, dépendances et outils existants avant de
+   créer une copie, un mécanisme ou un environnement parallèle ; justifier
+   explicitement toute exception.
+3. Conserver **une seule branche de développement : `master`**, un checkout
+   canonique et un build/une installation de référence, avec traçabilité
+   source → build → préfixe → essais. Les anciennes copies restent protégées
+   jusqu'à décision explicite de migration ou de suppression.
+4. Pour le travail pérenne sur le 5700X, viser **au plus trois zones
+   permanentes** sous `/home/Deniel/d4wrling-work` :
+   `canon/` (sources, build, installation), `validation/` (tests et sorties
+   bornées) et `historique/` (preuves protégées). **C'est une cible
+   d'organisation, pas une autorisation de créer ces dossiers, déplacer les
+   copies actuelles ni nettoyer l'existant.** Utiliser l'espace autorisé par
+   la mission ; ne pas multiplier les racines ou dossiers horodatés par
+   défaut. Les essais temporaires ont un propriétaire, une limite et une
+   politique de conservation.
+5. Avant toute commande à effet, annoncer le **shell**, les chemins lus et
+   écrits, le volume, les accès réseau, les changements Git et les risques.
+   Aucune installation, copie volumineuse, écriture sur volume Windows ni
+   téléchargement implicite. Un clone partiel peut déclencher un *lazy fetch*
+   même en lecture ; le prévenir explicitement.
+6. Aucune suppression, aucun déplacement, écrasement, force-push, reset
+   destructif ou réécriture d'historique sans autorisation spécifique.
+   Préserver `experiments/petite-victoire/`, ses preuves et les installations
+   historiques selon les restrictions renforcées plus bas.
+7. Une correction n'est **intégrée** que si elle est revue, testée au niveau
+   pertinent et présente dans `master` ; un PASS synthétique, un commit
+   publié et une recette réelle sont trois états distincts. Porter les
+   corrections qualifiées par petits changements traçables, sans assembler
+   arbitrairement des binaires issus de builds différents.
+8. Définir le livrable demandé **maintenant**, la preuve attendue, les tests
+   négatifs, un budget de travail et un **critère d'arrêt**. Ne pas étendre
+   « go » à des chantiers implicites.
+9. Les prompts destinés à un autre agent et les scripts livrés à l'utilisateur
+   doivent être **complets et collables en une seule fois**, avec prévol du
+   dépôt réel, bon répertoire, protections, lancement et bilan ; aucune
+   retouche manuelle exigée.
+10. Avant diagnostic ou correctif non trivial, lire **documentation officielle
+    et code/version réels** (AGT-014). Si une précondition manque, signaler
+    le blocage plutôt que multiplier des essais ou fabriquer des prérequis.
+
+La mémoire conversationnelle ne remplace **jamais** ce prévol documentaire.
+Les règles spécifiques D4rling ci-après renforcent ce contrat ; elles ne
+l'annulent pas. Aucun changement des dossiers existants n'est autorisé par
+ce document seul.
+
 ## Petite Victoire — développement réservé à fr4nck
 
 **fr4nck garde la main sur le développement et les choix de produit de Petite
