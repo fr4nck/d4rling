@@ -277,3 +277,33 @@ Avant de poursuivre le développement :
 **État administratif de cet archivage :** création de ce seul document
 Markdown sur la branche `master`. Aucune modification de code, sous-module,
 configuration, PR #8, binaire ou donnée du poste 5700X.
+
+
+## 10. Qualification V1-R2 — preuves binaires i386 et reprise après archivage (8 novembre 2026)
+
+**Statut : OBS ; V1 extraction/disassemblage PASS, diagnostic H-CF encore OPEN.** L'opérateur a fourni la sortie Bash de `G1-RECOVERY + V1` puis de `V1-R2` sur le 5700X. Aucun essai dynamique n'a été réalisé dans cette étape et aucun fichier de l'installation n'a été remplacé.
+
+### Archivage G1 confirmé
+
+- L'archivage initial intégral de `/tmp` échouait normalement sur les sockets Unix Darling et sur les chemins `prefix.workdir/work` inaccessibles. L'archive partielle n'était pas qualifiée.
+- Une reprise a créé **`/home/Deniel/d4rling-preuves/g1-v1-recovery.hpfVdVIF/G1-preuves.tar.gz`** en excluant les préfixes d'exécution. `gzip -t`, les huit fichiers obligatoires dans l'index et `sha256sum -c` ont rendu PASS. L'archive compressée fait environ **16 Kio**, car les préfixes sont exclus. Elle représente les **preuves sélectionnées**, non l'environnement d'exécution complet. Les trois répertoires originaux de `/tmp` n'ont pas été supprimés.
+- Une première tentative V1 avait rejeté à tort la tranche i386 parce que le contrôle comparait littéralement la sortie de `llvm-lipo-19 -archs`, avec son espace final éventuel. **Faux échec du script**, non du binaire ; corrigé dans V1-R2.
+
+### V1-R2 : tranches et symboles vérifiés
+
+Répertoire de résultat : `/home/Deniel/d4rling-preuves/g1-v1-recovery.hpfVdVIF/v1-r2.5VyVqC4c` (25 Mio). Deux tranches sont reconnues `Mach-O i386`, les symboles sont accessibles et `llvm-objdump-19` a terminé avec succès.
+
+| Binaire installé | SHA-256 universel | SHA-256 tranche i386 | Ancrages i386 |
+| --- | --- | --- | --- |
+| `usr/lib/system/libsystem_kernel.dylib` | `f94ab6955869ce4e91d6df1319764e84bb5d1925341fbf3b6372268ace85dd2e` | `b9d71878c48f858002b8daf759109969ac9935b2cc4d7bf645e78daecafc2e52` | `__darling_bsd_syscall` 0x492f1 ; `tramp_cerror` 0x3d5a8 ; `_getattrlist$UNIX2003` 0x3dc08 ; `_lstat64` 0x3e3fc ; `_stat64` 0x3fb9c |
+| `usr/lib/dyld` | `0f048c39017e6194581a5084d0bc0656b446f9743337cc66829dd4dc685b86ed` | `8e5d39fa6b349eb0047a1096848210e367158cca1e038ad189865c155eba91d5` | `__darling_bsd_syscall` 0xe7415 ; `tramp_cerror` 0xe10d4 ; `_realpath$DARWIN_EXTSN` 0xab410 ; `_getattrlist$UNIX2003` 0xe1244 ; `_lstat64` 0xe1418 ; `_stat64` 0xe18cc |
+
+**Fait binaire relevé :** dans les deux tranches i386, les wrappers `getattrlist$UNIX2003`, `lstat64` et `stat64` appellent `__darling_bsd_syscall`, puis exécutent `jae` pour éviter la branche d'erreur ; les branches d'erreur utilisent des pointeurs/trampolines `cerror`. Par exemple, dans dyld, `0xe1249 calll 0xe7415` puis `0xe124e jae 0xe125e`; dans libsystem_kernel, `0x3dc0d calll 0x492f1` puis `0x3dc12 jae 0x3dc22`.
+
+**Hypothèse statique forte :** le code source `bsd_syscall.S` épinglé exécute `addl $56,%esp` immédiatement avant `ret` en i386, écrasant les flags, dont CF. Si ce même code est présent dans les binaires, la condition `jae` du wrapper pourrait refléter une restauration de pile plutôt que la convention Darwin des erreurs BSD. La sortie V1-R2 ne publie que les deux premiers `nop` du dispatcher et **ne démontre pas encore** la présence exacte des instructions finales de ce dispatcher dans les binaires installés.
+
+### Dernier contrôle requis pour V1
+
+Lire des extraits ciblés du désassemblage **déjà généré**, autour de `__darling_bsd_syscall` et des wrappers `getattrlist$UNIX2003` pour **les deux tranches i386**. Observer impérativement le corps complet du dispatcher, le traitement effectif du résultat d'appel et les instructions de retour ; ne pas inférer un code binaire depuis la seule source. Un diagnostic V1 peut alors conclure statiquement (avec limites), sans prétendre qu'un défaut dynamique est prouvé avant un témoin d'erreur invité. Ne pas réextraire ni redésassembler les binaires si les fichiers existants sont intacts.
+
+**Conservation :** cette note GitHub archive les sorties et empreintes textuelles publiées par l'opérateur, pas les exécutables ou logs bruts privés.
