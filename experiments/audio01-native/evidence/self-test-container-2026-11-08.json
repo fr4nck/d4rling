@@ -1,0 +1,51 @@
+{
+  "schema": "d4rling.audio01.test-evidence.v1",
+  "captured_on": "2026-11-08",
+  "test_environment": {
+    "description": "isolated assistant container, NOT the user's 5700X / WSL2 / MacBook",
+    "platform": "linux",
+    "machine": "x86_64",
+    "python": "3.13.5",
+    "wsl_detected": false,
+    "pulse_server_env": "unset",
+    "wslg_pulse_socket": "not_present"
+  },
+  "command": "python audio01_native.py --self-test",
+  "exit_code": 0,
+  "stdout": {
+    "experiment": "D4RLING-AUDIO-01",
+    "mode": "self-test",
+    "scope": "Linux native PulseAudio only; no Mach-O/CoreAudio/Darwin/JACK",
+    "status": "SELF_TEST_PASS",
+    "frames": 55125,
+    "bytes": 220500,
+    "sample_spec_size": 12,
+    "pcm_sha256": "4bc80528c7b673a5c25c5183ef8ab012ea73b4dfefe8957ba16ec665539eeeb5",
+    "tone": {
+      "hz": 440,
+      "duration_ms": 1250,
+      "rate_hz": 44100,
+      "channels": 2,
+      "sample_format": "S16LE",
+      "amplitude_pct_full_scale": 9
+    }
+  },
+  "checks": {
+    "python_syntax": "PASS (py_compile)",
+    "zip_integrity": "PASS (unzip -t)",
+    "archive_original_sha256_match": true,
+    "source_original_git_blob_sha1_match": true,
+    "readme_original_git_blob_sha1_match": true
+  },
+  "limitations": [
+    "No actual PulseAudio server tested on this assistant container",
+    "No audibility test performed",
+    "No Darwin Mach-O or CoreAudio execution",
+    "Not a replacement for raw B13/B14/C10 reports or Q7-Q12 archives"
+  ],
+  "sources": {
+    "native_script_sha256": "e40fff0002ebf2f61be67eb05421e51d5a7d089432502688a26a57f8ab17d083",
+    "native_readme_sha256": "b703575261dd87aea4ed5d44ea6db22e7a8bd7c4c3403813c134d30cc25ee275",
+    "original_zip_sha256": "a16ee4ad467e233fd9dc767ab3c64a2e7d611dca1f279509899af4728a4affd5"
+  }
+}
