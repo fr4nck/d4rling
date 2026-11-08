@@ -105,3 +105,19 @@ Les cas ci-dessous sont un **plan de tests**, pas une suite ayant déjà réussi
 - Ce fichier conserve les **conclusions et liens**, pas les octets des preuves expérimentales du 5700X.
 
 **Jalon documentaire :** l'audit croisé est archivé ; les tests R2 sont spécifiés ; G1-R2/R3 rend l'ancien R1-B7 non prioritaire ; il reste principalement la preuve i386 V1, et la sauvegarde durable des logs locaux avant de clore la conversation.
+
+## 7. Vérification V0 des preuves locales — 8 novembre 2026
+
+**OBS : sortie Bash fournie par l'opérateur sur `Deniel@5700X` (Debian WSL2).** L'inventaire n'a effectué aucune écriture, aucune opération Git et aucun téléchargement. Les trois dossiers G1 dans `/tmp` existent encore au moment de ce relevé :
+
+| Répertoire local | Volume `du -sh` | Contenu visible au niveau 2 |
+| --- | ---: | --- |
+| `/tmp/d4rl-g1-r1.nMO0yEhA` | 5.3 Mio | `exit-code.txt`, `stderr.log`, `stdout.log`, `prefix/.init.pid` |
+| `/tmp/d4rl-g1-r2.1Stj16FI` | 11 Mio | `C2/stderr.log`, `C2/stdout.log`, `OLD/stderr.log`, `OLD/stdout.log` |
+| `/tmp/d4rl-g1-r3.zfPDLfmC` | 16 Mio | `inputs-before.sha256`, `inputs-after.sha256`, rapports `NEGATIVE`, `LOADER_RPATH`, `DIRECT` |
+
+Les sorties sont **tronquées à deux niveaux de profondeur pour l'inventaire** : aucune conclusion sur le contenu intégral des sous-répertoires ou sur leur nature privée. **Ces 32,3 Mio approximatifs n'ont pas encore été archivés durablement par le relevé.**
+
+Également observés dans `/home/Deniel` : `d4rl-v012.zIDwo8mW` (61 Mio), `d4rl-v012-kit` (24 Kio), `d4rling-dyld-rpath-c0` (164 Kio), `d4rling-dyld-rpath-c2` (5.1 Mio), `d4rling-dyld-rpath-c4` (6.2 Mio). LLVM `llvm-lipo-19`, `llvm-objdump-19`, `llvm-nm-19` sont présents. Le dyld installé a les architectures `i386 x86_64` et le SHA-256 `0f048c39017e6194581a5084d0bc0656b446f9743337cc66829dd4dc685b86ed`. Le `libsystem_kernel.dylib` installé a `x86_64 i386` et le SHA-256 `f94ab6955869ce4e91d6df1319764e84bb5d1925341fbf3b6372268ace85dd2e`.
+
+**Prochain ordre :** (1) copier/archiver les trois G1 de `/tmp` vers un seul répertoire privé durable sous `/home/Deniel`, vérifier archive et SHA, sans suppression des sources ; (2) contrôler la tranche effectivement i386 de l'ABI BSD sans modifier les installations. Cette entrée GitHub conserve les métadonnées, **pas** les journaux locaux ni leur contenu.
