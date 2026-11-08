@@ -307,3 +307,67 @@ Répertoire de résultat : `/home/Deniel/d4rling-preuves/g1-v1-recovery.hpfVdVIF
 Lire des extraits ciblés du désassemblage **déjà généré**, autour de `__darling_bsd_syscall` et des wrappers `getattrlist$UNIX2003` pour **les deux tranches i386**. Observer impérativement le corps complet du dispatcher, le traitement effectif du résultat d'appel et les instructions de retour ; ne pas inférer un code binaire depuis la seule source. Un diagnostic V1 peut alors conclure statiquement (avec limites), sans prétendre qu'un défaut dynamique est prouvé avant un témoin d'erreur invité. Ne pas réextraire ni redésassembler les binaires si les fichiers existants sont intacts.
 
 **Conservation :** cette note GitHub archive les sorties et empreintes textuelles publiées par l'opérateur, pas les exécutables ou logs bruts privés.
+
+
+## 11. V1-R3 — preuve statique de destruction du drapeau CF (8 novembre 2026)
+
+**OBS BINAIRE : défaut structurel confirmé dans les tranches Mach-O i386 des deux binaires installés.** L'opérateur a lu en lecture seule les désassemblages V1-R2 déjà présents. Les passages ci-dessous proviennent de la **sortie effectivement observée**, et non d'une reconstruction à partir des sources.
+
+### `libsystem_kernel.dylib` i386 — SHA tranche `b9d71878c48f858002b8daf759109969ac9935b2cc4d7bf645e78daecafc2e52`
+
+```asm
+000492f1 <__darling_bsd_syscall>:
+   ...
+   49384:  subl $0x38, %esp
+   49387:  calll *%eax
+   49389:  addl $0x38, %esp
+0004938c <.std_ret>:
+   4938c:  nop
+   ...
+   49393:  retl
+```
+
+Wrapper présent et précédemment observé dans le même binaire :
+
+```asm
+3dc08 <_getattrlist$UNIX2003>:
+   3dc0d:  calll 0x492f1 <__darling_bsd_syscall>
+   3dc12:  jae   0x3dc22
+   ...    # branche vers cerror si CF=1
+```
+
+### `dyld` i386 — SHA tranche `8e5d39fa6b349eb0047a1096848210e367158cca1e038ad189865c155eba91d5`
+
+```asm
+000e7415 <__darling_bsd_syscall>:
+   ...
+   e74a8:  subl $0x38, %esp
+   e74ab:  calll *%eax
+   e74ad:  addl $0x38, %esp
+000e74b0 <.std_ret>:
+   e74b0:  nop
+   ...
+   e74b7:  retl
+```
+
+Wrapper correspondant :
+
+```asm
+e1244 <_getattrlist$UNIX2003>:
+   e1249:  calll 0xe7415 <__darling_bsd_syscall>
+   e124e:  jae   0xe125e
+   ...    # branche vers cerror si CF=1
+```
+
+### Analyse et qualification
+
+- `addl $0x38,%esp` **modifie EFLAGS, notamment CF**. Les `nop` et `retl` qui suivent ne restaurent pas l'état précédent des drapeaux. Le stub `jae` teste donc le **CF issu de la restauration de la pile**, pas le statut d'erreur du gestionnaire BSD. Ceci est **démontré statiquement** dans les **deux tranches i386**.
+- Sur une pile utilisateur ordinaire, l'addition de 56 n'entraîne pas de retenue et CF=0. Un appel BSD renvoyant une erreur risque donc d'être interprété comme un succès : la conversion Darwin `CF=1`, `eax=errno positif` via `tramp_cerror` ne s'effectue pas. **L'effet sur le `errno` réellement observé au runtime n'est PAS encore mesuré**.
+- La branche `.no_sys` comporte également une opération `addl $4,%esp` après `___unknown_syscall`, affectant CF avant le retour ; à couvrir séparément dans la correction éventuelle.
+- Portée : **les binaires i386 installés et épinglés**, non une preuve que toutes les versions/branches de Darling comportent encore ce défaut, ni que ce seul défaut cause tous les échecs `realpath`, QuickTime ou CoreAudio.
+- Avant toute correction, caractériser la convention de retour des fonctions du dispatch (`-errno` Linux, valeurs valides signées ou non, appels de résultat 64 bits), puis produire un témoin invité positif/négatif. Une correction devra restituer **explicitement** la convention CF/EAX Darwin à la sortie de `__darling_bsd_syscall` et traiter les cas `.no_sys` ; ne pas remplacer aveuglément par `test eax,eax` (certaines valeurs valides peuvent porter le bit de signe).
+- Statut : **V1 STATIC = PASS (anomalie structurelle confirmée)** ; **V3 GUEST = NOT RUN** ; **PATCH/REGRESSION = NOT RUN** ; aucun changement de binaire ni de code lors de V1-R3.
+
+### Jalon de reprise
+
+La revue statique i386 V1 est maintenant terminée. L'archive privée G1 reste à l'emplacement mentionné dans la section 10, avec ses préfixes d'exécution exclus, son contrôle SHA PASS et les preuves originales encore dans `/tmp` au moment de l'essai. Les journaux/bruts ne sont pas publiés sur GitHub. La prochaine étape utile est **un témoin invité isolé V3** de retour `stat64` / `getattrlist` sur un chemin inexistant avec mesure de `errno`, suivi d'un test positif. Ne pas lancer de nouveau build ni modifier le préfixe actif sans protocole identifié.
