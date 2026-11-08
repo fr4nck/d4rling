@@ -134,3 +134,25 @@ QuickTime ou essai audio n'a été exécuté pour publier ces guides. Les source
 archives et travaux locaux préexistants restent inchangés. Consulter la
 roadmap pour les critères PASS/BLOCKED et les tâches indépendantes, puis les
 rapports datés avant toute nouvelle expérimentation.
+
+## QuickTime — premier sous-ensemble Movie vide (8 novembre 2026)
+
+Le [lot Q-A2](docs/evidence/quicktime-q-a2-empty-movie-2026-11-08.md) implémente sept fonctions : EnterMovies,
+ExitMovies, GetMoviesError, NewMovie, DisposeMovie, GetMovieTimeScale et
+SetMovieTimeScale. NewMovie(0) alloue un objet vide à 600 unités/s ; son
+échelle positive est propre à l'objet et modifiable. Les flags non nuls
+sont refusés ; l'environnement reste unique et non réentrant. Les autres
+stubs, frameworks et Petite Victoire sont inchangés.
+
+La [recette](tests/regressions/quicktime-empty-movie/README.md) compile les
+vrais QuickTime.c/QuickTime.h et MacTypes avec des adaptations de plateforme
+hôte identifiées. Windows x64 : **4 059 contrôles, 0 échec, 0 allocation
+vivante**, dont 1 000 cycles de vie, erreurs et panne d'allocation injectée ;
+contrats et liaison C/C++ passants. Avant correction, le constructeur renvoie
+NULL et les contrats typés échouent. Les deux échecs initiaux de préparation
+du runner sont conservés dans le rapport, sans être masqués.
+
+Ces résultats qualifient le sous-ensemble en mémoire sur l'hôte, pas un build
+ou une exécution Darwin i386. Prochain critère : compiler/exporter puis
+exécuter ce même cycle i386 dans un espace isolé. Aucun fichier/piste,
+movie actif, time base générale, audio/vidéo, QTKit ou Player n'est qualifié.

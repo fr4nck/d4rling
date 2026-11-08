@@ -24,6 +24,55 @@
 
 static int verbose = 0;
 
+/* Empty-movie subset only. EnterMoviesOnThread and shared/concurrent access
+ * are not implemented. The list owns allocations for Dispose/Exit cleanup;
+ * it is not a generational handle table and cannot detect reused stale IDs.
+ */
+enum {
+    d4rlMovieUnimplemented = -4,
+    d4rlMovieParamErr = -50,
+    d4rlMovieMemFullErr = -108,
+    d4rlInvalidMovie = -2010,
+    d4rlMovieToolboxUninitialized = -2020
+};
+
+struct MovieType {
+    TimeScale time_scale;
+};
+
+struct D4RLMovieStorage {
+    struct MovieType *handle_value;
+    struct MovieType value;
+    struct D4RLMovieStorage *next;
+};
+
+static int movie_initialized;
+static OSErr movie_error;
+static struct D4RLMovieStorage *movie_list;
+
+static struct D4RLMovieStorage **movie_slot(Movie movie)
+{
+    struct D4RLMovieStorage **slot = &movie_list;
+    while (*slot && &(*slot)->handle_value != movie)
+        slot = &(*slot)->next;
+    return slot;
+}
+
+static struct D4RLMovieStorage *movie_lookup(Movie movie)
+{
+    struct D4RLMovieStorage *storage;
+    if (!movie_initialized) {
+        movie_error = d4rlMovieToolboxUninitialized;
+        return NULL;
+    }
+    storage = *movie_slot(movie);
+    if (!storage) {
+        movie_error = d4rlInvalidMovie;
+        return NULL;
+    }
+    return storage;
+}
+
 __attribute__((constructor))
 static void initme(void) {
     verbose = getenv("STUB_VERBOSE") != NULL;
@@ -2669,10 +2718,17 @@ void* DisposeMatte(void)
     return NULL;
 }
 
-void* DisposeMovie(void)
+void DisposeMovie(Movie theMovie)
 {
-    if (verbose) puts("STUB: DisposeMovie called");
-    return NULL;
+    struct D4RLMovieStorage **slot;
+    struct D4RLMovieStorage *storage;
+    if (!movie_lookup(theMovie))
+        return;
+    slot = movie_slot(theMovie);
+    storage = *slot;
+    *slot = storage->next;
+    free(storage);
+    movie_error = noErr;
 }
 
 void* DisposeMovieController(void)
@@ -3419,10 +3475,12 @@ void* EndianVersionChunk_NtoB(void)
     return NULL;
 }
 
-void* EnterMovies(void)
+OSErr EnterMovies(void)
 {
-    if (verbose) puts("STUB: EnterMovies called");
-    return NULL;
+    /* Repeated calls are harmless and do not discard existing movies. */
+    movie_initialized = 1;
+    movie_error = noErr;
+    return noErr;
 }
 
 void* EnterMoviesOnThread(void)
@@ -3449,10 +3507,15 @@ void* ExecuteCallBack(void)
     return NULL;
 }
 
-void* ExitMovies(void)
+void ExitMovies(void)
 {
-    if (verbose) puts("STUB: ExitMovies called");
-    return NULL;
+    while (movie_list) {
+        struct D4RLMovieStorage *storage = movie_list;
+        movie_list = storage->next;
+        free(storage);
+    }
+    movie_initialized = 0;
+    movie_error = noErr;
 }
 
 void* ExitMoviesOnThread(void)
@@ -4565,10 +4628,13 @@ void* GetMovieTimeBase(void)
     return NULL;
 }
 
-void* GetMovieTimeScale(void)
+TimeScale GetMovieTimeScale(Movie theMovie)
 {
-    if (verbose) puts("STUB: GetMovieTimeScale called");
-    return NULL;
+    struct D4RLMovieStorage *storage = movie_lookup(theMovie);
+    if (!storage)
+        return 0;
+    movie_error = noErr;
+    return storage->value.time_scale;
 }
 
 void* GetMovieTrack(void)
@@ -4625,10 +4691,11 @@ void* GetMovieVolume(void)
     return NULL;
 }
 
-void* GetMoviesError(void)
+OSErr GetMoviesError(void)
 {
-    if (verbose) puts("STUB: GetMoviesError called");
-    return NULL;
+    OSErr error = movie_error;
+    movie_error = noErr;
+    return error;
 }
 
 void* GetMoviesStickyError(void)
@@ -12977,10 +13044,29 @@ void* NewMCActionNotificationUPP(void)
     return NULL;
 }
 
-void* NewMovie(void)
+Movie NewMovie(SInt32 flags)
 {
-    if (verbose) puts("STUB: NewMovie called");
-    return NULL;
+    struct D4RLMovieStorage *storage;
+    if (!movie_initialized) {
+        movie_error = d4rlMovieToolboxUninitialized;
+        return NULL;
+    }
+    /* No active movie, handler, data reference or playback is implied. */
+    if (flags != 0) {
+        movie_error = d4rlMovieUnimplemented;
+        return NULL;
+    }
+    storage = malloc(sizeof(*storage));
+    if (!storage) {
+        movie_error = d4rlMovieMemFullErr;
+        return NULL;
+    }
+    storage->value.time_scale = 600;
+    storage->handle_value = &storage->value;
+    storage->next = movie_list;
+    movie_list = storage;
+    movie_error = noErr;
+    return &storage->handle_value;
 }
 
 void* NewMovieController(void)
@@ -25175,10 +25261,18 @@ void* SetMovieTime(void)
     return NULL;
 }
 
-void* SetMovieTimeScale(void)
+void SetMovieTimeScale(Movie theMovie, TimeScale timeScale)
 {
-    if (verbose) puts("STUB: SetMovieTimeScale called");
-    return NULL;
+    struct D4RLMovieStorage *storage = movie_lookup(theMovie);
+    if (!storage)
+        return;
+    if (timeScale <= 0) {
+        movie_error = d4rlMovieParamErr;
+        return;
+    }
+    /* These movies have no tracks, edits or nonzero durations to rescale. */
+    storage->value.time_scale = timeScale;
+    movie_error = noErr;
 }
 
 void* SetMovieTimeValue(void)

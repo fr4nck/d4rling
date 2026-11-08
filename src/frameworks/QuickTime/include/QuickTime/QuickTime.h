@@ -21,6 +21,32 @@
 #ifndef _QuickTime_H_
 #define _QuickTime_H_
 
+#include <MacTypes.h>
+
+/* Legacy Movie is an opaque handle. These types keep the Darwin i386
+ * widths through MacTypes; native LP64 long is not the legacy flags ABI.
+ */
+typedef struct MovieType **Movie;
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/* Initial subset: one non-reentrant environment, empty movies, flags == 0.
+ * Other movie, track, time-base and playback APIs remain unimplemented.
+ */
+OSErr EnterMovies(void);
+void ExitMovies(void);
+OSErr GetMoviesError(void);
+Movie NewMovie(SInt32 flags);
+void DisposeMovie(Movie theMovie);
+TimeScale GetMovieTimeScale(Movie theMovie);
+void SetMovieTimeScale(Movie theMovie, TimeScale timeScale);
+
+#ifdef __cplusplus
+}
+#endif
+
 void* AbortPrePrerollMovie(void);
 void* AddCallBackToTimeBase(void);
 void* AddClonedTrackToMovie(void);
@@ -461,7 +487,6 @@ void* DisposeMCActionFilterUPP(void);
 void* DisposeMCActionFilterWithRefConUPP(void);
 void* DisposeMCActionNotificationUPP(void);
 void* DisposeMatte(void);
-void* DisposeMovie(void);
 void* DisposeMovieController(void);
 void* DisposeMovieDrawingCompleteUPP(void);
 void* DisposeMovieEditState(void);
@@ -586,12 +611,10 @@ void* EndianMatrixRecord_BtoN(void);
 void* EndianModifierTrackGraphicsModeRecord_BtoN(void);
 void* EndianSoundDataChunk_NtoB(void);
 void* EndianVersionChunk_NtoB(void);
-void* EnterMovies(void);
 void* EnterMoviesOnThread(void);
 void* EqualHandles(void);
 void* EqualMatrix(void);
 void* ExecuteCallBack(void);
-void* ExitMovies(void);
 void* ExitMoviesOnThread(void);
 void* ExtendMediaDecodeDurationToDisplayEndTime(void);
 void* FCompressImage(void);
@@ -777,7 +800,6 @@ void* GetMovieStatus(void);
 void* GetMovieThreadAttachState(void);
 void* GetMovieTime(void);
 void* GetMovieTimeBase(void);
-void* GetMovieTimeScale(void);
 void* GetMovieTrack(void);
 void* GetMovieTrackCount(void);
 void* GetMovieUserData(void);
@@ -787,7 +809,6 @@ void* GetMovieVisualContrast(void);
 void* GetMovieVisualHue(void);
 void* GetMovieVisualSaturation(void);
 void* GetMovieVolume(void);
-void* GetMoviesError(void);
 void* GetMoviesStickyError(void);
 void* GetNamedComponentMessageParameter(void);
 void* GetNamedComponentMessageParameterInfo(void);
@@ -2179,7 +2200,6 @@ void* NewImageGWorld(void);
 void* NewMCActionFilterUPP(void);
 void* NewMCActionFilterWithRefConUPP(void);
 void* NewMCActionNotificationUPP(void);
-void* NewMovie(void);
 void* NewMovieController(void);
 void* NewMovieDrawingCompleteUPP(void);
 void* NewMovieEditState(void);
@@ -4212,7 +4232,6 @@ void* SetMoviePropertyAtom(void);
 void* SetMovieRate(void);
 void* SetMovieSelection(void);
 void* SetMovieTime(void);
-void* SetMovieTimeScale(void);
 void* SetMovieTimeValue(void);
 void* SetMovieUseTrackForTimeTableCallBack(void);
 void* SetMovieVideoOutput(void);

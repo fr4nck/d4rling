@@ -174,6 +174,12 @@ attesté.** Démonstrateur visé : **QuickTime Player exécuté sous D4RLING ave
 lecture vidéo et audio réelle**. Son import set exact reste à établir depuis
 une copie légitime disponible, sans téléchargement implicite.
 
+**Avancement Q-A2, 8 novembre :** un [cycle de Movie vide](docs/evidence/quicktime-q-a2-empty-movie-2026-11-08.md)
+est implémenté (initialisation, création/destruction, échelle propre à
+l'objet, modification et erreurs). Le banc hôte Windows x64 passe sur le
+vrai code ; Darwin i386, ouverture de fichiers, pistes, lecture et Player
+restent à qualifier. Ce résultat borné ne ferme pas tout QT1.
+
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
 | QT1 — runtime utile | Petite API réellement appelée : initialisation, ouverture/fermeture, erreurs et ressources ; 20 cycles et négatifs fichier absent/tronqué | R ; contrat ciblé possible avant le Player, sans nouveau catalogue de milliers de stubs |

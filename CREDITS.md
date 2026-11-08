@@ -80,3 +80,18 @@ creation and ownership contracts; the pinned
 was checked for clock declarations. No external implementation was copied.
 Host tests use an explicitly identified test-only CF allocator adapter;
 they do not validate the actual CoreFoundation runtime.
+
+## QuickTime — empty-movie time-scale subset (Q-A2, 2026-11-08)
+
+Original implementation and regression sources prepared for fr4nck with OpenAI
+Codex. Existing Darling notices are retained; new regression sources use
+GPL-3.0-or-later. The change implements an explicitly limited empty Movie
+lifecycle, per-object time scale and current-error handling in the existing
+QuickTime source/header. No external implementation was copied.
+
+Apple's archived QuickTime documentation and the historical Movies.h type
+contracts were consulted; [references, host adaptations and scope](tests/regressions/quicktime-empty-movie/README.md)
+record their provenance. MacTypes.h is reused from this repository, without
+redistributing an Apple SDK. The Windows host platform fixtures are test-only
+and do not enter the production build. See the [qualification record](docs/evidence/quicktime-q-a2-empty-movie-2026-11-08.md)
+for the executed checks and the untested Darwin i386/application paths.
