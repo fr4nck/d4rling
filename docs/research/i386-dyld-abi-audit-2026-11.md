@@ -1,5 +1,12 @@
 # D4RLING — dossier de clôture : dyld `@rpath`, ABI Darwin i386 et faisabilité Logic 8
 
+> **Actualisation du 8 novembre 2026 :** V1 statique clos, V3 ciblé exécuté
+> et preuves privées vérifiées ; candidat source testé avec gestionnaires
+> synthétiques. Voir le [nouveau bilan](bsd-i386-v3-source-2026-11-08.md)
+> et sa recette. Les sections ci-dessous conservent leurs états historiques ;
+> la bibliothèque reconstruite et le dyld intégré restent à qualifier.
+> Les chemins personnels des anciennes sections sont représentés par `$HOME`.
+
 **Consolidation documentaire : 8 novembre 2026.**  
 **Statut : recherche ouverte, qualification incomplète ; aucun GO pour Logic Pro 8.**
 
@@ -286,12 +293,12 @@ configuration, PR #8, binaire ou donnée du poste 5700X.
 ### Archivage G1 confirmé
 
 - L'archivage initial intégral de `/tmp` échouait normalement sur les sockets Unix Darling et sur les chemins `prefix.workdir/work` inaccessibles. L'archive partielle n'était pas qualifiée.
-- Une reprise a créé **`/home/Deniel/d4rling-preuves/g1-v1-recovery.hpfVdVIF/G1-preuves.tar.gz`** en excluant les préfixes d'exécution. `gzip -t`, les huit fichiers obligatoires dans l'index et `sha256sum -c` ont rendu PASS. L'archive compressée fait environ **16 Kio**, car les préfixes sont exclus. Elle représente les **preuves sélectionnées**, non l'environnement d'exécution complet. Les trois répertoires originaux de `/tmp` n'ont pas été supprimés.
+- Une reprise a créé **`$HOME/d4rling-preuves/g1-v1-recovery.hpfVdVIF/G1-preuves.tar.gz`** en excluant les préfixes d'exécution. `gzip -t`, les huit fichiers obligatoires dans l'index et `sha256sum -c` ont rendu PASS. L'archive compressée fait environ **16 Kio**, car les préfixes sont exclus. Elle représente les **preuves sélectionnées**, non l'environnement d'exécution complet. Les trois répertoires originaux de `/tmp` n'ont pas été supprimés.
 - Une première tentative V1 avait rejeté à tort la tranche i386 parce que le contrôle comparait littéralement la sortie de `llvm-lipo-19 -archs`, avec son espace final éventuel. **Faux échec du script**, non du binaire ; corrigé dans V1-R2.
 
 ### V1-R2 : tranches et symboles vérifiés
 
-Répertoire de résultat : `/home/Deniel/d4rling-preuves/g1-v1-recovery.hpfVdVIF/v1-r2.5VyVqC4c` (25 Mio). Deux tranches sont reconnues `Mach-O i386`, les symboles sont accessibles et `llvm-objdump-19` a terminé avec succès.
+Répertoire de résultat : `$HOME/d4rling-preuves/g1-v1-recovery.hpfVdVIF/v1-r2.5VyVqC4c` (25 Mio). Deux tranches sont reconnues `Mach-O i386`, les symboles sont accessibles et `llvm-objdump-19` a terminé avec succès.
 
 | Binaire installé | SHA-256 universel | SHA-256 tranche i386 | Ancrages i386 |
 | --- | --- | --- | --- |
@@ -373,3 +380,18 @@ e1244 <_getattrlist$UNIX2003>:
 La revue statique i386 V1 est maintenant terminée. L'archive privée G1 reste à l'emplacement mentionné dans la section 10, avec ses préfixes d'exécution exclus, son contrôle SHA PASS et les preuves originales encore dans `/tmp` au moment de l'essai. Les journaux/bruts ne sont pas publiés sur GitHub. La prochaine étape utile est **un témoin invité isolé V3** de retour `stat64` / `getattrlist` sur un chemin inexistant avec mesure de `errno`, suivi d'un test positif. Ne pas lancer de nouveau build ni modifier le préfixe actif sans protocole identifié.
 
 **Suivi ouvert après V1-R3 :** [D4RLING issue #11 — drapeau CF de retour BSD i386 écrasé](https://github.com/fr4nck/d4rling/issues/11). Le témoin dynamique V3 et l'étude d'une correction sont désormais suivis dans cette issue ; la clôture documentaire V1 ne vaut pas validation fonctionnelle du futur correctif.
+
+## 12. V3 et candidat source — 8 novembre 2026
+
+Le [bilan dédié](bsd-i386-v3-source-2026-11-08.md) apporte les résultats
+postérieurs à V1-R3 sans réécrire ses observations historiques :
+
+- V3 conservé : deux références à six échecs et deux candidats B7 à zéro,
+  avec octets i386 réellement chargés identifiés ; succès getattrlist ouvert.
+- Dispatcher source compilé dans un témoin i386 à gestionnaires synthétiques :
+  deux séries de 82 659 contrôles sans échec, dont 8 000 appels sur quatre
+  threads par série ; variante EAX seul : 36 échecs.
+- Patch expérimental et recette publique rejouée ; aucune application aux
+  sources de production, sous-modules ou installations existantes.
+- Intégration à libsystem_kernel, vrais retours larges/cerror/TLS et dyld
+  intégré à qualifier. L'issue #11 reste ouverte ; archives brutes privées.

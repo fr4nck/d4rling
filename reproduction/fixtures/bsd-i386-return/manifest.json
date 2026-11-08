@@ -1,0 +1,28 @@
+{
+  "schema": "d4rling.bsd-i386-return.v1",
+  "date": "2026-11-08",
+  "source_repository": "https://github.com/darlinghq/darling-xnu",
+  "source_revision": "fa29287aa2f0115271e091f1031f53c9e024005d",
+  "observed_parent_revision": "766d451363dbd17fe2ec61faf6c6279f1f24f912",
+  "source_files": {
+    "darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h": {
+      "original_sha256": "26f713e3d0dfd86d10c9f03d47d0fa19bf431bf5da0448dcb569f5f4f14eecef",
+      "candidate_sha256": "65a953cf408899364e5e893a4399a8d1b10d63978f26f745fcfe219a42f6f015"
+    },
+    "darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S": {
+      "original_sha256": "6033c89ab1b5eccec76884ffe833b18dc5df3a70afff07ca05c26134aaae12d7",
+      "candidate_sha256": "487e7f5adc1e1f5f71d8ffde70984e07ff2be652ca9045054b23beec965848ef"
+    },
+    "darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c": {
+      "original_sha256": "c0faf9ce6fbee7db9af45c60500a5be3a4dd0c718a7b375aee980010032e8a0c",
+      "candidate_sha256": "43b5276ab0e0908a8240cbefcd9d2b4623d1c9c4e496918568d5df1b681558e3"
+    }
+  },
+  "patch_sha256": "d0f208c6e9d61b9f308c079c1f4d24330fca187c4f29a11023ccebdc69b02611",
+  "private_evidence_checkpoints": {
+    "v3_archive_sha256": "e16bae4ff697c315a876d27c7a65692989f6084d27ed74b1961a7aff34137d26",
+    "source_archive_sha256": "e6360ba47d19bcd2f1ba66028151be25f97ae1dcdc64d4e30ca429e362f9b1c2",
+    "note": "Private evidence archives are retained locally and are not distributed here."
+  },
+  "public_adaptation": "The original tested fixture is retained; runners take three explicit environment variables instead of personal paths; SPDX notices added. Public packaging replay recorded separately."
+}

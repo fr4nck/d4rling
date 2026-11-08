@@ -1,0 +1,35 @@
+{
+  "all_checks_passed": true,
+  "fixture": "real source dispatcher compiled into private Mach-O i386 executable with synthetic handlers",
+  "x86_64_object_identical": true,
+  "runs": [
+    {
+      "label": "original",
+      "exit_code": 10,
+      "checks": 82641,
+      "errors": 36863,
+      "thread_calls": 8000
+    },
+    {
+      "label": "candidate1",
+      "exit_code": 0,
+      "checks": 82659,
+      "errors": 0,
+      "thread_calls": 8000
+    },
+    {
+      "label": "low-word-only",
+      "exit_code": 10,
+      "checks": 82659,
+      "errors": 36,
+      "thread_calls": 8000
+    },
+    {
+      "label": "candidate2",
+      "exit_code": 0,
+      "checks": 82659,
+      "errors": 0,
+      "thread_calls": 8000
+    }
+  ]
+}

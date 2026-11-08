@@ -31,7 +31,7 @@ ancienne conclusion que pour **la même révision, architecture et chaîne**.
 | --- | --- | --- |
 | [Reproduction du 29 octobre](reproduction/validation.md) | 135 contrôles Carbon hôte, répétition ASan, contrats C11/C++17 ; build des quatre lanceurs/serveur ; témoin Carbon Mach-O i386 NORMAL/BYPASS et négatif sans dylib | Adaptateur CF pour les tests hôte ; dylibs système privées de référence pour le témoin ; pas de build intégral des frameworks ni d'application complète |
 | [État historique](PROJECT_STATE.md) et [reprise BH–CE](docs/d4rling-reprise-2026-10-29.md) | Preuves distinctes de chargement, instructions i386 et appels Carbon/paramètres | `b7d0cb6` + neuf modifications et test ignoré diffère de `master` ; les compteurs d'audits statiques ne sont pas des tests applicatifs |
-| [Audit dyld/ABI de novembre](docs/research/i386-dyld-abi-audit-2026-11.md) | OBS : témoin `@rpath` passant avec C2 dans G1-R2/R3 ; comparaison à l'original et contrôle négatif | C2 expérimental ; PR #8 ouverte, brouillon, non fusionnée lors de l'inspection ; H-CF reste une hypothèse, V1 i386 non conclusif |
+| [Audit dyld/ABI](docs/research/i386-dyld-abi-audit-2026-11.md) et [V3/candidat source](docs/research/bsd-i386-v3-source-2026-11-08.md) | V1-R3 statique clos ; V3 privé revérifié : références 6 erreurs, B7 0 ; dispatcher source testé deux fois à 82 659 contrôles sans échec | V3 limité aux appels identifiés ; source testée avec gestionnaires synthétiques ; libsystem_kernel reconstruit, cerror/TLS et dyld intégré à qualifier ; C2/PR #8 distincts |
 | [Reprise audio B14/C10](docs/REPRISE-AUDIO-MUSIQUE-2026-11-08.md) | Compte rendu : 36/36 contrôles positifs, 16/16 pannes, Float32 stéréo 44,1 kHz ; stop 36,1 ms, erreur 497 ms | Journaux d'origine non rejoués ici ; C10 muet au dernier essai concerné ; délai de stop distinct de la latence acoustique |
 | [Exigences audio et Logic](docs/decisions/logic8-exigences-audio-et-chantiers-2026-11-08.md) | Retour distinct du 7 novembre : 440 Hz entendu via trajet i386/CoreAudio/B13/PulseAudio/WSLg, avec microcoupures | Observation rapportée à relier aux artefacts exacts ; ne valide ni la mélodie C10 ni une sortie fiable |
 | [AUDIO-01 natif](experiments/audio01-native/README.md) | Source conservée ; autotest publié : 55 125 frames, 220 500 octets, `SELF_TEST_PASS` | Python Linux natif ; ni Mach-O/CoreAudio, ni preuve acoustique sur la machine cible |
@@ -94,15 +94,22 @@ l'ABI HAL, Carbon, CoreMIDI et le backend pour faire passer un démonstrateur.
 Les témoins Carbon i386 conservent leur valeur. C2 et H-CF n'établissent pas
 une correction générale de dyld ou des erreurs Darwin.
 
+**Actualisation R-A1/R-A2 — 8 novembre :** V1-R3 et V3 ciblé sont acquis ;
+le [candidat source](docs/research/bsd-i386-v3-source-2026-11-08.md) est qualifié sur son témoin synthétique i386,
+avec deux séries de 82 659 contrôles et un rejeu de la recette publique.
+L'intégration système et le dyld restent À FAIRE ; aucun statut global
+R1/R2/R3 n'est clos par ces seuls résultats. L'issue #11 reste ouverte.
+
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
 | R1 — provenance et ABI | Identifier les slices et empreintes des binaires réellement utilisés ; désassemblage brut i386 validé de V1 ; séparer convention de retour, CF/errno et hypothèse H-CF | BLOCKED si tranche/outils/objets indisponibles ; aucune correction sur une étiquette d'analyseur |
 | R2 — lancement déterministe | Même témoin terminant : 10/10 départs à préfixes frais, code 0 et marqueur exact ; négatif sans dylib échoue sans marqueur ; enregistrer stdin, pile et tous les essais | Dépend de R1 et des fournisseurs ; collision EEXIST ou timeout inexpliqué bloque la stabilité |
 | R3 — contrats de liaison et langage | Positifs/négatifs pour `@loader_path`, `@executable_path`, `@rpath` ; pthread anciens, TLS, callbacks, exceptions/destructeurs sur témoins bornés | Les variantes UNIX2003 seules ne ferment pas les noms anciens ; C2 exige symlinks/normalisation/chemins restreints avant généralisation |
 
-**Lot agent R-A1 :** clore V1 par lecture seule et rédiger le diagnostic
-comparatif. **Lot R-A2 :** préparer les fixtures de liaison/ABI sans modifier
-les installations. Écritures : nouveaux rapports publics expurgés dans
+**Lot R-A1 :** V1 statique clos ; lire V3 et le candidat source ci-dessus
+avant toute nouvelle inspection. **Lot R-A2 :** utiliser les fixtures publiées ;
+la prochaine correction intégrée doit qualifier les vrais retours/errno,
+puis dyld séparément, dans une nouvelle installation privée. Écritures : nouveaux rapports publics expurgés dans
 `docs/research/`, nouvelles sources dédiées dans `reproduction/fixtures/`.
 Chargeur, libSystem, sous-modules dyld/XNU et C2 restent hors écriture sans
 mission de correction explicite. Aucun nouveau V3 runtime n'est autorisé

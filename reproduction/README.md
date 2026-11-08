@@ -244,3 +244,19 @@ utiliser les sources et références de ce dossier ; mettre à jour l'état avec
 résultat. Ne pas reproposer les inventaires déjà terminés, inventer une
 installation Claude/JACK, ou confondre audit, compilation, chargement, exécution
 et compatibilité d'une application.
+
+## BSD i386 — recette du candidat source, 8 novembre 2026
+
+Le [banc dédié](fixtures/bsd-i386-return/README.md) matérialise seulement
+trois blobs Git xnu locaux, vérifie/applique le
+[patch expérimental](patches/bsd-i386-return-fa29287.patch) à une copie neuve,
+puis compile et exécute explicitement le dispatcher avec des gestionnaires
+synthétiques dans un témoin Mach-O i386 privé. Aucun objet manquant n'est
+récupéré implicitement ; SDK, cctools et installation doivent déjà exister.
+
+Référence xnu : fa29287aa2f0115271e091f1031f53c9e024005d.
+Candidat : deux séries à 82 659 contrôles, zéro échec ; contre-épreuve EAX
+seul : 36 échecs. Le rejeu du paquet public reproduit ces compteurs.
+Le [bilan](../docs/research/bsd-i386-v3-source-2026-11-08.md) distingue V3 sur les vrais appels, tests synthétiques
+du protocole et intégration système encore à faire. Le patch n'est appliqué
+à aucun sous-module par cette livraison ; les preuves binaires restent privées.

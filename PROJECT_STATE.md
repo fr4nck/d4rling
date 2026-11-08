@@ -156,3 +156,25 @@ Ces résultats qualifient le sous-ensemble en mémoire sur l'hôte, pas un build
 ou une exécution Darwin i386. Prochain critère : compiler/exporter puis
 exécuter ce même cycle i386 dans un espace isolé. Aucun fichier/piste,
 movie actif, time base générale, audio/vidéo, QTKit ou Player n'est qualifié.
+
+## BSD Darwin i386 — V3 et candidat source (8 novembre 2026)
+
+Le [bilan V3 et source](docs/research/bsd-i386-v3-source-2026-11-08.md) complète la preuve statique V1-R3.
+V3 privé, conservé et revérifié : deux références à six échecs chacune,
+deux essais B7 à zéro échec, bibliothèque i386 identifiée en mémoire.
+Les erreurs d'access/stat64/lstat64/realpath sur chemin absent sont corrigées
+sur ce témoin ; getattrlist valide seulement sa convention d'erreur.
+Les positifs V3 affichés ne sont pas tous comptés automatiquement.
+
+Le [candidat source](reproduction/patches/bsd-i386-return-fa29287.patch)
+passe deux séries de 82 659 contrôles dans un témoin Mach-O i386 avec
+gestionnaires synthétiques, dont 8 000 appels sur quatre threads par série.
+La contre-épreuve classant EAX seul échoue sur 36 contrôles. La
+[recette publique](reproduction/fixtures/bsd-i386-return/README.md) a été
+rejouée après expurgation des chemins personnels, avec les mêmes compteurs.
+
+Cette publication conserve le correctif comme artefact : aucun sous-module,
+source de production, build ou installation existante n'est modifié.
+La reconstruction de libsystem_kernel, les vrais lseek/cerror/TLS et le
+dyld intégré restent à qualifier ; l'[issue #11](https://github.com/fr4nck/d4rling/issues/11)
+reste ouverte. Les archives originales et journaux bruts restent privés.

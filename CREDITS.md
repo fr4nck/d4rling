@@ -95,3 +95,19 @@ record their provenance. MacTypes.h is reused from this repository, without
 redistributing an Apple SDK. The Windows host platform fixtures are test-only
 and do not enter the production build. See the [qualification record](docs/evidence/quicktime-q-a2-empty-movie-2026-11-08.md)
 for the executed checks and the untested Darwin i386/application paths.
+
+## BSD Darwin i386 return protocol (2026-11-08)
+
+Experimental patch prepared for fr4nck with OpenAI Codex against
+[darlinghq/darling-xnu fa29287aa2f0115271e091f1031f53c9e024005d](https://github.com/darlinghq/darling-xnu/tree/fa29287aa2f0115271e091f1031f53c9e024005d).
+The three patched files retain their Darling/XNU authors, history and applicable
+component licenses; this artifact does not relicense or update the submodule.
+The return-classification design uses the pinned dispatcher's C declarations
+and the error range already used by its x86_64 wrappers.
+
+Original C/assembly fixtures and Python/Bash packaging were prepared with
+OpenAI Codex under GPL-3.0-or-later. No proprietary SDK, system binary,
+private trace or recovery archive is distributed. The
+[dated evidence](docs/research/bsd-i386-v3-source-2026-11-08.md) and
+[fixture recipe](reproduction/fixtures/bsd-i386-return/README.md) distinguish
+real V3 calls, synthetic-handler protocol tests and pending system integration.
