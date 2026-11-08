@@ -18,6 +18,7 @@ along with Darling.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <stdio.h>
+#include <limits.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -265,6 +266,12 @@ static void pushShellspawnCommandData(int sockfd, shellspawn_cmd_type_t type, co
 {
 	struct shellspawn_cmd* cmd;
 	size_t length;
+
+	if (data_length > USHRT_MAX)
+	{
+		fprintf(stderr, "shellspawn: command payload too large (%zu bytes, maximum %u)\n", data_length, (unsigned)USHRT_MAX);
+		exit(EXIT_FAILURE);
+	}
 
 	length = sizeof(*cmd) + data_length;
 
