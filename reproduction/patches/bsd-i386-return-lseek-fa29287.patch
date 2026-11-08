@@ -1,0 +1,126 @@
+--- a/darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h
++++ b/darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h
+@@ -1,6 +1,10 @@
+ #ifndef LINUX_SYSCALLS_H
+ #define LINUX_SYSCALLS_H
+ 
+-extern void* __bsd_syscall_table[600];
++#define BSD_SYSCALL_TABLE_SIZE 600
++
++#ifndef __ASSEMBLER__
++extern void* __bsd_syscall_table[BSD_SYSCALL_TABLE_SIZE];
++#endif
+ 
+ #endif // LINUX_SYSCALLS_H
+--- a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S
++++ b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S
+@@ -37,9 +37,11 @@
+ 
+ #elif defined(__i386__)
+ 
++#include <darling/emulation/xnu_syscall/bsd/bsd_syscall_table.h>
++
+ #define copy_arg(off) \
+ 	movl	8+off(%esp), %ecx ;\
+-	movl	%ecx, -56+off(%esp)
++	movl	%ecx, -72+off(%esp)
+ 
+ __darling_bsd_syscall:
+ Lentry_hook:
+@@ -50,9 +52,16 @@
+ 2:
+ 	movl	L___bsd_syscall_table$non_lazy_ptr-1b(%ecx), %ecx
+ 	andl	$0xffff, %eax // Because there is some extra stuff in upper bytes we don't need
++	// Keep the masked syscall number for diagnostics and return width.
++	movl	%eax, %edx
++	cmpl	$BSD_SYSCALL_TABLE_SIZE, %eax
++	jae		.no_sys
+ 	movl	(%ecx,%eax,4), %eax
+ 	test	%eax, %eax
+ 	jz		.no_sys
++	// Reserve an extra 16 bytes, keeping C call alignment unchanged.
++	// The syscall number lives above the 14 copied argument words.
++	movl	%edx, -16(%esp)
+ 	// Copy arguments
+ 	copy_arg(0)
+ 	copy_arg(4)
+@@ -68,18 +77,36 @@
+ 	copy_arg(44)
+ 	copy_arg(48)
+ 	copy_arg(52)
+-	subl	$56, %esp
++	subl	$72, %esp
+ 	call	*%eax
+-	addl	$56, %esp
++	// In this table, lseek (199) is the only 64-bit C return.
++	// Its low word alone may look like -errno on a successful seek.
++	cmpl	$199, 56(%esp)
++	leal	72(%esp), %esp
++	jne		.ret32
++	cmpl	$-1, %edx
++	jne		.ret_success
++.ret32:
++	// Handlers reserve -4095..-1 for errors, as on x86_64.
++	// Do not test the sign bit: pointers and other results may set it.
++	cmpl	$-4095, %eax
++	jb		.ret_success
++	negl	%eax
++	stc
++	jmp		.std_ret
++.ret_success:
++	clc
+ .std_ret:
+ Lexit_hook:
+ 	.space 7, 0x90
+ 	ret
+ .no_sys:
+-	pushl	%ecx
++	// Pass the syscall number, not the table address, at C alignment.
++	subl	$8, %esp
++	movl	%edx, (%esp)
+ 	call	___unknown_syscall
+-	addl	$4, %esp
+-	jmp .std_ret
++	addl	$8, %esp
++	jmp		.ret32
+ 
+ 	.section        __IMPORT,__pointers,non_lazy_symbol_pointers
+ L___bsd_syscall_table$non_lazy_ptr:
+--- a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c
++++ b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c
+@@ -217,7 +217,7 @@
+ #include <darling/emulation/xnu_syscall/bsd/impl/xattr/setattrlistat.h>
+ #include <darling/emulation/xnu_syscall/bsd/impl/xattr/setxattr.h>
+ 
+-void* __bsd_syscall_table[600] = {
++void* __bsd_syscall_table[BSD_SYSCALL_TABLE_SIZE] = {
+ 	[0] = sys_syscall,
+ 	[1] = sys_exit,
+ 	[2] = sys_fork,
+--- a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/impl/unistd/lseek.c
++++ b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/impl/unistd/lseek.c
+@@ -8,15 +8,16 @@
+ {
+ 	long long ret;
+ 
+-#ifdef SYS__llseek
+-	long long roff;
+-	ret = LINUX_SYSCALL(__NR__llseek, fd, (unsigned int)offset >> 32,
+-			(unsigned int)offset, &roff, whence);
+-
+-	if (ret >= 0)
+-		ret = roff;
++#if defined(__i386__)
++    long long roff = 0;
++    unsigned long long raw = (unsigned long long)offset;
++    ret = LINUX_SYSCALL(__NR__llseek, fd,
++        (unsigned int)(raw >> 32),
++        (unsigned int)raw, &roff, whence);
++    if (ret >= 0)
++        ret = roff;
+ #else
+-	ret = LINUX_SYSCALL(__NR_lseek, fd, offset, whence);
++    ret = LINUX_SYSCALL(__NR_lseek, fd, offset, whence);
+ #endif
+ 	if (ret < 0)
+ 		ret = errno_linux_to_bsd(ret);
