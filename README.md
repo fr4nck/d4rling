@@ -1,5 +1,7 @@
 # d4rling
 
+**[Feuille de route multi-axes](ROADMAP.md) · [Guide des agents autonomes](AGENTS.md)**
+
 **Start here: [current project state](PROJECT_STATE.md) · [reproduce on another machine](reproduction/README.md)**
 
 The current resume state includes the historical local source overlay, the previously

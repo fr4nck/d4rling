@@ -117,3 +117,20 @@ ne doivent pas être publiés pour alimenter une suggestion. Les processus en
 mémoire et les sockets ne sont pas des artifacts restaurables.
 Les neuf fichiers du checkout protégé restent intacts ; aucun checkout/reset
 n'est à effectuer dans cette copie.
+
+## Orientation documentaire — 8 novembre 2026
+
+La [feuille de route multi-axes](ROADMAP.md) et le [guide des agents](AGENTS.md)
+consolident les jalons runtime i386, Carbon/Cocoa, CoreAudio/PulseAudio,
+CoreMIDI/AudioUnit, QuickTime/QTKit, Logic Studio 8/EXS24 et Petite Victoire.
+Ils croisent les preuves historiques ci-dessus avec les comptes rendus audio
+et dyld/ABI plus récents, sans les transformer en qualification applicative.
+Les constats de ce fichier restent datés de leur campagne ; notamment
+« aucune chaîne audio réelle qualifiée » ne doit pas effacer les observations
+ultérieures, avec leurs propres limites et leur statut de preuve.
+
+Cette mise à jour est documentaire : aucun test, build, lancement de Logic,
+QuickTime ou essai audio n'a été exécuté pour publier ces guides. Les sources,
+archives et travaux locaux préexistants restent inchangés. Consulter la
+roadmap pour les critères PASS/BLOCKED et les tâches indépendantes, puis les
+rapports datés avant toute nouvelle expérimentation.
