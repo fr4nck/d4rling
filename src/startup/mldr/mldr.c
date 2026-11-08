@@ -95,6 +95,11 @@ struct load_results mldr_load_results = {0};
 
 static uint32_t stack_size = 0;
 
+#ifdef __i386__
+#define LAYOUT_RETRY_ENV "__mldr_layout_retry"
+#define LAYOUT_RETRY_MAX 8
+#endif
+
 static const char* const skip_env_vars[] = {
 	"__mldr_bprefs=",
 	"__mldr_sockpath=",
@@ -221,7 +226,8 @@ int main(int argc, char** argv, char** envp)
 		// Don't pass these special env vars down to userland
 		if (
 			ENV_VAR_MATCHES("__mldr_bprefs=")   ||
-			ENV_VAR_MATCHES("__mldr_sockpath=")
+			ENV_VAR_MATCHES("__mldr_sockpath=") ||
+			ENV_VAR_MATCHES("__mldr_layout_retry=")
 		) {
 			size_t len_after = 0;
 			const char* orig_envp_i_plus_one = mldr_load_results.envp[i + 1];
@@ -541,6 +547,9 @@ static void unset_special_env() {
 	unsetenv("__mldr_bprefs");
 	unsetenv("__mldr_sockpath");
 	unsetenv("__mldr_lifetime_pipe");
+#ifdef __i386__
+	unsetenv(LAYOUT_RETRY_ENV);
+#endif
 };
 
 typedef struct socket_bitmap {
@@ -811,7 +820,70 @@ void __mldr_close_process_lifetime_pipe(int fd) {
 	}
 }
 
+#ifdef __i386__
+static void ensure_top_range_free(struct load_results* lr, unsigned long stack_size) {
+	unsigned long start = commpage_address(false) - stack_size;
+	unsigned long length = commpage_length(false) + stack_size;
+
+	void* probe = compatible_mmap((void*)start, length, PROT_NONE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE, -1, 0);
+	if (probe != MAP_FAILED) {
+		munmap(probe, length);
+		if (probe == (void*)start)
+			return;
+	} else if (errno != EEXIST) {
+		return;
+	}
+
+	const char* str = getenv(LAYOUT_RETRY_ENV);
+	int retries = 0;
+
+	if (str != NULL) {
+		char* end = NULL;
+		errno = 0;
+		long value = strtol(str, &end, 10);
+
+		if (str[0] < '0' || str[0] > '9' ||
+		    end == str || *end != '\0' ||
+		    errno == ERANGE || value < 0) {
+			retries = LAYOUT_RETRY_MAX;
+		} else {
+			retries = value >= LAYOUT_RETRY_MAX
+			    ? LAYOUT_RETRY_MAX : (int)value;
+		}
+	}
+
+	if (retries >= LAYOUT_RETRY_MAX)
+		return;
+
+	char selfpath[1024];
+	ssize_t len = readlink("/proc/self/exe", selfpath, sizeof(selfpath) - 1);
+	if (len == -1)
+		return;
+	selfpath[len] = '\0';
+
+	char count[16];
+	snprintf(count, sizeof(count), "%d", retries + 1);
+	if (setenv(LAYOUT_RETRY_ENV, count, 1) != 0)
+		return;
+
+	execv(selfpath, lr->argv);
+	unsetenv(LAYOUT_RETRY_ENV);
+}
+#endif
+
 static void setup_space(struct load_results* lr, bool is_64_bit) {
+	struct rlimit limit;
+	getrlimit(RLIMIT_STACK, &limit);
+	// allocate a few pages 16 pages if it's less than the limit; otherwise, allocate the limit
+	unsigned long size = PAGE_SIZE * 16;
+	if (limit.rlim_cur != RLIM_INFINITY && limit.rlim_cur < size) {
+		size = limit.rlim_cur;
+	}
+
+#ifdef __i386__
+	ensure_top_range_free(lr, size);
+#endif
+
 	commpage_setup(is_64_bit);
 
 	// Using the default stack top would cause the stack to be placed just above the commpage
@@ -824,14 +896,6 @@ static void setup_space(struct load_results* lr, bool is_64_bit) {
 #else
 	#error Unsupported architecture
 #endif
-
-	struct rlimit limit;
-	getrlimit(RLIMIT_STACK, &limit);
-	// allocate a few pages 16 pages if it's less than the limit; otherwise, allocate the limit
-	unsigned long size = PAGE_SIZE * 16;
-	if (limit.rlim_cur != RLIM_INFINITY && limit.rlim_cur < size) {
-		size = limit.rlim_cur;
-	}
 
 	if (compatible_mmap((void*)(lr->stack_top - size), size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_FIXED_NOREPLACE | MAP_GROWSDOWN, -1, 0) == MAP_FAILED) {
 		fprintf(stderr, "Failed to allocate stack of %lu bytes: %d (%s)\n", size, errno, strerror(errno));

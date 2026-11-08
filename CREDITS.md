@@ -111,3 +111,10 @@ private trace or recovery archive is distributed. The
 [dated evidence](docs/research/bsd-i386-v3-source-2026-11-08.md) and
 [fixture recipe](reproduction/fixtures/bsd-i386-return/README.md) distinguish
 real V3 calls, synthetic-handler protocol tests and pending system integration.
+
+## i386 mldr32 stack/commpage collision (BIG MAMA 3, 2026-11-08)
+
+- Original algorithm and upstream code: **Lubos Dolezel** (`LubosD`), [Darling PR #1864](https://github.com/darlinghq/darling/pull/1864), merged as `331c65d63b3b4aace9ad442ad9cc19f59d20be96`.
+- D4RLING port on `master` `c17bd4f`: `mldr.c`, `commpage.c`, `commpage.h`; preserves original copyright notices and GPL-3.0-or-later terms. No wholesale upstream merge.
+- Local modifications: stricter retry-counter parsing and `setenv()` error guard; this port and its verification scripts were prepared for fr4nck with OpenAI ChatGPT assistance. `O_CLOEXEC` remains outside this change.
+- Differential real-i386 qualification and limits: [BIG MAMA 3 evidence](docs/evidence/mldr32-stack-commpage-bm3-2026-11-08.md). Local raw logs and artifacts remain private.
