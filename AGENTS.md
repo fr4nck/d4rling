@@ -6,6 +6,29 @@ travail ; sa lecture ne déclenche ni expérimentation ni publication.
 Objectif : livrer une amélioration bornée, prouvée et réutilisable sans
 endommager les travaux existants ni annoncer une compatibilité non démontrée.
 
+## Petite Victoire — développement réservé à fr4nck
+
+**fr4nck garde la main sur le développement et les choix de produit de Petite
+Victoire**, y compris son nom et son évolution éventuelle vers un DAW.
+Les agents ne choisissent pas spontanément un lot de développement de ce
+projet et n'écrivent pas dans `experiments/petite-victoire/` (code, tests,
+interface, ressources, documentation du produit, versions ou archives).
+
+Une intervention exige une **demande explicite et ciblée de fr4nck**.
+Une mission générale de développement autonome de D4RLING ne délègue pas
+Petite Victoire. La lecture et le signalement de blocages restent possibles
+dans le périmètre de la mission ; proposer une évolution ne vaut pas
+autorisation de l'implémenter.
+
+Petite Victoire doit devenir le démonstrateur musical de référence pour
+vérifier les fonctions de D4RLING **sans posséder Logic Studio 8**.
+Les agents peuvent préparer et qualifier le socle D4RLING avec leurs propres
+témoins, puis documenter les contrats utilisables par fr4nck. La validation
+par Petite Victoire porte sur les chemins réellement exercés et identifiés :
+mode natif et mode invité i386 sont distingués, ainsi que les fonctions
+encore absentes ou non testées. Les jalons Logic/EXS24 et QuickTime gardent
+leurs preuves applicatives propres.
+
 ## 1. Lire avant d'agir
 
 Lire dans cet ordre :
@@ -57,7 +80,7 @@ ne pas exécuter une commande Bash comme une commande PowerShell.
 ## 3. Choisir et borner un lot
 
 Prendre un seul identifiant de [ROADMAP.md](ROADMAP.md), par exemple R-A1,
-A-A1, Q-A1 ou P-A1. Dans une mission autorisant le développement autonome,
+A-A1, Q-A1 ou M-A1. Dans une mission autorisant le développement autonome,
 choisir le plus petit lot utile dont les entrées sont disponibles ; annoncer
 objectif, preuves et fichiers avant de modifier. Une mission documentaire
 reste documentaire.
@@ -98,11 +121,11 @@ modification collective.
 | --- | --- | --- |
 | R-A1 / R-A2 | Note dédiée `docs/research/`, nouvelles fixtures `reproduction/fixtures/` | Lecture seule des binaires installés ; pas de modification mldr, dyld, libSystem/XNU, libgcc ou C2 sans mission de correction |
 | U-A1 | Tests dédiés `tests/regressions/carbon-*/`, note datée | Production `src/frameworks/Carbon/`, interfaces publiques et Cocotron partagés ; attribution requise |
-| A-A1 | Note `docs/evidence/`, nouveau banc isolé `experiments/` | Préserver `src/CoreAudio/`, HAL, PulseAudio, pont ELF/IPC et acquis B11–C10 ; pas de nouveau backend implicite |
+| A-A1 | Note `docs/evidence/`, nouveau banc isolé `experiments/` hors `experiments/petite-victoire/` | Préserver `src/CoreAudio/`, HAL, PulseAudio, pont ELF/IPC et acquis B11–C10 ; pas de nouveau backend implicite |
 | M-A1 / M-A2 | Nouveaux tests MIDI et AU dans des sous-dossiers distincts de `tests/regressions/` | `src/frameworks/CoreMIDI/`, Component Manager et AudioUnit partagés ; contrôler ABI et durée de vie |
 | Q-A1 | Témoin `tests/regressions/quicktime-*/`, média synthétique défini par source originale, note de preuve | Corrections attribuées seulement dans `src/frameworks/QuickTime/` / `QTKit/` ; aucun Player/codec propriétaire publié |
 | L-A1 | Synthèse expurgée `docs/audits/logic-studio-8/` | DVD, Logic, banques et frameworks privés en lecture seule ; pas de lancement sans autorisation explicite |
-| P-A1 / P-A2 | Fichiers attribués dans `experiments/petite-victoire/v0.1/`, tests et sorties dédiés | Archive source historique intacte ; ne pas modifier les couches Carbon/audio partagées pour contourner une erreur |
+| P — réservé à fr4nck | Aucune écriture autonome dans `experiments/petite-victoire/` | Intervention uniquement sur demande explicite et ciblée de fr4nck ; les agents travaillent sur le socle D4RLING et leurs témoins séparés |
 | Intégration documentaire | `ROADMAP.md`, `AGENTS.md`, `PROJECT_STATE.md`, liens README | Un intégrateur ; actualiser les conclusions sans réécrire les anciens rapports |
 
 Ne pas changer hors mission : CMake racine, CI, packaging, dépendances,
@@ -164,9 +187,10 @@ Choisir le niveau de vérification adapté :
 
 Pour les contrats Carbon hôte, les commandes sont dans
 [le runner existant](tests/regressions/carbon-events/README.md) ; préciser
-adaptateur CF, vrais en-têtes ou fixtures substituées. Pour Petite Victoire,
-utiliser CMake/CTest et le test Node déjà documentés, sans installer un outil
-absent. Pour Mach-O, vérifier tranches, ID, exports/réexports, conventions
+adaptateur CF, vrais en-têtes ou fixtures substituées. Si fr4nck délègue
+explicitement un test de Petite Victoire, utiliser CMake/CTest et le test Node
+déjà documentés, avec des sorties dédiées, sans installer un outil absent.
+Pour Mach-O, vérifier tranches, ID, exports/réexports, conventions
 d'appel, tailles/alignements, erreurs, callbacks et durées de vie.
 Respecter le graphe `*_firstpass.dylib` ; un build `COMPONENTS=core`
 ne qualifie pas les composants audio `gui`.

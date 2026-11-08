@@ -13,6 +13,9 @@ Studio 8 et son EXS24 authentique** sont une cible majeure de compatibilité.
 **QuickTime/QTKit et QuickTime Player** constituent un jalon indépendant.
 **Petite Victoire**, nom provisoire, est un prototype musical natif original
 qui peut évoluer vers un DAW ; son utilité ne dépend pas du succès de Logic.
+**Son développement et ses choix de produit restent réservés à fr4nck.**
+Il doit servir de démonstrateur musical de référence pour vérifier D4RLING
+sans posséder Logic Studio 8, avec une couverture fonctionnelle explicite.
 Il n'existe pas encore de preuve de ces applications complètes sous D4RLING.
 
 Lire [PROJECT_STATE.md](PROJECT_STATE.md), puis
@@ -78,7 +81,7 @@ décrivent sa création ; la présence actuelle des sources dans Git est vérifi
 | M — CoreMIDI/AudioUnit | R ; A pour le rendu audible ; Carbon Component Manager historique | Contrats MIDI, paquets/horloges, composant original de test |
 | Q — QuickTime/QTKit | R ; U pour le Player ; A pour l'audio ; décodeurs autorisés | Petit contrat QuickTime utile et médias synthétiques |
 | L — Logic Studio 8/EXS24 | R + Cocoa U + A + M + sous-ensemble Q réellement requis et frameworks privés | Matrice des besoins et localisation statique du DSP, en privé |
-| P — Petite Victoire | Aucune dépendance Logic/QuickTime pour le moteur natif ; R/U/A pour Carbon i386 ; M pour MIDI externe | Séquence, exports, métronome, transport et effets originaux |
+| P — Petite Victoire | Aucune dépendance Logic/QuickTime pour le moteur natif ; R/U/A pour Carbon i386 ; M pour MIDI externe | Développement réservé à fr4nck ; agents : lecture, signalement de blocages et travail séparé sur le socle D4RLING |
 
 L'échec de L ne bloque ni Q ni P. Q n'attend pas l'EXS24. Les tests sans
 audio de U/M et les tests natifs de P n'attendent pas une chaîne i386 complète.
@@ -216,6 +219,31 @@ sans écriture. Aucun patch binaire ni contournement de licence.
 i386 non qualifiée.** Le nom peut changer. La trajectoire DAW reste une
 orientation, sans promesse de calendrier ni assimilation à Logic.
 
+**Rôle de validation :** permettre à une personne ne disposant pas de Logic
+Studio 8 de composer et jouer un petit projet original, puis de vérifier
+concrètement le socle musical D4RLING. Le parcours de référence doit fournir
+sources redistribuables, séquence et médias originaux, commandes, résultats
+attendus et rapport de couverture, sans binaire, banque ni ressource Logic.
+
+| Fonction vérifiée avec Petite Victoire | Preuve attendue dans le mode concerné |
+| --- | --- |
+| Runtime i386 (R) | Le binaire invité identifié démarre et termine correctement ; le mode Linux natif reste une preuve distincte |
+| Interface Carbon (U) | Fenêtre, édition, événements et fermeture réellement exercés ; aucune extrapolation à Cocoa non testé |
+| Audio CoreAudio/PulseAudio (A) | Chemin d'appel identifié, mélodie entendue, format, boucle, Stop/reprise, erreurs et stabilité mesurés |
+| MIDI / AudioUnit (M) | Lorsque intégrés : notes transmises, horodatages et rendu du composant de test original ; les exports MIDI seuls ne ferment pas ce critère |
+| Usage musical et conservation (P) | Petit projet édité, sauvegardé/réouvert et exporté sans perte ni écrasement ; couverture et limites reproductibles sans Logic |
+
+Ce rôle est un **objectif à qualifier**, sans nouveau résultat revendiqué.
+Chaque rapport précise mode, révisions, matériel, contrôles PASS/FAIL/BLOCKED
+et fonctions non exercées. QuickTime/QTKit et Logic/EXS24 conservent leurs
+jalons applicatifs propres.
+
+**Responsabilité : fr4nck.** Aucun lot P n'est proposé à la prise en charge
+autonome par un agent. Toute intervention dans `experiments/petite-victoire/`
+ou évolution du produit exige une demande explicite et ciblée de fr4nck.
+Les agents peuvent lire, signaler les blocages et développer les couches
+D4RLING dans leurs périmètres attribués avec des témoins séparés.
+
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
 | P1 — base native reproductible | Rejouer CMake/CTest et, si Node déjà présent, le test web v0.1 ; contrôler MIDI type 1, WAV et absence d'écrasement ; rapprocher sources et livraison | Autonome Linux ; tests rapportés distincts des nouveaux essais ; droits/provenance à clarifier avant distribution élargie |
@@ -224,11 +252,13 @@ orientation, sans promesse de calendrier ni assimilation à Logic.
 | P4 — outil musical original | Métronome : accents, subdivisions, ternaire, swing, rythmes asymétriques/polyrythmies et claves définis par exemples ; tests de positions/durées et écoute ; édition/quantification réversibles | M seulement pour MIDI externe ; lots Q7–Q12 à retrouver avant réimplémentation |
 | P5 — décision DAW | Définir puis qualifier un petit scénario multipiste : audio/MIDI, enregistrement, automation, effet original, sauvegarde/réouverture sans perte et rendu ; budget CPU/RAM/latence mesuré | Décision produit après P2 ; compatibilité AU via M optionnelle et distincte d'EXS24 |
 
-**Lots P-A1 / P-A2 :** oracle musical/métronome et transport/exports natifs,
-sur fichiers distincts de `experiments/petite-victoire/v0.1/`, sans modifier
-l'archive source historique. La version suivante peut avoir son propre
-dossier après décision de version. Ne pas importer les sons, DSP ou interface
-commerciale de Logic ; préserver les exports à destination explicite.
+**Travaux réservés à fr4nck :** oracle musical/métronome, transport/exports
+natifs et intégration du démonstrateur dans `experiments/petite-victoire/`.
+Les anciens identifiants P-A1/P-A2 ne sont plus des lots autonomes pour agents.
+L'archive source historique reste intacte ; la version suivante et son nom
+relèvent de fr4nck. Toute aide d'un agent porte uniquement sur la tâche
+explicitement déléguée. Ne pas importer les sons, DSP ou interface commerciale
+de Logic ; préserver les exports à destination explicite.
 
 ## Organisation du travail autonome et sortie attendue
 
@@ -239,8 +269,9 @@ pas une autorisation de modifier tout un sous-système.
 
 Priorité de convergence : rapprocher les preuves existantes R/A/P, fermer
 les petits contrats bloquants, puis démontrer des parcours complets. L'audit
-V1, les oracles MIDI/QuickTime et les fonctions natives de Petite Victoire
-peuvent avancer indépendamment. Pas de fusion générale des branches.
+V1 et les oracles MIDI/QuickTime peuvent avancer indépendamment côté agents.
+Petite Victoire progresse en parallèle sous la conduite de fr4nck, avec les
+contrats du socle et ses propres preuves. Pas de fusion générale des branches.
 
 Chaque livraison indique : lot, SHA de base et correctif éventuel, fichiers
 touchés, commandes réellement exécutées, attendus/résultats, contrôles
