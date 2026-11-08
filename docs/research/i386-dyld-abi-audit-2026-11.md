@@ -371,3 +371,5 @@ e1244 <_getattrlist$UNIX2003>:
 ### Jalon de reprise
 
 La revue statique i386 V1 est maintenant terminée. L'archive privée G1 reste à l'emplacement mentionné dans la section 10, avec ses préfixes d'exécution exclus, son contrôle SHA PASS et les preuves originales encore dans `/tmp` au moment de l'essai. Les journaux/bruts ne sont pas publiés sur GitHub. La prochaine étape utile est **un témoin invité isolé V3** de retour `stat64` / `getattrlist` sur un chemin inexistant avec mesure de `errno`, suivi d'un test positif. Ne pas lancer de nouveau build ni modifier le préfixe actif sans protocole identifié.
+
+**Suivi ouvert après V1-R3 :** [D4RLING issue #11 — drapeau CF de retour BSD i386 écrasé](https://github.com/fr4nck/d4rling/issues/11). Le témoin dynamique V3 et l'étude d'une correction sont désormais suivis dans cette issue ; la clôture documentaire V1 ne vaut pas validation fonctionnelle du futur correctif.
