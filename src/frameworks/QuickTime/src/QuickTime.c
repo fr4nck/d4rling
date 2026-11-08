@@ -21,10 +21,12 @@
 #include <QuickTime/QuickTime.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "qt_mov_probe.h"
 
 static int verbose = 0;
 
-/* Empty-movie subset only. EnterMoviesOnThread and shared/concurrent access
+/* Empty movies and movie headers read from in-memory MOV data only.
+ * EnterMoviesOnThread and shared/concurrent access
  * are not implemented. The list owns allocations for Dispose/Exit cleanup;
  * it is not a generational handle table and cannot detect reused stale IDs.
  */
@@ -32,12 +34,18 @@ enum {
     d4rlMovieUnimplemented = -4,
     d4rlMovieParamErr = -50,
     d4rlMovieMemFullErr = -108,
+    d4rlBadPublicMovieAtom = -2002,
+    d4rlCantFindHandler = -2003,
     d4rlInvalidMovie = -2010,
-    d4rlMovieToolboxUninitialized = -2020
+    d4rlInvalidDataRef = -2012,
+    d4rlInvalidDuration = -2014,
+    d4rlMovieToolboxUninitialized = -2020,
+    d4rlNoMovieFound = -2048
 };
 
 struct MovieType {
     TimeScale time_scale;
+    TimeValue duration;
 };
 
 struct D4RLMovieStorage {
@@ -71,6 +79,28 @@ static struct D4RLMovieStorage *movie_lookup(Movie movie)
         return NULL;
     }
     return storage;
+}
+
+static Movie movie_new(TimeScale time_scale, TimeValue duration)
+{
+    struct D4RLMovieStorage *storage = malloc(sizeof(*storage));
+    if (!storage) {
+        movie_error = d4rlMovieMemFullErr;
+        return NULL;
+    }
+    storage->value.time_scale = time_scale;
+    storage->value.duration = duration;
+    storage->handle_value = &storage->value;
+    storage->next = movie_list;
+    movie_list = storage;
+    movie_error = noErr;
+    return &storage->handle_value;
+}
+
+static OSErr movie_fail(OSErr error)
+{
+    movie_error = error;
+    return error;
 }
 
 __attribute__((constructor))
@@ -4430,10 +4460,13 @@ void* GetMovieDisplayClipRgn(void)
     return NULL;
 }
 
-void* GetMovieDuration(void)
+TimeValue GetMovieDuration(Movie theMovie)
 {
-    if (verbose) puts("STUB: GetMovieDuration called");
-    return NULL;
+    struct D4RLMovieStorage *storage = movie_lookup(theMovie);
+    if (!storage)
+        return 0;
+    movie_error = noErr;
+    return storage->value.duration;
 }
 
 void* GetMovieEffectiveRate(void)
@@ -13046,7 +13079,6 @@ void* NewMCActionNotificationUPP(void)
 
 Movie NewMovie(SInt32 flags)
 {
-    struct D4RLMovieStorage *storage;
     if (!movie_initialized) {
         movie_error = d4rlMovieToolboxUninitialized;
         return NULL;
@@ -13056,17 +13088,7 @@ Movie NewMovie(SInt32 flags)
         movie_error = d4rlMovieUnimplemented;
         return NULL;
     }
-    storage = malloc(sizeof(*storage));
-    if (!storage) {
-        movie_error = d4rlMovieMemFullErr;
-        return NULL;
-    }
-    storage->value.time_scale = 600;
-    storage->handle_value = &storage->value;
-    storage->next = movie_list;
-    movie_list = storage;
-    movie_error = noErr;
-    return &storage->handle_value;
+    return movie_new(600, 0);
 }
 
 void* NewMovieController(void)
@@ -13129,10 +13151,49 @@ void* NewMovieFromDataFork64(void)
     return NULL;
 }
 
-void* NewMovieFromDataRef(void)
+/* Pointer data references only. The caller's bytes hold a movie file or a
+ * bare 'moov' atom; they are read during this call and never retained.
+ * Only moov/mvhd is used: no tracks, media, sample data or playback.
+ * The documented id contract concerns movie resources, which this data does
+ * not have; *id is therefore left unchanged.
+ */
+OSErr NewMovieFromDataRef(Movie *m, short flags, short *id, Handle dataRef,
+                          OSType dataRefType)
 {
-    if (verbose) puts("STUB: NewMovieFromDataRef called");
-    return NULL;
+    const PointerDataRefRecord *record;
+    struct d4rl_qt_mov_header header;
+    Movie movie;
+    int status;
+
+    if (m)
+        *m = NULL;
+    if (!movie_initialized)
+        return movie_fail(d4rlMovieToolboxUninitialized);
+    if (!m)
+        return movie_fail(d4rlMovieParamErr);
+    if (flags != 0)
+        return movie_fail(d4rlMovieUnimplemented);
+    if (dataRefType != PointerDataHandlerSubType)
+        return movie_fail(d4rlCantFindHandler);
+    if (!dataRef || !*dataRef)
+        return movie_fail(d4rlInvalidDataRef);
+    record = (const PointerDataRefRecord *)*dataRef;
+    if (!record->data || record->dataLength <= 0)
+        return movie_fail(d4rlInvalidDataRef);
+    status = d4rl_qt_mov_probe(record->data, (size_t)record->dataLength, &header);
+    if (status == D4RL_QT_MOV_NO_MOVIE_HEADER)
+        return movie_fail(d4rlNoMovieFound);
+    if (status != D4RL_QT_MOV_OK)
+        return movie_fail(d4rlBadPublicMovieAtom);
+    /* TimeValue is SInt32: unknown (all ones) or longer durations do not fit. */
+    if (header.duration > INT32_MAX)
+        return movie_fail(d4rlInvalidDuration);
+    movie = movie_new((TimeScale)header.timescale, (TimeValue)header.duration);
+    if (!movie)
+        return movie_error;
+    (void)id;
+    *m = movie;
+    return noErr;
 }
 
 void* NewMovieFromFile(void)
@@ -25270,7 +25331,11 @@ void SetMovieTimeScale(Movie theMovie, TimeScale timeScale)
         movie_error = d4rlMovieParamErr;
         return;
     }
-    /* These movies have no tracks, edits or nonzero durations to rescale. */
+    /* No tracks or edits exist; rescaling a parsed duration is not implemented. */
+    if (storage->value.duration != 0) {
+        movie_error = d4rlMovieUnimplemented;
+        return;
+    }
     storage->value.time_scale = timeScale;
     movie_error = noErr;
 }

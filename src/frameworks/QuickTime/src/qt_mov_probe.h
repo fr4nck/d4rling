@@ -31,6 +31,7 @@ struct d4rl_qt_mov_header {
  * The output is changed only on success. The caller retains ownership of data.
  * The buffer must remain valid and immutable for the duration of the call.
  */
+__attribute__((visibility("hidden")))
 int d4rl_qt_mov_probe(const void *data, size_t length,
                       struct d4rl_qt_mov_header *result);
 

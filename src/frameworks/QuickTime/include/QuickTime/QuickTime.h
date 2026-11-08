@@ -32,9 +32,24 @@ typedef struct MovieType **Movie;
 extern "C" {
 #endif
 
-/* Initial subset: one non-reentrant environment, empty movies, flags == 0.
- * Other movie, track, time-base and playback APIs remain unimplemented.
+/* Initial subset: one non-reentrant environment, flags == 0, empty movies and
+ * movie headers from pointer data references. Other movie, track, time-base
+ * and playback APIs remain unimplemented. Deliberate limitation:
+ * SetMovieTimeScale does not rescale a nonzero duration; it fails with
+ * unimpErr and leaves the movie unchanged.
  */
+struct PointerDataRefRecord {
+    void *data;
+    Size dataLength;
+};
+typedef struct PointerDataRefRecord PointerDataRefRecord;
+typedef PointerDataRefRecord *PointerDataRefPtr;
+typedef PointerDataRefPtr *PointerDataRef;
+
+enum {
+    PointerDataHandlerSubType = 0x70747220 /* 'ptr ' */
+};
+
 OSErr EnterMovies(void);
 void ExitMovies(void);
 OSErr GetMoviesError(void);
@@ -42,6 +57,9 @@ Movie NewMovie(SInt32 flags);
 void DisposeMovie(Movie theMovie);
 TimeScale GetMovieTimeScale(Movie theMovie);
 void SetMovieTimeScale(Movie theMovie, TimeScale timeScale);
+TimeValue GetMovieDuration(Movie theMovie);
+OSErr NewMovieFromDataRef(Movie *m, short flags, short *id, Handle dataRef,
+                          OSType dataRefType);
 
 #ifdef __cplusplus
 }
@@ -767,7 +785,6 @@ void* GetMovieDataSize64(void);
 void* GetMovieDefaultDataRef(void);
 void* GetMovieDisplayBoundsRgn(void);
 void* GetMovieDisplayClipRgn(void);
-void* GetMovieDuration(void);
 void* GetMovieEffectiveRate(void);
 void* GetMovieGWorld(void);
 void* GetMovieIdleManager(void);
@@ -2210,7 +2227,6 @@ void* NewMovieExportStageReachedCallbackUPP(void);
 void* NewMovieForDataRefFromHandle(void);
 void* NewMovieFromDataFork(void);
 void* NewMovieFromDataFork64(void);
-void* NewMovieFromDataRef(void);
 void* NewMovieFromFile(void);
 void* NewMovieFromHandle(void);
 void* NewMovieFromProperties(void);
