@@ -78,8 +78,7 @@ Une branche portant un correctif ne signifie pas que celui-ci est fusionné.
   le pont ELF existant. Un service Linux64 par IPC est une option à qualifier,
   pas un backend déjà livré. Les IPC Linux32/64 ne prouvent pas l'IPC invité Darwin.
 - **JACK :** ni bibliothèques/outils JACK ni route audio réelle qualifiés sur
-  l'environnement relevé. Claude Code et Ruby ne sont pas des dépendances
-  obligatoires du projet ; aucune installation Claude n'est démontrée.
+  l'environnement relevé. Ruby n'est pas une dépendance obligatoire du projet.
 - **QuickTime/QTKit :** les audits trouvent environ 4 600 symboles de stubs
   explicites QuickTime ; des sources et références ne constituent pas un
   lecteur multimédia. Player 7 et plusieurs frameworks sont absents aux
