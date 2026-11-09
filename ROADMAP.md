@@ -1,8 +1,11 @@
 # D4RLING — feuille de route multi-axes
 
-**Version 0.1 — 8 novembre 2026.** Dépôt : `fr4nck/d4rling`, branche
-d'intégration `master`. État public examiné :
-[`27dd3395b2e21c3b94a7b837428950f1c0bba6f6`](https://github.com/fr4nck/d4rling/commit/27dd3395b2e21c3b94a7b837428950f1c0bba6f6).
+**Version 0.2 — 9 novembre 2026.** Dépôt : `fr4nck/d4rling`, branche
+d'intégration `master`. État public de référence avant actualisation :
+[`d2318ea37f9edbdcd661408edfa8723b0289eb2e`](https://github.com/fr4nck/d4rling/commit/d2318ea37f9edbdcd661408edfa8723b0289eb2e).
+La version 0.1 (8 novembre) demeure l'historique de cadrage ; les
+actualisations datées ci-dessous prévalent lorsqu'elles couvrent le même
+périmètre, sans effacer les preuves antérieures.
 Cette publication est documentaire : aucun build, lancement applicatif, test
 audio ou MIDI n'a été rejoué pour la rédiger.
 
@@ -24,6 +27,77 @@ Lire [PROJECT_STATE.md](PROJECT_STATE.md), puis
 La feuille de route consolide les priorités ; elle ne remplace pas les
 rapports datés ni les recettes épinglées. Une preuve récente ne remplace une
 ancienne conclusion que pour **la même révision, architecture et chaîne**.
+
+## Actualisation v0.2 — 9 novembre 2026
+
+**Portée :** synchronisation de la feuille de route avec les commits publics
+jusqu'à `d2318ea3` et les résultats privés rapportés les 8–9 novembre.
+Cette mise à jour ne rejoue aucun test, ne modifie aucune source et ne confère
+aucun PASS général à Logic, QuickTime, Cocoa ou CoreAudio. Les journaux privés
+et l'observation humaine restent distingués des preuves reproductibles Git.
+
+| Axe | Acquis ou constat récent | Limite toujours ouverte |
+| --- | --- | --- |
+| **R — Mach-O i386 / BSD** | Témoin Carbon i386 normal/bypass et négatif validés sur le canon `c17bd4f7` ; `mldr32` intégré au fork (`559f9911`) ; B11/R5 40/40 exécutions invitées et patch BSD/lseek archivé (`ab20544d`) | Build et liaison privés `libsystem_kernel` + `dyld` avec patch BSD non encore exécutés ; portage non intégré au sous-module de production |
+| **U — Carbon** | PR internes [#2](https://github.com/fr4nck/d4rling/pull/2) et [#3](https://github.com/fr4nck/d4rling/pull/3) fusionnées ; 246 contrôles hôte sur fixtures ; doublon `SetEventParameter` supprimé dans `6659e6b9` | CI packaging sur le correctif, CoreFoundation réelle et couverture globale de l'interface à qualifier |
+| **A/P — audio et Petite Victoire** | **OBS humaine du 8 novembre :** fenêtre du témoin Mach-O i386 jugée correcte, sans scintillement perceptible en Play/Stop, et musique entendue intégralement ; C11-G1-L rapportait `LIVE_TECHNICAL=PASS` | Résultat limité au démonstrateur et aux conditions d'écoute ; pas de mesure acoustique de latence, de test 10 minutes ni de preuve du moteur audio Logic |
+| **Q — QuickTime** | Au-delà des 7 fonctions Q-A2 : `NewMovieFromDataRef` et `GetMovieDuration`, parseur MOV borné, extraction de PCM pris en charge et conservation mémoire (`02418473`, `d2318ea3`) ; 4 600 exports préservés | `QuickTime` complet non construit via CMake/Ninja (`gui_stubs` bloqué) ; aucune lecture audio/vidéo, aucun Player qualifié |
+| **M — MIDI / AU** | Inventaire et contrats historiques disponibles | Pas de chaîne MIDI → Audio Unit historique → rendu Logic validée |
+| **L — Logic Studio 8** | Audit privé : 71 binaires i386 et 9 979 imports ; 154 symboles QuickTime distincts (147 stubs **au stade Q-A2**, nombre à recalculer après `QT-NEXT`) | Aucune exécution Logic/EXS24 ; résolution des dépendances, Cocoa i386, Audio Units et moteur audio à qualifier |
+
+**Lecture des résultats :** l'observation d'écoute de Petite Victoire est
+postérieure au cas C10 muet conservé dans la [synthèse historique
+B14/C10](docs/REPRISE-AUDIO-MUSIQUE-2026-11-08.md) : ces essais ne sont pas
+interchangeables. Les nombres B11/B15 sont des comptes rendus de qualification
+locale, non une reconstruction intégrale de la pile par la roadmap.
+
+**Prévol privé B15-A6-R2 (OBS, non publié dans Git) :** 890/890 objets
+`libsystem_kernel` disponibles, 3/3 substitutions BSD, recettes Ninja et
+archives statiques i386/x86_64 reconnues pour le lien `dyld`.
+`PASS_PREVOL_LIAISONS_PRIVEES` **n'est pas** un PASS de compilation ou liaison :
+aucune des deux liaisons n'a été exécutée. Étape proposée **B15-A7** :
+liens privés contrôlés, vérification des slices/exports/ABI et tests différentiels
+dans une installation isolée ; canon, anciens préfixes et Petite Victoire intacts.
+
+### Priorités de convergence après v0.2
+
+1. **Terminer B15** sans substitution de binaires dans une installation
+   historique ; distinguer la correction du dispatcher BSD du traitement
+   `errno` déjà introduit en amont par
+   [darling-xnu #49](https://github.com/darlinghq/darling-xnu/pull/49)
+   (fusionnée le 7 novembre). Le correctif `mldr32` provient déjà de
+   [Darling #1864](https://github.com/darlinghq/darling/pull/1864) :
+   ne pas le reproposer comme nouveauté.
+2. **Stabiliser Carbon et la reproduction** : vérifier le packaging sur
+   `6659e6b9` et comparer nos événements/queues à la
+   [PR amont #1780](https://github.com/darlinghq/darling/pull/1780) WIP,
+   avant toute proposition de correction.
+3. **Consolider QuickTime utile** : construire la cible `gui_stubs` dans un
+   espace isolé ; qualifier ABI i386, erreurs, médias synthétiques et traces
+   d'appels. Ne pas confondre copie de PCM et restitution sonore.
+4. **Approcher Logic 8 par étapes** : obtenir un premier chargement des
+   frameworks privés/du programme, puis seulement une interface et un projet
+   vide. **Cocoa i386** peut être nécessaire à son interface ;
+   le chantier général **x86_64/Cocoa est reporté**.
+5. **Préserver le moteur audio original de Logic** : D4RLING reproduit les
+   services Darwin/CoreAudio/Audio Units attendus. Un éventuel décodeur
+   auxiliaire (FFmpeg ou autre) ne remplace pas le mixage, les instruments ou
+   les effets Logic ; aucun accès bloquant dans le callback audio, et tests
+   de non-régression obligatoires.
+
+### Contributions vers Darling officiel — candidats, pas de PR autorisée
+
+| Candidat | Niveau de préparation / décision |
+| --- | --- |
+| `shellspawn` : garde de taille 16 bits ([`2d6ef337`](https://github.com/fr4nck/d4rling/commit/2d6ef3378da25e81ad5c41e74a94d102e979b855)) | Diff court ; ajout de test de borne, revue et comparaison amont nécessaires |
+| Carbon événements et files (PR internes #2/#3) | Code et 246 tests hôte ; intégrer la vraie CF, l'ABI i386 et coordonner avec #1780 |
+| QuickTime MOV / PCM ([`d2318ea3`](https://github.com/fr4nck/d4rling/commit/d2318ea37f9edbdcd661408edfa8723b0289eb2e)) | Fonctionnalités originales et essais i386 ciblés ; CMake/Ninja et tests d'intégration encore bloquants |
+| BSD i386 / `lseek` | Comparer explicitement au correctif amont #49 avant d'isoler un delta nouveau et sûr |
+
+Conformément à la [stratégie de contribution](docs/decisions/strategie-contributions-amont.md),
+l'intérêt technique d'un correctif ne vaut **pas** autorisation de soumettre
+une PR. Aucun nouveau chantier x86_64 ni aucune modification de
+`experiments/petite-victoire/` n'est autorisé par cette actualisation.
 
 ## État documentaire et preuves disponibles
 
@@ -117,11 +191,14 @@ par cette seule roadmap.
 
 ## U — Carbon et Cocoa/AppKit
 
-**État : contrats et événements Carbon partiellement testés ; interface
-applicative non qualifiée.** L'[audit UI](docs/carbon-ui-roadmap.md) est daté :
+**État au 9 novembre :** contrats et événements Carbon testés sur un banc
+hôte isolé ; interface du seul démonstrateur Petite Victoire observée
+fonctionnelle en i386, sans validation de l'interface de Logic ni du backend
+Carbon/Cocoa dans son ensemble. Voir l'actualisation v0.2. L'[audit UI](docs/carbon-ui-roadmap.md) est daté :
 ses anciens constats de stubs d'événements doivent être lus avec les
 [résultats de queue/dispatch](docs/carbon-queue-dispatch-2026-10-22.md).
-Logic 8 requiert aussi Cocoa ; une fenêtre Carbon ne qualifie pas son interface.
+Logic 8 requiert aussi Cocoa **i386** ; une fenêtre Carbon ne qualifie pas
+son interface. L'axe x86_64/Cocoa générique reste volontairement différé.
 
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
@@ -136,8 +213,10 @@ fichiers attribuée ; aucun remplacement global d'AppKit ni faux succès UI.
 
 ## A — CoreAudio / PulseAudio
 
-**État : backend réel dans les sources et résultats audio ciblés rapportés ;
-chaîne reproductible et fiable encore à qualifier.** Conserver PulseAudio,
+**État au 9 novembre :** backend réel dans les sources ; écoute intégrale de
+Petite Victoire confirmée humainement le 8 novembre sur la chaîne i386 ;
+reproduction, stabilité prolongée et latence acoustique encore à qualifier.
+Les comptes rendus audio antérieurs décrivent d'autres essais. Conserver PulseAudio,
 l'ABI HAL et les acquis B11/B13/B14/C10. L'[audit historique
 CA-01 à CA-12](docs/audits/coreaudio-i386-heritage.md) donne des oracles,
 pas une liste de défauts encore ouverts sur toute révision.
@@ -181,11 +260,17 @@ attesté.** Démonstrateur visé : **QuickTime Player exécuté sous D4RLING ave
 lecture vidéo et audio réelle**. Son import set exact reste à établir depuis
 une copie légitime disponible, sans téléchargement implicite.
 
-**Avancement Q-A2, 8 novembre :** un [cycle de Movie vide](docs/evidence/quicktime-q-a2-empty-movie-2026-11-08.md)
-est implémenté (initialisation, création/destruction, échelle propre à
-l'objet, modification et erreurs). Le banc hôte Windows x64 passe sur le
-vrai code ; Darwin i386, ouverture de fichiers, pistes, lecture et Player
-restent à qualifier. Ce résultat borné ne ferme pas tout QT1.
+**Historique Q-A2 (8 novembre) :** le [cycle de Movie vide](docs/evidence/quicktime-q-a2-empty-movie-2026-11-08.md)
+implémente sept fonctions, d'abord qualifiées sur l'hôte Windows x64.
+**État au 9 novembre :** Q-A3 a qualifié le sous-ensemble en Mach-O i386 ;
+[QT-NEXT](tests/regressions/quicktime-mov-dataref/README.md) prend en charge
+les MOV en mémoire via référence pointeur et leur durée (5 118 contrôles,
+0 échec sur le témoin i386). [QT-MOV-02 R3](tests/regressions/quicktime-mov-pcm/README.md)
+conserve certains échantillons PCM dans l'objet Movie (40 contrôles i386,
+0 échec ; extracteur natif 20 149 contrôles, 0 échec). Ces fonctionnalités
+ne restituent pas encore de son, ne couvrent pas les pistes publiques et ne
+valident ni QTKit ni le Player ; construction de la cible `QuickTime`
+par CMake/Ninja toujours BLOCKED.
 
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
@@ -207,8 +292,10 @@ codec propriétaire, SDK ou média commercial.
 
 ## L — Logic Studio 8 et EXS24 authentique
 
-**État : audit statique privé rapporté et recherches publiques ; aucune
-installation/exécution Logic ou restitution EXS24 qualifiée.** Les besoins
+**État au 9 novembre :** audit statique privé des binaires i386 disponible,
+avec matrice QuickTime datée Q-A2 (154 imports distincts dont 147 stubs à
+cette date). Aucun chargement applicatif de Logic ni restitution EXS24
+qualifiés. Ne pas utiliser cette matrice comme trace d'appels runtime. Les besoins
 musicaux incluent édition MIDI/quantification non destructive, instruments,
 Bitcrusher, Space Designer, compresseur et limiteur. Leur présence dans une
 liste de dépendances ne démontre pas leur fonctionnement.
@@ -228,8 +315,11 @@ sans écriture. Aucun patch binaire ni contournement de licence.
 
 ## P — Petite Victoire, prototype natif et DAW possible
 
-**État : moteur/exports portables et aperçu web livrés ; intégration Carbon
-i386 non qualifiée.** Le nom peut changer. La trajectoire DAW reste une
+**État au 9 novembre :** moteur et exports portables présents ; exécution
+Carbon Mach-O i386 avec musique effectivement entendue et fenêtre correcte
+**observées** par fr4nck le 8 novembre. C10/C11 et les mesures instrumentées
+restent des preuves distinctes ; pas de qualification de Logic ni de stabilité
+sur une session de production. Le nom peut changer. La trajectoire DAW reste une
 orientation, sans promesse de calendrier ni assimilation à Logic.
 
 **Rôle de validation :** permettre à une personne ne disposant pas de Logic
@@ -280,8 +370,10 @@ Consulter [AGENTS.md](AGENTS.md) pour le prévol, le contrat d'écriture et
 le format de preuve. La table des lots donne des périmètres candidats,
 pas une autorisation de modifier tout un sous-système.
 
-Priorité de convergence : rapprocher les preuves existantes R/A/P, fermer
-les petits contrats bloquants, puis démontrer des parcours complets. L'audit
+Priorité de convergence au 9 novembre : B15-A7 en isolation, vérification
+CI Carbon, intégration QuickTime `gui_stubs`, puis chargement de composants
+Logic sans toucher à son moteur audio. Rapprocher les preuves existantes R/A/P,
+fermer les petits contrats bloquants, puis démontrer des parcours complets. L'audit
 V1 et les oracles MIDI/QuickTime peuvent avancer indépendamment côté agents.
 Petite Victoire progresse en parallèle sous la conduite de fr4nck, avec les
 contrats du socle et ses propres preuves. Pas de fusion générale des branches.
