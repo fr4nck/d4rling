@@ -1,0 +1,225 @@
+diff --git a/src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp b/src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp
+--- a/src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp
++++ b/src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp
+@@ -70,26 +70,123 @@
+ 	free(p);
+ }
+ 
++
++/* E3-B2 MM-C2: experimental logical-size bookkeeping.
++ * Test candidate only, NOT a deployed CarbonCore.
++ * The existing Memory Manager is not thread-safe; this
++ * isolated candidate retains that single-thread limitation.
++ */
++struct D4RLHandleRecord {
++    Ptr master;                 /* first member: Handle ABI */
++    Size logical;
++    D4RLHandleRecord *next;
++};
++
++static D4RLHandleRecord *d4rl_handles = nullptr;
++static OSErr d4rl_last_mem_error = noErr;
++static bool d4rl_qa_fail_realloc = false;
++
++extern "C" OSErr MemError(void)
++{
++    return d4rl_last_mem_error;
++}
++
++extern "C" void d4rl_qa_fail_next_realloc(void)
++{
++    d4rl_qa_fail_realloc = true;
++}
++
++static D4RLHandleRecord *d4rl_find_handle(Handle h)
++{
++    for (D4RLHandleRecord *r = d4rl_handles; r; r = r->next) {
++        if (h == &r->master)
++            return r;
++    }
++    return nullptr;
++}
++
++static Handle d4rl_new_handle(Size logical, bool clear, bool empty)
++{
++    if (logical < 0) {
++        d4rl_last_mem_error = paramErr;
++        return nullptr;
++    }
++
++    D4RLHandleRecord *r =
++        (D4RLHandleRecord *)malloc(sizeof(*r));
++
++    if (!r) {
++        d4rl_last_mem_error = memFullErr;
++        return nullptr;
++    }
++
++    r->master = nullptr;
++
++    if (!empty) {
++        size_t n = logical ? (size_t)logical : 1u;
++        r->master = (Ptr)(clear ? calloc(1, n) : malloc(n));
++
++        if (!r->master) {
++            free(r);
++            d4rl_last_mem_error = memFullErr;
++            return nullptr;
++        }
++    }
++
++    r->logical = logical;
++    r->next = d4rl_handles;
++    d4rl_handles = r;
++    d4rl_last_mem_error = noErr;
++
++    return &r->master;
++}
++
+ void DisposeHandle(Handle handle)
+ {
+-	DisposePtr(*handle);
+-	free(handle);
++    D4RLHandleRecord **link = &d4rl_handles;
++
++    while (*link && handle != &(*link)->master)
++        link = &(*link)->next;
++
++    if (!*link) {
++        d4rl_last_mem_error = nilHandleErr;
++        return;
++    }
++
++    D4RLHandleRecord *r = *link;
++    *link = r->next;
++
++    free(r->master);
++    free(r);
++    d4rl_last_mem_error = noErr;
+ }
+ 
+ Size GetHandleSize(Handle h)
+ {
+-	if (!*h)
+-		return 0;
+-	return GetPtrSize(*h);
++    D4RLHandleRecord *r = d4rl_find_handle(h);
++
++    if (!r) {
++        d4rl_last_mem_error = nilHandleErr;
++        return 0;
++    }
++
++    d4rl_last_mem_error = noErr;
++    return r->logical;
+ }
+ 
+ void EmptyHandle(Handle h)
+ {
+-	if (*h)
+-	{
+-		DisposePtr(*h);
+-		*h = nullptr;
+-	}
++    D4RLHandleRecord *r = d4rl_find_handle(h);
++
++    if (!r) {
++        d4rl_last_mem_error = nilHandleErr;
++        return;
++    }
++
++    free(r->master);
++    r->master = nullptr;
++    r->logical = 0;
++    d4rl_last_mem_error = noErr;
+ }
+ 
+ OSErr PtrToHand(const void* srcPtr, Handle* dstHndl, long size)
+@@ -108,23 +205,17 @@
+ 
+ Handle NewHandle(long size)
+ {
+-	Handle h = (Handle) malloc(sizeof(*h));
+-	*h = NewPtr(size);
+-	return h;
++    return d4rl_new_handle(size, false, false);
+ }
+ 
+ Handle NewHandleClear(long size)
+ {
+-	Handle h = (Handle) malloc(sizeof(*h));
+-	*h = NewPtrClear(size);
+-	return h;
++    return d4rl_new_handle(size, true, false);
+ }
+ 
+ Handle NewEmptyHandle(void)
+ {
+-	Handle h = (Handle) malloc(sizeof(*h));
+-	*h = nullptr;
+-	return h;
++    return d4rl_new_handle(0, false, true);
+ }
+ 
+ long GetPtrSize(Ptr ptr)
+@@ -144,17 +235,49 @@
+ 
+ void SetHandleSize(Handle h, long newSize)
+ {
+-	if (!*h)
+-		*h = NewPtr(newSize);
+-	else if (!newSize)
+-	{
+-		DisposePtr(*h);
+-		*h = nullptr;
+-	}
+-	else
+-	{
+-		*h = (Ptr) realloc(*h, newSize);
+-	}
++    D4RLHandleRecord *r = d4rl_find_handle(h);
++
++    if (!r) {
++        d4rl_last_mem_error = nilHandleErr;
++        return;
++    }
++
++    if (newSize < 0) {
++        d4rl_last_mem_error = paramErr;
++        return;
++    }
++
++    if (newSize == 0) {
++        free(r->master);
++        r->master = nullptr;
++        r->logical = 0;
++        d4rl_last_mem_error = noErr;
++        return;
++    }
++
++    if (r->logical == newSize && r->master) {
++        d4rl_last_mem_error = noErr;
++        return;
++    }
++
++    void *replacement;
++
++    if (d4rl_qa_fail_realloc) {
++        d4rl_qa_fail_realloc = false;
++        replacement = nullptr;
++    } else {
++        replacement = realloc(r->master, (size_t)newSize);
++    }
++
++    if (!replacement) {
++        /* Original pointer and logical size remain unchanged. */
++        d4rl_last_mem_error = memFullErr;
++        return;
++    }
++
++    r->master = (Ptr)replacement;
++    r->logical = newSize;
++    d4rl_last_mem_error = noErr;
+ }
+ 
+ void ReallocateHandle(Handle h, Size byteCount)

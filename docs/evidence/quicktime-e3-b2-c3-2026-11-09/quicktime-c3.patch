@@ -1,0 +1,227 @@
+diff --git a/src/frameworks/QuickTime/src/QuickTime.c b/src/frameworks/QuickTime/src/QuickTime.c
+--- a/src/frameworks/QuickTime/src/QuickTime.c
++++ b/src/frameworks/QuickTime/src/QuickTime.c
+@@ -24,6 +24,9 @@
+ #include <string.h>
+ #include "qt_mov_probe.h"
+ #include "qt_movie_internal.h"
++#include <CarbonCore/MacMemory.h>
++/* C3 dependency: qualified candidate Memory Manager. */
++extern OSErr MemError(void);
+ 
+ static int verbose = 0;
+ 
+@@ -4309,10 +4312,169 @@
+     return NULL;
+ }
+ 
+-void* GetMediaSample(void)
+-{
+-    if (verbose) puts("STUB: GetMediaSample called");
+-    return NULL;
++/*
++ * Locate the owning Movie without dereferencing the caller's Media.
++ * The existing track_lookup has already validated the handle.
++ */
++static struct MovieType *d4rl_sample_owner(
++    const struct D4RLTrackStorage *wanted)
++{
++    struct D4RLMovieStorage *storage;
++    SInt32 i;
++
++    for (storage = movie_list; storage; storage = storage->next) {
++        for (i = 0; i < storage->value.track_count; ++i) {
++            if (&storage->value.tracks[i] == wanted)
++                return &storage->value;
++        }
++    }
++    return NULL;
++}
++
++/*
++ * E3-B2 C1: pre-sized Handle only. No resizing and no decoder.
++ * The destination size comes from the external Memory Manager.
++ */
++OSErr GetMediaSample(
++    Media theMedia, Handle dataOut, SInt32 maxSizeToGrow,
++    SInt32 *size, TimeValue time, TimeValue *sampleTime,
++    TimeValue *durationPerSample,
++    SampleDescriptionHandle sampleDescriptionH,
++    SInt32 *sampleDescriptionIndex, SInt32 maxNumberOfSamples,
++    SInt32 *numberOfSamples, SInt16 *sampleFlags)
++{
++    struct D4RLTrackStorage *track;
++    struct MovieType *movie;
++    const struct d4rl_qt_mov_pcm_info *info;
++    Size handle_size;
++    size_t frame_bytes, available, count, start, bytes;
++
++    track = track_lookup(theMedia, 1);
++    if (!track)
++        return movie_error;
++
++    if (!dataOut || maxSizeToGrow < 0 ||
++        maxNumberOfSamples < 0)
++        return movie_fail(d4rlMovieParamErr);
++
++    /* A non-null sample description requires a separately
++     * qualified Memory Manager and description layout. */
++    if (sampleDescriptionH)
++        return movie_fail(d4rlMovieUnimplemented);
++
++    movie = d4rl_sample_owner(track);
++    if (!movie || !movie->pcm || track->track.handler != 0x736F756Eu)
++        return movie_fail(d4rlMovieUnimplemented);
++
++    info = &movie->pcm_info;
++
++    if (!info->frame_count || info->frame_count > INT32_MAX ||
++        info->channels < 1 || info->channels > 2 ||
++        info->bits_per_sample != 16 ||
++        track->media.sample_count != (SInt32)info->frame_count ||
++        track->media.time_scale != (TimeScale)info->sample_rate)
++        return movie_fail(d4rlMovieUnimplemented);
++
++    if (time < 0 || (uint32_t)time >= info->frame_count)
++        return movie_fail(-2032); /* timeNotInMedia */
++
++    frame_bytes = (size_t)info->channels * 2u;
++
++    if (info->byte_count % frame_bytes != 0 ||
++        info->byte_count / frame_bytes != info->frame_count)
++        return movie_fail(d4rlMovieUnimplemented);
++
++    /*
++     * No call to SetHandleSize: its failure behavior is not
++     * qualified. Never dereference *dataOut before checking
++     * the size reported by the Memory Manager.
++     */
++
++    /*
++     * C3: bounded Handle growth.
++     *
++     * Choose at most 64 KiB per request to avoid unbounded
++     * allocation when both caller limits are zero.
++     *
++     * The sample count remains a maximum, not a requirement
++     * to return every remaining sample.
++     */
++    handle_size = GetHandleSize(dataOut);
++
++    if (MemError() != noErr || handle_size < 0)
++        return movie_fail(d4rlMovieParamErr);
++
++    available = (size_t)info->frame_count - (size_t)time;
++    count = available;
++
++    if (maxNumberOfSamples > 0 &&
++        count > (size_t)maxNumberOfSamples)
++        count = (size_t)maxNumberOfSamples;
++
++    if (maxSizeToGrow > 0) {
++        size_t limit = (size_t)maxSizeToGrow / frame_bytes;
++        if (count > limit)
++            count = limit;
++    }
++
++    if (count > 65536u / frame_bytes)
++        count = 65536u / frame_bytes;
++
++    if (count > (size_t)INT32_MAX / frame_bytes)
++        count = (size_t)INT32_MAX / frame_bytes;
++
++    if (!count)
++        return movie_fail(-2027);
++
++    start = (size_t)time * frame_bytes;
++    bytes = count * frame_bytes;
++
++    if (start > info->byte_count ||
++        bytes > info->byte_count - start)
++        return movie_fail(d4rlMovieUnimplemented);
++
++    /*
++     * Only grow when necessary. The patched Memory Manager
++     * preserves its original pointer and logical size on
++     * failure. Never copy before confirming the new size.
++     */
++    if ((size_t)handle_size < bytes) {
++        SetHandleSize(dataOut, (long)bytes);
++
++        {
++            OSErr memory_error = MemError();
++            if (memory_error != noErr)
++                return movie_fail(memory_error);
++        }
++
++        if (!*dataOut)
++            return movie_fail(d4rlMovieMemFullErr);
++
++        handle_size = GetHandleSize(dataOut);
++
++        if (MemError() != noErr ||
++            handle_size < 0 ||
++            (size_t)handle_size < bytes)
++            return movie_fail(d4rlMovieUnimplemented);
++    }
++
++    memcpy(*dataOut, (const unsigned char *)movie->pcm + start,
++           bytes);
++
++    if (size)
++        *size = (SInt32)bytes;
++    if (sampleTime)
++        *sampleTime = time;
++    if (durationPerSample)
++        *durationPerSample = 1;
++    if (sampleDescriptionIndex)
++        *sampleDescriptionIndex = 1;
++    if (numberOfSamples)
++        *numberOfSamples = (SInt32)count;
++    if (sampleFlags)
++        *sampleFlags = 0;
++
++    return movie_fail(noErr);
+ }
+ 
+ void* GetMediaSample2(void)
+diff --git a/src/frameworks/QuickTime/include/QuickTime/QuickTime.h b/src/frameworks/QuickTime/include/QuickTime/QuickTime.h
+--- a/src/frameworks/QuickTime/include/QuickTime/QuickTime.h
++++ b/src/frameworks/QuickTime/include/QuickTime/QuickTime.h
+@@ -29,6 +29,9 @@
+ typedef struct MovieType **Movie;
+ typedef struct TrackType **Track;
+ typedef struct MediaType **Media;
++
++/* Opaque historical QuickTime sample description handle. */
++typedef struct SampleDescription **SampleDescriptionHandle;
+ 
+ #ifdef __cplusplus
+ extern "C" {
+@@ -755,7 +758,25 @@
+ void* GetMediaPreferredChunkSize(void);
+ void* GetMediaPropertyAtom(void);
+ void* GetMediaQuality(void);
+-void* GetMediaSample(void);
++/*
++ * E3-B2 C3: bounded PCM retrieval with Handle growth.
++ * Requires qualified Memory Manager; sample-description output unsupported.
++ * All historical long parameters use SInt32 for Darwin i386 ABI.
++ */
++OSErr GetMediaSample(
++    Media theMedia,
++    Handle dataOut,
++    SInt32 maxSizeToGrow,
++    SInt32 *size,
++    TimeValue time,
++    TimeValue *sampleTime,
++    TimeValue *durationPerSample,
++    SampleDescriptionHandle sampleDescriptionH,
++    SInt32 *sampleDescriptionIndex,
++    SInt32 maxNumberOfSamples,
++    SInt32 *numberOfSamples,
++    SInt16 *sampleFlags
++);
+ void* GetMediaSample2(void);
+ void* GetMediaSampleDescription(void);
+ void* GetMediaSampleDescriptionCount(void);
