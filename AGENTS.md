@@ -23,7 +23,7 @@ d'incertitude bloquante, **arrêter l'opération concernée et demander un
 arbitrage**, sans contournement tacite.
 
 **Contrat obligatoire avant création, développement, script ou délégation
-Claude Code / Codex :**
+à un agent :**
 
 1. Identifier le **dépôt canonique**, l'état réel de `master`, les éventuels
    changements locaux, la source de vérité et les solutions déjà disponibles.
@@ -73,15 +73,15 @@ Les règles spécifiques D4rling ci-après renforcent ce contrat ; elles ne
 l'annulent pas. Aucun changement des dossiers existants n'est autorisé par
 ce document seul.
 
-## Petite Victoire — développement réservé à fr4nck
+## Petite Victoire — développement réservé au responsable du projet
 
-**fr4nck garde la main sur le développement et les choix de produit de Petite
+**Le responsable du projet garde la main sur le développement et les choix de produit de Petite
 Victoire**, y compris son nom et son évolution éventuelle vers un DAW.
 Les agents ne choisissent pas spontanément un lot de développement de ce
 projet et n'écrivent pas dans `experiments/petite-victoire/` (code, tests,
 interface, ressources, documentation du produit, versions ou archives).
 
-Une intervention exige une **demande explicite et ciblée de fr4nck**.
+Une intervention exige une **demande explicite et ciblée du responsable du projet**.
 Une mission générale de développement autonome de D4RLING ne délègue pas
 Petite Victoire. La lecture et le signalement de blocages restent possibles
 dans le périmètre de la mission ; proposer une évolution ne vaut pas
@@ -90,7 +90,7 @@ autorisation de l'implémenter.
 Petite Victoire doit devenir le démonstrateur musical de référence pour
 vérifier les fonctions de D4RLING **sans posséder Logic Studio 8**.
 Les agents peuvent préparer et qualifier le socle D4RLING avec leurs propres
-témoins, puis documenter les contrats utilisables par fr4nck. La validation
+témoins, puis documenter les contrats utilisables par le responsable du projet. La validation
 par Petite Victoire porte sur les chemins réellement exercés et identifiés :
 mode natif et mode invité i386 sont distingués, ainsi que les fonctions
 encore absentes ou non testées. Les jalons Logic/EXS24 et QuickTime gardent
@@ -192,7 +192,7 @@ modification collective.
 | M-A1 / M-A2 | Nouveaux tests MIDI et AU dans des sous-dossiers distincts de `tests/regressions/` | `src/frameworks/CoreMIDI/`, Component Manager et AudioUnit partagés ; contrôler ABI et durée de vie |
 | Q-A1 | Témoin `tests/regressions/quicktime-*/`, média synthétique défini par source originale, note de preuve | Corrections attribuées seulement dans `src/frameworks/QuickTime/` / `QTKit/` ; aucun Player/codec propriétaire publié |
 | L-A1 | Synthèse expurgée `docs/audits/logic-studio-8/` | DVD, Logic, banques et frameworks privés en lecture seule ; pas de lancement sans autorisation explicite |
-| P — réservé à fr4nck | Aucune écriture autonome dans `experiments/petite-victoire/` | Intervention uniquement sur demande explicite et ciblée de fr4nck ; les agents travaillent sur le socle D4RLING et leurs témoins séparés |
+| P — réservé au responsable du projet | Aucune écriture autonome dans `experiments/petite-victoire/` | Intervention uniquement sur demande explicite et ciblée du responsable du projet ; les agents travaillent sur le socle D4RLING et leurs témoins séparés |
 | Intégration documentaire | `ROADMAP.md`, `AGENTS.md`, `PROJECT_STATE.md`, liens README | Un intégrateur ; actualiser les conclusions sans réécrire les anciens rapports |
 
 Ne pas changer hors mission : CMake racine, CI, packaging, dépendances,
@@ -254,7 +254,7 @@ Choisir le niveau de vérification adapté :
 
 Pour les contrats Carbon hôte, les commandes sont dans
 [le runner existant](tests/regressions/carbon-events/README.md) ; préciser
-adaptateur CF, vrais en-têtes ou fixtures substituées. Si fr4nck délègue
+adaptateur CF, vrais en-têtes ou fixtures substituées. Si le responsable du projet délègue
 explicitement un test de Petite Victoire, utiliser CMake/CTest et le test Node
 déjà documentés, avec des sorties dédiées, sans installer un outil absent.
 Pour Mach-O, vérifier tranches, ID, exports/réexports, conventions
