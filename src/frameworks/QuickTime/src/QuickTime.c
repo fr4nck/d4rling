@@ -21,7 +21,9 @@
 #include <QuickTime/QuickTime.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "qt_mov_probe.h"
+#include "qt_movie_internal.h"
 
 static int verbose = 0;
 
@@ -41,11 +43,6 @@ enum {
     d4rlInvalidDuration = -2014,
     d4rlMovieToolboxUninitialized = -2020,
     d4rlNoMovieFound = -2048
-};
-
-struct MovieType {
-    TimeScale time_scale;
-    TimeValue duration;
 };
 
 struct D4RLMovieStorage {
@@ -90,11 +87,18 @@ static Movie movie_new(TimeScale time_scale, TimeValue duration)
     }
     storage->value.time_scale = time_scale;
     storage->value.duration = duration;
+    storage->value.pcm = NULL;
     storage->handle_value = &storage->value;
     storage->next = movie_list;
     movie_list = storage;
     movie_error = noErr;
     return &storage->handle_value;
+}
+
+static void movie_free(struct D4RLMovieStorage *storage)
+{
+    free(storage->value.pcm);
+    free(storage);
 }
 
 static OSErr movie_fail(OSErr error)
@@ -2757,7 +2761,7 @@ void DisposeMovie(Movie theMovie)
     slot = movie_slot(theMovie);
     storage = *slot;
     *slot = storage->next;
-    free(storage);
+    movie_free(storage);
     movie_error = noErr;
 }
 
@@ -3542,7 +3546,7 @@ void ExitMovies(void)
     while (movie_list) {
         struct D4RLMovieStorage *storage = movie_list;
         movie_list = storage->next;
-        free(storage);
+        movie_free(storage);
     }
     movie_initialized = 0;
     movie_error = noErr;
@@ -13153,7 +13157,8 @@ void* NewMovieFromDataFork64(void)
 
 /* Pointer data references only. The caller's bytes hold a movie file or a
  * bare 'moov' atom; they are read during this call and never retained.
- * Only moov/mvhd is used: no tracks, media, sample data or playback.
+ * moov/mvhd gives the movie time; a supported PCM sound track is copied into
+ * memory owned by the movie. No tracks, media API or playback.
  * The documented id contract concerns movie resources, which this data does
  * not have; *id is therefore left unchanged.
  */
@@ -13162,6 +13167,9 @@ OSErr NewMovieFromDataRef(Movie *m, short flags, short *id, Handle dataRef,
 {
     const PointerDataRefRecord *record;
     struct d4rl_qt_mov_header header;
+    struct d4rl_qt_mov_pcm_info pcm_info;
+    size_t pcm_offset;
+    void *pcm = NULL;
     Movie movie;
     int status;
 
@@ -13188,9 +13196,24 @@ OSErr NewMovieFromDataRef(Movie *m, short flags, short *id, Handle dataRef,
     /* TimeValue is SInt32: unknown (all ones) or longer durations do not fit. */
     if (header.duration > INT32_MAX)
         return movie_fail(d4rlInvalidDuration);
+    /* Unsupported or absent sound leaves the movie without samples, as before.
+     * The copy is bounded by the caller's buffer: the samples lie inside it. */
+    if (d4rl_qt_mov_find_pcm(record->data, (size_t)record->dataLength,
+                             &pcm_info, &pcm_offset) == D4RL_QT_PCM_OK) {
+        pcm = malloc(pcm_info.byte_count);
+        if (!pcm)
+            return movie_fail(d4rlMovieMemFullErr);
+        memcpy(pcm, (const char *)record->data + pcm_offset, pcm_info.byte_count);
+    }
     movie = movie_new((TimeScale)header.timescale, (TimeValue)header.duration);
-    if (!movie)
+    if (!movie) {
+        free(pcm);
         return movie_error;
+    }
+    if (pcm) {
+        (*movie)->pcm = pcm;
+        (*movie)->pcm_info = pcm_info;
+    }
     (void)id;
     *m = movie;
     return noErr;
