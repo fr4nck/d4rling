@@ -221,6 +221,8 @@ l'ABI HAL et les acquis B11/B13/B14/C10. L'[audit historique
 CA-01 à CA-12](docs/audits/coreaudio-i386-heritage.md) donne des oracles,
 pas une liste de défauts encore ouverts sur toute révision.
 
+**Qualification R0 / AUDIO-A1-T1 (9 novembre 2026) :** [premier signal i386 via CoreAudio-B14 entendu sur le socle canonique](docs/evidence/audio-r0-a1-t1-2026-11-09.md). Le test unique rapporte un PASS technique (786 432 octets/96 blocs, PulseAudio terminé, 38 bibliothèques système depuis R0) et une observation humaine distincte du signal de 440 Hz. CoreAudio-B14 reste externe au profil `core` ; la stabilité temps réel, les négatifs audio et le CoreAudio de `master` ne sont pas qualifiés. **A2 reste partiel.**
+
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
 | A1 — Ulysses | Associer chaque lot à sources, SHA, architecture, installation, callback, format et sortie ; distinguer natif, mock et véritable invité ; localiser les originaux privés sans les publier | BLOCKED pour la promotion TEST si journaux/artefacts absents ; ne pas effacer les observations |
