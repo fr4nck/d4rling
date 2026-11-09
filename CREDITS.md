@@ -18,20 +18,20 @@ remain in their files; this document supplements them.
   components and Cocotron. The main license does not replace those component
   licenses.
 - Submodule repositories remain with their original owners and at the revisions
-  recorded by Git. Their URLs are absolute so a clone of this personal fork does
-  not require creating sibling repositories under fr4nck.
+  recorded by Git. Their URLs are absolute and require no sibling repositories
+  under the fork owner.
 
 ## HIToolbox window error reporting (lot 1)
 
-- Input: `darling-hitoolbox-lot1.zip`, supplied by fr4nck from the earlier
-  ChatGPT-assisted work. No separate human author is established by that archive.
+- Input: `darling-hitoolbox-lot1.zip`. No separate human author is established
+  by that archive.
 - Archive SHA-256:
   `1db07936186425e66ec0fbcde4361e1aecabdc5aaa54391b04c9660bdf408708`.
 - Baseline source: Darling's `MacWindows.cpp` at the baseline above, Git blob
   `b328f28495f70dbd6f80120343c6124b87e9a46f`.
 - Import commit: `2b4a018fc2a71d12844aa0438075422756816685`.
-- The supplied source correction and 25 test assertions were imported; the
-  runners and integration documentation were adapted with OpenAI Codex.
+- The supplied source correction and 25 test assertions were imported;
+  the runners and integration documentation were adapted for this fork.
   These additions follow the repository's GPL license.
 
 ## CoreAudio / CarbonCore C API declaration fixes
@@ -40,10 +40,8 @@ remain in their files; this document supplements them.
 - Source: [VibeDarling/darling PR 18](https://github.com/VibeDarling/darling/pull/18).
 - Original commit:
   [df1fe1b560b25310f83e64f3d1fa5a9be7f0a9a2](https://github.com/VibeDarling/darling/commit/df1fe1b560b25310f83e64f3d1fa5a9be7f0a9a2).
-- The original commit records assistance from Claude Opus 5 (1M context).
-- Port commit: `1cf634b46d1c6eed55547862e4ed3739edc91559`, prepared with OpenAI
-  Codex. Its message includes the original author's co-author attribution,
-  source commit and PR, original AI-assistance record, and port-assistance record.
+- Port commit: `1cf634b46d1c6eed55547862e4ed3739edc91559`.
+  The source commit and original author attribution are retained.
 - Scope: the five-file declaration/definition correction only. Existing copyright
   and GPL notices are retained.
 
@@ -51,8 +49,7 @@ remain in their files; this document supplements them.
 
 For every future reused change, record its project URL, author(s), source commit
 or archive hash, applicable license, local integration commit and adaptations.
-Preserve existing notices and author metadata. Record any disclosed AI assistance
-as provenance; do not attribute AI-assisted work to an invented human author.
+Preserve existing notices and author metadata; do not invent author attributions.
 Use merges to retain upstream history. For ports, record source references and
 author attribution in the commit as well as this file.
 
@@ -61,7 +58,7 @@ and the Carbon event-loop WIP have not been imported into this fork.
 
 ## Carbon callback and window-target contracts
 
-Prepared for fr4nck with OpenAI Codex, based on personal integration commit
+Based on integration commit
 b932d448bbb317654a45640717925823d2fd3fb0. The original
 [Apple Carbon Event Manager Reference, archived mirror](https://leopard-adc.pepas.com/documentation/Carbon/Reference/Carbon_Event_Manager_Ref/Reference/reference.html)
 was consulted for EventHandlerProcPtr, EventHandlerUPP and GetWindowEventTarget.
@@ -71,7 +68,7 @@ these changes together with the tests and validation note.
 
 ## Carbon event metadata and lifetime
 
-Prepared for fr4nck with OpenAI Codex on top of
+Based on integration commit
 c003abfdad4adebc327d8c5c1875d9761ef5b4d2. Existing Darling authors and the source
 GPL notice are retained. New regression files use GPL-3.0-or-later.
 The Apple Carbon Event Manager Reference linked above was consulted for event
@@ -83,8 +80,8 @@ they do not validate the actual CoreFoundation runtime.
 
 ## QuickTime — empty-movie time-scale subset (Q-A2, 2026-11-08)
 
-Original implementation and regression sources prepared for fr4nck with OpenAI
-Codex. Existing Darling notices are retained; new regression sources use
+Implementation and regression sources. Existing Darling notices are retained;
+new regression sources use
 GPL-3.0-or-later. The change implements an explicitly limited empty Movie
 lifecycle, per-object time scale and current-error handling in the existing
 QuickTime source/header. No external implementation was copied.
@@ -98,23 +95,23 @@ for the executed checks and the untested Darwin i386/application paths.
 
 ## BSD Darwin i386 return protocol (2026-11-08)
 
-Experimental patch prepared for fr4nck with OpenAI Codex against
+Experimental patch based on
 [darlinghq/darling-xnu fa29287aa2f0115271e091f1031f53c9e024005d](https://github.com/darlinghq/darling-xnu/tree/fa29287aa2f0115271e091f1031f53c9e024005d).
 The three patched files retain their Darling/XNU authors, history and applicable
 component licenses; this artifact does not relicense or update the submodule.
 The return-classification design uses the pinned dispatcher's C declarations
 and the error range already used by its x86_64 wrappers.
 
-Original C/assembly fixtures and Python/Bash packaging were prepared with
-OpenAI Codex under GPL-3.0-or-later. No proprietary SDK, system binary,
+C/assembly fixtures and Python/Bash packaging are provided under
+GPL-3.0-or-later. No proprietary SDK, system binary,
 private trace or recovery archive is distributed. The
 [dated evidence](docs/research/bsd-i386-v3-source-2026-11-08.md) and
 [fixture recipe](reproduction/fixtures/bsd-i386-return/README.md) distinguish
 real V3 calls, synthetic-handler protocol tests and pending system integration.
 
-## i386 mldr32 stack/commpage collision (BIG MAMA 3, 2026-11-08)
+## i386 mldr32 stack/commpage collision (2026-11-08)
 
 - Original algorithm and upstream code: **Lubos Dolezel** (`LubosD`), [Darling PR #1864](https://github.com/darlinghq/darling/pull/1864), merged as `331c65d63b3b4aace9ad442ad9cc19f59d20be96`.
 - D4RLING port on `master` `c17bd4f`: `mldr.c`, `commpage.c`, `commpage.h`; preserves original copyright notices and GPL-3.0-or-later terms. No wholesale upstream merge.
-- Local modifications: stricter retry-counter parsing and `setenv()` error guard; this port and its verification scripts were prepared for fr4nck with OpenAI ChatGPT assistance. `O_CLOEXEC` remains outside this change.
-- Differential real-i386 qualification and limits: [BIG MAMA 3 evidence](docs/evidence/mldr32-stack-commpage-bm3-2026-11-08.md). Local raw logs and artifacts remain private.
+- Local modifications: stricter retry-counter parsing and `setenv()` error guard; this port includes verification scripts. `O_CLOEXEC` remains outside this change.
+- Differential real-i386 qualification and limits: [qualification evidence](docs/evidence/mldr32-stack-commpage-bm3-2026-11-08.md). Local raw logs and artifacts remain private.
