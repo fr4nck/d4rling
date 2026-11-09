@@ -1,0 +1,65 @@
+diff --git a/darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h b/darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h
+--- a/darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h
++++ b/darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h
+@@ -1,6 +1,10 @@
+ #ifndef LINUX_SYSCALLS_H
+ #define LINUX_SYSCALLS_H
+ 
+-extern void* __bsd_syscall_table[600];
++#define BSD_SYSCALL_TABLE_SIZE 600
+ 
++#ifndef __ASSEMBLER__
++extern void* __bsd_syscall_table[BSD_SYSCALL_TABLE_SIZE];
++#endif
++
+ #endif // LINUX_SYSCALLS_H
+diff --git a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S
+--- a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S
++++ b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S
+@@ -37,6 +37,8 @@
+ 
+ #elif defined(__i386__)
+ 
++#include <darling/emulation/xnu_syscall/bsd/bsd_syscall_table.h>
++
+ #define copy_arg(off) \
+ 	movl	8+off(%esp), %ecx ;\
+ 	movl	%ecx, -56+off(%esp)
+@@ -50,6 +52,10 @@
+ 2:
+ 	movl	L___bsd_syscall_table$non_lazy_ptr-1b(%ecx), %ecx
+ 	andl	$0xffff, %eax // Because there is some extra stuff in upper bytes we don't need
++	// Save the masked syscall number before loading the handler pointer.
++	movl	%eax, %edx
++	cmpl	$BSD_SYSCALL_TABLE_SIZE, %eax
++	jae		.no_sys
+ 	movl	(%ecx,%eax,4), %eax
+ 	test	%eax, %eax
+ 	jz		.no_sys
+@@ -76,9 +82,12 @@
+ 	.space 7, 0x90
+ 	ret
+ .no_sys:
+-	pushl	%ecx
++	// Pass the masked syscall number with the B15-qualified call frame.
++	subl	$8, %esp
++	movl	%edx, (%esp)
+ 	call	___unknown_syscall
+-	addl	$4, %esp
++	addl	$8, %esp
++	// Return raw -errno; upstream syscall stubs convert it to CF/errno.
+ 	jmp .std_ret
+ 
+ 	.section        __IMPORT,__pointers,non_lazy_symbol_pointers
+diff --git a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c
+--- a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c
++++ b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c
+@@ -224,7 +224,7 @@
+ #include <darling/emulation/xnu_syscall/bsd/impl/xattr/setattrlistat.h>
+ #include <darling/emulation/xnu_syscall/bsd/impl/xattr/setxattr.h>
+ 
+-void* __bsd_syscall_table[600] = {
++void* __bsd_syscall_table[BSD_SYSCALL_TABLE_SIZE] = {
+ 	[0] = sys_syscall,
+ 	[1] = sys_exit,
+ 	[2] = sys_fork,
