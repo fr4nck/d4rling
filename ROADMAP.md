@@ -9,6 +9,14 @@ périmètre, sans effacer les preuves antérieures.
 Cette publication est documentaire : aucun build, lancement applicatif, test
 audio ou MIDI n'a été rejoué pour la rédiger.
 
+**Repère musical évolutif : `01 — Shelter` (en cours).** Le titre et le
+numéro de progression changent ensemble au passage à chaque nouveau jalon
+musical ; pas de liste de 29 titres réservés à l'avance. Afficher seulement
+le titre du morceau, sans nom d'artiste ni mention « feat. », et respecter
+le plafond de trois morceaux par artiste. Ce repère éditorial ne vaut pas
+validation technique : les critères R/U/A/M/QT/L/P et leurs statuts restent
+indépendants.
+
 ## Intention et lecture
 
 D4RLING développe un socle Darwin/macOS réutilisable sous Linux. **Logic
@@ -176,9 +184,9 @@ R1/R2/R3 n'est clos par ces seuls résultats. L'issue #11 reste ouverte.
 
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
-| R1 — Shelter | Identifier les slices et empreintes des binaires réellement utilisés ; désassemblage brut i386 validé de V1 ; séparer convention de retour, CF/errno et hypothèse H-CF | BLOCKED si tranche/outils/objets indisponibles ; aucune correction sur une étiquette d'analyseur |
-| R2 — Rocket | Même témoin terminant : 10/10 départs à préfixes frais, code 0 et marqueur exact ; négatif sans dylib échoue sans marqueur ; enregistrer stdin, pile et tous les essais | Dépend de R1 et des fournisseurs ; collision EEXIST ou timeout inexpliqué bloque la stabilité |
-| R3 — The Fear | Positifs/négatifs pour `@loader_path`, `@executable_path`, `@rpath` ; pthread anciens, TLS, callbacks, exceptions/destructeurs sur témoins bornés | Les variantes UNIX2003 seules ne ferment pas les noms anciens ; C2 exige symlinks/normalisation/chemins restreints avant généralisation |
+| R1 — provenance et ABI | Identifier les slices et empreintes des binaires réellement utilisés ; désassemblage brut i386 validé de V1 ; séparer convention de retour, CF/errno et hypothèse H-CF | BLOCKED si tranche/outils/objets indisponibles ; aucune correction sur une étiquette d'analyseur |
+| R2 — lancement déterministe | Même témoin terminant : 10/10 départs à préfixes frais, code 0 et marqueur exact ; négatif sans dylib échoue sans marqueur ; enregistrer stdin, pile et tous les essais | Dépend de R1 et des fournisseurs ; collision EEXIST ou timeout inexpliqué bloque la stabilité |
+| R3 — contrats de liaison et langage | Positifs/négatifs pour `@loader_path`, `@executable_path`, `@rpath` ; pthread anciens, TLS, callbacks, exceptions/destructeurs sur témoins bornés | Les variantes UNIX2003 seules ne ferment pas les noms anciens ; C2 exige symlinks/normalisation/chemins restreints avant généralisation |
 
 **Lot R-A1 :** V1 statique clos ; lire V3 et le candidat source ci-dessus
 avant toute nouvelle inspection. **Lot R-A2 :** utiliser les fixtures publiées ;
@@ -202,9 +210,9 @@ son interface. L'axe x86_64/Cocoa générique reste volontairement différé.
 
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
-| U1 — Human | Rejouer les runners pertinents sur la source choisie ; ABI i386, callbacks, propriété mémoire et erreurs vérifiés ; cas sans affichage retourne une erreur réelle | Contrats hôte possibles sans R ; invité dépend de R |
-| U2 — When Love Takes Over | Affichage/repaint, clic, clavier et fermeture vers le bon handler ; 20 cycles créer/fermer sans objet/handler résiduel ; fermeture d'une fenêtre distincte de quitter | BLOCKED si backend/display absent ou événement non livré ; capture seule insuffisante |
-| U3 — The Story | Programme Cocoa i386 avec menu/contrôle, événements, fermeture propre ; qualifier séparément vue Carbon intégrée, nib et contrôles réellement nécessaires à la cible | Dépend de R et AppKit cohérent ; UI Logic reste BLOCKED tant que ses besoins réels manquent |
+| U1 — contrats | Rejouer les runners pertinents sur la source choisie ; ABI i386, callbacks, propriété mémoire et erreurs vérifiés ; cas sans affichage retourne une erreur réelle | Contrats hôte possibles sans R ; invité dépend de R |
+| U2 — une fenêtre Carbon | Affichage/repaint, clic, clavier et fermeture vers le bon handler ; 20 cycles créer/fermer sans objet/handler résiduel ; fermeture d'une fenêtre distincte de quitter | BLOCKED si backend/display absent ou événement non livré ; capture seule insuffisante |
+| U3 — un parcours Cocoa | Programme Cocoa i386 avec menu/contrôle, événements, fermeture propre ; qualifier séparément vue Carbon intégrée, nib et contrôles réellement nécessaires à la cible | Dépend de R et AppKit cohérent ; UI Logic reste BLOCKED tant que ses besoins réels manquent |
 
 **Lot U-A1 :** étendre un contrat d'événement ou un oracle de fenêtre dans un
 runner dédié. Écritures : `tests/regressions/carbon-*/` et note associée.
@@ -225,10 +233,10 @@ pas une liste de défauts encore ouverts sur toute révision.
 
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
-| A1 — Ulysses | Associer chaque lot à sources, SHA, architecture, installation, callback, format et sortie ; distinguer natif, mock et véritable invité ; localiser les originaux privés sans les publier | BLOCKED pour la promotion TEST si journaux/artefacts absents ; ne pas effacer les observations |
-| A2 — Jai Ho | Mach-O i386 → CoreAudio/HAL → pont qualifié → PulseAudio → sortie identifiée ; PCM synthétique vérifié et confirmation acoustique ; négatifs sans sortie et format refusé | Dépend de R ; ELF64 PulseAudio ne peut pas être appelé directement comme ELF32 |
-| A3 — Marathon Man | Mélodie C10 réellement entendue ; 10 min de lecture, 20 Stop/reprises et boucle ; relever xruns, erreurs, CPU/RAM et timestamps ; zéro microcoupure constatée selon le protocole déclaré | BLOCKED tant que C10 muet ou microcoupures inexpliquées ; pannes propagées, jamais masquées |
-| A4 — Swords of Truth | WAV/AIFF synthétiques lus avec format/frames attendus ; mesurer séparément latence acoustique, acquittement de stop et détection d'erreur ; protocole et seuil d'usage annoncés avant essai | Pas de revendication « faible latence » sans mesure ; capture/full-duplex et JACK sont des qualifications ultérieures distinctes |
+| A1 — réconcilier les preuves | Associer chaque lot à sources, SHA, architecture, installation, callback, format et sortie ; distinguer natif, mock et véritable invité ; localiser les originaux privés sans les publier | BLOCKED pour la promotion TEST si journaux/artefacts absents ; ne pas effacer les observations |
+| A2 — premier trajet audible | Mach-O i386 → CoreAudio/HAL → pont qualifié → PulseAudio → sortie identifiée ; PCM synthétique vérifié et confirmation acoustique ; négatifs sans sortie et format refusé | Dépend de R ; ELF64 PulseAudio ne peut pas être appelé directement comme ELF32 |
+| A3 — transport stable | Mélodie C10 réellement entendue ; 10 min de lecture, 20 Stop/reprises et boucle ; relever xruns, erreurs, CPU/RAM et timestamps ; zéro microcoupure constatée selon le protocole déclaré | BLOCKED tant que C10 muet ou microcoupures inexpliquées ; pannes propagées, jamais masquées |
+| A4 — fichiers et mesures | WAV/AIFF synthétiques lus avec format/frames attendus ; mesurer séparément latence acoustique, acquittement de stop et détection d'erreur ; protocole et seuil d'usage annoncés avant essai | Pas de revendication « faible latence » sans mesure ; capture/full-duplex et JACK sont des qualifications ultérieures distinctes |
 
 **Lot A-A1 :** registre de convergence et oracle format/propriétés/erreurs.
 Écritures : `docs/evidence/` et sources d'un banc isolé sous `experiments/`.
