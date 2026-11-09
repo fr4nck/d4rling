@@ -38,10 +38,13 @@ enum {
     d4rlMovieMemFullErr = -108,
     d4rlBadPublicMovieAtom = -2002,
     d4rlCantFindHandler = -2003,
+    d4rlInvalidMedia = -2008,
+    d4rlInvalidTrack = -2009,
     d4rlInvalidMovie = -2010,
     d4rlInvalidDataRef = -2012,
     d4rlInvalidDuration = -2014,
     d4rlMovieToolboxUninitialized = -2020,
+    d4rlBadTrackIndex = -2028,
     d4rlNoMovieFound = -2048
 };
 
@@ -88,6 +91,9 @@ static Movie movie_new(TimeScale time_scale, TimeValue duration)
     storage->value.time_scale = time_scale;
     storage->value.duration = duration;
     storage->value.pcm = NULL;
+    storage->value.tracks = NULL;
+    storage->value.track_count = 0;
+    storage->value.tracks_unavailable = false;
     storage->handle_value = &storage->value;
     storage->next = movie_list;
     movie_list = storage;
@@ -97,8 +103,81 @@ static Movie movie_new(TimeScale time_scale, TimeValue duration)
 
 static void movie_free(struct D4RLMovieStorage *storage)
 {
+    free(storage->value.tracks);
     free(storage->value.pcm);
     free(storage);
+}
+
+/* Find a live track or media handle by address; never dereference it. */
+static struct D4RLTrackStorage *track_lookup(const void *handle, int media)
+{
+    struct D4RLMovieStorage *storage;
+    SInt32 i;
+    if (!movie_initialized) {
+        movie_error = d4rlMovieToolboxUninitialized;
+        return NULL;
+    }
+    for (storage = movie_list; storage; storage = storage->next) {
+        struct D4RLTrackStorage *tracks = storage->value.tracks;
+        for (i = 0; i < storage->value.track_count; ++i) {
+            if (!media && handle == (const void *)&tracks[i].track_handle)
+                return &tracks[i];
+            if (media && tracks[i].media_handle &&
+                handle == (const void *)&tracks[i].media_handle)
+                return &tracks[i];
+        }
+    }
+    movie_error = media ? d4rlInvalidMedia : d4rlInvalidTrack;
+    return NULL;
+}
+
+/* Track table in container order; NULL with *count 0 when there is none. */
+static OSErr build_tracks(const void *data, size_t length,
+                          struct D4RLTrackStorage **out, SInt32 *count,
+                          Boolean *unavailable)
+{
+    struct d4rl_qt_mov_track_info *infos;
+    struct D4RLTrackStorage *tracks;
+    size_t n, i;
+
+    *out = NULL;
+    *count = 0;
+    *unavailable = false;
+    if (d4rl_qt_mov_list_tracks(data, length, NULL, 0, &n) != D4RL_QT_PCM_OK) {
+        *unavailable = true;
+        return noErr;
+    }
+    if (n == 0)
+        return noErr;
+    /* n <= length / 8: bounded by the caller buffer. */
+    if (n > INT32_MAX || n > SIZE_MAX / sizeof(*tracks) || n > SIZE_MAX / sizeof(*infos)) {
+        *unavailable = true;
+        return noErr;
+    }
+    infos = malloc(n * sizeof(*infos));
+    if (!infos)
+        return d4rlMovieMemFullErr;
+    if (d4rl_qt_mov_list_tracks(data, length, infos, n, &n) != D4RL_QT_PCM_OK) {
+        free(infos);
+        *unavailable = true;
+        return noErr;
+    }
+    tracks = malloc(n * sizeof(*tracks));
+    if (!tracks) {
+        free(infos);
+        return d4rlMovieMemFullErr;
+    }
+    for (i = 0; i < n; ++i) {
+        tracks[i].track.handler = infos[i].handler;
+        tracks[i].track_handle = &tracks[i].track;
+        tracks[i].media.time_scale = (TimeScale)infos[i].media_time_scale;
+        tracks[i].media.sample_count = (SInt32)infos[i].sample_count;
+        tracks[i].media_handle = infos[i].has_media ? &tracks[i].media : NULL;
+    }
+    free(infos);
+    *out = tracks;
+    *count = (SInt32)n;
+    return noErr;
 }
 
 static OSErr movie_fail(OSErr error)
@@ -4242,10 +4321,13 @@ void* GetMediaSample2(void)
     return NULL;
 }
 
-void* GetMediaSampleCount(void)
+SInt32 GetMediaSampleCount(Media theMedia)
 {
-    if (verbose) puts("STUB: GetMediaSampleCount called");
-    return NULL;
+    struct D4RLTrackStorage *track = track_lookup(theMedia, 1);
+    if (!track)
+        return 0;
+    movie_error = noErr;
+    return track->media.sample_count;
 }
 
 void* GetMediaSampleDescription(void)
@@ -4296,10 +4378,13 @@ void* GetMediaSyncSampleCount(void)
     return NULL;
 }
 
-void* GetMediaTimeScale(void)
+TimeScale GetMediaTimeScale(Media theMedia)
 {
-    if (verbose) puts("STUB: GetMediaTimeScale called");
-    return NULL;
+    struct D4RLTrackStorage *track = track_lookup(theMedia, 1);
+    if (!track)
+        return 0;
+    movie_error = noErr;
+    return track->media.time_scale;
 }
 
 void* GetMediaTrack(void)
@@ -4497,10 +4582,22 @@ void* GetMovieImporterForDataRef(void)
     return NULL;
 }
 
-void* GetMovieIndTrack(void)
+/* Index values range from 1 to the number of tracks (Apple, Locating Tracks). */
+Track GetMovieIndTrack(Movie theMovie, SInt32 index)
 {
-    if (verbose) puts("STUB: GetMovieIndTrack called");
-    return NULL;
+    struct D4RLMovieStorage *storage = movie_lookup(theMovie);
+    if (!storage)
+        return NULL;
+    if (storage->value.tracks_unavailable) {
+        movie_error = d4rlBadPublicMovieAtom;
+        return NULL;
+    }
+    if (index < 1 || index > storage->value.track_count) {
+        movie_error = d4rlBadTrackIndex;
+        return NULL;
+    }
+    movie_error = noErr;
+    return &storage->value.tracks[index - 1].track_handle;
 }
 
 void* GetMovieIndTrackType(void)
@@ -4680,10 +4777,20 @@ void* GetMovieTrack(void)
     return NULL;
 }
 
-void* GetMovieTrackCount(void)
+/* Tracks are counted whatever their media type; this implies no codec,
+ * video or playback support. An unreadable track table reports 0 tracks
+ * with badPublicMovieAtom so it is not mistaken for an empty movie. */
+SInt32 GetMovieTrackCount(Movie theMovie)
 {
-    if (verbose) puts("STUB: GetMovieTrackCount called");
-    return NULL;
+    struct D4RLMovieStorage *storage = movie_lookup(theMovie);
+    if (!storage)
+        return 0;
+    if (storage->value.tracks_unavailable) {
+        movie_error = d4rlBadPublicMovieAtom;
+        return 0;
+    }
+    movie_error = noErr;
+    return storage->value.track_count;
 }
 
 void* GetMovieUserData(void)
@@ -5125,10 +5232,17 @@ void* GetTrackMatte(void)
     return NULL;
 }
 
-void* GetTrackMedia(void)
+Media GetTrackMedia(Track theTrack)
 {
-    if (verbose) puts("STUB: GetTrackMedia called");
-    return NULL;
+    struct D4RLTrackStorage *track = track_lookup(theTrack, 0);
+    if (!track)
+        return NULL;
+    if (!track->media_handle) {
+        movie_error = d4rlInvalidMedia;
+        return NULL;
+    }
+    movie_error = noErr;
+    return &track->media_handle;
 }
 
 void* GetTrackModificationTime(void)
@@ -13170,7 +13284,11 @@ OSErr NewMovieFromDataRef(Movie *m, short flags, short *id, Handle dataRef,
     struct d4rl_qt_mov_pcm_info pcm_info;
     size_t pcm_offset;
     void *pcm = NULL;
+    struct D4RLTrackStorage *tracks;
+    SInt32 track_count;
+    Boolean tracks_unavailable;
     Movie movie;
+    OSErr error;
     int status;
 
     if (m)
@@ -13205,11 +13323,21 @@ OSErr NewMovieFromDataRef(Movie *m, short flags, short *id, Handle dataRef,
             return movie_fail(d4rlMovieMemFullErr);
         memcpy(pcm, (const char *)record->data + pcm_offset, pcm_info.byte_count);
     }
+    error = build_tracks(record->data, (size_t)record->dataLength, &tracks,
+                         &track_count, &tracks_unavailable);
+    if (error != noErr) {
+        free(pcm);
+        return movie_fail(error);
+    }
     movie = movie_new((TimeScale)header.timescale, (TimeValue)header.duration);
     if (!movie) {
+        free(tracks);
         free(pcm);
         return movie_error;
     }
+    (*movie)->tracks = tracks;
+    (*movie)->track_count = track_count;
+    (*movie)->tracks_unavailable = tracks_unavailable;
     if (pcm) {
         (*movie)->pcm = pcm;
         (*movie)->pcm_info = pcm_info;

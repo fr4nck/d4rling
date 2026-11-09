@@ -27,6 +27,8 @@
  * widths through MacTypes; native LP64 long is not the legacy flags ABI.
  */
 typedef struct MovieType **Movie;
+typedef struct TrackType **Track;
+typedef struct MediaType **Media;
 
 #ifdef __cplusplus
 extern "C" {
@@ -60,6 +62,13 @@ void SetMovieTimeScale(Movie theMovie, TimeScale timeScale);
 TimeValue GetMovieDuration(Movie theMovie);
 OSErr NewMovieFromDataRef(Movie *m, short flags, short *id, Handle dataRef,
                           OSType dataRefType);
+/* Track and media lookup. Apple declares the counts and the index as long,
+ * which is 32 bits on Darwin i386; SInt32 keeps that width on LP64 hosts. */
+SInt32 GetMovieTrackCount(Movie theMovie);
+Track GetMovieIndTrack(Movie theMovie, SInt32 index);
+Media GetTrackMedia(Track theTrack);
+SInt32 GetMediaSampleCount(Media theMedia);
+TimeScale GetMediaTimeScale(Media theMedia);
 
 #ifdef __cplusplus
 }
@@ -748,7 +757,6 @@ void* GetMediaPropertyAtom(void);
 void* GetMediaQuality(void);
 void* GetMediaSample(void);
 void* GetMediaSample2(void);
-void* GetMediaSampleCount(void);
 void* GetMediaSampleDescription(void);
 void* GetMediaSampleDescriptionCount(void);
 void* GetMediaSampleReference(void);
@@ -757,7 +765,6 @@ void* GetMediaSampleReferences64(void);
 void* GetMediaSeed(void);
 void* GetMediaShadowSync(void);
 void* GetMediaSyncSampleCount(void);
-void* GetMediaTimeScale(void);
 void* GetMediaTrack(void);
 void* GetMediaUserData(void);
 void* GetMovieActive(void);
@@ -789,7 +796,6 @@ void* GetMovieEffectiveRate(void);
 void* GetMovieGWorld(void);
 void* GetMovieIdleManager(void);
 void* GetMovieImporterForDataRef(void);
-void* GetMovieIndTrack(void);
 void* GetMovieIndTrackType(void);
 void* GetMovieLoadState(void);
 void* GetMovieMatrix(void);
@@ -818,7 +824,6 @@ void* GetMovieThreadAttachState(void);
 void* GetMovieTime(void);
 void* GetMovieTimeBase(void);
 void* GetMovieTrack(void);
-void* GetMovieTrackCount(void);
 void* GetMovieUserData(void);
 void* GetMovieVisualBrightness(void);
 void* GetMovieVisualContext(void);
@@ -891,7 +896,6 @@ void* GetTrackLayer(void);
 void* GetTrackLoadSettings(void);
 void* GetTrackMatrix(void);
 void* GetTrackMatte(void);
-void* GetTrackMedia(void);
 void* GetTrackModificationTime(void);
 void* GetTrackMovie(void);
 void* GetTrackMovieBoundsRgn(void);

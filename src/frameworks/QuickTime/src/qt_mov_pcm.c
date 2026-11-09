@@ -308,3 +308,88 @@ int d4rl_qt_mov_extract_pcm(const void *data, size_t length,
     *info = found;
     return D4RL_QT_PCM_OK;
 }
+
+static void describe_track(struct span trak, struct d4rl_qt_mov_track_info *info)
+{
+    struct span mdia, mdhd, hdlr, minf, stbl, stsz;
+    uint32_t scale, size, samples;
+    size_t table;
+
+    memset(info, 0, sizeof(*info));
+    if (one_child(trak, "mdia", &mdia) != D4RL_QT_PCM_OK ||
+        one_child(mdia, "hdlr", &hdlr) != D4RL_QT_PCM_OK || hdlr.n < 12)
+        return;
+    info->handler = rd32(hdlr.p + 8);
+    if (one_child(mdia, "mdhd", &mdhd) != D4RL_QT_PCM_OK)
+        return;
+    if (mdhd.n >= 20 && mdhd.p[0] == 0)
+        scale = rd32(mdhd.p + 12);
+    else if (mdhd.n >= 32 && mdhd.p[0] == 1)
+        scale = rd32(mdhd.p + 20);
+    else
+        return;
+    if (scale == 0 || scale > INT32_MAX ||
+        one_child(mdia, "minf", &minf) != D4RL_QT_PCM_OK ||
+        one_child(minf, "stbl", &stbl) != D4RL_QT_PCM_OK ||
+        one_child(stbl, "stsz", &stsz) != D4RL_QT_PCM_OK)
+        return;
+    /* stsz (QTFF, Sample Size Atoms): version and flags 0, sample size,
+     * number of entries, then a 4-byte size per sample only when the sample
+     * size is 0. Compared by division: no overflow, no table entry read. */
+    if (stsz.n < 12 || rd32(stsz.p) != 0)
+        return;
+    size = rd32(stsz.p + 4);
+    samples = rd32(stsz.p + 8);
+    table = stsz.n - 12;
+    if (size != 0 ? table != 0 : (table % 4 != 0 || table / 4 != samples))
+        return;
+    if (samples > INT32_MAX)
+        return;
+    info->media_time_scale = scale;
+    info->sample_count = samples;
+    info->has_media = 1;
+}
+
+/* Walk moov children; describe traks only when tracks is not NULL. */
+static int walk_tracks(struct span moov, struct d4rl_qt_mov_track_info *tracks,
+                       size_t *count)
+{
+    size_t off = 0, n = 0;
+    while (off < moov.n) {
+        const uint8_t *t;
+        struct span body;
+        size_t total;
+        TRY(read_atom(moov, off, &t, &body, &total));
+        off += total;
+        if (memcmp(t, "trak", 4) != 0)
+            continue;
+        if (tracks)
+            describe_track(body, &tracks[n]);
+        ++n;
+    }
+    *count = n;
+    return D4RL_QT_PCM_OK;
+}
+
+int d4rl_qt_mov_list_tracks(const void *data, size_t length,
+                            struct d4rl_qt_mov_track_info *tracks,
+                            size_t capacity, size_t *count)
+{
+    struct span file = { data, length }, moov;
+    struct d4rl_qt_mov_header header;
+    size_t n;
+
+    if (!data || !count || (!tracks && capacity))
+        return D4RL_QT_PCM_INVALID_ARGUMENT;
+    if (d4rl_qt_mov_probe(data, length, &header) != D4RL_QT_MOV_OK)
+        return D4RL_QT_PCM_BAD_MOVIE;
+    TRY(one_child(file, "moov", &moov));
+    TRY(walk_tracks(moov, NULL, &n));
+    if (tracks) {
+        if (capacity < n)
+            return D4RL_QT_PCM_BUFFER_TOO_SMALL;
+        TRY(walk_tracks(moov, tracks, &n));
+    }
+    *count = n;
+    return D4RL_QT_PCM_OK;
+}

@@ -219,7 +219,8 @@ int main(void)
     fail_at = 2; m1 = (Movie)1;
     CHECK(open_and_drop(&m1) == -108 && m1 == NULL && live_blocks == blocks);
     fail_at = 0;
-    CHECK(open_and_drop(&m1) == noErr && live_blocks == blocks + 2);
+    /* A live movie owns its PCM copy, its track table and its storage. */
+    CHECK(open_and_drop(&m1) == noErr && live_blocks == blocks + 3);
     DisposeMovie(m1);
     CHECK(live_blocks == blocks);
     simple_no_sound(); fail_at = 1; m1 = (Movie)1;

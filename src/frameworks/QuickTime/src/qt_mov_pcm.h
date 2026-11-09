@@ -54,4 +54,23 @@ int d4rl_qt_mov_extract_pcm(const void *data, size_t length,
                             void *pcm, size_t capacity,
                             struct d4rl_qt_mov_pcm_info *info);
 
+struct d4rl_qt_mov_track_info {
+    uint32_t handler;          /* hdlr component subtype, 0 if absent */
+    uint32_t media_time_scale; /* mdhd time scale, when has_media */
+    uint32_t sample_count;     /* stsz sample count, when has_media */
+    int has_media;
+};
+
+/*
+ * List moov/trak atoms in container order. A track has a media when its mdia
+ * holds one hdlr, one mdhd (version 0 or 1, time scale 1..INT32_MAX) and
+ * minf/stbl/stsz (version and flags 0, count <= INT32_MAX, a 4-byte entry per
+ * sample exactly when the sample size is 0); otherwise has_media is 0.
+ * With tracks == NULL only *count is set. Outputs change only on success.
+ */
+__attribute__((visibility("hidden")))
+int d4rl_qt_mov_list_tracks(const void *data, size_t length,
+                            struct d4rl_qt_mov_track_info *tracks,
+                            size_t capacity, size_t *count);
+
 #endif
