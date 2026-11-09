@@ -146,11 +146,7 @@ OSStatus SetEventMask(EventMask a)
 	return 0;
 }
 
-OSStatus SetEventParameter(EventRef a, EventParamName b, EventParamType c, UInt32 d, const void * e)
-{
-    if (verbose) puts("STUB: SetEventParameter called");
-	return 0;
-}
+/* Event parameter APIs are provided by the reexported HIToolbox. */
 
 void ShowMenuBar(void)
 {
