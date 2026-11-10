@@ -141,3 +141,18 @@ Le patch Machdep i386 I1-R4 a désormais été appliqué et compilé **à partir
 Le [banc existant](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/qualify_machdep_i386.py) accepte désormais `--pinned-dir` pour relire en **lecture seule** les cinq fichiers déjà présents sur disque, en vérifiant leur Git SHA-1 **et** SHA-256, sans clone ni téléchargement. Une nouvelle suite [de 12 contre-épreuves](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/test_machdep_verified_sources.py) refuse les sources altérées, CRLF, symlinks, fichiers absents, mauvais SHA et UTF-8 invalide. **36/36 tests Python PASS** (24 existants + 12 nouveaux).
 
 **Frontière de preuve :** `PASS_PINNED_BLOBS` confirme l'identité des contenus complets et la qualification statique/assemblage local, **pas** l'appartenance à un checkout Git complet (le mode `--xnu` reste prévu pour cela). Les vrais en-têtes de liaison, `libsystem_kernel.dylib`, `tramp_cerror`/TLS et l'exécution invitée Darling/Logic 8 restent **OPEN**. Le correctif est **toujours expérimental**, non fusionné à `master`.
+
+
+## R6 — 10400 et conformité des sept hunks (10 novembre)
+
+**Branche de recherche vérifiée :** [`9837242108f7`](https://github.com/fr4nck/d4rling/commit/9837242108f74959ea3083b55ceb601181aef411). [Rapport R6](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/docs/evidence/bsd-i386-10400-r6-source-hunks-2026-11-10.md).
+
+Le **10400** reste exploitable : Debian WSL2, chaîne i386, anciens binaires `mldr32`/`dyld`/`libSystem.B.dylib` et essais Carbon qualifiés. Les arbres `~/atelier/d4rling`, `~/atelier/d4rling-10400/source`, `~/atelier/d4rling-10400/build-core-i386` ainsi que les **neuf modifications historiques** sont protégés. Le dossier de sorties existant est `~/atelier/d4rling-r4f-20261110-182414`. Le dernier blocage `R4-G` est un **lien `undefined reference to commpage_length`**, sans lien de causalité démontré avec la recherche BSD.
+
+Deux nouveaux outils en lecture seule :
+- [Prévol i5-10400](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/preflight_10400.py) : contrôle sans écriture des chemins, outils, révisions et artefacts, sans supposer que le XNU `ba34c8ac` est déjà présent ; **7/7 tests locaux PASS**.
+- [Qualification des deux patchs BSD et syscall](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/verify_bsd_i386_patchset.py) : vérification des cinq Git blobs amont, contrôle strict des hunks sans application sur disque, modes `--xnu` (commit réel) et `--pinned-dir` (contenu certifié seulement) ; **15/15 tests locaux PASS**.
+
+Par lecture directe des **cinq fichiers XNU authentiques à `ba34c8ac`**, les **sept hunks des deux patchs** correspondent exactement aux lignes amont, y compris leurs offsets. Ce résultat `7/7 MATCH` est un **contrôle source**, pas un `git apply --check` exécuté sur une copie locale intégrale, ni une compilation ou une exécution invitée. Les tests Python du lot totalisent **22/22 PASS**.
+
+**OPEN :** exécution du prévol sur le véritable 10400, disponibilité locale de la révision XNU, rejeu intégral des patchs, liaison `libsystem_kernel.dylib`, stubs `cerror`/TLS, Logic Studio 8. Aucune modification de code sur `master`, aucun téléchargement, installation, suppression ni écriture sur les fichiers historiques de l'utilisateur.
