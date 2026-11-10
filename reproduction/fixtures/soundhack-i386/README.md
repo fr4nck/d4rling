@@ -1,8 +1,10 @@
-# SoundHack 0.896 — SH01–SH03 static witnesses (i386)
+# SoundHack 0.896 — SH01–SH07 static and host witnesses (i386 target)
 
-These files are **read-only, standard-library Python 3** tools. No Apple SDK,
-SoundHack executable, media, GUI, audio, Linux guest or additional package is
-included. License for these new tests/tools: GPL-3.0-or-later (D4rling).
+These fixtures use **Python 3 standard-library** host tools. The static auditors
+read files only; SH07 explicitly creates one new output WAV and compiles pinned
+upstream FFT code in a private temporary directory. No Apple SDK,
+SoundHack executable, bundled media, GUI, audio driver, Linux guest or
+additional Python package is included. License for these new tests/tools: GPL-3.0-or-later (D4rling).
 
 ## Scope
 
@@ -122,3 +124,32 @@ local negative checks and skips the 3 original-source-dependent cases.
 Exit 0 = bounded HOST_DSP_PASS, 2 = numerical FAIL, 3 = inconclusive.
 **No SoundHack guest runtime, audio file, Darwin i386 ABI or audio-output PASS.**
 See [SH06 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH06-host-fft.md).
+
+## SH07 — WAV file processing with original SoundHack FFT (host only)
+
+The new [wav_fft_render.py](wav_fft_render.py) reuses SH06's upstream source
+hash validation, compiles the **unaltered** original SoundHack Math/FFT.c on
+the host, and filters an actual **mono PCM16 WAV** with RealFFT (periodic
+Hann windows, quarter-frame hop, overlap-add normalization). It never
+fetches/installs third-party software, plays sound, or edits a D4rling
+framework. The test sources are NOT redistributed in this repository.
+
+Example, from the canonical checkout with the already-authorized original
+SoundHack Math source directory available:
+
+    export SOUNDHACK_MATH_DIR=/authorized/path/SoundHack/Math
+    python3 -m unittest discover -s reproduction/fixtures/soundhack-i386 -p 'test_wav_fft_render.py' -v
+    python3 reproduction/fixtures/soundhack-i386/wav_fft_render.py \
+      --math-dir "$SOUNDHACK_MATH_DIR" --input /authorized/input.wav \
+      --output /authorized/NEW-output.wav --notch-hz 3000
+
+Outputs are exclusive-create only: an existing file or symlink is never
+overwritten. Only 16-bit mono PCM WAV is supported, with explicit size,
+sample-count and frequency bounds. Exit 0 = **HOST_WAV_RENDERED**, exit 3 =
+**INCONCLUSIVE**; no other status implies SoundHack GUI, guest, real playback
+or audio driver compatibility. With pinned original Math/ source: **18/18
+SH07 unit tests PASS**; full SoundHack fixture suite: 79 cases, 78 PASS and
+1 SKIP (separate SH05 checkout-path qualification).
+
+The WAV example used independent 750 Hz / 3,000 Hz tones, keeping 750 Hz and
+reducing 3,000 Hz approximately 61 dB. See [SH07 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH07-host-wav-render.md).
