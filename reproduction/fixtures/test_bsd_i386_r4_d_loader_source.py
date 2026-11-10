@@ -27,6 +27,16 @@ class MldrI386MmapDiagnostics(unittest.TestCase):
         self.assertLess(cmake.index("if (D4RLING_MLDR_I386_MMAP_DIAG)"), cmake.index(target))
         self.assertLess(cmake.index("add_executable(mldr32"), cmake.index(target))
 
+    def test_template_undefines_diagnostic_between_64_and_32_bit_passes(self):
+        mldr = (SOURCE.parent / "mldr.c").read_text(encoding="utf-8")
+        self.assertIn('#define GEN_64BIT\\n#include "loader.c"', mldr)
+        self.assertIn('#define GEN_32BIT\\n#include "loader.c"', mldr)
+        self.assertEqual(self.source.count("#undef MLDR_MMAP_DIAG"), 1)
+        self.assertLess(
+            self.source.rindex("#undef MAP_EXTRA"),
+            self.source.rindex("#undef MLDR_MMAP_DIAG"),
+        )
+
     def test_guard_requires_both_i386_and_opt_in(self):
         self.assertIn(
             "#if defined(GEN_32BIT) && defined(D4RLING_MLDR_I386_MMAP_DIAG)",
