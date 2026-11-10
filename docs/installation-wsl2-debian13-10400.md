@@ -513,6 +513,53 @@ compilation i386. Les changements récents de `master` ne sont pas
 qualifiés par le succès Carbon historique. QuickTime C4-D reste un
 chantier indépendant, non intégrable à ce stade.
 
+
+### Résultat du 10400 : compilation isolée de l'objet R4-F (10/11/2026)
+
+Après inventaire local **sans réseau ni écriture**, l'opérateur a confirmé :
+
+- Canon `~/atelier/d4rling` : `master` propre à
+  `77988d3a784afc07ba039f75e4be177b65b9241d` (**pas le dernier HEAD
+  GitHub**) ; les trois sous-modules
+  `darlingserver`, `cctools-port`, `xnu` ne sont **pas initialisés
+  dans ce checkout**, mais leurs SHA épinglés sont **identiques** à
+  ceux du snapshot historique déjà présent.
+- Racine `~/atelier` : un **troisième dossier de 760 Kio** existe,
+  `d4rling-r4f-20261110-182414`. Il contient un CMakeCache et des
+  fichiers temporaires de configuration, mais il **n'est pas un second
+  checkout complet**. Ne pas l'effacer, le déplacer ou en créer un autre.
+- Le lot R4-F a **réutilisé ce troisième dossier existant** pour y produire
+  `r4f-current-mldr32.o` et `r4f-current-mldr32.o.d`. Le code
+  `src/startup/mldr/mldr.c` du canon local, diagnostic R4-F activé,
+  a été compilé avec Clang 19 en **ELF32 i386 relocatable**.
+- Marqueurs observés :
+  `R4F_OBJECT_COMPILE=PASS`,
+  `R4F_LINK=NON_TESTE`,
+  `R4F_RUNTIME=NON_TESTE`,
+  `HISTORICAL_BUILD_MODIFIED=NON`,
+  `INSTALLATION_MODIFIED=NON`.
+- **Un seul avertissement Clang** :
+  `src/startup/mldr/stack.c:132`,
+  `%x` attend `unsigned int` tandis que l'argument est actuellement
+  casté en `unsigned long`. Il ne constitue pas un échec du compileur ;
+  la correction et sa non-régression x86_64/i386 n'ont **pas** été
+  validées sur le 10400 à cette étape.
+
+**Verdict exact : `R4F_OBJECT_COMPILE=PASS`**, pas
+`R4F_CURRENT_MASTER_MLDR32_BUILD_PASS`. Un objet `.o`
+ELF32 ne suffit pas à établir l'édition de liens, l'existence d'un
+`mldr32` exécutable récent, ou son fonctionnement invité.
+Une liaison avec des objets d'autres révisions ne serait pas une
+qualification cohérente de `master`.
+
+**Décision de rangement :** conserver uniquement les répertoires déjà
+présents, sans `git fetch`, `submodule update`, nouvel arbre
+CMake, duplication des 5,7 Gio de sources, installation ou nettoyage
+automatique. Le prochain essai devra d'abord choisir un chemin de
+liaison **cohérent et réutilisable** à partir des sources réellement
+disponibles. Les anciens répertoires `/tmp/d4rl-replay.*` restent
+inchangés ; aucune suppression implicite.
+
 ## Précautions
 
 Conserver **un seul atelier de travail** dans `$HOME/atelier` et **aucun fichier à la racine de `C:\`**. Ne pas altérer `C:\\WINDOWS\\system32`, la distribution Docker, le dépôt `master`, l'arbre historique ou les logs. Ne rien supprimer ou déplacer sans validation préalable. Tous les échecs sont à conserver et à documenter comme tels.
