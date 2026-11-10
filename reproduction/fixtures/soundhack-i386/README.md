@@ -13,6 +13,9 @@ included. License for these new tests/tools: GPL-3.0-or-later (D4rling).
 - `quicktime_stubs.py`: a source-pattern witness for **14 specific QuickTime
   functions** used by `SoundFile/Play.c` in Tom Erbe's SoundHack source at
   `tomerbe/SoundHack@df6f0bc89243b93573b391afa5ab371cce56ac95`.
+- `gestalt_startup_gate.py`: extracts the real current CarbonCore `Gestalt()`
+  function and executes it in an isolated **host C++ mock** to check SoundHack's
+  Carbon and system-version gates. Requires an existing C++17 compiler.
 - `test_*.py`: positive, mutation/negative, malformed and CLI checks. Synthetic
   Mach-O samples are generated in temporary directories; no fake SoundHack
   executable is distributed.
@@ -75,3 +78,24 @@ identity remain explicitly inconclusive. `LC_DYLD_INFO` bind opcodes are not
 resolved. The independent source references, 12 new negative/positive cases
 (**39 total host tests**) and exact limitations are in
 `docs/evidence/soundhack-sh01-2026-11-10/SH04-ordinal-qualification.md`.
+
+## SH05 — host startup gate (2026-11-10)
+
+The source-level `CapabilityCheck()` of SoundHack requires Carbon version
+(`'cbon'`) and system version (`'sysv'`) before `MainLoop`. This bounded
+**host-only** witness tests D4rling's real `Gestalt()` implementation against
+the two thresholds without altering production code:
+
+```sh
+python3 reproduction/fixtures/soundhack-i386/gestalt_startup_gate.py \
+  --gestalt-source src/frameworks/CoreServices/src/CarbonCore/Gestalt.cpp \
+  --expected-blob dffdd4cb26c7f191c6e2b5fc97298c79a8d75dff
+```
+
+On the pinned source the command is **expected to exit 2** and report
+`HOST_STARTUP_GATE_BLOCKED` (`cbon` unimplemented, `sysv` overwritten by
+`sysa` fallthrough). If a concurrent owner changes Gestalt.cpp, the pinned
+run fails closed with exit 3 until its source is requalified. Never present
+the simulated C++ host result as SoundHack guest execution, ABI, GUI or audio.
+See `docs/evidence/soundhack-sh01-2026-11-10/SH05-startup-gestalt.md` for
+actual compiler output, test provenance and CarbonCore owner handoff.
