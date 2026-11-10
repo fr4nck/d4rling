@@ -116,3 +116,16 @@ Un [patch expérimental ciblé](https://github.com/fr4nck/d4rling/blob/research/
 **Exécution réellement effectuée hors 5700X :** `git apply --check` sur deux copies privées de l'extrait i386, compilation Mach-O i386 de l'original et du candidat, désassemblage différentiel `cmpl/cmc/jae/negl`, identité des objets **non-Darling** et **20/20 tests Python PASS**. Les objets sont compilés avec un mini-shim reproduisant les macros amont, pas avec l'intégralité des headers XNU ; l'exécution de `qualify_varargs_cf.py --xnu` sur les objets Git complets à `ba34c8ac` est toujours **OPEN**.
 
 **NO GO production :** ni vraie `libsystem_kernel.dylib`, ni `syscall()` invité, ni `tramp_cerror`/TLS de production validés. Aucun correctif de code fusionné dans `master`, aucun composant QuickTime/AUD/audio modifié. Il s'agit d'un nouveau défaut indépendant du garde de table BSD.
+
+
+## I1-R4 — protection Machdep i386 et CF des wrappers LDT (10 novembre)
+
+**Branche de recherche :** [`08e91bf2825c`](https://github.com/fr4nck/d4rling/commit/08e91bf2825cf289b2153d35dca55850c81b594f), état vérifié lors de cette synchronisation.
+
+L'audit des fichiers véritables de `darling-xnu@ba34c8ac576190d1bbacb6ee6b1903204a576114` révèle **deux défauts de sécurité/ABI i386 distincts** dans `machdep_syscall.S` : aucune borne avant indexation de la table de **10 entrées** et numéro inconnu mal transmis (adresse de table dans `ECX`). En outre, les wrappers `i386_get_ldt` et `i386_set_ldt` ne convertissent pas le retour brut `-errno` en `CF/EAX` avant de choisir le trampoline `cerror`.
+
+Le [patch de recherche](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/patches/bsd-i386-machdep-guard-cf-ba34c8ac.patch) introduit une comparaison `nr >= 10` **avant** la lecture de table, conserve le numéro masqué dans `EDX`, puis ajoute sous `#ifdef DARLING` la macro officielle `DARLING_SYSCALL_RESULT_TO_CF` aux deux wrappers des deux copies de `custom.S`. Aucun changement au code x86_64, aux stubs non-Darling ou aux installations historiques.
+
+**Preuves locales réelles :** 24/24 [tests Python versionnés](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/test_qualify_machdep_i386.py) PASS ; compilation de témoins Mach-O i386 PASS, garde vérifié dans le désassemblage, comparaison binaire x86_64 PASS et non-Darling LDT identique. [Banc de qualification](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/qualify_machdep_i386.py), [vérificateur de source épinglée](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/check_machdep_patch.py) et [rapport](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/docs/evidence/bsd-i386-machdep-guard-cf-2026-11-10.md) disponibles sur la branche.
+
+**OPEN :** rejeu `--xnu` sur checkout amont intégral, liaison `libsystem_kernel.dylib`, `cerror`/TLS de production et exécution invitée. Les entrées LDT 5/6 restent non implémentées. Aucune validation de Logic Studio 8 revendiquée. **Ne pas fusionner les correctifs expérimentaux dans `master` à ce stade.**
