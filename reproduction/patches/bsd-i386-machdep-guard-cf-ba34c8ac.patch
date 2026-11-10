@@ -1,0 +1,68 @@
+diff --git a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/machdep/machdep_syscall.S b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/machdep/machdep_syscall.S
+--- a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/machdep/machdep_syscall.S
++++ b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/machdep/machdep_syscall.S
+@@ -36,6 +36,9 @@
+ 2:
+ 	movl	L___machdep_syscall_table$non_lazy_ptr-1b(%ecx), %ecx
+ 	andl	$0xffff, %eax // Because there is some extra stuff in upper bytes we don't need
++	movl	%eax, %edx // Preserve masked syscall number for the unknown handler
++	cmpl	$10, %eax // The machdep table has exactly 10 slots
++	jae		.no_sys
+ 	movl	(%ecx,%eax,4), %eax
+ 	test	%eax, %eax
+ 	jz		.no_sys
+@@ -51,7 +54,7 @@
+ 	addl	$24, %esp
+ 	ret
+ .no_sys:
+-	pushl	%ecx
++	pushl	%edx
+ 	call	___unknown_syscall_machdep
+ 	addl	$4, %esp
+ 	ret
+diff --git a/gen/bsdsyscalls/custom.S b/gen/bsdsyscalls/custom.S
+--- a/gen/bsdsyscalls/custom.S
++++ b/gen/bsdsyscalls/custom.S
+@@ -3,6 +3,9 @@
+ _i386_get_ldt:
+ 	movl    $6,%eax
+ 	MACHDEP_SYSCALL_TRAP
++#ifdef DARLING
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	jnb		2f
+ 	jmp		tramp_cerror
+ 2:	ret
+@@ -13,6 +16,9 @@
+ _i386_set_ldt:
+ 	movl    $5,%eax
+ 	MACHDEP_SYSCALL_TRAP
++#ifdef DARLING
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	jnb		2f
+ 	jmp		tramp_cerror
+ 2:	ret
+diff --git a/libsyscall/custom/custom.S b/libsyscall/custom/custom.S
+--- a/libsyscall/custom/custom.S
++++ b/libsyscall/custom/custom.S
+@@ -3,6 +3,9 @@
+ _i386_get_ldt:
+ 	movl    $6,%eax
+ 	MACHDEP_SYSCALL_TRAP
++#ifdef DARLING
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	jnb		2f
+ 	jmp		tramp_cerror
+ 2:	ret
+@@ -13,6 +16,9 @@
+ _i386_set_ldt:
+ 	movl    $5,%eax
+ 	MACHDEP_SYSCALL_TRAP
++#ifdef DARLING
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	jnb		2f
+ 	jmp		tramp_cerror
+ 2:	ret
