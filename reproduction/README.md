@@ -123,12 +123,33 @@ bash reproduction/configure.sh "$SRC" "$HOME/d4rling-rebuild/build-i386" core-i3
 cmake --build "$HOME/d4rling-rebuild/build-i386" --target darling mldr mldr32 darlingserver --parallel 2
 ```
 
-Puis, selon le jalon à requalifier, construire les bibliothèques et leurs
-dépendances par le graphe :
+### Bibliothèques Darwin : identifier les noms réels des cibles
+
+**Attention, correction issue du second poste WSL2 (10/11/2026) :** la
+commande précédemment indiquée avec `--target system_c system CoreFoundation`
+échoue immédiatement sur le profil historique `core-i386` avec
+`ninja: error: unknown target 'CoreFoundation'`. Aucun framework n'a été
+compilé par cette tentative. Ne pas relancer la même commande.
+
+Avant de construire les bibliothèques, **énumérer les cibles générées** dans le
+build concerné. Le nom d'un framework ou d'un sous-dossier n'est pas
+nécessairement celui de sa cible Ninja :
 
 ```bash
-cmake --build "$HOME/d4rling-rebuild/build-i386" --target system_c system CoreFoundation --parallel 2
+BUILD="$HOME/d4rling-rebuild/build-i386"
+cmake --build "$BUILD" --target help > "$HOME/d4rling-rebuild/targets-help.txt" 2>&1
+grep -iE 'corefoundation|system_c|libsystem' "$HOME/d4rling-rebuild/targets-help.txt" | head -n 50 || true
+ninja -C "$BUILD" -t targets all > "$HOME/d4rling-rebuild/targets-all.txt" 2>&1
+grep -iE 'corefoundation|system_c|libsystem' "$HOME/d4rling-rebuild/targets-all.txt" | head -n 50 || true
 ```
+
+Choisir ensuite uniquement les **cibles existantes**, en petits lots
+(`--parallel 2` sur le 10400), et conserver les journaux. La qualification
+complète des frameworks, de l'installation privée et du guest reste **NO GO**
+sur ce poste tant qu'elle n'a pas été réalisée et vérifiée.
+
+Voir le [tutoriel d'installation WSL2/Debian 13 sur le 10400](../docs/installation-wsl2-debian13-10400.md)
+pour les étapes et preuves réellement observées.
 
 Le linker Mach-O Darling est un produit cctools du build :
 `src/external/cctools-port/cctools/ld64/src/x86_64-apple-darwin20-ld`.
