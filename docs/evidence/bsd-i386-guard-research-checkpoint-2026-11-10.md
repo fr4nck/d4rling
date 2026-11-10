@@ -70,3 +70,25 @@ Nouvelle fixture associant le **dispatcher i386 compilé depuis XNU épinglé** 
 **Qualifié directement hors 5700X :** trois objets Mach-O i386 (fixture positive, fixture mutante, programme C) ; **23/23 tests locaux PASS** (7 structure/ABI, 16 oracle avec contre-épreuves) ; `bash -n` du lanceur PASS. Les six blobs Git du lot correspondent exactement aux six sources locales qualifiées. Le lanceur [`run-guard-cf-private.sh`](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/run-guard-cf-private.sh) est préparé, **non rejoué**.
 
 **Qualification invitée : OPEN**. Les 222 contrôles par variante (positif attendu 0 défaut/code 0, mutant attendu défauts/code 10), le lien i386 complet, les vrais stubs `cerror`/TLS et la bibliothèque kernel reconstruite n'ont pas été exécutés ici. Aucun travail Carbon, QuickTime, AUD/R4 ni audio n'a été modifié par ce lot. **Pas de fusion du garde expérimental sur `master`.**
+
+## I1-R1 : fermeture du faux PASS du mutant (10 novembre)
+
+**Branche de recherche vérifiée :** [5e7f905009939583ae57c6f670ece46566ca583f](https://github.com/fr4nck/d4rling/commit/5e7f905009939583ae57c6f670ece46566ca583f).
+
+Sur les neuf cas connus (deux variantes de CF chacun) et les sept appels inconnus
+du témoin I1, le mutant *sans cmc* produit exactement **71 échecs sur 222 contrôles**.
+Le compte **50 connus + 21 inconnus** a été vérifié en exécutant une séquence
+assembleur x86 indépendante sur un Linux x86_64 ; ce n'est **pas** une
+exécution i386 dans Darling.
+
+Le vérificateur [verify_guard_cf.py](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/verify_guard_cf.py)
+refuse maintenant toute autre valeur de défauts mutant (auparavant, >0 suffisait).
+Le lanceur produit un manifeste SHA-256 de **huit preuves**, comprenant désormais
+les deux fichiers de code de retour. Les [23 tests de la vérification](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/test_verify_guard_cf.py)
+ont été exécutés avec **23/23 PASS** ; l'[oracle natif](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/mutant_failure_oracle.c)
+a retourné le code 0 après vérification de 50 + 21 = 71. Les trois blobs Git ont
+été comparés aux fichiers testés avant publication.
+
+**Toujours OPEN :** compilation/lien complet du témoin I1 sur la machine cible,
+son exécution dans Darling, le vrai chemin cerror/TLS et la reconstruction
+du kernel amont. Aucun composant de production ou autre chantier n'a été modifié.
