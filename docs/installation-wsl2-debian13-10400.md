@@ -173,23 +173,45 @@ ninja: error: unknown target 'CoreFoundation'
 
 Cette erreur se produit pendant **la recherche des cibles par Ninja**, avant le build des frameworks. Le code source contient un sous-projet `src/external/corefoundation`, mais la présence de ce dossier ne garantit pas une cible de construction exactement nommée `CoreFoundation`.
 
-**Commande de diagnostic à exécuter maintenant** (lecture seule et génération de logs privés) :
+**Diagnostic réalisé sur le 10400 :** les commandes d'inventaire
+`cmake --build ... --target help` et `ninja -t targets all` ont réussi.
+Le filtrage initial par `grep` a produit surtout des chemins internes
+`src/external/xnu/.../libsystem_kernel` ; **aucun nom de cible CoreFoundation
+n'était identifié dans cet affichage**. Cela ne prouve pas que les véritables
+cibles sont absentes.
+
+**Analyse des sources épinglées (non encore requalifiée sur la machine) :**
+
+- Le sous-module historique
+  `darlinghq/darling-corefoundation` à
+  `a3640a77410cf1825f7855172b1551ae7917c461` utilise
+  `add_separated_framework(CoreFoundation ...)`.
+- La macro `cmake/darling_framework.cmake` définit des cibles de
+  compilation `CoreFoundation_i386` et `CoreFoundation_x86_64`,
+  et un représentant générique `CoreFoundation` de type **IMPORTED** :
+  une cible importée peut participer aux dépendances sans constituer
+  une cible Ninja compilable directement.
+- Le sous-module `darling-Libc` crée `system_c` et
+  `darling-Libsystem` crée `system`.
+
+**Nouveau prévol limité aux noms exacts (aucune compilation) :**
 
 ~~~bash
 BUILD="$HOME/atelier/d4rling-10400/build-core-i386"
-LOG="$HOME/atelier/d4rling-10400/logs"
-mkdir -p "$LOG"
 
-cmake --build "$BUILD" --target help > "$LOG/targets-help.txt" 2>&1
-grep -iE 'CoreFoundation|system_c|libSystem|(^|[ /])system([ /:]|$)' \
-  "$LOG/targets-help.txt" | head -n 50 || true
-
-ninja -C "$BUILD" -t targets all > "$LOG/targets-all.txt" 2>&1
-grep -iE 'corefoundation|libsystem|system_c' \
-  "$LOG/targets-all.txt" | head -n 50 || true
+for TARGET in system_c system CoreFoundation_i386 CoreFoundation_x86_64; do
+  if ninja -C "$BUILD" -t query "$TARGET" > /dev/null 2>&1; then
+    echo "PRESENT : $TARGET"
+  else
+    echo "ABSENT  : $TARGET"
+  fi
+done
 ~~~
 
-Ensuite, sélectionner les **noms exacts** réellement exposés par CMake/Ninja et tester les bibliothèques par étapes, sans deviner une cible ni reconfigurer au hasard.
+Si `CoreFoundation_i386` est présent, tenter **cette cible exacte**
+(`--parallel 2`) avec journal dédié. Ne pas considérer sa réussite
+comme acquise avant un retour complet du 10400. Ne pas changer
+`COMPONENTS=core` ni relancer l'installation pour ce seul diagnostic.
 
 ## 9. Installation privée et test Mach-O : à faire
 
