@@ -1,4 +1,4 @@
-# SoundHack 0.896 — SH01–SH10 static, archive and host witnesses (i386 target)
+# SoundHack 0.896 — SH01–SH11 static, archive and host witnesses (i386 target)
 
 These fixtures use **Python 3 standard-library** host tools. The static auditors
 read files only; SH07 explicitly creates one new output WAV and compiles pinned
@@ -272,3 +272,38 @@ linking, guest execution, Carbon GUI, audio device or Logic compatibility
 is claimed. The canonical cctools-port submodule is pinned at
 `d9456c221e1f462e17c0b3297748bc089d5a861e`.
 Evidence: [SH10 static archive qualification](../../../docs/evidence/soundhack-sh01-2026-11-10/SH10-darwin-static-archive.md).
+
+## SH11 — pinned linker, fail-closed dynamic library export (host only)
+
+The existing [darwin_archive_gate.py](darwin_archive_gate.py) now accepts
+`--ld64-sha256 HEX` (SHA-256 pin of the installed linker, checked **before**
+running it) and `--linked-output /authorized/new/libSoundHackFFT_i386.dylib`
+(exclusive creation **only after** `verify_linked()` accepts a real
+i386 `MH_DYLIB`). A matching linker SHA is a binary identity check, **not**
+proof of source provenance. A linker exit code of zero, a filename, or an
+opaque `LC_DYLD_INFO` is never a guest/runtime PASS. Existing files and
+symlinks are protected; ambiguous or failed links create no dylib.
+
+SH11 adds [test_sh11_cctools_handoff.py](test_sh11_cctools_handoff.py):
+**17/17 new host tests PASS**; SH09–SH11 **58/58 PASS** on Linux/Python
+3.13.5. Some tests mock `verify_linked()` to exercise **only destination
+delivery I/O**; those synthetic cases are never evidence of an actual link.
+
+Real SH08 object + pinned `ld64.lld` 17: **`LINK_TOOLCHAIN_BLOCKED`**,
+`missing or unsupported -arch i386`, exit 3, **no linked output**. Archive
+replay is `DARWIN_ARCHIVE_PASS`, SHA-256
+`c11833539630b5aa70d6d63a44d4063eb11a12f0f316884094b0b64f38707169`.
+A true cctools-port `ld64` executable is still missing locally; the network
+could not retrieve the canonical pinned submodule. No i386 dylib/guest/audio.
+
+Run the host tests from the repository root (no network):
+
+```sh
+python3 -m unittest discover -s reproduction/fixtures/soundhack-i386 \
+  -p 'test_sh11_cctools_handoff.py' -v
+```
+
+To use a previously compiled, *canonical* cctools-port i386 `ld64`, supply
+its absolute path, exact measured SHA-256 and a **nonexistent** output path;
+do not reuse an unrelated linker or combine builds. The actual link remains
+conditional, not qualified here. See [SH11 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH11-cctools-handoff.md).

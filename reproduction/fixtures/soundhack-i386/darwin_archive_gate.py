@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from pathlib import Path
 import shutil
 import subprocess
@@ -23,6 +24,7 @@ from i386_link_gate import (
 )
 
 MAX_ARCHIVE_BYTES = 2 * 1024 * 1024
+MAX_LINKER_BYTES = 256 * 1024 * 1024
 MEMBERS = ('fft.o', 'globals.o')
 
 
@@ -106,9 +108,22 @@ def check_archive(path, ar, obj_bytes, globals_bytes):
     }
 
 
-def try_link_archive(archive, linker, folder):
-    """Attempt real cctools ld64; no fake linker or Mach-O output is accepted."""
-    name = executable(linker)
+def checked_linker(linker, expected_sha256=None):
+    """Fingerprint an existing linker; a matching hash does not prove build origin."""
+    if expected_sha256 is not None and not re.fullmatch(r'[0-9a-fA-F]{64}', expected_sha256):
+        raise Inconclusive('ld64 SHA-256 must contain exactly 64 hex digits')
+    path = Path(executable(linker))
+    if not path.is_file() or not (1 <= path.stat().st_size <= MAX_LINKER_BYTES):
+        raise Inconclusive('ld64 absent, empty, or exceeds bounded size')
+    sha = hashlib.sha256(path.read_bytes()).hexdigest()
+    if expected_sha256 is not None and sha != expected_sha256.lower():
+        raise Inconclusive('ld64 SHA-256 does not match the provided pin')
+    return str(path), sha
+
+
+def try_link_archive(archive, linker, folder, *, linked_output=None, linker_sha256=None):
+    """Use real linker; optionally retain ONLY an independently verified dylib."""
+    name, observed_sha = checked_linker(linker, linker_sha256)
     flags = (['-platform_version', 'macos', '10.5', '10.5']
              if Path(name).name.startswith('ld64.lld') else ['-macosx_version_min', '10.5'])
     product = folder / 'libSH09OriginalFFT.dylib'
@@ -116,9 +131,11 @@ def try_link_archive(archive, linker, folder):
            '-undefined', 'dynamic_lookup', '-install_name', INSTALL_NAME,
            '-all_load', str(archive), '-o', str(product)]
     proc = run_checked(cmd, max_output=100000)
+    base = {'linker_sha256': observed_sha, 'linker_basename': Path(name).name}
     if proc.returncode:
         return {
-            'status': 'LINK_TOOLCHAIN_BLOCKED', 'linker_returncode': proc.returncode,
+            'status': 'LINK_TOOLCHAIN_BLOCKED', **base,
+            'linker_returncode': proc.returncode,
             'linker_stderr_tail': proc.stderr.decode(errors='replace').strip()[-500:],
         }
     if not product.is_file():
@@ -126,15 +143,37 @@ def try_link_archive(archive, linker, folder):
     try:
         linked = verify_linked(product)
     except Inconclusive as exc:
-        # A real dylib may use LC_DYLD_INFO, which the current bounded
-        # reader intentionally refuses to treat as a resolved ABI.
-        return {'status': 'LINK_UNVERIFIED', 'reason': str(exc),
+        # Incomplete dyld bind/export parsing is never silently promoted to PASS.
+        return {'status': 'LINK_UNVERIFIED', **base, 'reason': str(exc),
                 'observed_output_bytes': product.stat().st_size}
-    return {'status': 'LINK_STRUCTURE_PASS', 'linked': linked}
+    result = {'status': 'LINK_STRUCTURE_PASS', **base, 'linked': linked}
+    if linked_output is not None:
+        # Reject a verifier/candidate mismatch before creating any destination.
+        if hashlib.sha256(product.read_bytes()).hexdigest() != linked['sha256']:
+            raise ContractFailure('linked candidate changed after verification')
+        dest = Path(linked_output)
+        # Never overwrite an existing file or follow an existing symlink.
+        with dest.open('xb') as stream:
+            with product.open('rb') as src:
+                shutil.copyfileobj(src, stream, length=1024 * 1024)
+        if hashlib.sha256(dest.read_bytes()).hexdigest() != linked['sha256']:
+            raise ContractFailure('saved linker output does not match verified dylib')
+        result['saved_dylib'] = str(dest)
+    return result
 
 
 def qualify(object_path, expected_sha256=EXPECTED_SH08_SHA256, *,
-            clang='clang', ar='llvm-ar', linker=None, output=None):
+            clang='clang', ar='llvm-ar', linker=None, output=None,
+            linked_output=None, linker_sha256=None):
+    if linked_output is not None and linker is None:
+        raise Inconclusive('--linked-output requires --ld64')
+    if linker_sha256 is not None and linker is None:
+        raise Inconclusive('--ld64-sha256 requires --ld64')
+    if output is not None and linked_output is not None and Path(output).resolve() == Path(linked_output).resolve():
+        raise Inconclusive('archive and dylib must not have the same output path')
+    if linker is not None:
+        # Validate the linker pin before creating outputs or running commands.
+        checked_linker(linker, linker_sha256)
     original_info = inspect_macho(object_path, expected_sha256)
     original = Path(object_path).read_bytes()
     if hashlib.sha256(original).hexdigest() != original_info['sha256']:
@@ -159,7 +198,8 @@ def qualify(object_path, expected_sha256=EXPECTED_SH08_SHA256, *,
             'source_object': original_info, 'archive': info,
         }
         if linker:
-            link_result = try_link_archive(archive, linker, folder)
+            link_result = try_link_archive(archive, linker, folder,
+                                           linked_output=linked_output, linker_sha256=linker_sha256)
             result['link_attempt'] = link_result
             result['status'] = link_result['status']
         if output is not None:
@@ -185,11 +225,14 @@ def main(argv=None):
     parser.add_argument('--llvm-ar', default='llvm-ar')
     parser.add_argument('--ld64', default=None, help='optional installed cctools-port ld64 executable path')
     parser.add_argument('--output', default=None, help='optional new archive path; never overwrites')
+    parser.add_argument('--linked-output', default=None, help='optional verified MH_DYLIB path; exclusive-create only')
+    parser.add_argument('--ld64-sha256', default=None, help='optional SHA-256 pin of already installed linker')
     args = parser.parse_args(argv)
     try:
         result = qualify(args.object, args.expected_sha256,
                          clang=args.clang, ar=args.llvm_ar, linker=args.ld64,
-                         output=args.output)
+                         output=args.output, linked_output=args.linked_output,
+                         linker_sha256=args.ld64_sha256)
     except ContractFailure as exc:
         result, status = {'status': 'TARGET_CONTRACT_FAIL', 'error': str(exc)}, 2
     except (Inconclusive, InvalidMachO, ValueError, OSError) as exc:
