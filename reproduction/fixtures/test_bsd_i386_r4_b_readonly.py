@@ -93,6 +93,13 @@ class ProbeR4BTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "exactly one i386"):
             output(header + arch1 + arch2 + payload)
 
+    def test_fat_i386_slice_overlapping_header_rejected(self):
+        payload = thin()
+        wrapped = bytearray(fat(payload))
+        struct.pack_into(">I", wrapped, 16, 8)
+        with self.assertRaisesRegex(ValueError, "invalid FAT i386 bounds"):
+            output(bytes(wrapped))
+
     def test_fat_truncated_architecture_table_rejected(self):
         with self.assertRaisesRegex(ValueError, "invalid FAT architecture table"):
             output(struct.pack(">II", 0xcafebabe, 2) + b"\x00" * 20)
