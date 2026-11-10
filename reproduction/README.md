@@ -215,9 +215,24 @@ python3 reproduction/install-private.py \
 
 Il ne lance ni sudo ni runtime. L’installation privée produite se trouve dans
 `$HOME/d4rling-rebuild/build-i386/private-install` ; utiliser ce chemin
-comme valeur de --installation ci-dessous. Le build complet des bibliothèques
-et leur assemblage restent des étapes à qualifier sur le poste de destination.
-Les installations historiques déjà assemblées sont conservées dans l’archive.
+comme valeur de --installation ci-dessous.
+
+**Qualification du second poste i5-10400 sous WSL2, 10/11/2026 : PASS.**
+Le profil `core-i386` complet a été compilé et assemblé par
+`install-private.py --build --jobs 2` sous
+`~/atelier/d4rling-10400/build-core-i386/private-install` ; le script a
+affiché `PRIVATE_INSTALLATION=...` et `RUNTIME_EXECUTED=NO`.
+L'opérateur a contrôlé `bin/darling` (ELF x86-64 **setuid**),
+`mldr` (ELF x86-64), `usr/lib/dyld` (Mach-O universel **i386 +
+x86_64**) et `usr/lib/libSystem.B.dylib` (Mach-O universel **i386 +
+x86_64**). Aucun test d'exécution invitée n'a encore été réussi sur ce poste.
+La qualité du build ne dispense pas du contrôle des permissions, des
+namespaces et des témoins positifs/négatifs. Ne pas relancer sur un préfixe
+existant : le script refuse explicitement de l'écraser. Les installations
+historiques déjà assemblées sont conservées dans l’archive.
+
+Consulter le [tutoriel du 10400](../docs/installation-wsl2-debian13-10400.md)
+pour la suite et les sorties réellement observées.
 
 ## 5. Reconstruire puis tester le témoin Carbon i386
 
