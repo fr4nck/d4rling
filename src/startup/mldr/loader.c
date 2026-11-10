@@ -16,6 +16,12 @@ static void load(const char* path, cpu_type_t cpu, bool expect_dylinker, char** 
 static void setup_space(struct load_results* lr, bool is_64_bit);
 static void* compatible_mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);
 
+#if defined(GEN_32BIT) && defined(D4RLING_MLDR_I386_MMAP_DIAG)
+#define MLDR_MMAP_DIAG(branch, seg, address, length, slide, flags) fprintf(stderr, "MLDR_I386_MMAP_DIAG branch=%s segment=%.16s requested=%p length=%zu slide=0x%lx vmaddr=0x%lx flags=0x%x errno=%d\\n", branch, (seg)->segname, (void*)(uintptr_t)(address), (size_t)(length), (unsigned long)(slide), (unsigned long)(seg)->vmaddr, (unsigned int)(flags), errno)
+#else
+#define MLDR_MMAP_DIAG(branch, seg, address, length, slide, flags) ((void)0)
+#endif
+
 #ifndef PAGE_SIZE
 #	define PAGE_SIZE	4096
 #endif
@@ -175,6 +181,9 @@ no_slide:
 								// if we can't map it, assume everything is fine and the system has already made that area inaccessible
 								rv = 0;
 							} else {
+								MLDR_MMAP_DIAG("anonymous-slide", seg, addr, seg->vmsize, slide, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED_NOREPLACE);
+								MLDR_MMAP_DIAG("anonymous-tail", seg, PAGE_ALIGN(seg->vmaddr + seg->vmsize - size), PAGE_ROUNDUP(size), slide, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED_NOREPLACE);
+								MLDR_MMAP_DIAG("file-backed", seg, addr, seg->filesize, slide, flag | MAP_PRIVATE);
 								fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(errno));
 								exit(1);
 							}
