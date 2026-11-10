@@ -474,47 +474,44 @@ Les journaux de contre-épreuves ont été conservés sous
 parcours historique Carbon i386, pas QuickTime, Logic 8,
 l'audio/JACK ou les développements récents de `master`.**
 
-## 14. Qualification de master actuel sur le 10400 — cible mldr32 R4-F
+## 14. Qualification sur master récent — prévol R4-F, aucune écriture sur le 10400
 
-**Statut : procédure prête, NON ENCORE EXÉCUTÉE sur le 10400.**
-Après fermeture du témoin historique Carbon 3/3 PASS, le prochain
-banc cible un composant modifié **sur le `master` récent** plutôt
-que de retoucher la reconstitution `b7d0cb6`. Le script existant
+**Statut : prévol local NON ENCORE EXÉCUTÉ ; le lancement R4-F antérieur
+est suspendu jusqu'à réconciliation de l'existant.** Le témoin Carbon
+historique est qualifié 3/3 PASS et son installation doit rester intacte.
+
+Les règles de `AGENTS.md` (en particulier sections « Prévol sans mutation »
+et « Protéger l'environnement ») imposent **l'inventaire local avant toute
+mise à jour Git, récupération de sous-module ou création de build**. La
+précédente proposition combinant `git fetch`, `git submodule update
+--init --recursive` et création automatique d'un build neuf a été
+**retirée** : elle pouvait générer des téléchargements volumineux et
+multiplier les artefacts sans vérifier les copies déjà disponibles.
+
+**Étape immédiate :** prévol **strictement en lecture seule** de
+`~/atelier/d4rling` et `~/atelier/d4rling-10400` :
+branche, HEAD, origin, modifications Git, présence de
+`reproduction/qualify-mldr32-current.sh`, options R4-F dans les
+sources, sous-modules locaux concernés, build(s) et sorties déjà présents.
+Utiliser `GIT_NO_LAZY_FETCH=1` et ne pas lancer
+`git fetch`, `pull`, `merge`, `submodule update`,
+`sync`, ni la compilation dans ce premier prévol.
+
+**Décision après résultats :** privilégier le build déjà réutilisable.
+Un **seul** build séparé nouveau serait justifié uniquement si les
+sources récentes ne peuvent techniquement pas être compilées dans
+un build cohérent déjà existant et si leur disponibilité est confirmée.
+Le script
 [`reproduction/qualify-mldr32-current.sh`](../reproduction/qualify-mldr32-current.sh)
-qualifie le drapeau de diagnostic mmap R4-F appliqué **exclusivement
-à `mldr32`** : source présente, configuration CMake fraîche,
-`compile_commands.json` avec une seule définition instrumentée,
-`-m32`, puis compilation d'un ELF32.
+requiert une destination inexistante et ne fait **ni installation ni guest** :
+ne pas l'exécuter automatiquement.
 
-**Deux arbres distincts :**
-
-- **Préserver** `~/atelier/d4rling-10400/source`,
-  `build-core-i386/`, `private-install/` et `carbon-probe/` :
-  le témoin historique reste 3/3 PASS.
-- Utiliser le dépôt canonique `~/atelier/d4rling` après
-  vérification de `master`, de `origin` et de l'absence de
-  changements locaux. Mettre à jour par **fetch + fusion fast-forward
-  uniquement**, sans reset, stash ni rebase ; synchroniser les
-  sous-modules seulement depuis le dépôt canonique.
-  **Ce passage nécessite GitHub et peut télécharger plusieurs Go
-  de sous-modules.** Le script de build ne réinstalle pas Darling.
-- Destination neuve :
-  `~/atelier/d4rling-10400/validation/current-master-r4f-build`.
-  Ne jamais écraser un ancien dossier de build ou utiliser le
-  `private-install` historique comme destination.
-
-**Critère d'acceptation :** messages
+**Critère futur :** R4-F affichera
 `R4F_COMPILE_DEFINITION_SCOPE_PASS` et
-`R4F_CURRENT_MASTER_MLDR32_BUILD_PASS`,
-SHA `SOURCE_HEAD` identifié, binaire ELF32 vérifié.
-**Aucune exécution invitée ni changement de la bibliothèque
-`dyld` historique n'est impliqué.**
-
-La proposition QuickTime C4-D reste à part : la branche
-`master` conserve un patch de configuration seulement proposé,
-car le Memory Manager C4 réel est toujours inaccessible depuis
-le 5700X. Le fait de qualifier `mldr32` sur `master` ne
-transforme pas QuickTime C4-D en fonctionnalité de production.
+`R4F_CURRENT_MASTER_MLDR32_BUILD_PASS` seulement après réelle
+compilation i386. Les changements récents de `master` ne sont pas
+qualifiés par le succès Carbon historique. QuickTime C4-D reste un
+chantier indépendant, non intégrable à ce stade.
 
 ## Précautions
 
