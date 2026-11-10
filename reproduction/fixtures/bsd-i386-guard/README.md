@@ -131,3 +131,33 @@ python3 reproduction/fixtures/bsd-i386-guard/qualify_machdep_i386.py --xnu /chem
 ```
 
 **Résultat réellement exécuté : 24/24 PASS et objets Mach-O i386 PASS sur extraits privés ;** contrôle source complet `--xnu` et invité Darling **OPEN**. Aucun téléchargement, aucune fusion sur `master`, aucun remplacement d'installation.
+
+
+## I1-R5 — fichiers XNU intégraux qualifiés hors 5700X (10 novembre)
+
+Le banc `qualify_machdep_i386.py` propose désormais `--pinned-dir CHEMIN` :
+lecture seule de **cinq fichiers XNU amont complets**, vérifiés par leurs
+Git blob SHA-1 **et** SHA-256, sans clone XNU ni téléchargement. Toute
+modification de contenu, CRLF, entrée manquante ou symlink provoque un refus.
+
+```bash
+# Les cinq fichiers sont déjà placés dans CHEMIN avec leurs chemins XNU originaux :
+python3 reproduction/fixtures/bsd-i386-guard/qualify_machdep_i386.py --pinned-dir CHEMIN
+python3 -m unittest discover -s reproduction/fixtures/bsd-i386-guard -p 'test_*machdep*.py' -v
+```
+
+**Preuves réellement exécutées sur cinq blobs authentiques :**
+`git apply --check` **PASS** sur les trois fichiers modifiés,
+assemblage Mach-O i386 de `machdep_syscall.S` complet **PASS**,
+deux wrappers LDT issus des vrais `custom.S` **PASS** avec mini-shim
+ABI, code x86_64 binaire-identique **PASS** et non-Darling inchangé.
+**36/36 tests Python PASS** (24 préexistants + 12 contrôles des sources
+épinglées). Le mode `--pinned-dir` affirme uniquement l'identité de
+contenu des Git blobs, pas la présence d'un checkout à une révision précise.
+Le mode `--xnu` continue d'exiger le commit `ba34c8ac`.
+
+[Rapport de qualification complète](../../../docs/evidence/bsd-i386-machdep-full-pinned-2026-11-10.md).
+
+**Toujours OPEN :** lien de la bibliothèque système XNU complète, exécution
+invitée Darling, `cerror`/TLS de production, et Logic Studio 8.
+Aucun code applicatif n'a été fusionné sur `master`.

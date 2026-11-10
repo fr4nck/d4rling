@@ -9,6 +9,7 @@ Never modifies XNU, a Darling installation, or the working checkout.
 from __future__ import annotations
 
 import argparse
+import hashlib
 from pathlib import Path
 import re
 import shutil
@@ -27,6 +28,13 @@ PINNED = {
     CUSTOM: '3f72013314c58f729ed7ee2efb8506597afae471',
     HEADER: 'ad3c3dfcb1c3b9d78a89104b3f74340c075c8b59',
     TABLE: 'fc5b04f0d193838606339b465757a1340674921a',
+}
+PINNED_SHA256 = {
+    MACH: 'f05f8b421c3c5ba2f84b3ea6b61ac1082a200ba27ad36760ea7fc24f0d9adc8d',
+    GEN: '45cc8182414e1bc2d0a018783de4e966c6776354d752567902d717a6cdaf3cea',
+    CUSTOM: '45cc8182414e1bc2d0a018783de4e966c6776354d752567902d717a6cdaf3cea',
+    HEADER: '722278dd44b34c760332dc8202a1f160621e6eaf909e2f89dc2011b4ef8b7fc3',
+    TABLE: '67134f69662de0dd4f36a605c0bb40cac4ef3ce4b33d5ee05dd54728d1678db6',
 }
 PATCH = Path(__file__).resolve().parent.parent.parent / 'patches' / 'bsd-i386-machdep-guard-cf-ba34c8ac.patch'
 # Minimal stand-ins with the exact source anchors: used only for --selftest.
@@ -178,6 +186,40 @@ def read_pinned(root: Path) -> dict[str, str]:
     return sources
 
 
+def read_pinned_directory(root: Path) -> dict[str, str]:
+    """Read five full XNU source files, checking both Git blob and SHA-256.
+
+    The byte identity is authenticated against verified upstream blob IDs,
+    but this mode does not establish the local repository's commit revision.
+    No source directory entries are created or altered.
+    """
+    if not root.is_dir() or root.is_symlink():
+        raise GateError('pinned source root missing or a symlink')
+    if set(PINNED) != set(PINNED_SHA256):
+        raise GateError('incomplete dual-digest provenance contract')
+    sources: dict[str, str] = {}
+    for path, expected in PINNED.items():
+        source = root
+        for segment in Path(path).parts:
+            source = source / segment
+            if source.is_symlink():
+                raise GateError(f'symlink in pinned source path: {path}')
+        if not source.is_file():
+            raise GateError(f'pinned source not a regular file: {path}')
+        data = source.read_bytes()
+        blob = hashlib.sha1(b'blob ' + str(len(data)).encode('ascii') +
+                            b'\0' + data).hexdigest()
+        if blob != expected:
+            raise GateError(f'pinned source Git blob mismatch: {path} ({blob})')
+        if hashlib.sha256(data).hexdigest() != PINNED_SHA256[path]:
+            raise GateError(f'pinned source SHA-256 mismatch: {path}')
+        try:
+            sources[path] = data.decode('utf-8')
+        except UnicodeDecodeError as exc:
+            raise GateError(f'pinned source is not valid UTF-8: {path}') from exc
+    return sources
+
+
 def validate_source(sources: dict[str, str], *, full: bool) -> None:
     mach = sources[MACH]
     old = 'andl\t$0xffff, %eax // Because there is some extra stuff in upper bytes we don\'t need'
@@ -311,19 +353,30 @@ def main() -> int:
     group=p.add_mutually_exclusive_group(required=True)
     group.add_argument('--selftest',action='store_true')
     group.add_argument('--xnu',type=Path)
+    group.add_argument('--pinned-dir', type=Path,
+                       help='existing directory of five complete files, verified by Git blob SHA-1')
     args=p.parse_args()
     if shutil.which('clang') is None or shutil.which('llvm-objdump') is None:
         print('MACHDEP_GATE=BLOCKED_TOOLS')
         return 3
     try:
-        sources=read_pinned(args.xnu) if args.xnu else {MACH:MACH_FIXTURE,GEN:LDT_FIXTURE,CUSTOM:LDT_FIXTURE}
-        result=qualify(sources,full=bool(args.xnu))
+        if args.xnu:
+            sources = read_pinned(args.xnu)
+        elif args.pinned_dir:
+            sources = read_pinned_directory(args.pinned_dir)
+        else:
+            sources = {MACH: MACH_FIXTURE, GEN: LDT_FIXTURE, CUSTOM: LDT_FIXTURE}
+        result = qualify(sources, full=bool(args.xnu or args.pinned_dir))
+        if args.pinned_dir:
+            result['source'] = 'PINNED_BLOBS_NO_GIT_CHECKOUT'
     except (GateError, OSError, ValueError, subprocess.CalledProcessError) as e:
         print(f'MACHDEP_GATE=FAIL_OR_BLOCKED {e}')
         return 10
     for key,value in result.items():
         print(f'MACHDEP_{key.upper()}={value}')
-    print('MACHDEP_GATE=PASS_FULL_PINNED' if args.xnu else 'MACHDEP_GATE=PASS_SELFTEST_ONLY')
+    print('MACHDEP_GATE=' + ('PASS_FULL_PINNED' if args.xnu else
+                               'PASS_PINNED_BLOBS' if args.pinned_dir else
+                               'PASS_SELFTEST_ONLY'))
     return 0
 
 if __name__=='__main__':
