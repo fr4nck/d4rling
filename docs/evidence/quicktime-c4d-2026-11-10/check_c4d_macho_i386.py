@@ -81,6 +81,13 @@ def assess(images: dict[str, dict]) -> dict:
                 'exit_code': 2 if errors else 3, 'errors': errors,
                 'inconclusive': unknown, 'evidence': evidence}
 
+    # The shared reader does not decode dyld bind/export opcodes. A complete
+    # nlist cannot certify that the dyld-visible dependency set is complete.
+    # Keep explicit structural violations authoritative (FAIL before UNKNOWN).
+    for framework in FRAMEWORKS:
+        if images[framework].get('has_dyld_info'):
+            unknown.append(f'{framework}: LC_DYLD_INFO present; bind/export opcodes uninspected')
+
     qt, cs, cc = (images[name] for name in FRAMEWORKS)
     def find_dep(source: dict, target: str) -> list[dict]:
         return [dep for dep in source['dylibs'] if framework_path(dep.get('name'), target)]

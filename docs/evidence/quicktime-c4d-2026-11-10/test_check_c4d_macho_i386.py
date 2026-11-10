@@ -125,6 +125,31 @@ class TestC4DM2(unittest.TestCase):
         images['QuickTime']['two_level_namespace'] = False
         self.assertEqual(self.evaluate(images)['exit_code'], 3)
 
+    def test_dyld_info_present_on_quicktime_is_inconclusive(self):
+        images = fixture()
+        images['QuickTime']['has_dyld_info'] = True
+        result = self.evaluate(images)
+        self.assertEqual((result['status'], result['exit_code']), ('STATIC_INCONCLUSIVE', 3))
+        self.assertIn('LC_DYLD_INFO', ' '.join(result['inconclusive']))
+
+    def test_dyld_info_present_on_coreservices_is_inconclusive(self):
+        images = fixture()
+        images['CoreServices']['has_dyld_info'] = True
+        self.assertEqual(self.evaluate(images)['exit_code'], 3)
+
+    def test_dyld_info_present_on_carboncore_is_inconclusive(self):
+        images = fixture()
+        images['CarbonCore']['has_dyld_info'] = True
+        self.assertEqual(self.evaluate(images)['exit_code'], 3)
+
+    def test_dyld_info_does_not_hide_missing_reexport_failure(self):
+        images = fixture()
+        images['CoreServices']['has_dyld_info'] = True
+        images['CoreServices']['dylibs'].clear()
+        result = self.evaluate(images)
+        self.assertEqual((result['status'], result['exit_code']), ('STATIC_FAIL', 2))
+        self.assertIn('LC_REEXPORT_DYLIB', ' '.join(result['errors']))
+
     def test_missing_symtab_inconclusive(self):
         images = fixture()
         images['QuickTime']['has_symtab'] = False
