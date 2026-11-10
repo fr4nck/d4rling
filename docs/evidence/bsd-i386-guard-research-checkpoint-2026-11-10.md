@@ -48,3 +48,14 @@ Le lot suivant est publié **uniquement sur la branche de recherche** (tête vé
 - [Témoin i386 de conversion](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/stub-cf-guest.c), [capture EAX/CF](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/stub-cf-capture-i386.S) et [lanceur privé](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/run-stub-cf-private.sh) : compilation i386 et syntaxe Bash contrôlées dans un conteneur Linux indépendant ; **l'exécution invitée sur le 5700X reste OPEN**.
 
 Aucune reconstruction de la véritable `libsystem_kernel.dylib` sur XNU amont n'a eu lieu ; aucun essai réel `cerror`/TLS, QuickTime, Audio ou Logic 8 n'est revendiqué. Le lancement s'appuie sur la chaîne B15 protégée par copie OverlayFS privée et sur un préfixe nouveau. Le script GitHub a reçu une correction de l'empreinte B15, enregistrée dans le commit indiqué ci-dessus. **Ne pas fusionner le patch expérimental dans `master` sur ces seuls résultats.**
+
+
+### Qualification CF : refus des faux PASS (10 novembre)
+
+**Nouvelle tête de la branche de recherche vérifiée :** [`adc5a522213393e2bbd2dcff0898aecf7e7038c1`](https://github.com/fr4nck/d4rling/commit/adc5a522213393e2bbd2dcff0898aecf7e7038c1).
+
+Le lanceur [`run-stub-cf-private.sh`](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/run-stub-cf-private.sh) ne peut plus imprimer `NOT_QUALIFIED` en terminant avec le code 0 : il conserve le véritable code retour, vérifie ses empreintes et délègue le verdict à [`verify_stub_cf_guest.py`](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/verify_stub_cf_guest.py).
+
+La nouvelle suite [`test_verify_stub_cf_guest.py`](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/test_verify_stub_cf_guest.py) a été **réellement exécutée hors Darling avec 15/15 PASS** : un témoin positif, quatorze refus de preuves erronées (code 137, doublons, journal tronqué, échec contradictoire, empreintes incorrectes, fichier manquant, etc.). Le parseur Bash du lanceur passe également `bash -n`. Les identités des trois sources publiées ont été confrontées à leurs Git blob SHA après publication.
+
+**Limites inchangées :** pas de rejeu i386 du lanceur sur le 5700X ; `STUB_CF_GUEST_RUNTIME=OPEN` ; la conversion `cerror`/TLS du vrai XNU et l'intégration du kernel restent OPEN. Ce checkpoint ne fusionne aucun correctif dans `master`, et ne modifie pas QuickTime, AUD/R4, l'audio ni les installations.
