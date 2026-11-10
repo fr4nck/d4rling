@@ -109,6 +109,22 @@ class ProbeR4BTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "load commands do not consume"):
             output(bytes(broken))
 
+    def test_big_endian_thin_i386(self):
+        name = b"__TEXT" + b"\\x00" * 10
+        segment = struct.pack(">II16sIIIIIIII", 1, 56, name,
+                              0x1000, 0x2000, 0, 0x1000, 7, 5, 0, 0)
+        header = struct.pack(">IIIIIII", 0xfeedface, 7, 3, 2, 1, 56, 0)
+        self.assertIn("SEGMENT=__TEXT VMADDR=0x1000", output(header + segment))
+
+    def test_little_endian_fat_wrapper(self):
+        payload = thin()
+        header = struct.pack("<II", 0xcafebabe, 1)
+        arch = struct.pack("<IIIII", 7, 3, 28, len(payload), 0)
+        self.assertIn("CPU=i386", output(header + arch + payload))
+
+    def test_fat_slice_with_nonzero_padding(self):
+        self.assertIn("SEGMENT=__TEXT", output(fat(thin(), offset=64)))
+
     def test_unrecognized_format_rejected(self):
         with self.assertRaisesRegex(ValueError, "not a 32-bit Mach-O"):
             output(b"Z" * 100)
