@@ -1,4 +1,4 @@
-# SoundHack 0.896 — SH01–SH12 static, archive and host witnesses (i386 target)
+# SoundHack 0.896 — SH01–SH13 static, archive and host witnesses (i386 target)
 
 These fixtures use **Python 3 standard-library** host tools. The static auditors
 read files only; SH07 explicitly creates one new output WAV and compiles pinned
@@ -339,3 +339,27 @@ but **no cctools-port ld64 was available**: status LINKER_ABSENT (exit 3).
 SH09-SH12 full host suite: **77/77 PASS**, 0 SKIP with actual SH08/SH10 artifacts.
 SH12 alone without external SH10 ZIP: **11 PASS, 8 SKIP**. See
 [SH12 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH12-offline-cctools-replay.md).
+
+## SH13 — detect the actual cctools-port ld64 output directory
+
+The pinned cctools-port `cctools/ld64/src/ld/Makefile.am` declares
+`bin_PROGRAMS = ld`. SH12 previously searched `.../ld64/src` but not
+`.../ld64/src/ld`; a correct linker build could be falsely reported absent.
+
+The existing bounded candidate search now also checks
+`.../ld64/src/ld/ld` and `.../ld64/src/ld/.libs/ld` (Libtool may
+leave a shell wrapper at the first path). Historical layouts remain supported,
+and existing ELF, symlink, ambiguity and hash checks are unchanged. It
+does **not** compile or install cctools and does **not** identify any linked
+SoundHack binary.
+
+```sh
+python3 -m unittest discover -s reproduction/fixtures/soundhack-i386 \
+  -p 'test_sh13_ld64_build_paths.py' -v
+```
+
+**8/8** focused path-discovery tests PASS; SH09–SH13 **85/85 PASS** with the
+pinned SH08 object and SH10 ZIP available for the larger suite. SH13's inert
+ELF test fixtures are never run as linkers. A real i386 Mach-O link remains
+blocked until an authorized, canonical cctools-port linker is built and used.
+See [SH13 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH13-ld64-build-path.md).

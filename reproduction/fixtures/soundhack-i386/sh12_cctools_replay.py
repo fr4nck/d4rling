@@ -35,10 +35,21 @@ PACKAGE_ITEMS = frozenset({ARCHIVE_NAME, "NOTICE.txt", "LICENSE-MIT-SoundHack.tx
 MAX_PACKAGE_BYTES = 1024 * 1024
 MAX_UNPACKED_BYTES = 2 * 1024 * 1024
 MAX_LINKER_BYTES = 256 * 1024 * 1024
+# cctools-port@d9456c2 builds bin_PROGRAMS=ld under ld64/src/ld.
+# Libtool may place its native ELF in .libs/ld behind a shell wrapper.
+# Keep the previous search locations for older build layouts.
 CANDIDATE_FOLDERS = (
+    "src/external/cctools-port/cctools/ld64/src/ld/.libs",
+    "src/external/cctools-port/cctools/ld64/src/ld",
     "src/external/cctools-port/cctools/ld64/src",
+    "cctools-port/cctools/ld64/src/ld/.libs",
+    "cctools-port/cctools/ld64/src/ld",
     "cctools-port/cctools/ld64/src",
+    "cctools/ld64/src/ld/.libs",
+    "cctools/ld64/src/ld",
     "cctools/ld64/src",
+    "ld64/src/ld/.libs",
+    "ld64/src/ld",
     "ld64/src",
 )
 LD_NAME = re.compile(r"^(?:ld|ld64|(?:i386|x86_64|aarch64)-apple-darwin\d+-ld)$")
