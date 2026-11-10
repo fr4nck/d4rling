@@ -30,7 +30,7 @@ def inspect(data):
         for i in range(nfat):
             cpu, subtype, offset, size, align = struct.unpack_from(endian + "IIIII", data, 8 + i * 20)
             if cpu == CPU_I386:
-                if offset > len(data) or size > len(data) - offset:
+                if offset < 8 + nfat * 20 or offset > len(data) or size > len(data) - offset:
                     raise ValueError("invalid FAT i386 bounds")
                 slices.append(data[offset:offset + size])
         if len(slices) != 1:
