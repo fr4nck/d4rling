@@ -110,7 +110,7 @@ class ProbeR4BTests(unittest.TestCase):
             output(bytes(broken))
 
     def test_big_endian_thin_i386(self):
-        name = b"__TEXT" + b"\\x00" * 10
+        name = b"__TEXT" + b"\x00" * 10
         segment = struct.pack(">II16sIIIIIIII", 1, 56, name,
                               0x1000, 0x2000, 0, 0x1000, 7, 5, 0, 0)
         header = struct.pack(">IIIIIII", 0xfeedface, 7, 3, 2, 1, 56, 0)
