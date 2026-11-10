@@ -146,14 +146,14 @@ ne pas exécuter une commande Bash comme une commande PowerShell.
 
 ## Coordination inter-conversations — journal Git partagé (10 novembre 2026)
 
-Le dépôt GitHub \`fr4nck/d4rling\`, branche \`master\`, est le **point de
+Le dépôt GitHub `fr4nck/d4rling`, branche `master`, est le **point de
 synchronisation commun** entre les conversations ChatGPT, agents locaux et
 autres contributions. Une conversation, un rapport oral ou une session
 terminale ne remplace pas les commits et documents publiés.
 
 **Avant chaque nouveau lot, reprise ou changement de chantier :**
 
-1. Lire le SHA courant de \`master\` **et les derniers commits** ; examiner
+1. Lire le SHA courant de `master` **et les derniers commits** ; examiner
    les diffs qui touchent les fichiers, contrats, dépendances ou preuves du lot.
    Comparer avec le SHA de départ de la conversation ou du checkout local.
 2. Lire le checkpoint publié le plus récent dans le périmètre concerné,
@@ -175,13 +175,13 @@ terminale ne remplace pas les commits et documents publiés.
   qualifié ou accessible depuis GitHub, publier **uniquement un checkpoint
   documentaire honnête**, lorsque sa publication est autorisée :
   révision, provenance, résultats rapportés vs vérifiés, limitations,
-  statut \`PASS\`/\`FAIL\`/\`BLOCKED\`, et prochaine action exacte.
+  statut `PASS`/`FAIL`/`BLOCKED`, et prochaine action exacte.
   Ne pas publier du code non qualifié sous prétexte de le sauvegarder.
 - À chaque checkpoint, distinguer les faits observés directement par
   l'agent des résultats **rapportés depuis un autre poste ou une autre
   conversation**. Ne jamais présenter ces derniers comme des tests rejoués.
 
-**Juste avant chaque commit ou publication :** relire à nouveau \`master\`,
+**Juste avant chaque commit ou publication :** relire à nouveau `master`,
 inspecter les nouveaux commits et les fichiers concernés. Si la tête a
 changé, comparer et réconcilier avant toute écriture ; ne jamais écraser
 silencieusement un travail concurrent. Publier uniquement en avance normale
@@ -191,7 +191,7 @@ puis communiquer SHA complet, URL, périmètre, preuves et prochain jalon.
 
 Ces contrôles se font **à chaque session et à chaque publication** ; ils
 ne constituent pas une surveillance continue en arrière-plan. Conserver
-la règle de branche unique \`master\` et toutes les protections du présent
+la règle de branche unique `master` et toutes les protections du présent
 guide, notamment les exclusions de Petite Victoire, les installations
 historiques et les données propriétaires.
 
