@@ -92,3 +92,14 @@ a retourné le code 0 après vérification de 50 + 21 = 71. Les trois blobs Git 
 **Toujours OPEN :** compilation/lien complet du témoin I1 sur la machine cible,
 son exécution dans Darling, le vrai chemin cerror/TLS et la reconstruction
 du kernel amont. Aucun composant de production ou autre chantier n'a été modifié.
+
+
+## I1-R2 — contrat des vrais stubs XNU (10 novembre 2026)
+
+**Branche de recherche vérifiée :** [`cc5a227c2bed722800a9ab9a88b379d170fd6829`](https://github.com/fr4nck/d4rling/commit/cc5a227c2bed722800a9ab9a88b379d170fd6829).
+
+Le travail précédent utilisait un **miroir** de la conversion `-errno`/CF. Ce lot a vérifié **sept fichiers XNU authentiques** à la révision épinglée `ba34c8ac576190d1bbacb6ee6b1903204a576114` : **22/22 contrôles statiques PASS**, réalisés par lecture directe GitHub et contrôle des Git blobs. Les deux branches i386 `SYS.h` sont identiques ; les chemins `INT` et ordinaires passent par `__darling_bsd_syscall` grâce à la redéfinition `DARLING` de `UNIX_SYSCALL_TRAP`. La conversion `cmpl / cmc / jnc / negl` concerne les appels normaux ; `ULOCK_RAW_SYSCALL` et `NOERROR` restent bruts. L'exception `lseek` 64 bits et `sigreturn` / `sigaltstack` ont été examinés.
+
+L'outil [`xnu_stub_contract.py`](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/xnu_stub_contract.py) lit en **lecture seule** les objets d'un dépôt XNU local, avec épinglage de révision et des sept Git blobs, et refuse toute source manquante ou dérivée. La suite [`test_xnu_stub_contract.py`](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/test_xnu_stub_contract.py) a été exécutée avec **21/21 PASS**, sur des entrées de contrat synthétiques et des mutations. Rapport : [I1-R2](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/docs/evidence/bsd-i386-xnu-stubs-source-contract-2026-11-10.md).
+
+**Limites :** l'outil Python n'a pas encore été rejoué contre un checkout local contenant `ba34c8ac` ; l'audit direct GitHub (22/22) et les tests Python (21/21) sont deux preuves distinctes. Aucun objet des *vrais stubs* n'a été compilé, aucune bibliothèque kernel reconstruite, aucun `cerror`/TLS réel ni invité Darling exécuté. **Pas de fusion du correctif expérimental dans `master`.**
