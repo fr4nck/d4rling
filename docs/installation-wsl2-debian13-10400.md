@@ -19,7 +19,9 @@ Machine : Intel Core i5-10400, 6 cœurs/12 threads, Windows 11, 23,9 Go de RAM p
 | `CoreFoundation_i386` + `CoreFoundation_x86_64` | Compilés PASS ; fat Mach-O i386 + x86_64 vérifié |
 | Ancienne commande `system_c system CoreFoundation` | Échec de nom de cible, résolu par les cibles séparées |
 | Installation privée core-i386 | **PASS**, dyld et libSystem Mach-O universels vérifiés |
-| Exécution d'un programme invité | Non testée sur le 10400 |
+| Témoin Carbon i386 + dylib dynamique | **Mach-O i386 compilés PASS** |
+| Première exécution Darwin i386 (normal) | **PASS, exit 0 et marqueur exact** |
+| Tests bypass et négatif | À qualifier sur le 10400 |
 | QuickTime, Logic 8, JACK/MIDI, applications GUI | Non testés sur le 10400 |
 
 Le clone de départ était sur `master` au commit `e76154b53614539f4fa34e4a0fab42b04ecebf35`. La commande de matérialisation crée un second arbre à partir du commit **historique épinglé** `b7d0cb6a79fe196657deb9711647f8486bcc5e5e` avec les correctifs Carbon documentés. Ce n'est **pas** une compilation des nouveaux changements de `master`.
@@ -337,55 +339,100 @@ La procédure ne doit **jamais être relancée** sur le même préfixe déjà
 créé : le script refuse volontairement une destination existante.
 Conserver ses journaux et l'intégralité des fichiers.
 
-## 11. Construire le témoin Carbon Mach-O i386 — prochaine validation
+## 11. Témoin Carbon Mach-O i386 — construction PASS (10400)
 
-Le script `reproduction/build-carbon-probe.py` utilise la base
-historique `source`, le linker cctools du build, et les bibliothèques
-Mach-O de l'installation privée. Il vérifie notamment la présence des
-tranches **i386** de CoreFoundation et de libSystem. Le témoin produit
-est lié à `@loader_path/libD4CarbonEvents.dylib`.
-
-**Commande prévue, pas encore exécutée sur le 10400 :**
+Le 10/11/2026, la commande suivante a reconstruit le témoin historique
+dans un **nouveau** dossier, sans écraser les sources ni l'installation :
 
 ~~~bash
 ROOT="$HOME/atelier/d4rling"
 BASE="$HOME/atelier/d4rling-10400"
-SRC="$BASE/source"
 BUILD="$BASE/build-core-i386"
-INSTALL="$BUILD/private-install"
+PRIVATE="$BUILD/private-install"
 OUT="$BASE/carbon-probe"
-mkdir -p "$BASE/logs"
 
-if [ -e "$OUT" ] || [ -L "$OUT" ]; then
-  echo "STOP : dossier temoin deja present, ne rien ecraser"
-else
-  python3 "$ROOT/reproduction/build-carbon-probe.py" --source "$SRC" \
-      --build "$BUILD" --installation "$INSTALL" --output "$OUT" \
-      > "$BASE/logs/carbon-probe-build.log" 2>&1
-  RC=$?
-  echo "Construction temoin : code $RC"
-  tail -n 40 "$BASE/logs/carbon-probe-build.log"
-fi
+test ! -e "$OUT" && test ! -L "$OUT" || {
+    echo "STOP : temoin deja present"
+    exit 1
+}
+python3 "$ROOT/reproduction/build-carbon-probe.py" \
+    --source "$BASE/source" \
+    --build "$BUILD" \
+    --installation "$PRIVATE" \
+    --output "$OUT"
 ~~~
 
-Critères : succès du script, sorties `carbon-dynamic-i386`
-et `libD4CarbonEvents.dylib` au format Mach-O i386 ; marqueur
-`CARBON_I386_PROBE_BUILD=PASS` ; `RUNTIME_EXECUTED=NO`.
+**Sortie réelle :**
 
-## 12. Exécution du témoin i386 — après validation de sa construction
+~~~text
+CARBON_I386_PROBE_BUILD=PASS
+RUNTIME_EXECUTED=NO
+~~~
 
-Le script existant `reproduction/run-guest.sh` prépare une exécution
-explicitement demandée, **sous de nouveaux espaces user/mount/PID/network
-avec timeout** et rapports séparés. Il faut y observer simultanément
-le code de retour 0 et le marqueur
-`D4RLING-CARBON-EVENT-I386-OK` dans `stdout.log`.
-Un refus `unshare` sous WSL2 est un **blocage d'isolation**, pas
-la preuve que le Mach-O ou la bibliothèque sont défectueux :
-ne pas relancer sans isolation, ne pas contourner les permissions
-et ne pas installer Darling globalement pour masquer ce problème.
+Les commandes `file` et `llvm-lipo-19 -archs` ont confirmé :
 
-Aucune exécution invitée, compatibilité QuickTime, Logic Studio 8
-ou sortie audio n'est encore démontrée sur le 10400.
+- `carbon-dynamic-i386` : **exécutable Mach-O i386** ;
+- `libD4CarbonEvents.dylib` : **bibliothèque dynamique Mach-O i386** ;
+- architecture du témoin exécutable : `i386`.
+
+## 12. Première exécution invitée Carbon i386 — PASS (10400)
+
+L'opérateur a invoqué le lanceur borné **existant**, sans modifier le
+framework ni réinstaller Darling :
+
+~~~bash
+ROOT="$HOME/atelier/d4rling"
+BASE="$HOME/atelier/d4rling-10400"
+PRIVATE="$BASE/build-core-i386/private-install"
+PROBE="$BASE/carbon-probe/carbon-dynamic-i386"
+
+bash "$ROOT/reproduction/run-guest.sh" \
+    "$PRIVATE" "$PROBE" normal 20
+~~~
+
+Le script prépare un **nouveau préfixe** ainsi que de nouveaux espaces
+user/mount/PID/IPC/UTS/réseau, vérifie les identités d'espaces à l'intérieur,
+et borne l'exécution par `timeout`. La sortie attestée est :
+
+~~~text
+REPORT=/tmp/d4rl-replay.3pBmFjCD
+EXIT_CODE=0
+D4RLING-CARBON-EVENT-I386-OK
+PASS : execution Carbon i386
+~~~
+
+Le marqueur figure dans le fichier `stdout.log` du rapport ; le
+code retour et le marqueur ont été vérifiés **ensemble** par le bloc
+de qualification. C'est la **première exécution positive effective d'un
+programme Mach-O i386** sur le banc 10400. Cela apporte une preuve
+fonctionnelle pour ce témoin Carbon et sa bibliothèque `@loader_path`,
+au-delà d'une compilation.
+
+`stderr.log` a signalé **sept fois**
+`sh: 1: xdg-user-dir: not found`, ainsi que :
+`Warning: failed to increase FD rlimit: Operation not permitted`.
+Ce sont des avertissements **non bloquants dans ce test précis**,
+pas des anomalies démontrées corrigées. Rien ne prouve que
+l'environnement invité soit complet pour d'autres logiciels.
+
+**Portée limitée :** le succès positif de ce témoin historique ne
+valide ni le mode `bypass`, ni l'échec attendu en l'absence de dylib,
+ni les évolutions récentes de `master`, ni les frameworks QuickTime,
+ni Logic Studio 8, ni l'audio/MIDI.
+
+## 13. Contre-épreuves à effectuer avant clôture du jalon
+
+Rejouer `run-guest.sh` avec le même témoin en mode `bypass`,
+en exigeant **code 0 + marqueur exact**. Effectuer ensuite une
+contre-épreuve négative en copiant **uniquement l'exécutable** dans
+un dossier neuf (sans copier `libD4CarbonEvents.dylib`). Le chargeur
+doit alors échouer proprement, sans marqueur de succès, avec une erreur
+dynamique explicite. Ne pas supprimer la dylib originale, et ne rien
+modifier dans l'installation privée.
+
+Une qualification positive/négative de ce petit programme n'établira
+toujours pas le lancement de QuickTime ou Logic Studio 8 : ce sont
+des chantiers distincts.
 
 ## Précautions
 
@@ -397,4 +444,4 @@ Conserver **un seul atelier de travail** dans `$HOME/atelier` et **aucun fichier
 - [Reproduction historique](../reproduction/README.md)
 - [État du projet](../PROJECT_STATE.md)
 
-**À compléter après résultats réels :** installation privée, résolution des dépendances, chargement via dyld et exécution invitée i386.
+**À compléter :** mode bypass et contre-épreuve négative i386, puis diagnostics d'applications QuickTime/audio/Logic 8. Le succès positif du témoin Carbon est acquis.
