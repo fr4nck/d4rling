@@ -19,8 +19,8 @@ def inspect(data):
     if len(data) < 28:
         raise ValueError("truncated Mach-O header")
     magic = data[:4]
-    if magic in (b"\\xca\\xfe\\xba\\xbe", b"\\xbe\\xba\\xfe\\xca"):
-        endian = ">" if magic == b"\\xca\\xfe\\xba\\xbe" else "<"
+    if magic in (b"\xca\xfe\xba\xbe", b"\xbe\xba\xfe\xca"):
+        endian = ">" if magic == b"\xca\xfe\xba\xbe" else "<"
         if len(data) < 8:
             raise ValueError("truncated FAT header")
         nfat = struct.unpack_from(endian + "I", data, 4)[0]
@@ -37,9 +37,9 @@ def inspect(data):
             raise ValueError("expected exactly one i386 FAT slice")
         data = slices[0]
         magic = data[:4]
-    if magic == b"\\xce\\xfa\\xed\\xfe":
+    if magic == b"\xce\xfa\xed\xfe":
         endian = "<"
-    elif magic == b"\\xfe\\xed\\xfa\\xce":
+    elif magic == b"\xfe\xed\xfa\xce":
         endian = ">"
     else:
         raise ValueError("not a 32-bit Mach-O executable")
@@ -66,7 +66,7 @@ def inspect(data):
                 raise ValueError("truncated LC_SEGMENT")
             name, vmaddr, vmsize, fileoff, filesize, maxprot, initprot, nsects, sflags = struct.unpack_from(
                 endian + "16sIIIIIIII", data, pos + 8)
-            name = name.split(b"\\x00", 1)[0].decode("ascii", "replace")
+            name = name.split(b"\x00", 1)[0].decode("ascii", "replace")
             print("SEGMENT=%s VMADDR=0x%x VMSIZE=0x%x FILEOFF=0x%x FILESIZE=0x%x INITPROT=0x%x MAXPROT=0x%x" %
                   (name, vmaddr, vmsize, fileoff, filesize, initprot, maxprot))
             count += 1
