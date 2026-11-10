@@ -18,7 +18,7 @@ Machine : Intel Core i5-10400, 6 cœurs/12 threads, Windows 11, 23,9 Go de RAM p
 | Analyse du binaire `mldr32` | ELF 32 bits i386 |
 | `CoreFoundation_i386` + `CoreFoundation_x86_64` | Compilés PASS ; fat Mach-O i386 + x86_64 vérifié |
 | Ancienne commande `system_c system CoreFoundation` | Échec de nom de cible, résolu par les cibles séparées |
-| Bibliothèques Darwin complètes, installation privée, programme invité | Non testés sur le 10400 |
+| Installation privée core-i386 | **PASS**, dyld et libSystem Mach-O universels vérifiés |\n| Exécution d'un programme invité | Non testée sur le 10400 |
 | QuickTime, Logic 8, JACK/MIDI, applications GUI | Non testés sur le 10400 |
 
 Le clone de départ était sur `master` au commit `e76154b53614539f4fa34e4a0fab42b04ecebf35`. La commande de matérialisation crée un second arbre à partir du commit **historique épinglé** `b7d0cb6a79fe196657deb9711647f8486bcc5e5e` avec les correctifs Carbon documentés. Ce n'est **pas** une compilation des nouveaux changements de `master`.
@@ -282,77 +282,109 @@ un invité Darwin. Espace libre Windows observé : **133 Go**.
 installation privée cohérente, lancement de `dyld`, tests Carbon dans
 le guest, QuickTime, Logic Studio 8 et audio/MIDI.
 
-## 10. Construire le core complet et assembler l'installation privée — non encore exécuté
+## 10. Construction complète et installation privée core-i386 — PASS (10400)
 
-La prochaine étape prévue réutilise le build historique `core-i386`. Le script existant
-`reproduction/install-private.py` contrôle la présence de
-`DEBIAN_PACKAGING=ON`, vérifie un préfixe exclusivement privé
-(`build-core-i386/private-install`), refuse un répertoire d'installation
-déjà présent et vérifie l'absence du hook historique `shutdown-user.sh`.
-Avec `--build`, il lance **tout le build core restant**, puis
-`cmake --install` **sans sudo**. Il n'exécute pas le runtime.
-
-**Attention : cette étape n'est pas encore qualifiée sur le 10400.**
-Une réussite de CoreFoundation universel ne prouve pas que toutes les autres
-cibles core sont construites. Ne lancer que sur la configuration déjà
-qualifiée, avec les logs et le contrôle d'espace disque.
+**Validation obtenue le 10 novembre 2026.** Dans le build historique déjà
+configuré, l'opérateur a exécuté le script de contrôle et d'assemblage :
 
 ~~~bash
-bash <<'BASH'
-set -Eeuo pipefail
-umask 077
-
 ROOT="$HOME/atelier/d4rling"
 BUILD="$HOME/atelier/d4rling-10400/build-core-i386"
 LOG="$HOME/atelier/d4rling-10400/logs"
 PREFIX="$BUILD/private-install"
 
-test -f "$BUILD/CMakeCache.txt" || { echo "STOP : CMakeCache absent"; exit 1; }
-test -f "$ROOT/reproduction/install-private.py" || { echo "STOP : script absent"; exit 1; }
+test -f "$BUILD/CMakeCache.txt" || exit 1
+test -f "$ROOT/reproduction/install-private.py" || exit 1
 if [ -e "$PREFIX" ] || [ -L "$PREFIX" ]; then
-    echo "STOP : installation privee deja presente, ne rien ecraser"
+    echo "STOP : installation privee deja presente, ne pas ecraser"
     exit 1
 fi
-
 mkdir -p "$LOG"
-echo "=== BUILD CORE COMPLET ET INSTALLATION PRIVEE ==="
 
-if python3 "$ROOT/reproduction/install-private.py" \
-    --build-dir "$BUILD" --build --jobs 2 \
-    > "$LOG/private-core-stage.log" 2>&1; then
-    echo "PASS : installation privee"
-    tail -n 20 "$LOG/private-core-stage.log"
-    for P in \
-        bin/darling \
-        libexec/darling/usr/libexec/darling/mldr \
-        libexec/darling/usr/lib/dyld \
-        libexec/darling/usr/lib/libSystem.B.dylib; do
-        file "$PREFIX/$P"
-    done
-else
-    RC=$?
-    echo "FAIL : build ou installation privee (code $RC)"
-    tail -n 70 "$LOG/private-core-stage.log"
-fi
-
-echo "=== ESPACE WINDOWS ==="
-df -h /mnt/c
-BASH
+python3 "$ROOT/reproduction/install-private.py" --build-dir "$BUILD" --build --jobs 2 \
+    > "$LOG/private-core-stage.log" 2>&1
+RC=$?
+echo "Installation privee : code $RC"
+tail -n 20 "$LOG/private-core-stage.log"
 ~~~
 
-En cas d'échec, **garder le build, le préfixe même partiel, et le log** ;
-ne pas supprimer le dossier pour relancer. Le code de retour et le premier
-diagnostic utile doivent être qualifiés avant tout nouvel essai.
+Ce script vérifie `DEBIAN_PACKAGING=ON`, le préfixe privé, l'absence
+du hook historique `shutdown-user.sh`, puis effectue le build des
+dépendances restantes et `cmake --install` **sans sudo**.
 
-## 11. Exécuter un témoin Mach-O i386 — étape future
+**Résultat réel : `PASS : installation privee`**, avec les marqueurs :
 
-Lorsque l'installation privée est cohérente, la procédure
-`reproduction/build-carbon-probe.py` peut construire le témoin,
-puis `reproduction/run-guest.sh` peut tenter les essais positif/négatif
-à préfixe isolé et timeout borné. **Aucune exécution du témoin Carbon
-Mach-O i386 sur le 10400 n'a encore été démontrée.**
-Une installation réussie ne vaut ni `dyld` validé, ni compatibilité
-QuickTime, ni lancement de Logic Studio 8.
+~~~text
+PRIVATE_INSTALLATION=/home/franck/atelier/d4rling-10400/build-core-i386/private-install
+RUNTIME_EXECUTED=NO
+~~~
+
+Formats des composants **installés**, vérifiés avec `file` :
+
+| Chemin relatif à `private-install` | Format |
+| --- | --- |
+| `bin/darling` | ELF x86-64 PIE **setuid** |
+| `libexec/darling/usr/libexec/darling/mldr` | ELF x86-64 PIE |
+| `libexec/darling/usr/lib/dyld` | **Mach-O universel i386 + x86_64** (dynamic linker) |
+| `libexec/darling/usr/lib/libSystem.B.dylib` | **Mach-O universel i386 + x86_64** |
+
+Le bit `setuid` de `bin/darling` fait partie des caractéristiques à
+surveiller avant l'exécution. Aucun runtime invité n'a été exécuté lors
+de cette installation. Espace libre Windows après le jalon : **132 Go**.
+
+La procédure ne doit **jamais être relancée** sur le même préfixe déjà
+créé : le script refuse volontairement une destination existante.
+Conserver ses journaux et l'intégralité des fichiers.
+
+## 11. Construire le témoin Carbon Mach-O i386 — prochaine validation
+
+Le script `reproduction/build-carbon-probe.py` utilise la base
+historique `source`, le linker cctools du build, et les bibliothèques
+Mach-O de l'installation privée. Il vérifie notamment la présence des
+tranches **i386** de CoreFoundation et de libSystem. Le témoin produit
+est lié à `@loader_path/libD4CarbonEvents.dylib`.
+
+**Commande prévue, pas encore exécutée sur le 10400 :**
+
+~~~bash
+ROOT="$HOME/atelier/d4rling"
+BASE="$HOME/atelier/d4rling-10400"
+SRC="$BASE/source"
+BUILD="$BASE/build-core-i386"
+INSTALL="$BUILD/private-install"
+OUT="$BASE/carbon-probe"
+mkdir -p "$BASE/logs"
+
+if [ -e "$OUT" ] || [ -L "$OUT" ]; then
+  echo "STOP : dossier temoin deja present, ne rien ecraser"
+else
+  python3 "$ROOT/reproduction/build-carbon-probe.py" --source "$SRC" \
+      --build "$BUILD" --installation "$INSTALL" --output "$OUT" \
+      > "$BASE/logs/carbon-probe-build.log" 2>&1
+  RC=$?
+  echo "Construction temoin : code $RC"
+  tail -n 40 "$BASE/logs/carbon-probe-build.log"
+fi
+~~~
+
+Critères : succès du script, sorties `carbon-dynamic-i386`
+et `libD4CarbonEvents.dylib` au format Mach-O i386 ; marqueur
+`CARBON_I386_PROBE_BUILD=PASS` ; `RUNTIME_EXECUTED=NO`.
+
+## 12. Exécution du témoin i386 — après validation de sa construction
+
+Le script existant `reproduction/run-guest.sh` prépare une exécution
+explicitement demandée, **sous de nouveaux espaces user/mount/PID/network
+avec timeout** et rapports séparés. Il faut y observer simultanément
+le code de retour 0 et le marqueur
+`D4RLING-CARBON-EVENT-I386-OK` dans `stdout.log`.
+Un refus `unshare` sous WSL2 est un **blocage d'isolation**, pas
+la preuve que le Mach-O ou la bibliothèque sont défectueux :
+ne pas relancer sans isolation, ne pas contourner les permissions
+et ne pas installer Darling globalement pour masquer ce problème.
+
+Aucune exécution invitée, compatibilité QuickTime, Logic Studio 8
+ou sortie audio n'est encore démontrée sur le 10400.
 
 ## Précautions
 
