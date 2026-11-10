@@ -1,4 +1,4 @@
-# SoundHack 0.896 — SH01–SH11 static, archive and host witnesses (i386 target)
+# SoundHack 0.896 — SH01–SH12 static, archive and host witnesses (i386 target)
 
 These fixtures use **Python 3 standard-library** host tools. The static auditors
 read files only; SH07 explicitly creates one new output WAV and compiles pinned
@@ -307,3 +307,35 @@ To use a previously compiled, *canonical* cctools-port i386 `ld64`, supply
 its absolute path, exact measured SHA-256 and a **nonexistent** output path;
 do not reuse an unrelated linker or combine builds. The actual link remains
 conditional, not qualified here. See [SH11 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH11-cctools-handoff.md).
+
+## SH12 — offline link replay from authentic SH10 ZIP (no source rebuild)
+
+The [sh12_cctools_replay.py](sh12_cctools_replay.py) utility reconstructs
+the original **3,236-byte SH08 FFT Mach-O i386 object** from the already
+distributed SH10 ZIP without redistributing or recompiling SoundHack sources.
+It validates archive/FFT SHA-256 fingerprints, the MIT notice, ZIP integrity,
+and Darwin ar alignment; it reuses the existing SH09/SH11 Mach-O and link gates.
+
+The caller designates **one existing canonical build root**. SH12 looks only
+in bounded cctools-port ld64 paths, rejects non-native ELF binaries, scripts,
+symlinks and ambiguous candidates, records the candidate SHA-256, then invokes
+the unchanged SH11 fail-closed verifier. SHA-256 proves a selected executable's
+identity, **not** its source provenance. No hidden network or install action.
+
+From the D4rling checkout (Bash, Linux/WSL):
+
+    python3 reproduction/fixtures/soundhack-i386/sh12_cctools_replay.py \
+      --sh10-package /authorized/SH10/d4rling-SH10-archive-i386.zip \
+      --build-root /authorized/canonical/build-core-i386 \
+      --linked-output /authorized/NEW/libSoundHackFFT_i386.dylib
+
+The output pathname must not exist. Exit **0** only means the SH11 verifier
+has qualified a linked Mach-O i386 *structure*. Exit **2** = contract failure;
+**3** = missing/inconclusive tool or linked result. This is **never** a proof
+of SoundHack guest start or real audio.
+
+On the isolated test host the actual SH10 ZIP was verified and SH08 extracted,
+but **no cctools-port ld64 was available**: status LINKER_ABSENT (exit 3).
+SH09-SH12 full host suite: **77/77 PASS**, 0 SKIP with actual SH08/SH10 artifacts.
+SH12 alone without external SH10 ZIP: **11 PASS, 8 SKIP**. See
+[SH12 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH12-offline-cctools-replay.md).
