@@ -86,6 +86,14 @@ class MldrI386MmapDiagnostics(unittest.TestCase):
             self.source.split('#include "loader.h"', 1)[0],
         )
 
+    def test_diagnostic_preserves_original_mmap_errno(self):
+        macro = self.source.split(
+            "#if defined(GEN_32BIT) && defined(D4RLING_MLDR_I386_MMAP_DIAG)", 1
+        )[1].split("#else", 1)[0]
+        self.assertIn("int mldr_diag_saved_errno = errno;", macro)
+        self.assertIn("mldr_diag_saved_errno); errno = mldr_diag_saved_errno;", macro)
+        self.assertIn("} while (0)", macro)
+
     def test_no_mapping_policy_changes_in_diagnostic(self):
         macro = self.source.split("#if defined(GEN_32BIT) && defined(D4RLING_MLDR_I386_MMAP_DIAG)", 1)[1].split("#endif", 1)[0]
         self.assertIn("fprintf(stderr", macro)
