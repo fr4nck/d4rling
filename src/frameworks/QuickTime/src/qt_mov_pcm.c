@@ -212,7 +212,7 @@ static int locate(const void *data, size_t length,
     TRY(one_child(mdia, "mdhd", &mdhd));
     if (mdhd.n < 20)
         return D4RL_QT_PCM_BAD_MOVIE;
-    if (mdhd.p[0] != 0)
+    if (rd32(mdhd.p) != 0)
         return D4RL_QT_PCM_UNSUPPORTED;
     timescale = rd32(mdhd.p + 12);
     duration = rd32(mdhd.p + 16);
@@ -256,7 +256,7 @@ static int locate(const void *data, size_t length,
     TRY(one_child(stbl, "stsz", &stsz));
     if (stsz.n < 12)
         return D4RL_QT_PCM_BAD_MOVIE;
-    if (stsz.p[0] != 0 || rd32(stsz.p + 4) == 0 || rd32(stsz.p + 4) == 1)
+    if (rd32(stsz.p) != 0 || rd32(stsz.p + 4) == 0 || rd32(stsz.p + 4) == 1)
         return D4RL_QT_PCM_UNSUPPORTED;
     TRY(one_child(stbl, "stco", &stco));
     TRY(table(stco, 4, &count));
@@ -322,9 +322,9 @@ static void describe_track(struct span trak, struct d4rl_qt_mov_track_info *info
     info->handler = rd32(hdlr.p + 8);
     if (one_child(mdia, "mdhd", &mdhd) != D4RL_QT_PCM_OK)
         return;
-    if (mdhd.n >= 20 && mdhd.p[0] == 0)
+    if (mdhd.n >= 20 && rd32(mdhd.p) == 0)
         scale = rd32(mdhd.p + 12);
-    else if (mdhd.n >= 32 && mdhd.p[0] == 1)
+    else if (mdhd.n >= 32 && rd32(mdhd.p) == 0x01000000U)
         scale = rd32(mdhd.p + 20);
     else
         return;

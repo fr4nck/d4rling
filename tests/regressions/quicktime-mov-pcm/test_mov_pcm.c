@@ -278,6 +278,33 @@ int main(void)
     c = base(1, 8000); build(&c); CHECK(corrupt_table_flags("stsc")); refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__);
     c = base(1, 8000); build(&c); CHECK(corrupt_table_flags("stco")); refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__);
 
+    /* R5: mdhd and stsz are FullBoxes; unsupported flags must not
+     * expose PCM or advertise sample metadata in the track listing. */
+    c = base(1, 8000); build(&c); CHECK(corrupt_table_flags("mdhd")); refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__);
+    c = base(1, 8000); build(&c); CHECK(corrupt_table_flags("stsz")); refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__);
+    {
+        struct d4rl_qt_mov_track_info tracks[2];
+        size_t track_count = 0;
+        c = base(1, 8000); build(&c);
+        CHECK(corrupt_table_flags("mdhd"));
+        memset(tracks, 0xCD, sizeof(tracks));
+        CHECK(d4rl_qt_mov_list_tracks(buf, len, tracks, 2, &track_count) == D4RL_QT_PCM_OK);
+        CHECK(track_count == 1);
+        CHECK(tracks[0].handler == 0x736F756Eu); /* 'soun' */
+        CHECK(tracks[0].has_media == 0);
+        CHECK(tracks[0].media_time_scale == 0 && tracks[0].sample_count == 0);
+
+        c = base(1, 8000); build(&c);
+        CHECK(corrupt_table_flags("stsz"));
+        memset(tracks, 0xCD, sizeof(tracks));
+        track_count = 0;
+        CHECK(d4rl_qt_mov_list_tracks(buf, len, tracks, 2, &track_count) == D4RL_QT_PCM_OK);
+        CHECK(track_count == 1);
+        CHECK(tracks[0].handler == 0x736F756Eu);
+        CHECK(tracks[0].has_media == 0);
+        CHECK(tracks[0].media_time_scale == 0 && tracks[0].sample_count == 0);
+    }
+
     /* R3. Data references: positive. */
     c = base(1, 8000); c.ref_type[0] = "url "; accept(&c, 0x74776F73, __LINE__);   /* url  self reference */
     c = base(1, 8000); c.dref_n = 2; c.ref_type[0] = "url "; c.ref_vf[0] = 0; c.dri = 2;
