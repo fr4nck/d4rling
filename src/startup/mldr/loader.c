@@ -182,8 +182,6 @@ no_slide:
 								rv = 0;
 							} else {
 								MLDR_MMAP_DIAG("anonymous-slide", seg, addr, seg->vmsize, slide, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED_NOREPLACE);
-								MLDR_MMAP_DIAG("anonymous-tail", seg, PAGE_ALIGN(seg->vmaddr + seg->vmsize - size), PAGE_ROUNDUP(size), slide, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED_NOREPLACE);
-								MLDR_MMAP_DIAG("file-backed", seg, addr, seg->filesize, slide, flag | MAP_PRIVATE);
 								fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(errno));
 								exit(1);
 							}
@@ -201,6 +199,7 @@ no_slide:
 								// if we can't map it, assume everything is fine and the system has already made that area inaccessible
 								rv = 0;
 							} else {
+								MLDR_MMAP_DIAG("anonymous-tail", seg, PAGE_ALIGN(seg->vmaddr + seg->vmsize - size), PAGE_ROUNDUP(size), slide, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED_NOREPLACE);
 								fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(errno));
 								exit(1);
 							}
@@ -224,7 +223,8 @@ no_slide:
 							// if we can't map it, assume everything is fine and the system has already made that area inaccessible
 							rv = 0;
 						} else {
-							fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(errno));
+							MLDR_MMAP_DIAG("file-backed", seg, addr, seg->filesize, slide, flag | MAP_PRIVATE);
+								fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(errno));
 							exit(1);
 						}
 					}
