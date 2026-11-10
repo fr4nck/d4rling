@@ -44,6 +44,20 @@ class MldrI386MmapDiagnostics(unittest.TestCase):
         legacy = 'fprintf(stderr, "Cannot mmap segment %s at %p: %s\\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(errno));'
         self.assertEqual(self.source.count(legacy), 3)
 
+    def test_diagnostic_format_is_newline_terminated(self):
+        macro = self.source.split(
+            "#if defined(GEN_32BIT) && defined(D4RLING_MLDR_I386_MMAP_DIAG)", 1
+        )[1].split("#else", 1)[0]
+        self.assertIn('errno=%d\\\\n",', macro)
+        self.assertNotIn('errno=%d\\\\\\\\n",', macro)
+
+    def test_diagnostic_is_only_on_failure_paths(self):
+        for branch in ("anonymous-slide", "anonymous-tail", "file-backed"):
+            call = 'MLDR_MMAP_DIAG("' + branch + '"'
+            before = self.source.split(call, 1)[0]
+            self.assertRegex(before[-420:], r"if \\(rv == \\(void\\*\\)MAP_FAILED\\)")
+        self.assertNotIn("D4RLING_MLDR_I386_MMAP_DIAG", self.source.split("#include \"loader.h\"", 1)[0])
+
     def test_no_mapping_policy_changes_in_diagnostic(self):
         macro = self.source.split("#if defined(GEN_32BIT) && defined(D4RLING_MLDR_I386_MMAP_DIAG)", 1)[1].split("#endif", 1)[0]
         self.assertIn("fprintf(stderr", macro)
