@@ -225,7 +225,8 @@ affiché `PRIVATE_INSTALLATION=...` et `RUNTIME_EXECUTED=NO`.
 L'opérateur a contrôlé `bin/darling` (ELF x86-64 **setuid**),
 `mldr` (ELF x86-64), `usr/lib/dyld` (Mach-O universel **i386 +
 x86_64**) et `usr/lib/libSystem.B.dylib` (Mach-O universel **i386 +
-x86_64**). Aucun test d'exécution invitée n'a encore été réussi sur ce poste.
+x86_64**). **Un premier test invité i386 a ensuite réussi** (section 5) ;
+l'installation seule n'était pas une preuve d'exécution.
 La qualité du build ne dispense pas du contrôle des permissions, des
 namespaces et des témoins positifs/négatifs. Ne pas relancer sur un préfixe
 existant : le script refuse explicitement de l'écraser. Les installations
@@ -258,8 +259,30 @@ bash reproduction/run-guest.sh "$HOME/d4rling-private-install" \
 ```
 
 Attendre code 0 et la ligne `D4RLING-CARBON-EVENT-I386-OK` dans stdout.
-Rejouer avec `bypass`, puis retirer la dylib d'une **copie** du programme
-pour le contrôle négatif. Un code retour seul ne suffit pas.
+**Résultat réel du 10400, 10/11/2026 :** témoin reconstruit,
+`CARBON_I386_PROBE_BUILD=PASS`, exécutable et bibliothèque
+`libD4CarbonEvents.dylib` vérifiés **Mach-O i386**, et exécution
+invitée isolée `normal` avec timeout de 20 secondes :
+
+```text
+REPORT=/tmp/d4rl-replay.3pBmFjCD
+EXIT_CODE=0
+D4RLING-CARBON-EVENT-I386-OK
+PASS : execution Carbon i386
+```
+
+L'avertissement `xdg-user-dir: not found` (sept occurrences) et
+`failed to increase FD rlimit: Operation not permitted` n'ont pas
+bloqué cette exécution, mais ne sont pas déclarés corrigés. Ce résultat
+valide le **premier parcours dynamique Carbon i386 positif sur une
+deuxième machine**, pas la compatibilité générale de Darling.
+
+**Reste à faire :** rejouer avec `bypass`, puis tester l'absence de dylib
+depuis un **nouveau dossier contenant seulement une copie du programme**.
+Ne pas retirer ni supprimer la dylib du témoin original. Exiger le code
+non nul, le marqueur absent et un diagnostic explicite du chargeur.
+Un code retour seul ne suffit pas.
+
 Chaque essai emploie un préfixe neuf, stdin=/dev/null, et un espace
 user/mount/PID/IPC/UTS/network propre, avec timeout et descendants bornés.
 Les journaux restent dans le nouveau dossier affiché. Aucun signal n'est
