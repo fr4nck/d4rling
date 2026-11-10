@@ -59,3 +59,14 @@ Le lanceur [`run-stub-cf-private.sh`](https://github.com/fr4nck/d4rling/blob/res
 La nouvelle suite [`test_verify_stub_cf_guest.py`](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/test_verify_stub_cf_guest.py) a été **réellement exécutée hors Darling avec 15/15 PASS** : un témoin positif, quatorze refus de preuves erronées (code 137, doublons, journal tronqué, échec contradictoire, empreintes incorrectes, fichier manquant, etc.). Le parseur Bash du lanceur passe également `bash -n`. Les identités des trois sources publiées ont été confrontées à leurs Git blob SHA après publication.
 
 **Limites inchangées :** pas de rejeu i386 du lanceur sur le 5700X ; `STUB_CF_GUEST_RUNTIME=OPEN` ; la conversion `cerror`/TLS du vrai XNU et l'intégration du kernel restent OPEN. Ce checkpoint ne fusionne aucun correctif dans `master`, et ne modifie pas QuickTime, AUD/R4, l'audio ni les installations.
+
+
+## I1 : couplage dispatcher BSD et conversion CF — 10 novembre
+
+**Référence de recherche relue :** [`012a8e02395f38cff808b75f4c49abee62918e43`](https://github.com/fr4nck/d4rling/commit/012a8e02395f38cff808b75f4c49abee62918e43). Voir le [rapport I1](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/docs/evidence/bsd-i386-guard-cf-i1-2026-11-10.md).
+
+Nouvelle fixture associant le **dispatcher i386 compilé depuis XNU épinglé** à un **miroir** de la conversion `-errno`/`CF` de `SYS.h`. Le chemin connu, `ENOSYS`, les bornes `-4095/-4096`, le masquage 16 bits et les valeurs 600/65535 sont prévus. Un mutant supprime volontairement `cmc`.
+
+**Qualifié directement hors 5700X :** trois objets Mach-O i386 (fixture positive, fixture mutante, programme C) ; **23/23 tests locaux PASS** (7 structure/ABI, 16 oracle avec contre-épreuves) ; `bash -n` du lanceur PASS. Les six blobs Git du lot correspondent exactement aux six sources locales qualifiées. Le lanceur [`run-guard-cf-private.sh`](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/run-guard-cf-private.sh) est préparé, **non rejoué**.
+
+**Qualification invitée : OPEN**. Les 222 contrôles par variante (positif attendu 0 défaut/code 0, mutant attendu défauts/code 10), le lien i386 complet, les vrais stubs `cerror`/TLS et la bibliothèque kernel reconstruite n'ont pas été exécutés ici. Aucun travail Carbon, QuickTime, AUD/R4 ni audio n'a été modifié par ce lot. **Pas de fusion du garde expérimental sur `master`.**
