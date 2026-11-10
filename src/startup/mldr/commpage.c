@@ -156,7 +156,16 @@ uint64_t get_cpu_caps(void)
 
 unsigned long commpage_address(bool _64bit)
 {
+#if defined(__i386__)
+	/* mldr32 only loads i386 guests; the 64-bit commpage cannot fit here. */
+	if (_64bit) {
+		fprintf(stderr, "mldr32 cannot address the 64-bit commpage\n");
+		exit(1);
+	}
+	return _COMM_PAGE32_BASE_ADDRESS;
+#else
 	return _64bit ? _COMM_PAGE64_BASE_ADDRESS : _COMM_PAGE32_BASE_ADDRESS;
+#endif
 }
 
 unsigned long commpage_length(bool _64bit)
