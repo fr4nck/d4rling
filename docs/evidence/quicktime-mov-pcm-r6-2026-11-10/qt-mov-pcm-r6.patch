@@ -1,0 +1,91 @@
+--- a/src/frameworks/QuickTime/src/qt_mov_pcm.c
++++ b/src/frameworks/QuickTime/src/qt_mov_pcm.c
+@@ -324,7 +324,7 @@
+         return;
+     if (mdhd.n >= 20 && rd32(mdhd.p) == 0)
+         scale = rd32(mdhd.p + 12);
+-    else if (mdhd.n >= 32 && rd32(mdhd.p) == 0x01000000U)
++    else if (mdhd.n >= 36 && rd32(mdhd.p) == 0x01000000U)
+         scale = rd32(mdhd.p + 20);
+     else
+         return;
+--- a/tests/regressions/quicktime-mov-pcm/test_mov_pcm.c
++++ b/tests/regressions/quicktime-mov-pcm/test_mov_pcm.c
+@@ -41,6 +41,7 @@
+     uint32_t ref_vf[3];
+     int ref_short, no_dinf, no_dref;
+     int moov_first, video_trak, sound_traks, co64;
++    int mdhd_v1, mdhd_omit_tail; /* test fixture only: v1 layout and truncation */
+ };
+ 
+ static struct cfg base(uint16_t channels, uint32_t hz)
+@@ -60,7 +61,21 @@
+     uint32_t i;
+     a = begin("tkhd"); put32(1); zero(80); end(a);
+     m = begin("mdia");
+-    a = begin("mdhd"); put32(0); put32(0); put32(0); put32(c->timescale); put32(c->mdhd_duration); put32(0); end(a);
++    a = begin("mdhd");
++    if (c->mdhd_v1) {
++        put32(0x01000000u); /* version 1, zero flags */
++        zero(16);          /* 64-bit creation and modification times */
++        put32(c->timescale);
++        put32(0); put32(c->mdhd_duration); /* 64-bit duration */
++        if (c->mdhd_omit_tail)
++            zero((size_t)(4 - c->mdhd_omit_tail)); /* omit 1..4 trailing bytes */
++        else
++            put32(0);     /* language and quality: required four bytes */
++    } else {
++        put32(0); put32(0); put32(0); put32(c->timescale);
++        put32(c->mdhd_duration); put32(0);
++    }
++    end(a);
+     a = begin("hdlr"); put32(0); put4("mhlr"); put4(handler); zero(12); put8(0); end(a);
+     s = begin("minf");
+     a = begin(handler[0] == 's' ? "smhd" : "vmhd"); put32(0); put32(0); end(a);
+@@ -303,6 +318,46 @@
+         CHECK(tracks[0].handler == 0x736F756Eu);
+         CHECK(tracks[0].has_media == 0);
+         CHECK(tracks[0].media_time_scale == 0 && tracks[0].sample_count == 0);
++    }
++
++    /* R6: mdhd version 1 is supported for track *metadata* (not PCM).
++     * Check the full 64-bit time layout and its required trailing fields. */
++    {
++        struct d4rl_qt_mov_track_info tracks[2];
++        size_t n;
++        c = base(1, 8000); c.mdhd_v1 = 1; c.moov_first = 1;
++        build(&c);
++        n = 99; memset(tracks, 0xCD, sizeof(tracks));
++        CHECK(d4rl_qt_mov_list_tracks(buf, len, tracks, 2, &n) == D4RL_QT_PCM_OK);
++        CHECK(n == 1);
++        CHECK(tracks[0].handler == 0x736F756Eu);
++        CHECK(tracks[0].has_media == 1);
++        CHECK(tracks[0].media_time_scale == 8000);
++        CHECK(tracks[0].sample_count == 100);
++        refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__); /* extraction remains v0 */
++
++        c = base(1, 8000); c.mdhd_v1 = 1; build(&c);
++        CHECK(corrupt_table_flags("mdhd"));
++        n = 99; memset(tracks, 0xCD, sizeof(tracks));
++        CHECK(d4rl_qt_mov_list_tracks(buf, len, tracks, 2, &n) == D4RL_QT_PCM_OK);
++        CHECK(n == 1);
++        CHECK(tracks[0].handler == 0x736F756Eu);
++        CHECK(tracks[0].has_media == 0);
++        CHECK(tracks[0].media_time_scale == 0 && tracks[0].sample_count == 0);
++        refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__);
++
++        /* Missing 1, 2, 3 or 4 final language/quality bytes: all invalid. */
++        for (unsigned missing = 1; missing <= 4; ++missing) {
++            c = base(1, 8000); c.mdhd_v1 = 1; c.mdhd_omit_tail = (int)missing;
++            build(&c); /* 35..32 bytes instead of the required 36 */
++            n = 99; memset(tracks, 0xCD, sizeof(tracks));
++            CHECK(d4rl_qt_mov_list_tracks(buf, len, tracks, 2, &n) == D4RL_QT_PCM_OK);
++            CHECK(n == 1);
++            CHECK(tracks[0].handler == 0x736F756Eu);
++            CHECK(tracks[0].has_media == 0);
++            CHECK(tracks[0].media_time_scale == 0 && tracks[0].sample_count == 0);
++            refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__);
++        }
+     }
+ 
+     /* R3. Data references: positive. */

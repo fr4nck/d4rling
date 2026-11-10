@@ -324,7 +324,7 @@ static void describe_track(struct span trak, struct d4rl_qt_mov_track_info *info
         return;
     if (mdhd.n >= 20 && rd32(mdhd.p) == 0)
         scale = rd32(mdhd.p + 12);
-    else if (mdhd.n >= 32 && rd32(mdhd.p) == 0x01000000U)
+    else if (mdhd.n >= 36 && rd32(mdhd.p) == 0x01000000U)
         scale = rd32(mdhd.p + 20);
     else
         return;
