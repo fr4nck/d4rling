@@ -40,3 +40,11 @@ Ce chantier réserve seulement le répertoire reproduction/fixtures/bsd-i386-gua
 3. Reconstruire et qualifier une libsystem_kernel.dylib privée sur la base amont, et rejouer 32 contrôles BSD B15 et 400 appels concurrents, sans installation permanente.
 
 **Ce document est un pointeur de coordination sur master, pas une fusion du correctif.** Avant tout nouveau lot, relire les dernières têtes des deux branches et comparer les chemins modifiés.
+### Reprise CF du 10 novembre — résultat et limites
+
+Le lot suivant est publié **uniquement sur la branche de recherche** (tête vérifiée : [`065d82c13fc31edeb19c223816c12a9ad3e770b9`](https://github.com/fr4nck/d4rling/commit/065d82c13fc31edeb19c223816c12a9ad3e770b9)) :
+
+- [Rapport de qualification des instructions `-errno` → CF](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/docs/evidence/bsd-i386-guard-stub-cf-host-2026-11-10.md) : exécution réelle sur hôte Linux x86_64, **12/12 PASS**, 10 contre-exemples détectés en mutant sans `cmc` ; trois objets Mach-O i386 assemblés séparément.
+- [Témoin i386 de conversion](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/stub-cf-guest.c), [capture EAX/CF](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/stub-cf-capture-i386.S) et [lanceur privé](https://github.com/fr4nck/d4rling/blob/research/bsd-i386-dispatch-guard-ba34c8ac/reproduction/fixtures/bsd-i386-guard/run-stub-cf-private.sh) : compilation i386 et syntaxe Bash contrôlées dans un conteneur Linux indépendant ; **l'exécution invitée sur le 5700X reste OPEN**.
+
+Aucune reconstruction de la véritable `libsystem_kernel.dylib` sur XNU amont n'a eu lieu ; aucun essai réel `cerror`/TLS, QuickTime, Audio ou Logic 8 n'est revendiqué. Le lancement s'appuie sur la chaîne B15 protégée par copie OverlayFS privée et sur un préfixe nouveau. Le script GitHub a reçu une correction de l'empreinte B15, enregistrée dans le commit indiqué ci-dessus. **Ne pas fusionner le patch expérimental dans `master` sur ces seuls résultats.**
