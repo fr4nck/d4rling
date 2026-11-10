@@ -129,7 +129,7 @@ void FUNCTION_NAME(const char* filepath, struct load_results* lr)
 	#define POINTER_FORMAT "%x"
 #endif
 
-	snprintf(elfcalls, sizeof(elfcalls), "elf_calls=" POINTER_FORMAT, (unsigned long)(uintptr_t)&_elfcalls);
+	snprintf(elfcalls, sizeof(elfcalls), "elf_calls=" POINTER_FORMAT, (user_long_t)(uintptr_t)&_elfcalls);
 	elfcalls_user = kernfd_user - sizeof(elfcalls);
 	memcpy(elfcalls_user, elfcalls, sizeof(elfcalls));
 
