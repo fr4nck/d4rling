@@ -17,7 +17,7 @@ static void setup_space(struct load_results* lr, bool is_64_bit);
 static void* compatible_mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);
 
 #if defined(GEN_32BIT) && defined(D4RLING_MLDR_I386_MMAP_DIAG)
-#define MLDR_MMAP_DIAG(branch, seg, address, length, slide, flags) fprintf(stderr, "MLDR_I386_MMAP_DIAG branch=%s segment=%.16s requested=%p length=%zu slide=0x%lx vmaddr=0x%lx flags=0x%x errno=%d\\n", branch, (seg)->segname, (void*)(uintptr_t)(address), (size_t)(length), (unsigned long)(slide), (unsigned long)(seg)->vmaddr, (unsigned int)(flags), errno)
+#define MLDR_MMAP_DIAG(branch, seg, address, length, slide, flags) fprintf(stderr, "MLDR_I386_MMAP_DIAG branch=%s segment=%.16s requested=%p length=%zu slide=0x%lx vmaddr=0x%lx flags=0x%x errno=%d\n", branch, (seg)->segname, (void*)(uintptr_t)(address), (size_t)(length), (unsigned long)(slide), (unsigned long)(seg)->vmaddr, (unsigned int)(flags), errno)
 #else
 #define MLDR_MMAP_DIAG(branch, seg, address, length, slide, flags) ((void)0)
 #endif
