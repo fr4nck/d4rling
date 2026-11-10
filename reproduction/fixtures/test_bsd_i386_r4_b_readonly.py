@@ -26,8 +26,8 @@ def thin(*, cpu=7, flags=0, vmaddr=0x1000, malformed=False):
         segment = bytearray(segment[:40])
         struct.pack_into("<I", segment, 4, 40)
         segment = bytes(segment)
-    header = struct.pack("<IIIIIII", 0xfeedface, cpu, 3, 1,
-                         len(segment), flags, 0)
+    header = struct.pack("<IIIIIII", 0xfeedface, cpu, 3, 2, 1,
+                         len(segment), flags)
     return header + segment
 
 
