@@ -112,3 +112,22 @@ python3 -m unittest discover -s reproduction/fixtures/bsd-i386-guard -p 'test_ve
 
 **Les véritables essais invités I1 restent OPEN.** Le nouveau format de manifeste
 ne rétrovalide aucun ancien résultat ; les éventuels journaux antérieurs restent intacts.
+
+
+## I1-R4 — Machdep i386 : borne de table et errno/CF (10 novembre)
+
+[Rapport](../../../docs/evidence/bsd-i386-machdep-guard-cf-2026-11-10.md) et [patch de recherche](../../patches/bsd-i386-machdep-guard-cf-ba34c8ac.patch).
+
+Le vrai dispatcher Machdep i386 masquait son index sur 16 bits puis lisait une table de **10 entrées** sans garde. Sa branche inconnue transmettait l'adresse de la table, pas le numéro. Les wrappers `i386_get_ldt` et `i386_set_ldt` testaient le drapeau `CF` sans convertir le retour `-errno`. Le patch ne touche que `machdep_syscall.S` et les **deux** copies i386 de `custom.S`. Il n'ajoute aucune implémentation LDT.
+
+**Banc versionné :** `qualify_machdep_i386.py` (compilation Mach-O i386, non-régression x86_64, conversion LDT), `test_qualify_machdep_i386.py` (24 tests unitaires), et `check_machdep_patch.py` (contrat de provenance des cinq blobs XNU).
+
+```bash
+python3 -m unittest discover -s reproduction/fixtures/bsd-i386-guard -p 'test_qualify_machdep_i386.py' -v
+python3 reproduction/fixtures/bsd-i386-guard/qualify_machdep_i386.py --selftest
+# Seulement si le checkout XNU contient DEJA la revision ba34c8ac :
+python3 reproduction/fixtures/bsd-i386-guard/check_machdep_patch.py --xnu /chemin/XNU
+python3 reproduction/fixtures/bsd-i386-guard/qualify_machdep_i386.py --xnu /chemin/XNU
+```
+
+**Résultat réellement exécuté : 24/24 PASS et objets Mach-O i386 PASS sur extraits privés ;** contrôle source complet `--xnu` et invité Darling **OPEN**. Aucun téléchargement, aucune fusion sur `master`, aucun remplacement d'installation.
