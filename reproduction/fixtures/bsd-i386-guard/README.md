@@ -86,3 +86,7 @@ bash -n reproduction/fixtures/bsd-i386-guard/run-stub-cf-private.sh
 
 **Résultat observé hors 5700X : 15/15 PASS, analyse syntaxique Bash PASS.**
 **Rejeu invité i386 : OPEN.** L'ancien ZIP de distribution du 10 novembre précède cette vérification ; ne pas en déduire qu'il inclut ces fichiers.
+
+## Intégration BSD + conversion CF (I1, 10 novembre)
+
+Le [rapport I1](../../../docs/evidence/bsd-i386-guard-cf-i1-2026-11-10.md) documente un **nouveau témoin intégré** du dispatcher BSD i386 et d'un miroir de la conversion `-errno`/`CF`, ainsi qu'un mutant sans `cmc`. Compilation Mach-O i386 de trois objets : PASS ; 7 tests structurels et 16 tests de vérification des journaux : **23/23 PASS hors Darling**. Le lanceur `run-guard-cf-private.sh` est disponible (`--check` ou `--run`), mais **n'a pas été rejoué sur le 5700X**. Les vrais `cerror`/TLS et le kernel intégré restent ouverts. Ne pas confondre ces tests avec une validation de production.
