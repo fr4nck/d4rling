@@ -49,6 +49,7 @@ OSStatus Gestalt(uint32_t type, int* value)
 			*value = min;
 		else if (type == gestaltSystemVersionPatch)
 			*value = patch;
+		break;
 	}
 	case gestaltSysArchitecture:
 #ifdef __powerpc__
