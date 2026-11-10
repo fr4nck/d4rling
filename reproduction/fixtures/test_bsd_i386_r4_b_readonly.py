@@ -84,6 +84,31 @@ class ProbeR4BTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "invalid load command size"):
             output(bytes(broken))
 
+    def test_fat_duplicate_i386_slices_rejected(self):
+        payload = thin()
+        offset = 8 + 2 * 20
+        header = struct.pack(">II", 0xcafebabe, 2)
+        arch1 = struct.pack(">IIIII", 7, 3, offset, len(payload), 0)
+        arch2 = struct.pack(">IIIII", 7, 3, offset, len(payload), 0)
+        with self.assertRaisesRegex(ValueError, "exactly one i386"):
+            output(header + arch1 + arch2 + payload)
+
+    def test_fat_truncated_architecture_table_rejected(self):
+        with self.assertRaisesRegex(ValueError, "invalid FAT architecture table"):
+            output(struct.pack(">II", 0xcafebabe, 2) + b"\x00" * 20)
+
+    def test_macho_command_table_truncated_rejected(self):
+        broken = bytearray(thin())
+        struct.pack_into("<I", broken, 20, 4096)
+        with self.assertRaisesRegex(ValueError, "invalid Mach-O command table"):
+            output(bytes(broken))
+
+    def test_macho_extra_bytes_in_command_table_rejected(self):
+        broken = bytearray(thin())
+        struct.pack_into("<I", broken, 16, 0)
+        with self.assertRaisesRegex(ValueError, "load commands do not consume"):
+            output(bytes(broken))
+
     def test_unrecognized_format_rejected(self):
         with self.assertRaisesRegex(ValueError, "not a 32-bit Mach-O"):
             output(b"Z" * 100)
