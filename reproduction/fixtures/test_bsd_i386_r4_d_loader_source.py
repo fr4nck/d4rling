@@ -29,8 +29,11 @@ class MldrI386MmapDiagnostics(unittest.TestCase):
 
     def test_template_undefines_diagnostic_between_64_and_32_bit_passes(self):
         mldr = (SOURCE.parent / "mldr.c").read_text(encoding="utf-8")
-        self.assertIn('#define GEN_64BIT\\n#include "loader.c"', mldr)
-        self.assertIn('#define GEN_32BIT\\n#include "loader.c"', mldr)
+        lines = [line.strip() for line in mldr.splitlines()]
+        self.assertIn(["#define GEN_64BIT", '#include "loader.c"'],
+                      [lines[i:i + 2] for i in range(len(lines) - 1)])
+        self.assertIn(["#define GEN_32BIT", '#include "loader.c"'],
+                      [lines[i:i + 2] for i in range(len(lines) - 1)])
         self.assertEqual(self.source.count("#undef MLDR_MMAP_DIAG"), 1)
         self.assertLess(
             self.source.rindex("#undef MAP_EXTRA"),
