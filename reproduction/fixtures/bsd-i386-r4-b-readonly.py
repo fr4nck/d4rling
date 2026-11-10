@@ -95,6 +95,9 @@ def main():
         print("STDERR_MATCHES=%d" % len(matches))
         for x in matches[:8]:
             print("STDERR=%s" % x[:400])
+        if any("Cannot mmap segment" in x for x in matches):
+            print("MMAP_LOG_ADDRESS=UNSLID_VMADDR_NOT_EFFECTIVE_ADDRESS")
+            print("MMAP_EFFECTIVE_ADDRESS=UNKNOWN_WITHOUT_LOADER_SLIDE")
     if args.loader:
         print("LOADER=%s SHA256=%s" % (args.loader, hashlib.sha256(args.loader.read_bytes()).hexdigest()))
     try:
