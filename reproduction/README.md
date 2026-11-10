@@ -143,6 +143,26 @@ ninja -C "$BUILD" -t targets all > "$HOME/d4rling-rebuild/targets-all.txt" 2>&1
 grep -iE 'corefoundation|system_c|libsystem' "$HOME/d4rling-rebuild/targets-all.txt" | head -n 50 || true
 ```
 
+Le sous-module `darling-corefoundation` épinglé
+(`a3640a77410cf1825f7855172b1551ae7917c461`) utilise
+`add_separated_framework(CoreFoundation ...)`. La macro correspondante
+crée des cibles **`CoreFoundation_i386`** et **`CoreFoundation_x86_64`** ;
+le nom générique `CoreFoundation` est une cible CMake importée et non
+une cible Ninja directement compilable. Les sous-modules `darling-Libc` et
+`darling-Libsystem` déclarent respectivement `system_c` et `system`.
+Sur le 10400, faire confirmer ces noms **dans le build généré** :
+
+```bash
+BUILD="$HOME/d4rling-rebuild/build-i386"
+for TARGET in system_c system CoreFoundation_i386 CoreFoundation_x86_64; do
+  if ninja -C "$BUILD" -t query "$TARGET" >/dev/null 2>&1; then
+    echo "PRESENT : $TARGET"
+  else
+    echo "ABSENT  : $TARGET"
+  fi
+done
+```
+
 Choisir ensuite uniquement les **cibles existantes**, en petits lots
 (`--parallel 2` sur le 10400), et conserver les journaux. La qualification
 complète des frameworks, de l'installation privée et du guest reste **NO GO**
