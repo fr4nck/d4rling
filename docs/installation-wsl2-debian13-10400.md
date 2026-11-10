@@ -18,7 +18,8 @@ Machine : Intel Core i5-10400, 6 cœurs/12 threads, Windows 11, 23,9 Go de RAM p
 | Analyse du binaire `mldr32` | ELF 32 bits i386 |
 | `CoreFoundation_i386` + `CoreFoundation_x86_64` | Compilés PASS ; fat Mach-O i386 + x86_64 vérifié |
 | Ancienne commande `system_c system CoreFoundation` | Échec de nom de cible, résolu par les cibles séparées |
-| Installation privée core-i386 | **PASS**, dyld et libSystem Mach-O universels vérifiés |\n| Exécution d'un programme invité | Non testée sur le 10400 |
+| Installation privée core-i386 | **PASS**, dyld et libSystem Mach-O universels vérifiés |
+| Exécution d'un programme invité | Non testée sur le 10400 |
 | QuickTime, Logic 8, JACK/MIDI, applications GUI | Non testés sur le 10400 |
 
 Le clone de départ était sur `master` au commit `e76154b53614539f4fa34e4a0fab42b04ecebf35`. La commande de matérialisation crée un second arbre à partir du commit **historique épinglé** `b7d0cb6a79fe196657deb9711647f8486bcc5e5e` avec les correctifs Carbon documentés. Ce n'est **pas** une compilation des nouveaux changements de `master`.
