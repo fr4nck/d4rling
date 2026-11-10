@@ -16,6 +16,17 @@ class MldrI386MmapDiagnostics(unittest.TestCase):
     def setUpClass(cls):
         cls.source = SOURCE.read_text(encoding="utf-8")
 
+    def test_cmake_option_is_off_by_default_and_scoped_to_mldr32(self):
+        cmake = (SOURCE.parent / "CMakeLists.txt").read_text(encoding="utf-8")
+        declaration = 'option(D4RLING_MLDR_I386_MMAP_DIAG "Enable opt-in mmap failure diagnostics in mldr32 only" OFF)'
+        self.assertEqual(cmake.count(declaration), 1)
+        target = "target_compile_definitions(mldr32 PRIVATE D4RLING_MLDR_I386_MMAP_DIAG)"
+        self.assertEqual(cmake.count(target), 1)
+        self.assertNotIn("target_compile_definitions(mldr PRIVATE D4RLING_MLDR_I386_MMAP_DIAG)", cmake)
+        self.assertLess(cmake.index("if (BUILD_TARGET_32BIT)"), cmake.index(target))
+        self.assertLess(cmake.index("if (D4RLING_MLDR_I386_MMAP_DIAG)"), cmake.index(target))
+        self.assertLess(cmake.index("add_executable(mldr32"), cmake.index(target))
+
     def test_guard_requires_both_i386_and_opt_in(self):
         self.assertIn(
             "#if defined(GEN_32BIT) && defined(D4RLING_MLDR_I386_MMAP_DIAG)",
