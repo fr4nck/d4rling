@@ -86,6 +86,16 @@ class MldrI386MmapDiagnostics(unittest.TestCase):
             self.source.split('#include "loader.h"', 1)[0],
         )
 
+    def test_host_fixture_uses_exact_loader_macro(self):
+        fixture = (Path(__file__).resolve().parent /
+                   "bsd-i386-r4-d-mmap-diag-smoke.c").read_text(encoding="utf-8")
+        prefix = "#define MLDR_MMAP_DIAG(branch, seg, address, length, slide, flags)"
+        loader_macro = next(line for line in self.source.splitlines()
+                            if line.startswith(prefix) and "fprintf(stderr" in line)
+        fixture_macro = next(line for line in fixture.splitlines()
+                             if line.startswith(prefix) and "fprintf(stderr" in line)
+        self.assertEqual(fixture_macro, loader_macro)
+
     def test_diagnostic_preserves_original_mmap_errno(self):
         macro = self.source.split(
             "#if defined(GEN_32BIT) && defined(D4RLING_MLDR_I386_MMAP_DIAG)", 1
