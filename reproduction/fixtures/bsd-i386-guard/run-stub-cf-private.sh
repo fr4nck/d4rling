@@ -38,7 +38,7 @@ done
 for entry in \
     "599bb14c0e264c972631f689de15bed64183460f36583aaa431c97e44d441bb7:$MLDR" \
     "81c1c0a85b362e970130fb6181d88fc8a75e3a05e105f7e2b05f35ab18e0572d:$DYLD" \
-    "33a47b0e56d4e44e9b5aa677f009b00d6eb51aae7a790e5ba864aafb7bd1b1d:$KERNEL"
+    "33a47b0e56d4e44e9b5aa6778f009b00d6eb51aae7a790e5ba864aafb7bd1b1d:$KERNEL"
 do
     hash=${entry%%:*}
     name=${entry#*:}
@@ -93,7 +93,7 @@ mount -t overlay overlay \
 for entry in \
     '599bb14c0e264c972631f689de15bed64183460f36583aaa431c97e44d441bb7:libexec/darling/usr/libexec/darling/mldr32' \
     '81c1c0a85b362e970130fb6181d88fc8a75e3a05e105f7e2b05f35ab18e0572d:libexec/darling/usr/lib/dyld' \
-    '33a47b0e56d4e44e9b5aa677f009b00d6eb51aae7a790e5ba864aafb7bd1b1d:libexec/darling/usr/lib/system/libsystem_kernel.dylib'
+    '33a47b0e56d4e44e9b5aa6778f009b00d6eb51aae7a790e5ba864aafb7bd1b1d:libexec/darling/usr/lib/system/libsystem_kernel.dylib'
 do
     hash=${entry%%:*}
     name=${entry#*:}
