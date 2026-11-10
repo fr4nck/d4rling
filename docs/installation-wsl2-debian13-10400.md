@@ -256,7 +256,7 @@ compilé la seconde architecture avec :
 cmake --build "$BUILD" --target CoreFoundation_x86_64 --parallel 2
 ~~~
 
-puis vérifié les trois fichiers avec \`file\` et avec \`lipo -info\`
+puis vérifié les trois fichiers avec `file` et avec `lipo -info`
 du cctools intégré au build. Sorties attestées :
 
 ~~~text
@@ -267,29 +267,89 @@ Architectures in the fat file: i386 x86_64
 ~~~
 
 **PASS : les deux architectures compilent et le fichier universel contient
-bien i386 et x86_64.** Le binaire \`CoreFoundation\` est le produit assemblé
-par la macro \`add_separated_framework\`; la cible Ninja \`CoreFoundation\`
+bien i386 et x86_64.** Le binaire `CoreFoundation` est le produit assemblé
+par la macro `add_separated_framework`; la cible Ninja `CoreFoundation`
 reste non directement constructible, d'où l'usage de ses deux cibles
 spécialisées.
 
 La sortie du linker x86_64 contient des avertissements non bloquants
-sur des symboles \`NSObject\` préexistants. Ils restent à analyser : une
+sur des symboles `NSObject` préexistants. Ils restent à analyser : une
 bibliothèque liée n'est **pas encore** une bibliothèque chargée dans
 un invité Darwin. Espace libre Windows observé : **133 Go**.
 
 **Non démontré à ce stade :** dépendances dynamiques effectivement résolues,
-installation privée cohérente, lancement de \`dyld\`, tests Carbon dans
+installation privée cohérente, lancement de `dyld`, tests Carbon dans
 le guest, QuickTime, Logic Studio 8 et audio/MIDI.
 
-## 10. Installation privée et test Mach-O : à faire
+## 10. Construire le core complet et assembler l'installation privée — non encore exécuté
 
-Les scripts existants `reproduction/install-private.py`, `build-carbon-probe.py` et `run-guest.sh` documentent les prochaines étapes. **Aucune installation privée cohérente ni exécution du témoin Carbon Mach-O i386 sur le 10400 ne sont encore prouvées.** Ne pas présenter le build des quatre exécutables ELF comme une installation de Logic 8.
+La prochaine étape prévue réutilise le build historique `core-i386`. Le script existant
+`reproduction/install-private.py` contrôle la présence de
+`DEBIAN_PACKAGING=ON`, vérifie un préfixe exclusivement privé
+(`build-core-i386/private-install`), refuse un répertoire d'installation
+déjà présent et vérifie l'absence du hook historique `shutdown-user.sh`.
+Avec `--build`, il lance **tout le build core restant**, puis
+`cmake --install` **sans sudo**. Il n'exécute pas le runtime.
 
-Ordre de validation futur : frameworks nécessaires → installation privée isolée **sans sudo** → construction d'un Mach-O i386 → essais positifs et négatifs dans l'invité → QuickTime et audio → applications réelles.
+**Attention : cette étape n'est pas encore qualifiée sur le 10400.**
+Une réussite de CoreFoundation universel ne prouve pas que toutes les autres
+cibles core sont construites. Ne lancer que sur la configuration déjà
+qualifiée, avec les logs et le contrôle d'espace disque.
+
+~~~bash
+bash <<'BASH'
+set -Eeuo pipefail
+umask 077
+
+ROOT="$HOME/atelier/d4rling"
+BUILD="$HOME/atelier/d4rling-10400/build-core-i386"
+LOG="$HOME/atelier/d4rling-10400/logs"
+PREFIX="$BUILD/private-install"
+
+test -f "$BUILD/CMakeCache.txt" || { echo "STOP : CMakeCache absent"; exit 1; }
+test -f "$ROOT/reproduction/install-private.py" || { echo "STOP : script absent"; exit 1; }
+if [ -e "$PREFIX" ] || [ -L "$PREFIX" ]; then
+    echo "STOP : installation privee deja presente, ne rien ecraser"
+    exit 1
+fi
+
+mkdir -p "$LOG"
+echo "=== BUILD CORE COMPLET ET INSTALLATION PRIVEE ==="
+
+if python3 "$ROOT/reproduction/install-private.py"     --build-dir "$BUILD" --build --jobs 2     > "$LOG/private-core-stage.log" 2>&1; then
+    echo "PASS : installation privee"
+    tail -n 20 "$LOG/private-core-stage.log"
+    for P in         bin/darling         libexec/darling/usr/libexec/darling/mldr         libexec/darling/usr/lib/dyld         libexec/darling/usr/lib/libSystem.B.dylib; do
+        file "$PREFIX/$P"
+    done
+else
+    RC=$?
+    echo "FAIL : build ou installation privee (code $RC)"
+    tail -n 70 "$LOG/private-core-stage.log"
+fi
+
+echo "=== ESPACE WINDOWS ==="
+df -h /mnt/c
+BASH
+~~~
+
+En cas d'échec, **garder le build, le préfixe même partiel, et le log** ;
+ne pas supprimer le dossier pour relancer. Le code de retour et le premier
+diagnostic utile doivent être qualifiés avant tout nouvel essai.
+
+## 11. Exécuter un témoin Mach-O i386 — étape future
+
+Lorsque l'installation privée est cohérente, la procédure
+`reproduction/build-carbon-probe.py` peut construire le témoin,
+puis `reproduction/run-guest.sh` peut tenter les essais positif/négatif
+à préfixe isolé et timeout borné. **Aucune exécution du témoin Carbon
+Mach-O i386 sur le 10400 n'a encore été démontrée.**
+Une installation réussie ne vaut ni `dyld` validé, ni compatibilité
+QuickTime, ni lancement de Logic Studio 8.
 
 ## Précautions
 
-Conserver **un seul atelier de travail** dans `$HOME/atelier` et **aucun fichier à la racine de `C:\\`**. Ne pas altérer `C:\\WINDOWS\\system32`, la distribution Docker, le dépôt `master`, l'arbre historique ou les logs. Ne rien supprimer ou déplacer sans validation préalable. Tous les échecs sont à conserver et à documenter comme tels.
+Conserver **un seul atelier de travail** dans `$HOME/atelier` et **aucun fichier à la racine de `C:\`**. Ne pas altérer `C:\\WINDOWS\\system32`, la distribution Docker, le dépôt `master`, l'arbre historique ou les logs. Ne rien supprimer ou déplacer sans validation préalable. Tous les échecs sont à conserver et à documenter comme tels.
 
 ## Références
 
