@@ -23,7 +23,9 @@ def thin(*, cpu=7, flags=0, vmaddr=0x1000, malformed=False):
     segment = struct.pack("<II16sIIIIIIII", 1, 56, name, vmaddr,
                           0x2000, 0, 0x1000, 7, 5, 0, 0)
     if malformed:
-        segment = segment[:40]
+        segment = bytearray(segment[:40])
+        struct.pack_into("<I", segment, 4, 40)
+        segment = bytes(segment)
     header = struct.pack("<IIIIIII", 0xfeedface, cpu, 3, 1,
                          len(segment), flags, 0)
     return header + segment
