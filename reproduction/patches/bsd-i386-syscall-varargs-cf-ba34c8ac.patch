@@ -1,0 +1,34 @@
+diff --git a/gen/bsdsyscalls/___syscall.S b/gen/bsdsyscalls/___syscall.S
+--- a/gen/bsdsyscalls/___syscall.S
++++ b/gen/bsdsyscalls/___syscall.S
+@@ -35,9 +35,13 @@
+ 	popl	%ecx		// ret addr
+ 	popl	%eax		// syscall number
+ 	pushl	%ecx
+ 	UNIX_SYSCALL_TRAP
++#ifdef DARLING
++	// Darling dispatcher returns raw -errno, not a reliable CF.
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	movl	(%esp),%edx	// add one element to stack so
+ #ifdef DARLING
+ 	// Pushing ecx will cause a i386 process
+ 	// that calls syscall(...) to crash.
+ 	pushl	%edx
+diff --git a/libsyscall/custom/__syscall.S b/libsyscall/custom/__syscall.S
+--- a/libsyscall/custom/__syscall.S
++++ b/libsyscall/custom/__syscall.S
+@@ -35,9 +35,13 @@
+ 	popl	%ecx		// ret addr
+ 	popl	%eax		// syscall number
+ 	pushl	%ecx
+ 	UNIX_SYSCALL_TRAP
++#ifdef DARLING
++	// Darling dispatcher returns raw -errno, not a reliable CF.
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	movl	(%esp),%edx	// add one element to stack so
+ #ifdef DARLING
+ 	// Pushing ecx will cause a i386 process
+ 	// that calls syscall(...) to crash.
+ 	pushl	%edx
