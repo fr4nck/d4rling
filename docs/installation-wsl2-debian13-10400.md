@@ -247,39 +247,39 @@ restent à contrôler séparément. Les cibles `system_c` et `system`
 étaient présentes ; leur statut de sortie n'a pas été vérifié
 indépendamment dans cet échange.
 
-### Contrôle puis tranche x86_64 : étape suivante, non encore exécutée
+### Résultat de la tranche x86_64 et vérification du fat Mach-O — PASS
 
-Pour obtenir un framework complet dans cette configuration à deux
-architectures, inspecter d'abord la tranche i386, puis construire
-`CoreFoundation_x86_64` qui fait partie du graphe prévu par la macro
-`add_separated_framework`. Sur le 10400, conserver le parallélisme
-à deux tâches et ne pas installer dans le système.
+Le **10 novembre 2026**, le 10400 a contrôlé le fichier i386,
+compilé la seconde architecture avec :
 
 ~~~bash
-BUILD="$HOME/atelier/d4rling-10400/build-core-i386"
-LOG="$HOME/atelier/d4rling-10400/logs"
-CF="$BUILD/src/external/corefoundation/CoreFoundation_i386"
-
-test -s "$CF" || { echo "STOP : binaire i386 absent"; exit 1; }
-file "$CF"
-
-if cmake --build "$BUILD" --target CoreFoundation_x86_64 --parallel 2 \
-    > "$LOG/corefoundation-x64-build.log" 2>&1; then
-    echo "PASS : CoreFoundation_x86_64"
-    tail -n 20 "$LOG/corefoundation-x64-build.log"
-    for F in "$BUILD/src/external/corefoundation/CoreFoundation_x86_64" \
-             "$BUILD/src/external/corefoundation/CoreFoundation"; do
-        if [ -f "$F" ]; then file "$F"; fi
-    done
-else
-    RC=$?
-    echo "FAIL : CoreFoundation_x86_64 (code $RC)"
-    tail -n 60 "$LOG/corefoundation-x64-build.log"
-fi
-df -h /mnt/c
+cmake --build "$BUILD" --target CoreFoundation_x86_64 --parallel 2
 ~~~
 
-Ce bloc n'est pas encore qualifié : ne pas le présenter comme un résultat.
+puis vérifié les trois fichiers avec \`file\` et avec \`lipo -info\`
+du cctools intégré au build. Sorties attestées :
+
+~~~text
+CoreFoundation_i386: Mach-O i386 dynamically linked shared library
+CoreFoundation_x86_64: Mach-O 64-bit x86_64 dynamically linked shared library
+CoreFoundation: Mach-O universal binary with 2 architectures
+Architectures in the fat file: i386 x86_64
+~~~
+
+**PASS : les deux architectures compilent et le fichier universel contient
+bien i386 et x86_64.** Le binaire \`CoreFoundation\` est le produit assemblé
+par la macro \`add_separated_framework\`; la cible Ninja \`CoreFoundation\`
+reste non directement constructible, d'où l'usage de ses deux cibles
+spécialisées.
+
+La sortie du linker x86_64 contient des avertissements non bloquants
+sur des symboles \`NSObject\` préexistants. Ils restent à analyser : une
+bibliothèque liée n'est **pas encore** une bibliothèque chargée dans
+un invité Darwin. Espace libre Windows observé : **133 Go**.
+
+**Non démontré à ce stade :** dépendances dynamiques effectivement résolues,
+installation privée cohérente, lancement de \`dyld\`, tests Carbon dans
+le guest, QuickTime, Logic Studio 8 et audio/MIDI.
 
 ## 10. Installation privée et test Mach-O : à faire
 
@@ -297,4 +297,4 @@ Conserver **un seul atelier de travail** dans `$HOME/atelier` et **aucun fichier
 - [Reproduction historique](../reproduction/README.md)
 - [État du projet](../PROJECT_STATE.md)
 
-**À compléter après résultats réels :** formats Mach-O et fat, compilation CoreFoundation x86_64, assemblage privé et exécution invitée i386.
+**À compléter après résultats réels :** installation privée, résolution des dépendances, chargement via dyld et exécution invitée i386.
