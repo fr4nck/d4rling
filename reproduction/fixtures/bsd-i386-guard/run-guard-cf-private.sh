@@ -169,7 +169,8 @@ WORKER
     printf 'GUARD_CF_CASE=%s RC=%s\n' "$case" "$rc"
     tail -n 3 "$R/$case.stdout.log"
  done
-(cd "$R" && sha256sum positive.stdout.log positive.stderr.log \
-    mutant.stdout.log mutant.stderr.log probe-positive probe-mutant > SHA256SUMS)
+(cd "$R" && sha256sum positive.stdout.log positive.stderr.log positive.exit-code.txt \
+    mutant.stdout.log mutant.stderr.log mutant.exit-code.txt \
+    probe-positive probe-mutant > SHA256SUMS)
 (cd "$R" && sha256sum -c --status SHA256SUMS) || blocked MANIFEST
 python3 "$HERE/verify_guard_cf.py" "$R"

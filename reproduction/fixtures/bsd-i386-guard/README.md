@@ -90,3 +90,25 @@ bash -n reproduction/fixtures/bsd-i386-guard/run-stub-cf-private.sh
 ## Intégration BSD + conversion CF (I1, 10 novembre)
 
 Le [rapport I1](../../../docs/evidence/bsd-i386-guard-cf-i1-2026-11-10.md) documente un **nouveau témoin intégré** du dispatcher BSD i386 et d'un miroir de la conversion `-errno`/`CF`, ainsi qu'un mutant sans `cmc`. Compilation Mach-O i386 de trois objets : PASS ; 7 tests structurels et 16 tests de vérification des journaux : **23/23 PASS hors Darling**. Le lanceur `run-guard-cf-private.sh` est disponible (`--check` ou `--run`), mais **n'a pas été rejoué sur le 5700X**. Les vrais `cerror`/TLS et le kernel intégré restent ouverts. Ne pas confondre ces tests avec une validation de production.
+
+## I1 — verrouillage du mutant et des preuves (10 novembre 2026)
+
+Le défaut de conversion intentionnel **sans `cmc`** produit **71 erreurs attendues sur 222 assertions** :
+50 sur les neuf valeurs connues (chacune essayée deux fois) et 21 sur les sept appels inconnus.
+Ce total a été établi indépendamment **en exécutant les instructions x86 sur l'hôte**, dans
+`mutant_failure_oracle.c` ; il ne provient pas d'une exécution dans Darling.
+
+`verify_guard_cf.py` exige désormais le compte exact `71` pour le mutant, au lieu d'accepter
+une valeur arbitraire supérieure à zéro. Le manifeste SHA-256 du rejeu contient
+maintenant **huit entrées** : les deux exécutables, les quatre journaux et les **deux fichiers
+de code de retour**. Le test Python de l'oracle passe 23/23 contre-épreuves/contrôles.
+
+Reproduction indépendante :
+```sh
+clang -std=c11 -O2 -Wall -Wextra -Werror reproduction/fixtures/bsd-i386-guard/mutant_failure_oracle.c -o /tmp/i1-mutant-oracle
+/tmp/i1-mutant-oracle
+python3 -m unittest discover -s reproduction/fixtures/bsd-i386-guard -p 'test_verify_guard_cf.py' -v
+```
+
+**Les véritables essais invités I1 restent OPEN.** Le nouveau format de manifeste
+ne rétrovalide aucun ancien résultat ; les éventuels journaux antérieurs restent intacts.
