@@ -163,10 +163,19 @@ for TARGET in system_c system CoreFoundation_i386 CoreFoundation_x86_64; do
 done
 ```
 
-Choisir ensuite uniquement les **cibles existantes**, en petits lots
-(`--parallel 2` sur le 10400), et conserver les journaux. La qualification
-complète des frameworks, de l'installation privée et du guest reste **NO GO**
-sur ce poste tant qu'elle n'a pas été réalisée et vérifiée.
+**Résultat observé sur le 10400 le 10/11/2026 :** les cibles
+`system_c`, `system`, `CoreFoundation_i386` et
+`CoreFoundation_x86_64` ont toutes été trouvées dans le build généré.
+La compilation de `CoreFoundation_i386` a ensuite atteint
+**3418/3418 étapes PASS**, y compris l'édition de liens finale de
+`src/external/corefoundation/CoreFoundation_i386`. Plusieurs
+avertissements `ld` sont restés non bloquants et non résolus.
+
+La **validation du format et des dépendances Mach-O i386** reste à effectuer,
+ainsi que la tranche `CoreFoundation_x86_64`, l'assemblage privé et
+l'exécution guest. Le témoin compilé n'est **pas encore** un résultat
+d'exécution Darwin. Conserver `--parallel 2` sur ce poste, les
+journaux et toutes les sources.
 
 Voir le [tutoriel d'installation WSL2/Debian 13 sur le 10400](../docs/installation-wsl2-debian13-10400.md)
 pour les étapes et preuves réellement observées.
