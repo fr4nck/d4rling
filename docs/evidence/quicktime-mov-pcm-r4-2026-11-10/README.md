@@ -74,3 +74,48 @@ ASAN_OPTIONS=detect_leaks=1 UBSAN_OPTIONS=halt_on_error=1 "$WORK/test_mov_pcm"
 - **NO GO** : appliquer ce patch au code de production, promouvoir C4-D, annoncer `GetMediaSample` ou Logic 8 fonctionnels.
 
 Le candidat R4 n'altère pas les checkpoints C4-D/M2-R2, et ne change pas la décision de production C4-D (NO GO).
+
+
+## R4-N — qualification du véritable banc natif et correctif intégré (10 novembre 2026)
+
+**Cette section remplace uniquement le NO GO R4 initial qui précédait les essais sur les vraies sources. Elle ne change pas le NO GO C4-D / Logic 8.** La copie de qualification a été obtenue depuis les six fichiers publics exacts du dépôt, avec vérification des Git blobs de chaque entrée avant application du patch R4. Aucun SDK, sous-module, snapshot local protégé ou poste 5700X n'a été utilisé.
+
+Sources de base : `qt_mov_pcm.c` = `6eb2ce4498eacd0a27b1a8841d7a5042e26e6c3a` ; `test_mov_pcm.c` = `783ff897914bf368e8434158b899d9c648c7d37a` ; patch = `0b0e47b151d6e351262060d50c89800e08829d93`. Git blobs **après patch, identiques aux fichiers compilés** : `qt_mov_pcm.c` = `083740d92e53d6a9c7cf3b3d13e8f4f475c02807` et `test_mov_pcm.c` = `b69746a9bf847c749134b5a137ba55be33f22025`. `git apply --check` et `git apply` : PASS sur la copie isolée.
+
+| Essai natif Linux x86_64 (exécuté) | Résultat |
+| --- | --- |
+| Clang 17, ASan/UBSan, témoin original avant patch | **20 149 vérifications, 0 erreur** ; fuzz accepté 6 055/20 000 |
+| Clang 17, ASan/UBSan, témoin patché | **20 161 vérifications, 0 erreur** ; fuzz accepté 5 902/20 000 |
+| GCC 14.2, ASan/UBSan, témoin patché | **20 161 vérifications, 0 erreur** |
+| Clang 17, optimisation `-O2`, témoin patché | **20 161 vérifications, 0 erreur** |
+| Mutant : seule la condition de production revient à `s.p[0] != 0` | **8 échecs attendus**, code de sortie 8 : les quatre flags interdits sont acceptés et les sorties sont écrasées |
+
+Empreintes SHA-256 des journaux locaux : avant patch `5ae454f5a974cf1feeac85d44787d9acbac7928013e4eb5c2611ff42dd1f36d1` ; patché Clang/GCC/Clang-O2 `07ec0f0d42c46a1057547b677f009bcf2c00d10e7c1b868352478e340e87f5a5` ; mutant `382d04ef6a2e88126b73de5187de42d24ba1279313a56c714b00f1f6f1f9144e`. Les journaux complets restent locaux et ne sont pas publiés ; les tests ont été **exécutés sur le vrai banc** (et non sur le helper isolé mentionné au début de ce document).
+
+### Reproduction dans le checkout courant, lecture seule
+
+Bash Linux/WSL2 ; écritures limitées à un dossier temporaire. Aucun téléchargement ni changement Git. Clang doit déjà être installé.
+
+```bash
+set -Eeuo pipefail
+repo="$(git rev-parse --show-toplevel)"
+cd "$repo"
+test "$(git branch --show-current)" = master
+printf 'REPO=%s\nHEAD=%s\n' "$repo" "$(git rev-parse HEAD)"
+git status --short
+test "$(git hash-object src/frameworks/QuickTime/src/qt_mov_pcm.c)" = 083740d92e53d6a9c7cf3b3d13e8f4f475c02807
+test "$(git hash-object tests/regressions/quicktime-mov-pcm/test_mov_pcm.c)" = b69746a9bf847c749134b5a137ba55be33f22025
+command -v clang >/dev/null
+work="$(mktemp -d /tmp/d4rling-pcm-r4.XXXXXXXX)"
+trap 'rm -rf -- "$work"' EXIT
+clang -std=c11 -O1 -g -Wall -Wextra -Werror -fsanitize=address,undefined \
+  -fno-omit-frame-pointer -Isrc/frameworks/QuickTime/src \
+  src/frameworks/QuickTime/src/qt_mov_pcm.c \
+  src/frameworks/QuickTime/src/qt_mov_probe.c \
+  tests/regressions/quicktime-mov-pcm/test_mov_pcm.c \
+  -o "$work/test_pcm"
+ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 \
+  "$work/test_pcm"
+```
+
+**Verdict limité :** **GO** pour l'intégration de ces deux fichiers R4 sous `master`, avec vraie qualification native, sans modifier l'ABI, CMake ou CarbonCore. **NON EXÉCUTÉ :** véritable build/test invité Darwin i386, tests des handles C4 et des dylibs QuickTime intégrées. **NO GO maintenu** pour C4-D, `GetMediaSample` et Logic Studio 8. Les contrôles d'autres FullBox (notamment `mdhd` et `stsz`) empruntent des chemins distincts et ne sont pas couverts par cette correction.

@@ -158,6 +158,26 @@ static int untouched(void)
 
 static void poison(void) { memset(out, 0xCD, sizeof(out)); memset(&info, 0xCD, sizeof(info)); }
 
+/* Build() creates exactly one of each required table in this fixture.
+ * Flip only the lowest flag byte in the version/flags full box header. */
+static int corrupt_table_flags(const char tag[4])
+{
+    size_t i;
+    for (i = 4; i + 8 <= len; ++i) {
+        uint32_t atom_size;
+        if (memcmp(buf + i, tag, 4) != 0)
+            continue;
+        atom_size = ((uint32_t)buf[i - 4] << 24) |
+                    ((uint32_t)buf[i - 3] << 16) |
+                    ((uint32_t)buf[i - 2] << 8) | buf[i - 1];
+        if (atom_size < 16 || atom_size > len - (i - 4))
+            continue;
+        buf[i + 7] = 1;
+        return 1;
+    }
+    return 0;
+}
+
 static void refuse(int want, int line)
 {
     int got;
@@ -249,6 +269,14 @@ int main(void)
     c = base(1, 8000); c.stco_entries = 2; REFUSE(c, D4RL_QT_PCM_UNSUPPORTED);
     c = base(1, 8000); c.stsz_size = 0; REFUSE(c, D4RL_QT_PCM_UNSUPPORTED);
     c = base(1, 8000); c.stsz_size = 1; REFUSE(c, D4RL_QT_PCM_UNSUPPORTED);
+
+    /* R4: nonzero flags in the full-box header must never expose PCM.
+     * Apple QTFF: stsd/stts/stsc/stco version (1 byte) + flags (3 bytes).
+     * Mutation is applied after build(), before the caller-visible check. */
+    c = base(1, 8000); build(&c); CHECK(corrupt_table_flags("stsd")); refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__);
+    c = base(1, 8000); build(&c); CHECK(corrupt_table_flags("stts")); refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__);
+    c = base(1, 8000); build(&c); CHECK(corrupt_table_flags("stsc")); refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__);
+    c = base(1, 8000); build(&c); CHECK(corrupt_table_flags("stco")); refuse(D4RL_QT_PCM_UNSUPPORTED, __LINE__);
 
     /* R3. Data references: positive. */
     c = base(1, 8000); c.ref_type[0] = "url "; accept(&c, 0x74776F73, __LINE__);   /* url  self reference */

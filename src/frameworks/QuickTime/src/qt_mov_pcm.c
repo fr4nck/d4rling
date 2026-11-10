@@ -92,7 +92,7 @@ static int table(struct span s, size_t entry_size, uint32_t *entries)
 {
     if (s.n < 8)
         return D4RL_QT_PCM_BAD_MOVIE;
-    if (s.p[0] != 0)
+    if (rd32(s.p) != 0)
         return D4RL_QT_PCM_UNSUPPORTED;
     *entries = rd32(s.p + 4);
     if (entry_size && *entries != 1)
