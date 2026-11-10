@@ -15,7 +15,7 @@ Machine : Intel Core i5-10400, 6 cœurs/12 threads, Windows 11, 23,9 Go de RAM p
 | Tests de contrats C/C++ | PASS |
 | Configuration CMake core-i386 | PASS |
 | Build natif `darling mldr mldr32 darlingserver` | **179/179 PASS** |
-| Analyse du binaire `mldr32` | ELF 32 bits i386 |
+| Analyse du binaire `mldr32` | ELF 32 bits i386 |\n| `CoreFoundation_i386` + `CoreFoundation_x86_64` | Compilés PASS ; fat Mach-O i386 + x86_64 vérifié |
 | Build demandé `system_c system CoreFoundation` | **FAIL : cible Ninja `CoreFoundation` inconnue** |
 | Bibliothèques Darwin complètes, installation privée, programme invité | Non testés sur le 10400 |
 | QuickTime, Logic 8, JACK/MIDI, applications GUI | Non testés sur le 10400 |
@@ -316,10 +316,16 @@ fi
 mkdir -p "$LOG"
 echo "=== BUILD CORE COMPLET ET INSTALLATION PRIVEE ==="
 
-if python3 "$ROOT/reproduction/install-private.py"     --build-dir "$BUILD" --build --jobs 2     > "$LOG/private-core-stage.log" 2>&1; then
+if python3 "$ROOT/reproduction/install-private.py" \
+    --build-dir "$BUILD" --build --jobs 2 \
+    > "$LOG/private-core-stage.log" 2>&1; then
     echo "PASS : installation privee"
     tail -n 20 "$LOG/private-core-stage.log"
-    for P in         bin/darling         libexec/darling/usr/libexec/darling/mldr         libexec/darling/usr/lib/dyld         libexec/darling/usr/lib/libSystem.B.dylib; do
+    for P in \
+        bin/darling \
+        libexec/darling/usr/libexec/darling/mldr \
+        libexec/darling/usr/lib/dyld \
+        libexec/darling/usr/lib/libSystem.B.dylib; do
         file "$PREFIX/$P"
     done
 else
