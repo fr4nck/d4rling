@@ -208,12 +208,80 @@ for TARGET in system_c system CoreFoundation_i386 CoreFoundation_x86_64; do
 done
 ~~~
 
-Si `CoreFoundation_i386` est présent, tenter **cette cible exacte**
-(`--parallel 2`) avec journal dédié. Ne pas considérer sa réussite
-comme acquise avant un retour complet du 10400. Ne pas changer
-`COMPONENTS=core` ni relancer l'installation pour ce seul diagnostic.
+**Résultat du prévol (10/11/2026) :** les **quatre** noms sont
+`PRESENT` dans le Ninja du 10400 : `system_c`, `system`,
+`CoreFoundation_i386` et `CoreFoundation_x86_64`.
 
-## 9. Installation privée et test Mach-O : à faire
+## 9. CoreFoundation i386 — compilation réussie sur le 10400
+
+Sans reconfiguration ni changement de profil, l'opérateur a exécuté :
+
+~~~bash
+BUILD="$HOME/atelier/d4rling-10400/build-core-i386"
+LOG="$HOME/atelier/d4rling-10400/logs"
+mkdir -p "$LOG"
+
+cmake --build "$BUILD" --target CoreFoundation_i386 --parallel 2 \
+    > "$LOG/corefoundation-i386-build.log" 2>&1
+RC=$?
+echo "Code de compilation : $RC"
+tail -n 20 "$LOG/corefoundation-i386-build.log"
+~~~
+
+**Constat réel : `PASS : CoreFoundation_i386`, 3418/3418 étapes.**
+La dernière étape a lié
+`src/external/corefoundation/CoreFoundation_i386`.
+Les étapes ont également impliqué l'édition de liens de
+`src/external/icu/icuSources/libicucore.A.dylib`.
+
+Le linker a émis des **avertissements non bloquants** :
+`-rpath` sur une OS dylib, initialiseurs statiques dans des fichiers
+Objective-C, et alias `.objc_class_name_NSObject` préexistants.
+Aucune correction ni validation d'innocuité de ces avertissements n'est revendiquée.
+L'espace libre Windows après la compilation était d'environ **133 Go**.
+
+**Frontière de preuve :** le lien de `CoreFoundation_i386` a réussi,
+mais le format du fichier produit, ses dépendances, l'assemblage fat,
+l'installation privée et l'exécution effective d'un Mach-O i386
+restent à contrôler séparément. Les cibles `system_c` et `system`
+étaient présentes ; leur statut de sortie n'a pas été vérifié
+indépendamment dans cet échange.
+
+### Contrôle puis tranche x86_64 : étape suivante, non encore exécutée
+
+Pour obtenir un framework complet dans cette configuration à deux
+architectures, inspecter d'abord la tranche i386, puis construire
+`CoreFoundation_x86_64` qui fait partie du graphe prévu par la macro
+`add_separated_framework`. Sur le 10400, conserver le parallélisme
+à deux tâches et ne pas installer dans le système.
+
+~~~bash
+BUILD="$HOME/atelier/d4rling-10400/build-core-i386"
+LOG="$HOME/atelier/d4rling-10400/logs"
+CF="$BUILD/src/external/corefoundation/CoreFoundation_i386"
+
+test -s "$CF" || { echo "STOP : binaire i386 absent"; exit 1; }
+file "$CF"
+
+if cmake --build "$BUILD" --target CoreFoundation_x86_64 --parallel 2 \
+    > "$LOG/corefoundation-x64-build.log" 2>&1; then
+    echo "PASS : CoreFoundation_x86_64"
+    tail -n 20 "$LOG/corefoundation-x64-build.log"
+    for F in "$BUILD/src/external/corefoundation/CoreFoundation_x86_64" \
+             "$BUILD/src/external/corefoundation/CoreFoundation"; do
+        if [ -f "$F" ]; then file "$F"; fi
+    done
+else
+    RC=$?
+    echo "FAIL : CoreFoundation_x86_64 (code $RC)"
+    tail -n 60 "$LOG/corefoundation-x64-build.log"
+fi
+df -h /mnt/c
+~~~
+
+Ce bloc n'est pas encore qualifié : ne pas le présenter comme un résultat.
+
+## 10. Installation privée et test Mach-O : à faire
 
 Les scripts existants `reproduction/install-private.py`, `build-carbon-probe.py` et `run-guest.sh` documentent les prochaines étapes. **Aucune installation privée cohérente ni exécution du témoin Carbon Mach-O i386 sur le 10400 ne sont encore prouvées.** Ne pas présenter le build des quatre exécutables ELF comme une installation de Logic 8.
 
@@ -229,4 +297,4 @@ Conserver **un seul atelier de travail** dans `$HOME/atelier` et **aucun fichier
 - [Reproduction historique](../reproduction/README.md)
 - [État du projet](../PROJECT_STATE.md)
 
-**À compléter après résultats réels :** noms de cibles pour libSystem/CoreFoundation, installation privée et exécution invitée i386.
+**À compléter après résultats réels :** formats Mach-O et fat, compilation CoreFoundation x86_64, assemblage privé et exécution invitée i386.
