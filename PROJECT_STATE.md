@@ -189,3 +189,41 @@ source de production, build ou installation existante n'est modifié.
 La reconstruction de libsystem_kernel, les vrais lseek/cerror/TLS et le
 dyld intégré restent à qualifier ; l'[issue #11](https://github.com/fr4nck/d4rling/issues/11)
 reste ouverte. Les archives originales et journaux bruts restent privés.
+
+
+## Banc i5-10400 WSL2 — reconstruction et exécution Carbon i386 (10 novembre 2026)
+
+Une deuxième machine (i5-10400, Windows 11, WSL2 Debian 13.5) a
+**reconstruit** le snapshot historique `b7d0cb6` et ses 160 sous-modules
+épinglés sous `~/atelier/d4rling-10400/source`, indépendamment du
+checkout `master`.
+
+- Dépendances installées, dérives de versions `ca-certificates`/`gzip` notées ;
+  **135/135** tests Carbon hôte PASS, contrats C/C++ PASS.
+- Quatre binaires natifs `darling`, `mldr`, `mldr32`, `darlingserver`
+  compilés en **179/179 étapes**. `mldr32` ELF i386 confirmé.
+- `CoreFoundation_i386` compilé **3418/3418**, la tranche x86_64 construite ;
+  bibliothèque universelle Mach-O **i386+x86_64** vérifiée.
+- Build complet `core-i386` et **installation privée PASS** (sans
+  installation globale), `dyld` et `libSystem.B.dylib` installés au
+  format Mach-O universel i386+x86_64.
+- Témoin historique Carbon Mach-O i386 et `@loader_path` dylib reconstruits.
+  **Exécution invitée réelle sous isolation PASS 3/3** :
+  `normal` code 0 + `D4RLING-CARBON-EVENT-I386-OK` ;
+  `bypass` code 0 + même marqueur ;
+  négatif sans dylib code 1 attendu, marqueur absent et diagnostic dyld
+  `Library not loaded` explicite.
+- Avertissements `xdg-user-dir` et `FD rlimit` non bloquants pour
+  ce témoin, non corrigés.
+
+**Limite :** ce succès qualifie le témoin du **snapshot historique**
+sur un second poste, **pas** les changements récents de `master`,
+QuickTime/C4-D, SoundHack, CoreAudio/JACK, MIDI ni Logic Studio 8.
+Conserver les révisions/arbres distincts ; ne pas réappliquer la recette
+d'installation sur un préfixe existant.
+
+Détails et commandes :
+[tutoriel WSL2 10400](docs/installation-wsl2-debian13-10400.md) et
+[rapport daté](docs/qualification/10400-wsl2-core-i386-2026-11-10.md).
+Prochaine porte utile : **un témoin fonctionnel issu du `master`
+récent**, sur ce banc privé isolé et avec un résultat exécutable positif/négatif.
