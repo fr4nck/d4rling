@@ -1,4 +1,4 @@
-# SoundHack 0.896 — SH01–SH07 static and host witnesses (i386 target)
+# SoundHack 0.896 — SH01–SH10 static, archive and host witnesses (i386 target)
 
 These fixtures use **Python 3 standard-library** host tools. The static auditors
 read files only; SH07 explicitly creates one new output WAV and compiles pinned
@@ -229,3 +229,46 @@ A real valid linked candidate with unparsed dyld-info stays inconclusive.
 No guest, app, math library, audio or Logic engine was tested.
 
 Full [SH09 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH09-link-inputs.md).
+
+## SH10 — deterministic Darwin i386 static archive, cctools-port handoff
+
+[darwin_archive_gate.py](darwin_archive_gate.py) accepts a **verified SH08
+i386 Mach-O MH_OBJECT** (default SHA-256
+`c5e059e4ce39e2f1b95a925d0eebcac09ded0c36748db0e422b1bca3b7ee1409`)
+and reuses SH09's object/globals and Mach-O verification. It compiles only
+the `Pi`/`twoPi` companion, then runs the already installed
+`llvm-ar --format=darwin rcD`. The result is an archive with exactly two
+i386 object members and a Darwin `__.SYMDEF` index, NOT a dylib or program.
+
+The verifier independently reopens both members, checks their nlist symbol
+contracts and original bytes, and accepts only LLVM Darwin's documented
+alignment bytes (`0x0a`) at the end of each member. After the constants
+are accounted for, `_sin`/`_sinf` remain unresolved. SH10 performed an
+identical two-build comparison, and the real SH08 source object produced
+an archive of **4 000 bytes**, SHA-256
+`c11833539630b5aa70d6d63a44d4063eb11a12f0f316884094b0b64f38707169`.
+
+With a legitimate SH08 object in an isolated Linux environment:
+
+```sh
+export SH08_I386_OBJECT=/authorized/path/original-sh08-target.o
+python3 -m unittest discover -s reproduction/fixtures/soundhack-i386 \
+  -p 'test_darwin_archive_gate.py' -v
+python3 reproduction/fixtures/soundhack-i386/darwin_archive_gate.py \
+  --object "$SH08_I386_OBJECT" --output /authorized/new/FFT-i386.a
+```
+
+The optional `--output` **exclusively creates** a new archive (no overwrite).
+The default keeps the archive temporary. For a separately qualified,
+already-built cctools-port `ld64`, pass `--ld64 /authorized/canonical/ld64`.
+SH10 passes the archive to the real linker with `-all_load`, and rejects
+success without a valid Mach-O image; opaque dyld bind info is INCONCLUSIVE.
+
+Host tests: **20/20 SH10 PASS** including negative/fake linker cases and
+the authentic SH08 object; together with SH09, **41/41 PASS**. The only
+linker available in this environment is `ld64.lld` 17, which still rejects
+`-arch i386` (`LINK_TOOLCHAIN_BLOCKED`, exit 3). No native cctools-port
+linking, guest execution, Carbon GUI, audio device or Logic compatibility
+is claimed. The canonical cctools-port submodule is pinned at
+`d9456c221e1f462e17c0b3297748bc089d5a861e`.
+Evidence: [SH10 static archive qualification](../../../docs/evidence/soundhack-sh01-2026-11-10/SH10-darwin-static-archive.md).
