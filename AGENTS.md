@@ -144,6 +144,57 @@ ne pas exécuter une commande Bash comme une commande PowerShell.
   automatique selon l'outil, ou utiliser l'API GitHub pour les lectures
   distantes annoncées par la mission. Signaler un objet absent.
 
+## Coordination inter-conversations — journal Git partagé (10 novembre 2026)
+
+Le dépôt GitHub \`fr4nck/d4rling\`, branche \`master\`, est le **point de
+synchronisation commun** entre les conversations ChatGPT, agents locaux et
+autres contributions. Une conversation, un rapport oral ou une session
+terminale ne remplace pas les commits et documents publiés.
+
+**Avant chaque nouveau lot, reprise ou changement de chantier :**
+
+1. Lire le SHA courant de \`master\` **et les derniers commits** ; examiner
+   les diffs qui touchent les fichiers, contrats, dépendances ou preuves du lot.
+   Comparer avec le SHA de départ de la conversation ou du checkout local.
+2. Lire le checkpoint publié le plus récent dans le périmètre concerné,
+   puis vérifier l'état du checkout local, les modifications non commitées et
+   les artefacts non publiés. Ne pas refaire un lot déjà qualifié ni ignorer
+   un travail plus récent sous prétexte que la conversation est ancienne.
+3. Définir un lot court et des fichiers attribués. Lorsque deux travaux
+   risquent d'écrire les mêmes fichiers, coordonner la propriété avant
+   modification ; réserver les fichiers partagés à un seul intégrateur.
+
+**À chaque évolution et en fin de lot :**
+
+- Publier un **commit séparé, traçable et de portée réduite** pour toute
+  évolution **achevée et vérifiée** dans le périmètre autorisé : correction,
+  test, documentation ou décision. Le commit mentionne le lot, l'état
+  technique et renvoie vers les preuves utiles. Les tests pertinents doivent
+  passer avant intégration d'une modification de production.
+- Si un candidat, un résultat local ou une dépendance n'est pas encore
+  qualifié ou accessible depuis GitHub, publier **uniquement un checkpoint
+  documentaire honnête**, lorsque sa publication est autorisée :
+  révision, provenance, résultats rapportés vs vérifiés, limitations,
+  statut \`PASS\`/\`FAIL\`/\`BLOCKED\`, et prochaine action exacte.
+  Ne pas publier du code non qualifié sous prétexte de le sauvegarder.
+- À chaque checkpoint, distinguer les faits observés directement par
+  l'agent des résultats **rapportés depuis un autre poste ou une autre
+  conversation**. Ne jamais présenter ces derniers comme des tests rejoués.
+
+**Juste avant chaque commit ou publication :** relire à nouveau \`master\`,
+inspecter les nouveaux commits et les fichiers concernés. Si la tête a
+changé, comparer et réconcilier avant toute écriture ; ne jamais écraser
+silencieusement un travail concurrent. Publier uniquement en avance normale
+avec vérification explicite de la tête attendue, sans force-push, reset ni
+historique réécrit. Après publication, relire la tête et les fichiers,
+puis communiquer SHA complet, URL, périmètre, preuves et prochain jalon.
+
+Ces contrôles se font **à chaque session et à chaque publication** ; ils
+ne constituent pas une surveillance continue en arrière-plan. Conserver
+la règle de branche unique \`master\` et toutes les protections du présent
+guide, notamment les exclusions de Petite Victoire, les installations
+historiques et les données propriétaires.
+
 ## 3. Choisir et borner un lot
 
 Prendre un seul identifiant de [ROADMAP.md](ROADMAP.md), par exemple R-A1,
