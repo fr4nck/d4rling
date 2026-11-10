@@ -153,3 +153,39 @@ SH07 unit tests PASS**; full SoundHack fixture suite: 79 cases, 78 PASS and
 
 The WAV example used independent 750 Hz / 3,000 Hz tones, keeping 750 Hz and
 reducing 3,000 Hz approximately 61 dB. See [SH07 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH07-host-wav-render.md).
+
+## SH08 — compile unchanged FFT source to a Darwin i386 Mach-O object
+
+[fft_darwin_i386.py](fft_darwin_i386.py) uses existing Clang and the **pinned,
+unaltered** upstream SoundHack Math/FFT.c and Math/FFT.h to generate a temporary
+`i386-apple-darwin9` `MH_OBJECT` using `-nostdinc` and **prototype-only**
+math declarations. No Apple SDK, host headers, D4rling installation, dynamic
+libraries, binary downloads or audio device are required. It reuses the
+existing `macho_audit.parse()` and `fft_host_probe.require_pinned()` rather
+than adding a second Mach-O parser or source archive.
+
+It checks target ILP32 widths (32-bit pointer, long and int), the i386 Mach-O
+header, six defined original symbols and four unresolved symbols. The source
+is never modified; by default the temporary object is deleted. To retain it,
+pass `--output /authorized/new/file.o` (exclusive creation; never overwrite).
+
+From a canonical D4rling checkout with an authorized original SoundHack Math
+directory and an already installed Clang 17 with Darwin i386 support:
+
+```sh
+SOUNDHACK_MATH_DIR=/authorized/path/SoundHack/Math \
+  python3 -m unittest discover -s reproduction/fixtures/soundhack-i386 \
+  -p 'test_fft_darwin_i386.py' -v
+python3 reproduction/fixtures/soundhack-i386/fft_darwin_i386.py \
+  --source-dir /authorized/path/SoundHack/Math
+```
+
+Observed **20/20 SH08 tests PASS** (including compilation against the real
+source and negative controls); combined SH01–SH08 **99 cases, 98 PASS, 1 SKIP**.
+Without external upstream source, SH08 gives **16 PASS / 4 SKIP**. Codes:
+`0` = `TARGET_OBJECT_PASS`, `2` = target contract failure, `3` =
+inconclusive. **This does not link an i386 Mach-O dylib, execute in the
+D4rling guest, or demonstrate SoundHack/Logic audio.** The available
+`ld64.lld` explicitly rejects `-arch i386`.
+
+Evidence: [SH08 Darwin i386 object](../../../docs/evidence/soundhack-sh01-2026-11-10/SH08-darwin-i386-object.md).
