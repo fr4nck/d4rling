@@ -8,7 +8,8 @@ included. License for these new tests/tools: GPL-3.0-or-later (D4rling).
 
 - `macho_audit.py`: bounds-checked thin/FAT Mach-O (32/64, endian) reader;
   reports selected slice, `LC_LOAD_*` dylibs, `LC_SYMTAB` **nlist** undefined
-  and external defined names. Optional providers are compared **by name only**.
+  and external defined names. Flat images compare by name; two-level images
+  also check `n_desc` import ordinals against matching provider `LC_ID_DYLIB` IDs.
 - `quicktime_stubs.py`: a source-pattern witness for **14 specific QuickTime
   functions** used by `SoundFile/Play.c` in Tom Erbe's SoundHack source at
   `tomerbe/SoundHack@df6f0bc89243b93573b391afa5ab371cce56ac95`.
@@ -16,10 +17,10 @@ included. License for these new tests/tools: GPL-3.0-or-later (D4rling).
   Mach-O samples are generated in temporary directories; no fake SoundHack
   executable is distributed.
 
-This is not a dyld bind/opcode resolver. Exports, reexports, symbol ordinal
-binding, weak-link semantics, lazy binding and application run-time resolution
-are **not** proven. A matching name does not mean a callable ABI or working
-implementation. Files with `LC_DYLD_INFO[_ONLY]` are deliberately inconclusive
+This is not a dyld bind/opcode resolver. Reexports, dyld bind opcodes, true symbol binding, lazy binding and
+application run-time resolution are **not** proven. Import ordinals and weak
+reference flags are parsed, but do not certify actual symbol binding. Even an ordinal/ID/name match does not mean a callable ABI or
+working implementation. Files with `LC_DYLD_INFO[_ONLY]` are deliberately inconclusive
 in strict symbol comparison. Explicit `STUB` and missing definitions are
 reported separately; a missing `STUB` string never certifies functionality.
 
@@ -45,9 +46,12 @@ python3 reproduction/fixtures/soundhack-i386/macho_audit.py \
 
 A binary belonging to a **coherent, authorized** D4rling installation may be
 inspected separately using repeatable `--provider /path/to/QuickTime` and
-`--provider /path/to/lib...` arguments. For name-only checks, add `--strict`:
-exit 0 = bounded nlist comparison with no missing name in the supplied set;
-exit 2 = unresolved name(s); exit 3 = invalid/incomplete inputs. Absence of
+`--provider /path/to/lib...` arguments. For bounded static checks, add `--strict`:
+exit 0 = bounded nlist comparison with no mandatory missing symbol in the supplied set;
+exit 2 = unresolved mandatory symbol(s); exit 3 = invalid/incomplete or inconclusive
+inputs. Missing weak references are reported separately as optional. Two-level
+imports require a matching provider `LC_ID_DYLIB` install name; without it,
+strict mode is inconclusive, not a false success. Absence of
 unresolved names is **not** runtime success. Default output is JSON on stdout.
 The binary inspection limit is 128 MiB per input, without extraction or write.
 
@@ -61,3 +65,13 @@ The binary inspection limit is 128 MiB per input, without extraction or write.
   `docs/evidence/soundhack-sh01-2026-11-10/README.md`.
 - Changes here do **not** modify QuickTime, Carbon, BSD, dyld, CoreAudio,
   the original Logic engine, CI or `experiments/petite-victoire/`.
+
+## SH04 — two-level ordinal qualification (2026-11-10)
+
+The `macho_audit.py` tool now classifies the ordinal of each imported nlist
+symbol and rejects a same-name match from the **wrong provider**. Special
+ordinals, common/prebound, indirect definitions and incomplete provider
+identity remain explicitly inconclusive. `LC_DYLD_INFO` bind opcodes are not
+resolved. The independent source references, 12 new negative/positive cases
+(**39 total host tests**) and exact limitations are in
+`docs/evidence/soundhack-sh01-2026-11-10/SH04-ordinal-qualification.md`.

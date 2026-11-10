@@ -15,33 +15,37 @@ import macho_audit as audit
 
 
 def thin(arch="i386", imports=(), exports=(), dylibs=(), *, endian="<", no_symtab=False,
-         dyld_info=False):
+         dyld_info=False, two_level=False, install_name=None):
     cpu = audit.ARCH_CPUS[arch]
     is64 = arch in ("x86_64", "ppc64", "arm64")
     magic = 0xfeedfacf if is64 else 0xfeedface
     header_len = 32 if is64 else 28
     cmds = []
-    for name in dylibs:
+    for name, cmd in ([(install_name, 0xD)] if install_name else []) + [(n, 0xC) for n in dylibs]:
         raw = name.encode() + b"\0"
         size = (24 + len(raw) + 3) & ~3
-        cmds.append(struct.pack(endian + "IIIIII", 0xC, size, 24, 0, 0, 0) + raw + b"\0" * (size - 24 - len(raw)))
+        cmds.append(struct.pack(endian + "IIIIII", cmd, size, 24, 0, 0, 0) + raw + b"\0" * (size - 24 - len(raw)))
     if dyld_info:
         cmds.append(struct.pack(endian + "II", audit.LC_DYLD_INFO_ONLY, 8))
     syms = b""
     strings = b"\0"
-    items = [(name, 0x01) for name in imports] + [(name, 0x0F) for name in exports]
+    # import tuples: (symbol, library ordinal, weak_import[, n_value])
+    items = [((sym if isinstance(sym, str) else sym[0]), 0x01,
+              (0 if isinstance(sym, str) else (sym[1] << 8) | (0x40 if sym[2] else 0)),
+              (0 if isinstance(sym, str) or len(sym) < 4 else sym[3])) for sym in imports]
+    items += [(name, 0x0F, 0, 0) for name in exports]
     nsize = 16 if is64 else 12
     if not no_symtab:
         cmdsize = sum(map(len, cmds)) + 24
         symoff = header_len + cmdsize
         stroff = symoff + len(items) * nsize
-        cmds.append(struct.pack(endian + "IIIIII", audit.LC_SYMTAB, 24, symoff, len(items), stroff, 1 + sum(len(s.encode()) + 1 for s, _ in items)))
-        for name, ntype in items:
+        cmds.append(struct.pack(endian + "IIIIII", audit.LC_SYMTAB, 24, symoff, len(items), stroff, 1 + sum(len(name.encode()) + 1 for name, _, _, _ in items)))
+        for name, ntype, desc, value in items:
             si = len(strings)
             strings += name.encode() + b"\0"
-            syms += struct.pack(endian + ("IBBhQ" if is64 else "IBBhI"), si, ntype, 1 if ntype == 0x0F else 0, 0, 0)
+            syms += struct.pack(endian + ("IBBHQ" if is64 else "IBBHI"), si, ntype, 1 if ntype == 0x0F else 0, desc, value)
     all_commands = b"".join(cmds)
-    hdr = struct.pack(endian + "IiiIIII", magic, cpu, 3, 2, len(cmds), len(all_commands), 0)
+    hdr = struct.pack(endian + "IiiIIII", magic, cpu, 3, 6 if install_name else 2, len(cmds), len(all_commands), audit.MH_TWOLEVEL if two_level else 0)
     if is64:
         hdr += struct.pack(endian + "I", 0)
     return hdr + all_commands + syms + strings
@@ -174,6 +178,104 @@ class MachOAuditTests(unittest.TestCase):
         code, result = self.cli("--consumer", bad)
         self.assertEqual(code, 3)
         self.assertEqual(result["status"], "BLOCKED")
+
+    def test_two_level_ordinal_matched_to_correct_install_name(self):
+        consumer = self.write("consumer", thin(imports=[("_Play", 1, False)],
+                                  dylibs=["/A/Correct.dylib"], two_level=True))
+        right = self.write("right", thin(exports=["_Play"], install_name="/A/Correct.dylib"))
+        code, out = self.cli("--consumer", consumer, "--provider", right, "--strict")
+        self.assertEqual(code, 0)
+        self.assertEqual(out["resolved_nlist"], ["_Play"])
+        self.assertEqual(out["consumer"]["imports_detail"][0]["library_name"], "/A/Correct.dylib")
+        self.assertEqual(out["consumer"]["imports_detail"][0]["lookup"], "library")
+
+    def test_two_level_wrong_library_does_not_false_pass_by_name(self):
+        consumer = self.write("consumer", thin(imports=[("_Play", 1, False)],
+                                  dylibs=["/A/Expected.dylib"], two_level=True))
+        wrong = self.write("wrong", thin(exports=["_Play"], install_name="/B/Other.dylib"))
+        code, out = self.cli("--consumer", consumer, "--provider", wrong, "--strict")
+        self.assertEqual(code, 2)
+        self.assertEqual(out["resolved_nlist"], [])
+        self.assertEqual(out["unresolved_nlist_detail"], [{"name": "_Play", "expected_library": "/A/Expected.dylib"}])
+
+    def test_two_level_provider_without_id_is_inconclusive(self):
+        consumer = self.write("consumer", thin(imports=[("_Play", 1, False)],
+                                  dylibs=["/A/Correct.dylib"], two_level=True))
+        unnamed = self.write("unnamed", thin(exports=["_Play"]))
+        code, out = self.cli("--consumer", consumer, "--provider", unnamed, "--strict")
+        self.assertEqual(code, 3)
+        self.assertEqual(out["status"], "STATIC_INCONCLUSIVE")
+        self.assertEqual(out["unresolved_nlist"], [])
+
+    def test_two_level_weak_missing_is_optional_not_successful_binding(self):
+        consumer = self.write("consumer", thin(imports=[("_Optional", 1, True)],
+                                  dylibs=["/A/Fwk.dylib"], two_level=True))
+        provider = self.write("provider", thin(exports=["_Different"], install_name="/A/Fwk.dylib"))
+        code, out = self.cli("--consumer", consumer, "--provider", provider, "--strict")
+        self.assertEqual(code, 0)
+        self.assertEqual(out["unresolved_nlist"], [])
+        self.assertEqual(out["optional_missing_nlist"][0]["name"], "_Optional")
+
+    def test_id_command_does_not_change_import_ordinal(self):
+        # A dylib's LC_ID_DYLIB is not an imported-library ordinal.
+        data = thin(imports=[("_Dep", 1, False)], install_name="/Self.dylib",
+                    dylibs=["/Dep.dylib"], two_level=True)
+        info = audit.parse(data, "i386")
+        self.assertEqual(info["install_name"], "/Self.dylib")
+        self.assertEqual(info["imports_detail"][0]["library_name"], "/Dep.dylib")
+
+    def test_install_name_illegal_in_executable_rejected(self):
+        data = bytearray(thin(install_name="/Fake.dylib"))
+        struct.pack_into("<I", data, 12, 2)  # MH_EXECUTE with LC_ID_DYLIB
+        with self.assertRaisesRegex(audit.InvalidMachO, "non-dylib image"):
+            audit.parse(bytes(data), "i386")
+
+    def test_two_level_ordinal_two_is_second_load_order(self):
+        info = audit.parse(thin(imports=[("_Other", 2, False)], two_level=True,
+                                dylibs=["/First", "/Second"]), "i386")
+        self.assertEqual(info["imports_detail"][0]["library_name"], "/Second")
+
+    def test_duplicate_id_rejected(self):
+        data = bytearray(thin(install_name="/Self.dylib"))
+        # Reuse ID load command, extending header table with a duplicate.
+        cmd_size = struct.unpack_from("<I", data, 32)[0]
+        cmd = bytes(data[28:28 + cmd_size])
+        struct.pack_into("<I", data, 16, 2)
+        struct.pack_into("<I", data, 20, cmd_size * 2)
+        data[28 + cmd_size:28 + cmd_size] = cmd
+        with self.assertRaisesRegex(audit.InvalidMachO, "duplicate dylib install name"):
+            audit.parse(bytes(data), "i386")
+
+    def test_invalid_two_level_library_ordinal_rejected(self):
+        with self.assertRaisesRegex(audit.InvalidMachO, "invalid library ordinal"):
+            audit.parse(thin(imports=[("_X", 2, False)], dylibs=["/A/One"], two_level=True), "i386")
+
+    def test_special_ordinal_dynamic_lookup_is_not_assigned_arbitrary_provider(self):
+        consumer = self.write("consumer", thin(imports=[("_DynamicallyLookedUp", 0xFE, False)], two_level=True))
+        provider = self.write("provider", thin(exports=["_DynamicallyLookedUp"], install_name="/A/Other"))
+        code, out = self.cli("--consumer", consumer, "--provider", provider, "--strict")
+        self.assertEqual(code, 3)
+        self.assertEqual(out["status"], "STATIC_INCONCLUSIVE")
+        self.assertEqual(out["consumer"]["imports_detail"][0]["lookup"], "dynamic_lookup")
+
+    def test_common_symbol_does_not_get_strict_pass_by_name(self):
+        consumer = self.write("consumer", thin(imports=[("_Common", 0, False, 8)]))
+        provider = self.write("provider", thin(exports=["_Common"]))
+        code, out = self.cli("--consumer", consumer, "--provider", provider, "--strict")
+        self.assertEqual(code, 3)
+        self.assertEqual(out["status"], "STATIC_INCONCLUSIVE")
+
+    def test_indirect_export_is_not_real_definition(self):
+        raw = bytearray(thin(exports=["_Alias"]))
+        # Locate the nlist table in the LC_SYMTAB load command.
+        symoff = struct.unpack_from("<I", raw, 28 + 8)[0]
+        raw[symoff + 4] = 0x0B  # N_EXT | N_INDR
+        provider = self.write("provider", bytes(raw))
+        self.assertEqual(audit.inspect(provider, "i386")["exports_nlist"], [])
+        self.assertTrue(audit.inspect(provider, "i386")["symbol_caveats"])
+        consumer = self.write("consumer", thin(imports=["_Alias"]))
+        code, out = self.cli("--consumer", consumer, "--provider", provider, "--strict")
+        self.assertEqual(code, 3)
 
     def test_arch_endian_and_fat64_tables(self):
         self.assertEqual(audit.parse(thin("ppc", endian=">"), "ppc")["bits"], 32)

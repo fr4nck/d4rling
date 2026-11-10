@@ -22,6 +22,8 @@ THIN_MAGICS = {b"\xce\xfa\xed\xfe": ("<", False), b"\xfe\xed\xfa\xce": (">", Fal
 FAT_MAGICS = {b"\xca\xfe\xba\xbe": (">", False), b"\xbe\xba\xfe\xca": ("<", False),
               b"\xca\xfe\xba\xbf": (">", True), b"\xbf\xba\xfe\xca": ("<", True)}
 LC_SYMTAB = 0x2
+MH_TWOLEVEL = 0x80
+N_WEAK_REF = 0x0040
 LC_DYLD_INFO = 0x22
 LC_DYLD_INFO_ONLY = 0x80000022
 LC_LOADS = {0xC: "load", 0x80000018: "weak", 0x8000001F: "reexport",
@@ -67,6 +69,8 @@ def read_thin(data: bytes, offset: int, length: int) -> dict:
     dylibs: list[dict] = []
     symtab = None
     has_dyld_info = False
+    ordinal_libraries: list[str] = []
+    install_name = None
     for _ in range(ncmds):
         cmd, size = struct.unpack(endian + "II", section(data, pos, 8, pos, cmds_end))
         if size < 8 or size > cmds_end - pos:
@@ -77,7 +81,16 @@ def read_thin(data: bytes, offset: int, length: int) -> dict:
             pathoff = struct.unpack_from(endian + "I", data, pos + 8)[0]
             if pathoff < 24 or pathoff >= size:
                 raise InvalidMachO("invalid dylib name offset")
-            dylibs.append({"kind": LC_LOADS[cmd], "name": read_cstr(data, pos + pathoff, pos + size)})
+            name = read_cstr(data, pos + pathoff, pos + size)
+            dylibs.append({"kind": LC_LOADS[cmd], "name": name})
+            if cmd == 0xD:  # LC_ID_DYLIB is not in the import ordinal table
+                if filetype not in (0x6, 0x9):  # MH_DYLIB or MH_DYLIB_STUB
+                    raise InvalidMachO("dylib install name on non-dylib image")
+                if install_name is not None:
+                    raise InvalidMachO("duplicate dylib install name")
+                install_name = name
+            else:
+                ordinal_libraries.append(name)
         elif cmd == LC_SYMTAB:
             if symtab is not None or size < 24:
                 raise InvalidMachO("duplicate or truncated symtab command")
@@ -89,6 +102,9 @@ def read_thin(data: bytes, offset: int, length: int) -> dict:
         raise InvalidMachO("load command byte count mismatch")
     imported: set[str] = set()
     exported: set[str] = set()
+    imported_details: list[dict] = []
+    symbol_caveats: list[str] = []
+    two_level = bool(flags & MH_TWOLEVEL)
     if symtab:
         symoff, nsyms, stroff, strsize = symtab
         entry_size = 16 if is64 else 12
@@ -98,7 +114,8 @@ def read_thin(data: bytes, offset: int, length: int) -> dict:
         section(data, offset + stroff, strsize, offset, offset + length)
         for index in range(nsyms):
             at = offset + symoff + index * entry_size
-            nameoff, n_type = struct.unpack_from(endian + "IB", data, at)
+            nameoff, n_type, _n_sect, n_desc = struct.unpack_from(endian + "IBBH", data, at)
+            n_value = struct.unpack_from(endian + ("Q" if is64 else "I"), data, at + 8)[0]
             if not (n_type & 0x01) or (n_type & 0xE0):  # private/static or STAB debug record
                 continue
             if nameoff >= strsize:
@@ -106,16 +123,47 @@ def read_thin(data: bytes, offset: int, length: int) -> dict:
             name = read_cstr(data, offset + stroff + nameoff, offset + stroff + strsize)
             if not name:
                 continue
-            if (n_type & 0x0E) == 0:  # N_UNDF
+            kind = n_type & 0x0E
+            if kind in (0x0, 0xC):  # N_UNDF, N_PBUD
                 imported.add(name)
-            else:
+                ordinal = (n_desc >> 8) & 0xff if two_level else None
+                # Historical 0xfe must be interpreted as ordinal 254 when
+                # a binary contains at least that many load commands.
+                if ordinal == 0xfe and len(ordinal_libraries) < 254:
+                    lookup = "dynamic_lookup"
+                    library = None
+                elif ordinal == 0xff:
+                    lookup = "main_executable"
+                    library = None
+                elif ordinal == 0:
+                    lookup = "self" if two_level else "flat"
+                    library = None
+                elif ordinal is None:
+                    lookup = "flat"
+                    library = None
+                else:
+                    if ordinal > len(ordinal_libraries):
+                        raise InvalidMachO("invalid library ordinal")
+                    lookup = "library"
+                    library = ordinal_libraries[ordinal - 1]
+                imported_details.append({"name": name, "library_ordinal": ordinal,
+                                         "library_name": library, "lookup": lookup,
+                                         "weak_import": bool(n_desc & N_WEAK_REF),
+                                         "common_or_prebound": bool(n_value) or kind == 0xC,
+                                         "reference_to_weak": bool(n_desc & 0x0080)})
+            elif kind in (0x2, 0xE):  # N_ABS, N_SECT
                 exported.add(name)
+            else:  # N_INDR and unknown types do not prove a defined address
+                symbol_caveats.append(f"{name}: unsupported nlist type 0x{kind:x}")
     return {"arch": CPU_NAMES.get(cputype, f"cpu:{cputype}"), "cputype": cputype,
             "cpusubtype": cpusubtype, "bits": 64 if is64 else 32,
             "filetype": filetype, "dylibs": dylibs,
+            "two_level_namespace": two_level, "install_name": install_name,
             "imports_nlist": sorted(imported), "exports_nlist": sorted(exported),
+            "imports_detail": sorted(imported_details, key=lambda x: (x["name"], str(x["library_name"]))),
+            "symbol_caveats": sorted(symbol_caveats),
             "has_symtab": symtab is not None, "has_dyld_info": has_dyld_info,
-            "symbol_scope": "nlist only; dyld bind/reexport resolution not implemented"}
+            "symbol_scope": "nlist with library ordinals only; dyld bind/reexport resolution not implemented"}
 
 
 def parse(data: bytes, arch: str) -> dict:
@@ -193,13 +241,57 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({"status": "BLOCKED", "error": str(exc)}, sort_keys=True))
         return 3
     report = {"status": "STATIC_INSPECTED", "arch": args.arch, "consumer": consumer, "providers": providers,
-              "evidence": "STATIC nlist names only; no execution, dynamic binding or audio validated"}
+              "evidence": "STATIC nlist names and two-level ordinals; no execution, dyld binding, ABI or audio validated"}
     if providers:
-        names = set().union(*(set(p["exports_nlist"]) for p in providers))
-        report["resolved_nlist"] = sorted(set(consumer["imports_nlist"]) & names)
-        report["unresolved_nlist"] = sorted(set(consumer["imports_nlist"]) - names)
-        report["status"] = ("STATIC_INCONCLUSIVE" if not consumer["has_symtab"] or consumer["has_dyld_info"]
-                            or any(not x["has_symtab"] or x["has_dyld_info"] for x in providers) else "STATIC_AUDIT")
+        all_exports = set().union(*(set(p["exports_nlist"]) for p in providers))
+        by_id: dict[str, list[dict]] = {}
+        for provider in providers:
+            if provider["install_name"]:
+                by_id.setdefault(provider["install_name"], []).append(provider)
+        resolved = []
+        unresolved = []
+        unknown = []
+        optional_missing = []
+        for imp in consumer["imports_detail"]:
+            name = imp["name"]
+            library = imp["library_name"]
+            if not consumer["two_level_namespace"]:
+                matches = name in all_exports
+            elif imp["lookup"] != "library":
+                unknown.append({"name": name, "reason": f"{imp['lookup']} not resolved statically"})
+                continue
+            elif not by_id.get(library):
+                # A missing provider identity is not evidence that an API
+                # is missing from the library at runtime.
+                if any(not p["install_name"] for p in providers):
+                    unknown.append({"name": name, "reason": f"no verified provider identity for {library}"})
+                else:
+                    unresolved.append({"name": name, "expected_library": library})
+                continue
+            elif len(by_id[library]) != 1:
+                unknown.append({"name": name, "reason": f"ambiguous provider identity {library}"})
+                continue
+            else:
+                matches = name in by_id[library][0]["exports_nlist"]
+            if imp["common_or_prebound"] or imp["reference_to_weak"]:
+                unknown.append({"name": name, "reason": "common/prebound or weak-reference indirection"})
+            elif matches:
+                resolved.append({"name": name, "expected_library": library})
+            elif imp["weak_import"]:
+                optional_missing.append({"name": name, "expected_library": library})
+            else:
+                unresolved.append({"name": name, "expected_library": library})
+        report["resolved_nlist"] = sorted(set(x["name"] for x in resolved))
+        report["unresolved_nlist"] = sorted(set(x["name"] for x in unresolved))
+        report["resolved_nlist_detail"] = sorted(resolved, key=lambda x: (x["name"], str(x["expected_library"])))
+        report["unresolved_nlist_detail"] = sorted(unresolved, key=lambda x: (x["name"], str(x["expected_library"])))
+        report["optional_missing_nlist"] = sorted(optional_missing, key=lambda x: x["name"])
+        report["inconclusive_nlist"] = sorted(unknown, key=lambda x: x["name"])
+        inconclusive = (not consumer["has_symtab"] or consumer["has_dyld_info"]
+                        or bool(consumer["symbol_caveats"]) or bool(unknown)
+                        or any(not x["has_symtab"] or x["has_dyld_info"]
+                               or x["symbol_caveats"] for x in providers))
+        report["status"] = "STATIC_INCONCLUSIVE" if inconclusive else "STATIC_AUDIT"
     elif args.strict:
         report["status"] = "STATIC_INCONCLUSIVE"
     print(json.dumps(report, indent=2, sort_keys=True))
