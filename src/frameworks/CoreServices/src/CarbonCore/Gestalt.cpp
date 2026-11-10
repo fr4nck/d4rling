@@ -19,9 +19,30 @@ along with Darling.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <CarbonCore/MacErrors.h>
 #include <cstring>
+#include <climits>
 #include <cstdio>
 #include <sys/sysctl.h>
 #include <CarbonCore/Gestalt.h>
+
+// KERN_OSRELEASE is a dotted Darwin kernel release, not a macOS version.
+// Parse each component without scanf integer overflow or accepting suffixes.
+static bool parseReleaseNumber(const char*& cursor, int& result)
+{
+    if (*cursor < '0' || *cursor > '9')
+        return false;
+
+    int value = 0;
+    do {
+        const int digit = *cursor - '0';
+        if (value > (INT_MAX - digit) / 10)
+            return false;
+        value = value * 10 + digit;
+        ++cursor;
+    } while (*cursor >= '0' && *cursor <= '9');
+
+    result = value;
+    return true;
+}
 
 OSStatus Gestalt(uint32_t type, int* value)
 {
@@ -47,14 +68,22 @@ OSStatus Gestalt(uint32_t type, int* value)
 			return unimpErr;
 		}
 		version[version_len] = '\0';
-		if (sscanf(version, "%d.%d.%d", &maj, &min, &patch) != 3 ||
-			maj < 0 || min < 0 || patch < 0) {
+		const char* cursor = version;
+		if (!parseReleaseNumber(cursor, maj) || *cursor != '.' ||
+			!parseReleaseNumber(++cursor, min) || *cursor != '.' ||
+			!parseReleaseNumber(++cursor, patch) || *cursor != '\0') {
 			*value = 0;
 			return unimpErr;
 		}
-		
+
+		// Preserve the legacy encoding for now, but never overflow its int result.
+		if (type == gestaltSystemVersion && 0x100LL * maj + 0x10LL * min > INT_MAX) {
+			*value = 0;
+			return unimpErr;
+		}
+
 		if (type == gestaltSystemVersion)
-			*value = 0x100 * maj + 0x10 * min;
+			*value = static_cast<int>(0x100LL * maj + 0x10LL * min);
 		else if (type == gestaltSystemVersionMajor)
 			*value = maj;
 		else if (type == gestaltSystemVersionMinor)

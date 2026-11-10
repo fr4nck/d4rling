@@ -128,6 +128,47 @@ int main() {
   sysctl_mode = 5;
   check("unterminated kernel release", gestaltSystemVersion, 0, 0x1440, 1);
   sysctl_mode = 0;
+  mock_release = "0.0.0";
+  check("zero version", gestaltSystemVersion, 0, 0, 1);
+  mock_release = "00020.004.00";
+  check("leading zeros", gestaltSystemVersion, 0, 0x1440, 1);
+  mock_release = "20.4.0-extra";
+  check("suffix rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "20.4.0.1";
+  check("fourth component rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "20.4.0 ";
+  check("trailing whitespace rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = " 20.4.0";
+  check("leading whitespace rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "+20.4.0";
+  check("plus sign rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "20.+4.0";
+  check("plus minor rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "20.4";
+  check("missing component rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "";
+  check("empty release rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "20.4.0\n";
+  check("newline suffix rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "0x14.4.0";
+  check("hex rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "2147483648.4.0";
+  check("major overflow rejected", gestaltSystemVersionMajor, -4, 0, 1);
+  mock_release = "20.2147483648.0";
+  check("minor overflow rejected", gestaltSystemVersionMinor, -4, 0, 1);
+  mock_release = "20.4.2147483648";
+  check("patch overflow rejected", gestaltSystemVersionPatch, -4, 0, 1);
+  mock_release = "2147483647.0.0";
+  check("maximum legal major", gestaltSystemVersionMajor, 0, 2147483647, 1);
+  mock_release = "0.2147483647.0";
+  check("maximum legal minor", gestaltSystemVersionMinor, 0, 2147483647, 1);
+  mock_release = "0.0.2147483647";
+  check("maximum legal patch", gestaltSystemVersionPatch, 0, 2147483647, 1);
+  mock_release = "2147483647.0.0";
+  check("encoded major overflow rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "0.2147483647.0";
+  check("encoded minor overflow rejected", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "20.4.0";
   const int prior_calls = sysctl_calls;
   if (Gestalt(gestaltSystemVersion, nullptr) != -50 || sysctl_calls != prior_calls) {
     std::fprintf(stderr, "FAIL null output parameter\n");
@@ -150,8 +191,28 @@ int main() {
             raise RuntimeError('compile failed:\n' + build.stderr[-1600:])
         result = subprocess.run([str(output)], capture_output=True, text=True,
                                 check=False, timeout=5)
-        if result.returncode or result.stderr or 'GESTALT_HOST: 18 PASS, 0 FAIL' not in result.stdout:
+        if result.returncode or result.stderr or 'GESTALT_HOST: 38 PASS, 0 FAIL' not in result.stdout:
             raise RuntimeError('host contract failed:\n' + result.stdout + result.stderr)
+        # A test-only mutation that accepts a release suffix must be rejected.
+        mutant_anchor = " || *cursor != '\\0'"
+        text = raw.decode('utf-8')
+        if text.count(mutant_anchor) != 1:
+            raise RuntimeError('mutation anchor missing: requalify parser')
+        mutant_source = root / 'mutant.cpp'
+        mutant_output = root / 'mutant'
+        mutant_source.write_text(text.replace(mutant_anchor, '', 1), encoding='utf8')
+        mutant_command = [str(mutant_source) if item == str(source) else
+                          str(mutant_output) if item == str(output) else item
+                          for item in build.args]
+        mutant_build = subprocess.run(mutant_command, capture_output=True,
+                                      text=True, timeout=25, check=False)
+        if mutant_build.returncode:
+            raise RuntimeError('negative fixture compile failed:\n' + mutant_build.stderr[-1000:])
+        mutant_run = subprocess.run([str(mutant_output)], capture_output=True,
+                                    text=True, timeout=5, check=False)
+        if mutant_run.returncode == 0 or 'FAIL suffix rejected' not in mutant_run.stderr:
+            raise RuntimeError('suffix-acceptance mutant survived:\n' + mutant_run.stderr[-1000:])
+        print('PASS: suffix-acceptance mutation rejected')
         print('PASS: exact header blob', HEADER_BLOB)
         print('PASS: Gestalt source blob', blob)
         print(result.stdout.strip())
