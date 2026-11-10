@@ -358,4 +358,5 @@ no_slide:
 #undef MACH_HEADER_STRUCT
 #undef SECTION_STRUCT
 #undef MAP_EXTRA
+#undef MLDR_MMAP_DIAG
 
