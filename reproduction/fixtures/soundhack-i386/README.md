@@ -1,4 +1,4 @@
-# SoundHack 0.896 — SH01–SH13 static, archive and host witnesses (i386 target)
+# SoundHack 0.896 — SH01–SH14 static, archive and host witnesses (i386 target)
 
 These fixtures use **Python 3 standard-library** host tools. The static auditors
 read files only; SH07 explicitly creates one new output WAV and compiles pinned
@@ -363,3 +363,32 @@ pinned SH08 object and SH10 ZIP available for the larger suite. SH13's inert
 ELF test fixtures are never run as linkers. A real i386 Mach-O link remains
 blocked until an authorized, canonical cctools-port linker is built and used.
 See [SH13 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH13-ld64-build-path.md).
+
+## SH14 — i5-10400 real linker handoff (not run on the 10400 yet)
+
+The [sh14_10400_replay.sh](sh14_10400_replay.sh) shell runner uses the
+**already established** historical 10400 WSL2 core-i386 build and the
+unchanged, separately distributed SH10 ZIP. It checks the correct
+`cctools-port@d9456c2` submodule identity, detects exactly one native ELF
+cctools `ld` in the bounded SH13 paths, verifies the complete SH10 ZIP SHA,
+then calls the existing SH12 real linker gate. It does not clone, install,
+compile a framework, update Git, overwrite an output or run any guest.
+
+Unpack the previously prepared SH14 kit in one authorized directory on the
+10400, then from that directory run:
+
+```sh
+bash SH14-10400-replay.sh
+```
+
+Defaults: `~/atelier/d4rling` for the master checkout and
+`~/atelier/d4rling-10400/build-core-i386` for the historical build.
+Environment overrides are described in the
+[SH14 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH14-10400-linker-handoff.md).
+The output directory is created only after preflight, inside the same 10400
+project. An existing output is never overwritten.
+
+Observed here: script syntax PASS, missing-checkout negative case exit 3
+without creating an output directory; real SH12 on original SH10 package
+returns `LINKER_ABSENT` (exit 3) in the isolated container. **No real
+10400 linker execution or i386 Mach-O dylib was validated yet.**
