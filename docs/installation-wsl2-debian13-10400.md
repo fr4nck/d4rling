@@ -474,6 +474,48 @@ Les journaux de contre-épreuves ont été conservés sous
 parcours historique Carbon i386, pas QuickTime, Logic 8,
 l'audio/JACK ou les développements récents de `master`.**
 
+## 14. Qualification de master actuel sur le 10400 — cible mldr32 R4-F
+
+**Statut : procédure prête, NON ENCORE EXÉCUTÉE sur le 10400.**
+Après fermeture du témoin historique Carbon 3/3 PASS, le prochain
+banc cible un composant modifié **sur le `master` récent** plutôt
+que de retoucher la reconstitution `b7d0cb6`. Le script existant
+[`reproduction/qualify-mldr32-current.sh`](../reproduction/qualify-mldr32-current.sh)
+qualifie le drapeau de diagnostic mmap R4-F appliqué **exclusivement
+à `mldr32`** : source présente, configuration CMake fraîche,
+`compile_commands.json` avec une seule définition instrumentée,
+`-m32`, puis compilation d'un ELF32.
+
+**Deux arbres distincts :**
+
+- **Préserver** `~/atelier/d4rling-10400/source`,
+  `build-core-i386/`, `private-install/` et `carbon-probe/` :
+  le témoin historique reste 3/3 PASS.
+- Utiliser le dépôt canonique `~/atelier/d4rling` après
+  vérification de `master`, de `origin` et de l'absence de
+  changements locaux. Mettre à jour par **fetch + fusion fast-forward
+  uniquement**, sans reset, stash ni rebase ; synchroniser les
+  sous-modules seulement depuis le dépôt canonique.
+  **Ce passage nécessite GitHub et peut télécharger plusieurs Go
+  de sous-modules.** Le script de build ne réinstalle pas Darling.
+- Destination neuve :
+  `~/atelier/d4rling-10400/validation/current-master-r4f-build`.
+  Ne jamais écraser un ancien dossier de build ou utiliser le
+  `private-install` historique comme destination.
+
+**Critère d'acceptation :** messages
+`R4F_COMPILE_DEFINITION_SCOPE_PASS` et
+`R4F_CURRENT_MASTER_MLDR32_BUILD_PASS`,
+SHA `SOURCE_HEAD` identifié, binaire ELF32 vérifié.
+**Aucune exécution invitée ni changement de la bibliothèque
+`dyld` historique n'est impliqué.**
+
+La proposition QuickTime C4-D reste à part : la branche
+`master` conserve un patch de configuration seulement proposé,
+car le Memory Manager C4 réel est toujours inaccessible depuis
+le 5700X. Le fait de qualifier `mldr32` sur `master` ne
+transforme pas QuickTime C4-D en fonctionnalité de production.
+
 ## Précautions
 
 Conserver **un seul atelier de travail** dans `$HOME/atelier` et **aucun fichier à la racine de `C:\`**. Ne pas altérer `C:\\WINDOWS\\system32`, la distribution Docker, le dépôt `master`, l'arbre historique ou les logs. Ne rien supprimer ou déplacer sans validation préalable. Tous les échecs sont à conserver et à documenter comme tels.
