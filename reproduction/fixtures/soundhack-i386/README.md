@@ -1,4 +1,4 @@
-# SoundHack 0.896 — SH01–SH14 static, archive and host witnesses (i386 target)
+# SoundHack 0.896 — SH01–SH15 static, archive and host witnesses (i386 target)
 
 These fixtures use **Python 3 standard-library** host tools. The static auditors
 read files only; SH07 explicitly creates one new output WAV and compiles pinned
@@ -392,3 +392,37 @@ Observed here: script syntax PASS, missing-checkout negative case exit 3
 without creating an output directory; real SH12 on original SH10 package
 returns `LINKER_ABSENT` (exit 3) in the isolated container. **No real
 10400 linker execution or i386 Mach-O dylib was validated yet.**
+
+## SH15 — portable offline i386 cctools replay (no fresh Git checkout)
+
+The existing SH14 wrapper required local `master` to contain SH13. SH15
+delivers the **exact already-committed SH12/SH13 Python tools** in a pinned
+portable ZIP with the original SH10 FFT archive. The tools' Git blob hashes,
+SH10 SHA-256 and historical source/submodule identity are checked before any
+use. No download, installation, Git mutation or guest/audio execution occurs.
+
+Build the deterministic ZIP in an **authorized new directory** using the
+authentic externally supplied SH10 ZIP:
+
+```sh
+export SOUNDHACK_SH10_PACKAGE=/authorized/path/d4rling-SH10-archive-i386.zip
+python3 -m unittest discover -s reproduction/fixtures/soundhack-i386 \
+  -p 'test_sh15_portable.py' -v
+python3 reproduction/fixtures/soundhack-i386/build_sh15_portable.py \
+  --sh10-package "$SOUNDHACK_SH10_PACKAGE" \
+  --output /authorized/new/d4rling-SH15-10400-portable.zip
+```
+
+The private i5-10400 historical build is verified, but its executable linker
+has not yet been inspected. After extracting the kit into a **new** Debian
+WSL2 directory on that host, run `bash SH15-10400-portable.sh`. The wrapper
+checks one native `ld` candidate under the canonical existing build and
+delegates the actual link to the unchanged SH12/SH11 gate. It only retains a
+new `MH_DYLIB` after structural verification; no input is overwritten.
+
+**11/11 SH15 tests PASS** on the isolated Linux host with the authentic SH10
+ZIP; **2 PASS, 9 SKIP** without it. The ZIP is not stored in this repository;
+its original delivered SHA-256 is
+`1ae4ac3e3a2bfdfaf28bd327519519c20fe65bf494e5814502ae8466c58ef126`.
+This does **not** validate a real cctools link or SoundHack guest startup.
+See [SH15 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH15-portable-kit.md).
