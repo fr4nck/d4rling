@@ -132,6 +132,42 @@ class ProbeR4BTests(unittest.TestCase):
     def test_fat_slice_with_nonzero_padding(self):
         self.assertIn("SEGMENT=__TEXT", output(fat(thin(), offset=64)))
 
+    def test_mmap_stderr_diagnostic_is_explicitly_unslid(self):
+        import tempfile
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            binary = root / "fixture-i386"
+            stderr = root / "fixture.stderr"
+            binary.write_bytes(thin())
+            stderr.write_text("Cannot mmap segment __TEXT at 0x1000: Operation not permitted\\n")
+            buf = io.StringIO()
+            with patch("sys.argv", ["r4b", str(binary), "--stderr", str(stderr)]):
+                with contextlib.redirect_stdout(buf):
+                    probe.main()
+            out = buf.getvalue()
+            self.assertIn("STDERR_MATCHES=1", out)
+            self.assertIn("MMAP_LOG_ADDRESS=UNSLID_VMADDR_NOT_EFFECTIVE_ADDRESS", out)
+            self.assertIn("MMAP_EFFECTIVE_ADDRESS=UNKNOWN_WITHOUT_LOADER_SLIDE", out)
+
+    def test_non_mmap_stderr_does_not_claim_mmap_diagnostic(self):
+        import tempfile
+        from unittest.mock import patch
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            binary = root / "fixture-i386"
+            stderr = root / "fixture.stderr"
+            binary.write_bytes(thin())
+            stderr.write_text("Library not loaded: /System/Library/Frameworks/Foundation.framework\\n")
+            buf = io.StringIO()
+            with patch("sys.argv", ["r4b", str(binary), "--stderr", str(stderr)]):
+                with contextlib.redirect_stdout(buf):
+                    probe.main()
+            out = buf.getvalue()
+            self.assertIn("STDERR_MATCHES=1", out)
+            self.assertNotIn("MMAP_LOG_ADDRESS=", out)
+            self.assertNotIn("MMAP_EFFECTIVE_ADDRESS=", out)
+
     def test_unrecognized_format_rejected(self):
         with self.assertRaisesRegex(ValueError, "not a 32-bit Mach-O"):
             output(b"Z" * 100)
