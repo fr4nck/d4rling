@@ -189,3 +189,43 @@ D4rling guest, or demonstrate SoundHack/Logic audio.** The available
 `ld64.lld` explicitly rejects `-arch i386`.
 
 Evidence: [SH08 Darwin i386 object](../../../docs/evidence/soundhack-sh01-2026-11-10/SH08-darwin-i386-object.md).
+
+## SH09 — verify i386 relocations, globals and real linker refusal
+
+[**i386_link_gate.py**](i386_link_gate.py) consumes an existing SH08
+Mach-O i386 object (no recompilation or copying of SoundHack sources).
+It reuses `macho_audit.parse` and independently installed
+`llvm-objdump --macho --reloc` to verify relocations, symbols,
+target architecture and the exact reference SHA-256. A tiny
+temporary **Darwin i386 object** supplies SoundHack's application
+globals `Pi` and `twoPi` only; `sin` and `sinf` remain genuine
+external dependencies. The `ld64` selected by `--ld64` is attempted
+in a private temporary directory, and any output is checked for real
+Mach-O i386 `MH_DYLIB` structure. A positive exit without a valid
+binary is a failure; no binary is retained. For a static input-only
+check, use `--no-link`.
+
+From the canonical repository with an already-built SH08 object:
+
+```sh
+SH08_I386_OBJECT=/authorized/path/fft-i386.o \
+  python3 -m unittest discover -s reproduction/fixtures/soundhack-i386 \
+    -p 'test_i386_link_gate.py' -v
+python3 reproduction/fixtures/soundhack-i386/i386_link_gate.py \
+  --object /authorized/path/fft-i386.o --no-link
+python3 reproduction/fixtures/soundhack-i386/i386_link_gate.py \
+  --object /authorized/path/fft-i386.o \
+  --ld64 /authorized/canonical/build/path/to/ld64
+```
+
+**SH09 21/21 tests PASS** on the isolated host with the original SH08
+object available (without it, 19 PASS / 2 SKIP). Object: 48 relocations,
+21 validated pairs and four imports; the globals companion resolves two
+names, leaving `sin` and `sinf`. The available `ld64.lld` 17 returns
+`missing or unsupported -arch i386` (**exit 3,
+`LINK_TOOLCHAIN_BLOCKED`**, NOT a link PASS).
+The `--no-link` result `LINK_INPUTS_READY` (exit 0) is **only static**.
+A real valid linked candidate with unparsed dyld-info stays inconclusive.
+No guest, app, math library, audio or Logic engine was tested.
+
+Full [SH09 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH09-link-inputs.md).
