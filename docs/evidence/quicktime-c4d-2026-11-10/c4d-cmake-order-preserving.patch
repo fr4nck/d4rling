@@ -1,0 +1,47 @@
+diff --git a/cmake/darling_parse_components.cmake b/cmake/darling_parse_components.cmake
+--- a/cmake/darling_parse_components.cmake
++++ b/cmake/darling_parse_components.cmake
+@@ -16,6 +16,8 @@
+ 		set(COMPONENT_DEPS gui dev_gui_frameworks_common PARENT_SCOPE)
+ 	elseif ("${COMPONENT}" STREQUAL "gui_stubs")
+ 		set(COMPONENT_DEPS gui dev_gui_stubs_common PARENT_SCOPE)
++	elseif ("${COMPONENT}" STREQUAL "quicktime")
++		set(COMPONENT_DEPS cli PARENT_SCOPE)
+ 	elseif ("${COMPONENT}" STREQUAL "dev_gui_common")
+ 		set(COMPONENT_DEPS system PARENT_SCOPE)
+ 	elseif (("${COMPONENT}" STREQUAL "dev_gui_frameworks_common") OR ("${COMPONENT}" STREQUAL "dev_gui_stubs_common"))
+@@ -77,7 +79,7 @@
+ 	set(COMPONENT_core ON PARENT_SCOPE)
+ 
+ 	# first, set every component off
+-	foreach(COMPONENT IN ITEMS system python ruby perl cli cli_dev cli_extra gui gui_frameworks gui_stubs jsc webkit dev_gui_common dev_gui_frameworks_common dev_gui_stubs_common)
++	foreach(COMPONENT IN ITEMS system python ruby perl cli cli_dev cli_extra gui gui_frameworks gui_stubs quicktime jsc webkit dev_gui_common dev_gui_frameworks_common dev_gui_stubs_common)
+ 		set("COMPONENT_${COMPONENT}" OFF PARENT_SCOPE)
+ 	endforeach()
+ 
+diff --git a/src/frameworks/CMakeLists.txt b/src/frameworks/CMakeLists.txt
+--- a/src/frameworks/CMakeLists.txt
++++ b/src/frameworks/CMakeLists.txt
+@@ -135,6 +135,12 @@
+ 	add_subdirectory(Vision)
+ endif()
+ 
++# Standalone QuickTime component; preserve the legacy gui_stubs order.
++if (COMPONENT_quicktime AND NOT COMPONENT_gui_stubs)
++    set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "quicktime")
++    add_subdirectory(QuickTime)
++endif()
++
+ # Xcode also needs WebKit, even on the CLI! it may be a weak dependency (i didn't check that),
+ # but what we do is we build our stub if the `webkit` component isn't enabled.
+ #
+diff --git a/src/frameworks/QuickTime/CMakeLists.txt b/src/frameworks/QuickTime/CMakeLists.txt
+--- a/src/frameworks/QuickTime/CMakeLists.txt
++++ b/src/frameworks/QuickTime/CMakeLists.txt
+@@ -23,5 +23,6 @@
+         src/qt_mov_pcm.c
+ 
+     DEPENDENCIES
++        CoreServices
+         system
+ )
