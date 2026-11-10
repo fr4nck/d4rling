@@ -112,3 +112,14 @@ Après récupération et vérification du C4 réel (pas de reconstitution à par
 **Fichiers publiés uniquement dans ce dossier :** `README.md`, `c4d-cmake-proposal.patch`, `check_c4d.py` ; aucune branche, sous-module, CI, outil audio ou `experiments/petite-victoire/` touché.  
 **Prochain acte exact :** relire le HEAD `master` et cette note, accéder au 5700X quand disponible, vérifier le candidat C4-A/B/C **authentique**, puis exécuter la qualification de la section 5 en environnement isolé. Avant cela, la seule action utile est la revue documentaire du patch et du contrat de tests.  
 **Interdits :** appliquer le patch de qualification directement sur `master` sans les portes, reconstituer C4 depuis C3, annoncer QuickTime/Logic fonctionnels, inventer un build, ouvrir BSD/dyld/audio/Cocoa, modifier Petite Victoire, contribuer au Darling officiel sans décision distincte.
+
+
+## 8. Actualisation M2-R2 et arrêt des essais synthétiques (10 novembre 2026)
+
+La section 7 décrit **l'archivage initial**, pas le dernier commit de ce dossier. Le dernier jalon publié et vérifiable est [C4-D-M2-R2](C4D-M2-R2-host-replay.md), commit [`c897c0e7`](https://github.com/fr4nck/d4rling/commit/c897c0e78276c3c5b281e7cbf8d7ea66957ebc0d) : **32/32 tests PASS, 0 SKIP** sur Linux x64, avec parseur Git épinglé et **fichiers Mach-O i386 synthétiques**. Le lot R1 précédent et ses deux SKIP historiques ne sont pas réécrits. [Test CLI reproductible](test_check_c4d_macho_cli.py) et [garde Mach-O](check_c4d_macho_i386.py) sont présents dans ce dossier.
+
+**Décision de coordination :** sélectionner [`c4d-cmake-order-preserving.patch`](c4d-cmake-order-preserving.patch) (G2) comme **base prioritaire de qualification isolée** : il préserve l'ordre du bloc `gui_stubs` tout en préparant `COMPONENTS=quicktime` et `QuickTime → CoreServices`. L'ancien [patch C4-D initial](c4d-cmake-proposal.patch) reste archivé, **non promu et non supprimé**. G2 n'est **pas validé pour la production**.
+
+**État des gates :** PASS uniquement sur le graphe CMake instrumenté, la liaison témoin ELF hôte et le parseur Mach-O avec fichiers synthétiques ; **NON EXÉCUTÉ** pour la compilation/lien Mach-O i386 réel, les réexports via ld64, les APIs mémoire authentiques et GetMediaSample ; **BLOCKED** tant que C4-A/B/C authentique et le poste 5700X ne sont pas accessibles ; **NO GO** pour fusionner le code C4-D dans `src/` / `cmake/` et pour déclarer QuickTime ou Logic opérationnels.
+
+**Prochain acte exact (pas de travaux de préparation supplémentaires) :** reprendre sur un checkout et un build de référence préservés, vérifier le HEAD et les modifications locales, récupérer le candidat C4 authentique, appliquer G2 seulement à une copie autorisée, effectuer un build CarbonCore/CoreServices/QuickTime i386 cohérent, inspecter les trois dylibs avec M2, puis rejouer les vrais témoins C3/C4 positifs et négatifs. Avant ce prérequis, aucune série de nouveaux tests synthétiques n'est justifiée.

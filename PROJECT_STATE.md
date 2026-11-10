@@ -15,6 +15,18 @@ Le projet vise progressivement Logic Studio 8 / QuickTime 7 et le transport
 CoreAudio/MIDI. **Aucune application complète ni chaîne audio réelle n'est
 qualifiée.** Cela ne retire pas les preuves positives Carbon i386 ci-dessous.
 
+## Actualisation ciblée QuickTime — C4-D (10 novembre 2026)
+
+**Cette note complète les essais historiques ci-dessous ; elle ne les requalifie pas.**
+À la lecture de `master` = `d50ca8afbe5e6cdbb7574e2e870180ce6a0c972b`, le dernier lot C4-D publié est [M2-R2](docs/evidence/quicktime-c4d-2026-11-10/C4D-M2-R2-host-replay.md), commit [`c897c0e7`](https://github.com/fr4nck/d4rling/commit/c897c0e78276c3c5b281e7cbf8d7ea66957ebc0d).
+
+- **C3 (preuve historique rapportée)** : 187/187 contrôles Linux x64 et 187/187 Darwin i386 ; ne pas convertir cette qualification du banc isolé en intégration QuickTime.
+- **C4-A/B/C (preuve locale rapportée, NON REJOUÉE)** : Memory Manager et QuickTime testés isolément ; candidat source et journaux demeurent indisponibles depuis GitHub, conservés uniquement sur le 5700X. Ne jamais en reconstruire une approximation.
+- **C4-D (GitHub public, hôte)** : graphe et réexport CMake analysés ; proposition [G2 conservant l'ordre historique](docs/evidence/quicktime-c4d-2026-11-10/c4d-cmake-order-preserving.patch) privilégiée **uniquement comme candidat de qualification** (pas appliquée à `cmake/` ou `src/`). Le [garde Mach-O M2](docs/evidence/quicktime-c4d-2026-11-10/check_c4d_macho_i386.py) et ses essais officiels, dont [trois cas CLI](docs/evidence/quicktime-c4d-2026-11-10/test_check_c4d_macho_cli.py), totalisent **32/32 PASS, 0 SKIP** *sur hôte Linux et octets i386 synthétiques*, d'après M2-R2. Aucune dylib de production n'a été inspectée.
+- **Porte de sortie : NO GO production.** Sont encore absents : candidat C4 authentique, configuration/lien des trois véritables dylibs CarbonCore/CoreServices/QuickTime Darwin i386 depuis un build cohérent, preuve du réexport et des imports, exécution GetMediaSample/erreurs mémoire, non-régression C3/C4 en invité. L'exécution Logic Studio 8 n'est pas qualifiée.
+
+**Prochain acte utile :** lorsque le 5700X et C4 seront disponibles, vérifier les empreintes et l'état du checkout canonique, appliquer G2 dans une **copie d'essai isolée**, construire/inspecter les trois dylibs i386 et exécuter C3/C4. D'ici là, **ne pas multiplier les audits et témoins synthétiques** : le banc de lecture seule est prêt, et son extension n'éliminerait pas le blocage réel. Voir le [dossier C4-D](docs/evidence/quicktime-c4d-2026-11-10/README.md).
+
 ## Ce qui est effectivement acquis
 
 | Domaine | Résultat observé | Limite exacte |

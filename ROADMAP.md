@@ -36,6 +36,21 @@ La feuille de route consolide les priorités ; elle ne remplace pas les
 rapports datés ni les recettes épinglées. Une preuve récente ne remplace une
 ancienne conclusion que pour **la même révision, architecture et chaîne**.
 
+## Mise à jour ciblée Q — QuickTime C4-D (10 novembre 2026)
+
+**Reprise du jalon C4-D, sans modifier les priorités globales ni les résultats historiques v0.2.** État Git consulté : `master` = `d50ca8afbe5e6cdbb7574e2e870180ce6a0c972b` ; dernier commit QuickTime C4-D = [`c897c0e7`](https://github.com/fr4nck/d4rling/commit/c897c0e78276c3c5b281e7cbf8d7ea66957ebc0d).
+
+| Porte Q | État au 10/11 | Critère nécessaire pour avancer |
+| --- | --- | --- |
+| Q-C3 — témoin QuickTime isolé | **PASS rapporté : 187 Linux + 187 Darwin i386** | Garder les sources et bases d'essai exactes |
+| Q-C4-A/B/C — Memory Manager et QuickTime isolés | **PASS rapporté localement, preuves non accessibles ici** | Vérifier le vrai candidat C4 et ses journaux sur 5700X, sans reconstruction |
+| Q-C4-D — sélection ciblée et réexport CarbonCore | **PASS hôte borné ; patch proposé seulement** | Qualifier la variante [G2 conservant l'ordre CMake](docs/evidence/quicktime-c4d-2026-11-10/c4d-cmake-order-preserving.patch) dans un checkout d'essai i386 |
+| Q-C4-D-M2-R2 — vérificateur Mach-O | **32/32 PASS, 0 SKIP rapportés sur Linux, données i386 synthétiques** | Trois vraies dylibs issues du **même build** ; vérifier import, export, réexport, tranche et install name |
+| Q-C4-D production | **NO GO** | Compilation/lien/chargement Darwin i386, GetMediaSample + Memory Manager C4, négatifs et non-régression C3/C4 |
+| Logic Studio 8 | **NON QUALIFIÉ** | Prérequis runtime, QuickTime, audio et Audio Units réels ; ne pas inférer du banc Q |
+
+Le [checkpoint vérifiable](docs/evidence/quicktime-c4d-2026-11-10/README.md) et [M2-R2](docs/evidence/quicktime-c4d-2026-11-10/C4D-M2-R2-host-replay.md) sont la référence détaillée. **Aucun CMake ou framework de production n'a été promu dans ce lot.** Les tests synthétiques supplémentaires ne sont pas un substitut au premier vrai build C4-D i386 ; les suspendre jusqu'à preuve nouvelle. `x86_64/Cocoa` général reste reporté, et Petite Victoire demeure hors périmètre.
+
 ## Actualisation v0.2 — 9 novembre 2026
 
 **Portée :** synchronisation de la feuille de route avec les commits publics
