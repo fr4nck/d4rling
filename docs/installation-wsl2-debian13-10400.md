@@ -21,7 +21,7 @@ Machine : Intel Core i5-10400, 6 cœurs/12 threads, Windows 11, 23,9 Go de RAM p
 | Installation privée core-i386 | **PASS**, dyld et libSystem Mach-O universels vérifiés |
 | Témoin Carbon i386 + dylib dynamique | **Mach-O i386 compilés PASS** |
 | Première exécution Darwin i386 (normal) | **PASS, exit 0 et marqueur exact** |
-| Tests bypass et négatif | À qualifier sur le 10400 |
+| Tests bypass et négatif | **PASS** : bypass code 0, absence de dylib code 1 attendu |
 | QuickTime, Logic 8, JACK/MIDI, applications GUI | Non testés sur le 10400 |
 
 Le clone de départ était sur `master` au commit `e76154b53614539f4fa34e4a0fab42b04ecebf35`. La commande de matérialisation crée un second arbre à partir du commit **historique épinglé** `b7d0cb6a79fe196657deb9711647f8486bcc5e5e` avec les correctifs Carbon documentés. Ce n'est **pas** une compilation des nouveaux changements de `master`.
@@ -420,19 +420,59 @@ valide ni le mode `bypass`, ni l'échec attendu en l'absence de dylib,
 ni les évolutions récentes de `master`, ni les frameworks QuickTime,
 ni Logic Studio 8, ni l'audio/MIDI.
 
-## 13. Contre-épreuves à effectuer avant clôture du jalon
+## 13. Contre-épreuves bypass et absence de dylib — PASS (10400)
 
-Rejouer `run-guest.sh` avec le même témoin en mode `bypass`,
-en exigeant **code 0 + marqueur exact**. Effectuer ensuite une
-contre-épreuve négative en copiant **uniquement l'exécutable** dans
-un dossier neuf (sans copier `libD4CarbonEvents.dylib`). Le chargeur
-doit alors échouer proprement, sans marqueur de succès, avec une erreur
-dynamique explicite. Ne pas supprimer la dylib originale, et ne rien
-modifier dans l'installation privée.
+Le 10/11/2026, l'opérateur a réexécuté le témoin Carbon dans
+l'installation privée, en préservant l'original et en créant un dossier
+de qualification distinct :
 
-Une qualification positive/négative de ce petit programme n'établira
-toujours pas le lancement de QuickTime ou Logic Studio 8 : ce sont
-des chantiers distincts.
+`~/atelier/d4rling-10400/qualif-carbon-bypass-negative-01`.
+
+**BYPASS :** le script `reproduction/run-guest.sh` a créé un nouveau
+préfixe isolé, puis exécuté le même témoin avec `mode=bypass`.
+Résultat observé :
+
+~~~text
+REPORT=/tmp/d4rl-replay.9YHFzVcw
+EXIT_CODE=0
+D4RLING-CARBON-EVENT-I386-OK
+PASS : BYPASS
+~~~
+
+**NÉGATIF :** l'opérateur a **copié seulement l'exécutable**
+`carbon-dynamic-i386` dans le nouveau sous-dossier `no-dylib/`,
+sans la bibliothèque `libD4CarbonEvents.dylib`. Il n'a pas touché
+à la dylib originale. Nouvelle exécution en mode `normal` :
+
+~~~text
+REPORT=/tmp/d4rl-replay.zbOnD7yx
+EXIT_CODE=1
+dyld: Library not loaded: @loader_path/libD4CarbonEvents.dylib
+Reason: no suitable image found
+PASS : NEGATIF (echec attendu)
+~~~
+
+La ligne `Library not loaded` et la raison `no suitable image found`
+sont apparues dans les sorties du chargeur. Le marqueur positif était
+**absent**. Le banc exigeait simultanément code 1, marqueur absent
+et diagnostic explicite du chargeur.
+
+Les deux exécutions ont produit des avertissements
+`xdg-user-dir: not found` et de `FD rlimit`, comme lors de l'essai
+normal. Ils n'ont pas modifié ces verdicts et ne sont pas corrigés.
+
+**Bilan du témoin historique : 3/3 PASS**
+
+| Épreuve | Code | Vérification |
+| --- | --- | --- |
+| NORMAL | 0 | Marqueur attendu présent |
+| BYPASS | 0 | Marqueur attendu présent |
+| NÉGATIF sans dylib | 1 attendu | Marqueur absent, diagnostic dyld explicite |
+
+Les journaux de contre-épreuves ont été conservés sous
+`qualif-carbon-bypass-negative-01/`. **Ce succès qualifie ce
+parcours historique Carbon i386, pas QuickTime, Logic 8,
+l'audio/JACK ou les développements récents de `master`.**
 
 ## Précautions
 
@@ -444,4 +484,4 @@ Conserver **un seul atelier de travail** dans `$HOME/atelier` et **aucun fichier
 - [Reproduction historique](../reproduction/README.md)
 - [État du projet](../PROJECT_STATE.md)
 
-**À compléter :** mode bypass et contre-épreuve négative i386, puis diagnostics d'applications QuickTime/audio/Logic 8. Le succès positif du témoin Carbon est acquis.
+**À compléter :** qualification Darwin i386 des développements récents de `master`, applications QuickTime, CoreAudio/JACK et Logic Studio 8. Le témoin Carbon historique NORMAL/BYPASS/NÉGATIF est clos à 3/3 PASS.
