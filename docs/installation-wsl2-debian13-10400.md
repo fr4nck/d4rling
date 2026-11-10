@@ -568,6 +568,58 @@ liaison **cohérent et réutilisable** à partir des sources réellement
 disponibles. Les anciens répertoires `/tmp/d4rl-replay.*` restent
 inchangés ; aucune suppression implicite.
 
+### R4-F après correction : objet i386 qualifié sur le 10400 — PASS
+
+**Résultat transmis par l'opérateur le 10 novembre 2026, non rejoué par
+GitHub/CI.** Le canon `~/atelier/d4rling`, initialement à
+`77988d3a784afc07ba039f75e4be177b65b9241d`, a fait un
+**fast-forward** sur `origin/master` à
+`3f103d08f4d1ef32a655aac49972c9481977454b`.
+La récupération Git portait sur **71 objets / 76,93 Kio**,
+sans mise à jour de sous-module. Le correctif ciblé
+[`994574f`](https://github.com/fr4nck/d4rling/commit/994574f0478962a908eda926fd4b29ba997780dd)
+était inclus.
+
+La commande de compilation `mldr32` du **build historique** a été
+lue par `ninja -t commands`, puis adaptée pour compiler
+**uniquement** le `mldr.c` **actuel** avec les mêmes options 32 bits,
+`D4RLING_MLDR_I386_MMAP_DIAG=1` et `-Werror=format`.
+L'objet a été écrit exclusivement dans le **dossier R4-F existant** :
+
+```text
+SOURCE=/home/franck/atelier/d4rling/src/startup/mldr/mldr.c
+COMPILATEUR=/usr/bin/clang-19
+ARCHITECTURE=i386
+FORMAT_WARNING=ERROR
+R4F_OBJECT_COMPILE=PASS
+R4F_FORMAT_WARNING=ABSENT
+R4F_LINK=NON_TESTE
+R4F_RUNTIME=NON_TESTE
+HISTORICAL_BUILD_MODIFIED=NON
+INSTALLATION_MODIFIED=NON
+```
+
+Objet : `~/atelier/d4rling-r4f-20261110-182414/
+r4f-current-mldr32-after-994574f.o`,
+**ELF 32 bits i386 relocatable**, SHA-256
+`15cd2dc61d17053eb333db589b8b853434372caa8ffc8846db616601e7694c52`.
+Le dossier R4-F occupait **1,3 Mo** après cet essai.
+
+**Portée :** le warning de format disparu et le vrai fichier
+`mldr.c` actuel compile en objet i386 avec Clang 19.
+Le `mldr32` **complet n'a pas été lié ni exécuté** ; le
+build et l'installation Carbon historiques restent intacts.
+Un objet récent ne saurait être lié aveuglément avec les archives
+d'une autre révision : la cohérence des unités et dépendances
+doit être vérifiée avant toute tentative.
+
+**Suite limitée :** inspecter en lecture seule les commandes de
+compilation/lien existantes et la provenance des autres unités
+(`commpage.c`, `elfcalls/*.c`, RPC) ; réutiliser l'existant
+si leurs révisions concordent. Ne créer aucun build CMake
+supplémentaire et ne toucher ni au préfixe privé ni au dépôt
+historique sans porte de validation distincte.
+
 ## Précautions
 
 Conserver **un seul atelier de travail** dans `$HOME/atelier` et **aucun fichier à la racine de `C:\`**. Ne pas altérer `C:\\WINDOWS\\system32`, la distribution Docker, le dépôt `master`, l'arbre historique ou les logs. Ne rien supprimer ou déplacer sans validation préalable. Tous les échecs sont à conserver et à documenter comme tels.
