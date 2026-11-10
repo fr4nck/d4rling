@@ -45,7 +45,7 @@ def run(source: Path, compiler: str, expect_source_blob: str | None) -> int:
         (root / 'include/CarbonCore').mkdir(parents=True)
         (root / 'include/sys').mkdir()
         (root / 'include/CarbonCore/MacErrors.h').write_text(
-            '#pragma once\nconstexpr OSStatus unimpErr = -4;\n', encoding='utf8')
+            '#pragma once\nconstexpr OSStatus unimpErr = -4;\nconstexpr OSStatus paramErr = -50;\n', encoding='utf8')
         (root / 'include/sys/sysctl.h').write_text('''#pragma once
 #include <cstddef>
 #define CTL_KERN 1
@@ -63,14 +63,23 @@ using OSStatus = int;
 
 static const char* mock_release = "20.4.0";
 static int sysctl_calls = 0;
+static int sysctl_mode = 0;
 extern "C" int sysctl(const int* name, unsigned int n, void* dst, size_t* len,
                       const void*, size_t) {
   ++sysctl_calls;
   if (n != 2 || name[0] != CTL_KERN || name[1] != KERN_OSRELEASE || !len) return -1;
+  if (sysctl_mode == 1) return -1;
+  if (sysctl_mode == 2) { *len = 0; return 0; }
+  if (sysctl_mode == 3) { *len = 999; return 0; }
   const size_t needed = std::strlen(mock_release) + 1;
   if (!dst || *len < needed) return -1;
-  std::memcpy(dst, mock_release, needed);
-  *len = needed;
+  if (sysctl_mode == 5) {
+    std::memcpy(dst, mock_release, needed - 1); // non-NUL-terminated kernel output
+    *len = needed - 1;
+  } else {
+    std::memcpy(dst, mock_release, needed);
+    *len = needed;
+  }
   return 0;
 }
 
@@ -104,6 +113,28 @@ int main() {
   check("architecture unchanged", gestaltSysArchitecture, 0, gestaltIntel, 0);
   check("unknown selector", 0x7a7a7a7au, -4, 0, 0);
   check("Carbon unimplemented", 0x63626f6eu, -4, 0, 0);
+  sysctl_mode = 1;
+  check("sysctl failure", gestaltSystemVersion, -4, 0, 1);
+  sysctl_mode = 2;
+  check("empty kernel release", gestaltSystemVersionMajor, -4, 0, 1);
+  sysctl_mode = 3;
+  check("invalid reported size", gestaltSystemVersionMinor, -4, 0, 1);
+  sysctl_mode = 0;
+  mock_release = "20.invalid.0";
+  check("malformed kernel release", gestaltSystemVersionPatch, -4, 0, 1);
+  mock_release = "20.-1.0";
+  check("negative kernel release part", gestaltSystemVersion, -4, 0, 1);
+  mock_release = "20.4.0";
+  sysctl_mode = 5;
+  check("unterminated kernel release", gestaltSystemVersion, 0, 0x1440, 1);
+  sysctl_mode = 0;
+  const int prior_calls = sysctl_calls;
+  if (Gestalt(gestaltSystemVersion, nullptr) != -50 || sysctl_calls != prior_calls) {
+    std::fprintf(stderr, "FAIL null output parameter\n");
+    ++failed;
+  } else {
+    ++passed;
+  }
   std::printf("GESTALT_HOST: %d PASS, %d FAIL\n", passed, failed);
   return failed ? 1 : 0;
 }
@@ -119,7 +150,7 @@ int main() {
             raise RuntimeError('compile failed:\n' + build.stderr[-1600:])
         result = subprocess.run([str(output)], capture_output=True, text=True,
                                 check=False, timeout=5)
-        if result.returncode or result.stderr or 'GESTALT_HOST: 11 PASS, 0 FAIL' not in result.stdout:
+        if result.returncode or result.stderr or 'GESTALT_HOST: 18 PASS, 0 FAIL' not in result.stdout:
             raise RuntimeError('host contract failed:\n' + result.stdout + result.stderr)
         print('PASS: exact header blob', HEADER_BLOB)
         print('PASS: Gestalt source blob', blob)

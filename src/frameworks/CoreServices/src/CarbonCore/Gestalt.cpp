@@ -25,6 +25,9 @@ along with Darling.  If not, see <http://www.gnu.org/licenses/>.
 
 OSStatus Gestalt(uint32_t type, int* value)
 {
+	if (value == nullptr)
+		return paramErr;
+
 	switch (type)
 	{
 	case gestaltSystemVersion:
@@ -34,12 +37,21 @@ OSStatus Gestalt(uint32_t type, int* value)
 	{
 		// We may be mixing the Darwin and OS version, but this API is deprecated anyway
 		int name[2] = { CTL_KERN, KERN_OSRELEASE };
-		char version[32];
+		char version[32] = {};
 		size_t version_len = sizeof(version) - 1;
-		int maj, min, patch;
-		
-		sysctl(name, 2, version, &version_len, nullptr, 0);
-		sscanf(version, "%d.%d.%d", &maj, &min, &patch);
+		int maj = 0, min = 0, patch = 0;
+
+		if (sysctl(name, 2, version, &version_len, nullptr, 0) != 0 ||
+			version_len == 0 || version_len > sizeof(version) - 1) {
+			*value = 0;
+			return unimpErr;
+		}
+		version[version_len] = '\0';
+		if (sscanf(version, "%d.%d.%d", &maj, &min, &patch) != 3 ||
+			maj < 0 || min < 0 || patch < 0) {
+			*value = 0;
+			return unimpErr;
+		}
 		
 		if (type == gestaltSystemVersion)
 			*value = 0x100 * maj + 0x10 * min;
