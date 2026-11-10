@@ -39,3 +39,35 @@ La **commande complète effectivement exécutée et ses journaux** restent conse
 - Pas de `cerror`/TLS, pas de `lseek` réel sur ce nouveau correctif, pas de garantie globale de QuickTime, Carbon, CoreAudio ou Logic Studio 8.
 
 **Verdict public et borné :** `GUARD_RUNTIME=PASS_BOUNDED`. L'intégration amont et la construction complète restent ouvertes.
+
+
+## Lanceur de reprise : prévol puis exécution (nouveau lot)
+
+Le lanceur `run-guard.sh` reconstruit automatiquement les deux objets du **véritable dispatcher i386** depuis trois blobs locaux du sous-module XNU `fa29287`, vérifie les empreintes Git, applique **uniquement dans un dossier privé** le patch de garde, puis compile le témoin C ci-dessus et la fixture assembleur historique. Il lie deux Mach-O i386 avec `libSystem` FAT existant, exécute chaque variante dans un OverlayFS privé muni des trois binaires B15 qualifiés, conserve les journaux et crée un manifeste SHA-256. Aucun SDK n'est téléchargé ou requis pour le code synthétique.
+
+Les paramètres sont des **chemins déjà présents sur le poste**, à renseigner explicitement :
+
+```bash
+export BSD_GUARD_XNU=/chemin/du/checkout-local/xnu
+export BSD_GUARD_LINKER=/chemin/du/ld64-cctools
+export BSD_GUARD_INSTALLATION=/chemin/de/linstallation-privee-FAT-i386
+export BSD_GUARD_B15_UPPER=/chemin/des/preuves-B15/d4/upper
+export BSD_GUARD_WORK_ROOT=/chemin/court/WSL-ext4
+# Optionnel : BSD_GUARD_CLANG=clang-19
+
+# Aucune écriture : vérifie chemins, provenance et empreintes.
+bash reproduction/fixtures/bsd-i386-guard/run-guard.sh --check
+
+# Écrit uniquement un dossier neuf guard-r.XXXXXXXX sous WORK_ROOT :
+bash reproduction/fixtures/bsd-i386-guard/run-guard.sh --run
+```
+
+Le script exige une racine courte (40 caractères maximum) pour ses préfixes et conserve les dossiers même en cas d'erreur ; il n'effectue aucune suppression, aucune opération Git sur les branches, aucun accès réseau, aucun `sudo` ni changement de `sysctl`. Les indices hors table sont réservés au candidat. **Ne pas monter ou appliquer le patch sur l'installation historique.** Chaque appel invité possède un délai borné (75 s puis 10 s de terminaison).
+
+Un oracle indépendant `verify_guard.py` contrôle non seulement les codes de sortie, mais aussi les inventaires exacts de 34 et 61 `CHECK`, les cas de numéros, les témoins négatifs, les marqueurs B15 et la fin des deux programmes. Son contrat inclut **neuf tests unitaires synthétiques** :
+
+```bash
+python3 -m unittest discover -s reproduction/fixtures/bsd-i386-guard -p 'test_verify_guard.py' -v
+```
+
+**État de ce lot :** syntaxe Bash `bash -n` PASS ; neuf tests Python de l'oracle PASS sur un environnement de développement indépendant. **Le nouveau lanceur complet n'a pas encore été exécuté sur le 5700X** : `RUNNER_GUEST_REPLAY=OPEN` jusqu'à réception des journaux correspondants. La campagne initiale de 34/34 et 61/61 reste distincte, comme expliqué dans le rapport daté.
