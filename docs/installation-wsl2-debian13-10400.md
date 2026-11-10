@@ -15,8 +15,9 @@ Machine : Intel Core i5-10400, 6 cœurs/12 threads, Windows 11, 23,9 Go de RAM p
 | Tests de contrats C/C++ | PASS |
 | Configuration CMake core-i386 | PASS |
 | Build natif `darling mldr mldr32 darlingserver` | **179/179 PASS** |
-| Analyse du binaire `mldr32` | ELF 32 bits i386 |\n| `CoreFoundation_i386` + `CoreFoundation_x86_64` | Compilés PASS ; fat Mach-O i386 + x86_64 vérifié |
-| Build demandé `system_c system CoreFoundation` | **FAIL : cible Ninja `CoreFoundation` inconnue** |
+| Analyse du binaire `mldr32` | ELF 32 bits i386 |
+| `CoreFoundation_i386` + `CoreFoundation_x86_64` | Compilés PASS ; fat Mach-O i386 + x86_64 vérifié |
+| Ancienne commande `system_c system CoreFoundation` | Échec de nom de cible, résolu par les cibles séparées |
 | Bibliothèques Darwin complètes, installation privée, programme invité | Non testés sur le 10400 |
 | QuickTime, Logic 8, JACK/MIDI, applications GUI | Non testés sur le 10400 |
 
