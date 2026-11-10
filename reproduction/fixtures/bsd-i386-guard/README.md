@@ -71,3 +71,18 @@ python3 -m unittest discover -s reproduction/fixtures/bsd-i386-guard -p 'test_ve
 ```
 
 **État de ce lot :** syntaxe Bash `bash -n` PASS ; neuf tests Python de l'oracle PASS sur un environnement de développement indépendant. **Le nouveau lanceur complet n'a pas encore été exécuté sur le 5700X** : `RUNNER_GUEST_REPLAY=OPEN` jusqu'à réception des journaux correspondants. La campagne initiale de 34/34 et 61/61 reste distincte, comme expliqué dans le rapport daté.
+
+### Vérification autonome du rejeu CF (sans 5700X)
+
+Le lanceur `run-stub-cf-private.sh` a été renforcé : il enregistre le code de sortie réel dans `guest.exit-code.txt`, contrôle le manifeste SHA-256 et délègue la décision finale à `verify_stub_cf_guest.py`. En cas de sortie `NOT_QUALIFIED`, la commande termine désormais avec un code non nul (10), au lieu de simplement imprimer un échec puis retourner 0. Les preuves locales restent conservées.
+
+Le vérificateur contrôle les cinq marqueurs d'exécution uniques, les 12 contrôles annoncés sans échec, l'absence de cas `FAIL`, l'absence de contradiction sur le code retour, ainsi que les empreintes des trois fichiers attendus (binaire et journaux). Le test `test_verify_stub_cf_guest.py` fournit **15 cas**, dont **14 refus** de preuves incomplètes, incohérentes ou modifiées et un cas positif.
+
+Commande exécutable sans machine Darling :
+```bash
+python3 -m unittest discover -s reproduction/fixtures/bsd-i386-guard -p 'test_verify_stub_cf_guest.py' -v
+bash -n reproduction/fixtures/bsd-i386-guard/run-stub-cf-private.sh
+```
+
+**Résultat observé hors 5700X : 15/15 PASS, analyse syntaxique Bash PASS.**
+**Rejeu invité i386 : OPEN.** L'ancien ZIP de distribution du 10 novembre précède cette vérification ; ne pas en déduire qu'il inclut ces fichiers.

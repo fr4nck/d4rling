@@ -20,11 +20,12 @@ KERNEL=libexec/darling/usr/lib/system/libsystem_kernel.dylib
 blocked() { printf 'STUB_CF_GUEST_BLOCKED=%s\n' "$1" >&2; exit 3; }
 
 [[ $(id -u) -ne 0 ]] || blocked ROOT_USER
-for cmd in clang-19 sha256sum file unshare mount timeout mktemp cmp; do
+for cmd in clang-19 sha256sum file unshare mount timeout mktemp cmp stat grep python3; do
     command -v "$cmd" >/dev/null || blocked "TOOL_$cmd"
 done
 [[ -x "$L" && -x "$P/bin/darling" && -d "$SLOT" ]] || blocked TOOLCHAIN
 [[ -d "$ROOT" && $(stat -f -c %T "$ROOT") == ext4 ]] || blocked WORK_ROOT
+[[ -s "$HERE/verify_stub_cf_guest.py" ]] || blocked VERIFIER_MISSING
 for entry in \
     'c866e96ecede4bf84baf4aca4a98af8eb2668a9392391a32829c38562671550e:stub-cf-i386.S' \
     '4e452cbc4ecd55c0356fa93671324d9ad1de1dd9a8be22b63c73e1448d4fc3b1:stub-cf-capture-i386.S' \
@@ -113,18 +114,11 @@ WORKER
 RC=$?
 set -e
 printf 'GUEST_RC=%d\n' "$RC"
+printf '%s\n' "$RC" > "$R/guest.exit-code.txt"
 printf '%s\n' '=== GUEST STDOUT ==='
 tail -n 25 "$R/guest.stdout.log"
 printf '%s\n' '=== GUEST STDERR ==='
 tail -n 15 "$R/guest.stderr.log"
 sha256sum "$R/stub-cf-guest" "$R/guest.stdout.log" "$R/guest.stderr.log" > "$R/SHA256SUMS"
-if [[ "$RC" -eq 0 ]] && \
-   grep -Fxq 'B15_ACTIVE_HASHES=PASS' "$R/guest.stdout.log" && \
-   grep -Fxq 'STUB_CF_GUEST_CHECKS=12 FAILURES=0' "$R/guest.stdout.log" && \
-   grep -Fxq 'STUB_CF_GUEST_FINISHED' "$R/guest.stdout.log" && \
-   grep -Fxq 'STUB_CF_GUEST_EXIT=0' "$R/guest.stdout.log"; then
-    printf 'STUB_CF_GUEST_RUNTIME=PASS_BOUNDED\n'
-else
-    printf 'STUB_CF_GUEST_RUNTIME=NOT_QUALIFIED\n'
-fi
-printf 'RESULT_DIR=%s\n' "$R"
+sha256sum -c --status "$R/SHA256SUMS" || blocked EVIDENCE_CHECKSUM
+python3 "$HERE/verify_stub_cf_guest.py" "$R"
