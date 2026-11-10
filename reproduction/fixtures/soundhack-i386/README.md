@@ -99,3 +99,26 @@ run fails closed with exit 3 until its source is requalified. Never present
 the simulated C++ host result as SoundHack guest execution, ABI, GUI or audio.
 See `docs/evidence/soundhack-sh01-2026-11-10/SH05-startup-gestalt.md` for
 actual compiler output, test provenance and CarbonCore owner handoff.
+
+## SH06 — original Tom Erbe FFT numerical test (host only)
+
+The new [fft_host_probe.py](fft_host_probe.py) compiles the **unaltered**
+MIT-licensed upstream SoundHack 0.896 Math/FFT.c (and FFT.h) from a separately
+authorized, pinned source checkout. Both Git blobs are checked before
+compilation. The script executes FFT and RealFFT against an independent
+double-precision direct DFT oracle, then performs a two-tone spectral notch
+with the original RealFFT. No Apple SDK, SoundHack binary, media, guest or
+audio device is required; no automatic network access or installation occurs.
+
+    SOUNDHACK_MATH_DIR=/authorized/path/SoundHack/Math \
+      python3 -m unittest discover -s reproduction/fixtures/soundhack-i386 -p 'test_fft_host_probe.py' -v
+    python3 reproduction/fixtures/soundhack-i386/fft_host_probe.py \
+      --source-dir /authorized/path/SoundHack/Math
+
+On the observed pinned source: **24/24** FFT numerical cases and the spectral
+notch passed on host GCC 14.2 and Clang 17, with **13/13** unit checks including
+original-code mutations. Without SOUNDHACK_MATH_DIR, the unit suite runs the
+local negative checks and skips the 3 original-source-dependent cases.
+Exit 0 = bounded HOST_DSP_PASS, 2 = numerical FAIL, 3 = inconclusive.
+**No SoundHack guest runtime, audio file, Darwin i386 ABI or audio-output PASS.**
+See [SH06 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH06-host-fft.md).
