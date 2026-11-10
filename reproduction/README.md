@@ -277,11 +277,31 @@ bloqué cette exécution, mais ne sont pas déclarés corrigés. Ce résultat
 valide le **premier parcours dynamique Carbon i386 positif sur une
 deuxième machine**, pas la compatibilité générale de Darling.
 
-**Reste à faire :** rejouer avec `bypass`, puis tester l'absence de dylib
-depuis un **nouveau dossier contenant seulement une copie du programme**.
-Ne pas retirer ni supprimer la dylib du témoin original. Exiger le code
-non nul, le marqueur absent et un diagnostic explicite du chargeur.
-Un code retour seul ne suffit pas.
+**Contre-épreuves exécutées sur le 10400 le 10/11/2026 : PASS.**
+La même installation privée et le même exécutable i386 ont été
+utilisés pour une exécution `bypass` (code 0 et marqueur attendu),
+puis pour une exécution négative d'une **copie isolée de
+l'exécutable sans la dylib d'origine** (code **1 attendu**,
+marqueur absent, et `dyld: Library not loaded:
+@loader_path/libD4CarbonEvents.dylib`, `no suitable image found`).
+
+```text
+BYPASS  REPORT=/tmp/d4rl-replay.9YHFzVcw EXIT_CODE=0
+        D4RLING-CARBON-EVENT-I386-OK
+        PASS : BYPASS
+NEGATIF REPORT=/tmp/d4rl-replay.zbOnD7yx EXIT_CODE=1
+        dyld: Library not loaded: @loader_path/libD4CarbonEvents.dylib
+        PASS : NEGATIF (echec attendu)
+```
+
+La copie négative se trouve sous
+`~/atelier/d4rling-10400/qualif-carbon-bypass-negative-01/no-dylib/`.
+Le témoin original et l'installation privée restent inchangés.
+Les avertissements non bloquants `xdg-user-dir` et `FD rlimit`
+restent enregistrés. **Verdict : NORMAL/BYPASS/NÉGATIF, 3/3 PASS,
+exécution réelle du témoin Carbon i386 sur le second poste.**
+Ce résultat historique n'établit pas la compatibilité de `master`
+actuel, QuickTime, CoreAudio/JACK ni Logic Studio 8.
 
 Chaque essai emploie un préfixe neuf, stdin=/dev/null, et un espace
 user/mount/PID/IPC/UTS/network propre, avec timeout et descendants bornés.
