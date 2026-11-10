@@ -538,12 +538,20 @@ Après inventaire local **sans réseau ni écriture**, l'opérateur a confirmé 
   `R4F_RUNTIME=NON_TESTE`,
   `HISTORICAL_BUILD_MODIFIED=NON`,
   `INSTALLATION_MODIFIED=NON`.
-- **Un seul avertissement Clang** :
-  `src/startup/mldr/stack.c:132`,
-  `%x` attend `unsigned int` tandis que l'argument est actuellement
-  casté en `unsigned long`. Il ne constitue pas un échec du compileur ;
-  la correction et sa non-régression x86_64/i386 n'ont **pas** été
-  validées sur le 10400 à cette étape.
+- **Un seul avertissement Clang observé dans le build local à
+  `77988d3` :** `src/startup/mldr/stack.c:132`,
+  `%x` attend `unsigned int` mais l'argument était casté en
+  `unsigned long`. Ce n'est pas une erreur de compilation.
+  **Correctif ciblé publié ensuite sur GitHub**
+  ([`994574f`](https://github.com/fr4nck/d4rling/commit/994574f0478962a908eda926fd4b29ba997780dd)) :
+  utiliser le `user_long_t` existant, déjà `unsigned int` en
+  `GEN_32BIT` et `unsigned long` en `GEN_64BIT`.
+  Sur banc indépendant Clang 17, trois variantes
+  `-Werror=format` ont PASS après correction
+  (i386/GEN_32BIT, x86_64/GEN_32BIT, x86_64/GEN_64BIT) ;
+  l'ancienne variante 32 bits est rejetée.
+  **Aucune re-compilation de production ni lien sur le 10400
+  après ce correctif n'est revendiqué.**
 
 **Verdict exact : `R4F_OBJECT_COMPILE=PASS`**, pas
 `R4F_CURRENT_MASTER_MLDR32_BUILD_PASS`. Un objet `.o`
