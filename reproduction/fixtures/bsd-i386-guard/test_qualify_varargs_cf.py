@@ -117,13 +117,13 @@ class I386ObjectTests(unittest.TestCase):
 
 class PatchFormatTests(unittest.TestCase):
     def test_patch_touches_only_two_xnu_sources(self):
-        patch=(HERE/'bsd-i386-syscall-varargs-cf-ba34c8ac.patch').read_text()
+        patch=(HERE.parent.parent/'patches'/'bsd-i386-syscall-varargs-cf-ba34c8ac.patch').read_text()
         self.assertEqual(patch.count('diff --git '),2)
         self.assertEqual(patch.count('+\tDARLING_SYSCALL_RESULT_TO_CF'),2)
         self.assertNotIn('bsd_syscall.S',patch)
 
     def test_patch_applies_in_private_worktree(self):
-        patch=HERE/'bsd-i386-syscall-varargs-cf-ba34c8ac.patch'
+        patch=HERE.parent.parent/'patches'/'bsd-i386-syscall-varargs-cf-ba34c8ac.patch'
         with tempfile.TemporaryDirectory() as temp:
             root=Path(temp)
             for p in ('gen/bsdsyscalls/___syscall.S','libsyscall/custom/__syscall.S'):
