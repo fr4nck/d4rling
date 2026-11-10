@@ -35,6 +35,8 @@ install(TARGETS mldr DESTINATION libexec/darling/usr/libexec/darling)
 configure_file(darling.conf.in darling.conf @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/darling.conf" DESTINATION lib/binfmt.d)
 
+option(D4RLING_MLDR_I386_MMAP_DIAG "Enable opt-in mmap failure diagnostics in mldr32 only" OFF)
+
 if (BUILD_TARGET_32BIT)
 	add_library(mldr32_dserver_rpc STATIC ${CMAKE_BINARY_DIR}/src/external/darlingserver/src/rpc.c)
 	add_dependencies(mldr32_dserver_rpc generate_dserver_rpc_wrappers)
@@ -45,6 +47,9 @@ if (BUILD_TARGET_32BIT)
 	target_include_directories(mldr32_dserver_rpc PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/..)
 
 	add_executable(mldr32 ${mldr_sources})
+	if (D4RLING_MLDR_I386_MMAP_DIAG)
+		target_compile_definitions(mldr32 PRIVATE D4RLING_MLDR_I386_MMAP_DIAG)
+	endif()
 	target_compile_options(mldr32 PRIVATE -m32)
 	target_link_options(mldr32 PRIVATE -m32)
 	target_compile_options(mldr32 PRIVATE -pthread)
