@@ -20,10 +20,12 @@ along with Darling.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef GESTALT_H
 #define GESTALT_H
 
+#define gestaltCarbonVersion 'cbon'
 #define gestaltSystemVersion 'sysv'
 #define gestaltSystemVersionMajor 'sys1'
 #define gestaltSystemVersionMinor 'sys2'
 #define gestaltSystemVersionPatch 'sys3'
+#define gestaltSystemVersionBugFix gestaltSystemVersionPatch
 
 #define gestaltSysArchitecture 'sysa'
 #define gestaltPowerPC 2
@@ -40,4 +42,3 @@ OSStatus Gestalt(uint32_t type, int* value);
 #endif
 
 #endif
-

@@ -20,88 +20,124 @@ along with Darling.  If not, see <http://www.gnu.org/licenses/>.
 #include <CarbonCore/MacErrors.h>
 #include <cstring>
 #include <climits>
-#include <cstdio>
 #include <sys/sysctl.h>
 #include <CarbonCore/Gestalt.h>
 
-// KERN_OSRELEASE is a dotted Darwin kernel release, not a macOS version.
-// Parse each component without scanf integer overflow or accepting suffixes.
+// Decimal components must be complete, unsigned and representable as int.
+// Keep the checked parser introduced in G3; a Darwin release must never be
+// converted into a macOS product version by arithmetic on its components.
 static bool parseReleaseNumber(const char*& cursor, int& result)
 {
     if (*cursor < '0' || *cursor > '9')
         return false;
 
-    int value = 0;
+    int number = 0;
     do {
         const int digit = *cursor - '0';
-        if (value > (INT_MAX - digit) / 10)
+        if (number > (INT_MAX - digit) / 10)
             return false;
-        value = value * 10 + digit;
+        number = number * 10 + digit;
         ++cursor;
     } while (*cursor >= '0' && *cursor <= '9');
 
-    result = value;
+    result = number;
+    return true;
+}
+
+// ProductVersion can contain two or three decimal components (e.g. 10.16
+// and 11.7.4 in the prefix's compatibility and primary plists).
+static bool parseProductVersion(const char* version, int& major, int& minor, int& patch)
+{
+    const char* cursor = version;
+    if (!parseReleaseNumber(cursor, major) || major == 0 || *cursor != '.' ||
+        !parseReleaseNumber(++cursor, minor))
+        return false;
+
+    patch = 0;
+    if (*cursor == '.') {
+        if (!parseReleaseNumber(++cursor, patch))
+            return false;
+    }
+    return *cursor == '\0';
+}
+
+static bool readProductVersion(int& major, int& minor, int& patch)
+{
+    // Darling's pinned XNU provides this string via kern.osproductversion.
+    // It agrees with the primary SystemVersion.plist, unlike KERN_OSRELEASE.
+    char version[64] = {};
+    size_t length = sizeof(version);
+    if (sysctlbyname("kern.osproductversion", version, &length, nullptr, 0) != 0 ||
+        length == 0 || length > sizeof(version) ||
+        std::memchr(version, '\0', length) != version + length - 1)
+        return false;
+
+    return parseProductVersion(version, major, minor, patch);
+}
+
+static bool encodeLegacySystemVersion(int major, int minor, int patch, int& value)
+{
+    // Gestalt's four BCD-like digits: 10.4.0 -> 0x1040 and 10.3.15 ->
+    // 0x1039. Minor and bug-fix are saturated at 9 (Apple contract).
+    // The legacy representation cannot encode a three-digit major version.
+    if (major < 1 || major > 99)
+        return false;
+    const int minorDigit = minor > 9 ? 9 : minor;
+    const int patchDigit = patch > 9 ? 9 : patch;
+    value = ((major / 10) << 12) | ((major % 10) << 8) |
+            (minorDigit << 4) | patchDigit;
     return true;
 }
 
 OSStatus Gestalt(uint32_t type, int* value)
 {
-	if (value == nullptr)
-		return paramErr;
+    if (value == nullptr)
+        return paramErr;
 
-	switch (type)
-	{
-	case gestaltSystemVersion:
-	case gestaltSystemVersionMajor:
-	case gestaltSystemVersionMinor:
-	case gestaltSystemVersionPatch:
-	{
-		// We may be mixing the Darwin and OS version, but this API is deprecated anyway
-		int name[2] = { CTL_KERN, KERN_OSRELEASE };
-		char version[32] = {};
-		size_t version_len = sizeof(version) - 1;
-		int maj = 0, min = 0, patch = 0;
+    switch (type) {
+    case gestaltSystemVersion:
+    case gestaltSystemVersionMajor:
+    case gestaltSystemVersionMinor:
+    case gestaltSystemVersionPatch:
+    {
+        int major = 0, minor = 0, patch = 0;
+        if (!readProductVersion(major, minor, patch)) {
+            *value = 0;
+            return gestaltUnknownErr;
+        }
 
-		if (sysctl(name, 2, version, &version_len, nullptr, 0) != 0 ||
-			version_len == 0 || version_len > sizeof(version) - 1) {
-			*value = 0;
-			return unimpErr;
-		}
-		version[version_len] = '\0';
-		const char* cursor = version;
-		if (!parseReleaseNumber(cursor, maj) || *cursor != '.' ||
-			!parseReleaseNumber(++cursor, min) || *cursor != '.' ||
-			!parseReleaseNumber(++cursor, patch) || *cursor != '\0') {
-			*value = 0;
-			return unimpErr;
-		}
-
-		// Preserve the legacy encoding for now, but never overflow its int result.
-		if (type == gestaltSystemVersion && 0x100LL * maj + 0x10LL * min > INT_MAX) {
-			*value = 0;
-			return unimpErr;
-		}
-
-		if (type == gestaltSystemVersion)
-			*value = static_cast<int>(0x100LL * maj + 0x10LL * min);
-		else if (type == gestaltSystemVersionMajor)
-			*value = maj;
-		else if (type == gestaltSystemVersionMinor)
-			*value = min;
-		else if (type == gestaltSystemVersionPatch)
-			*value = patch;
-		break;
-	}
-	case gestaltSysArchitecture:
-#ifdef __powerpc__
-		*value = gestaltPowerPC;
+        if (type == gestaltSystemVersion) {
+            if (!encodeLegacySystemVersion(major, minor, patch, *value)) {
+                *value = 0;
+                return gestaltUnknownErr;
+            }
+        } else if (type == gestaltSystemVersionMajor) {
+            *value = major;
+        } else if (type == gestaltSystemVersionMinor) {
+            *value = minor;
+        } else {
+            *value = patch;
+        }
+        break; // G1: do not fall through to gestaltSysArchitecture.
+    }
+    case gestaltSysArchitecture:
+#if defined(__powerpc__)
+        *value = gestaltPowerPC;
 #elif defined(__x86_64__) || defined(__i386__)
-		*value = gestaltIntel;
+        *value = gestaltIntel;
+#else
+        *value = 0;
+        return gestaltUnknownErr;
 #endif
-		break;
-	default:
-		*value = 0;
-		return unimpErr;
-	}
-	return 0;
+        break;
+    case gestaltCarbonVersion:
+        // CarbonCore/HIToolbox currently cover only part of Carbon. No
+        // defensible Carbon API release number is established by that subset.
+        *value = 0;
+        return gestaltUndefSelectorErr;
+    default:
+        *value = 0;
+        return gestaltUndefSelectorErr;
+    }
+    return 0;
 }
