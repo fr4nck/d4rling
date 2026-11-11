@@ -29,7 +29,7 @@ along with Darling.  If not, see <http://www.gnu.org/licenses/>.
 // Carbon's MemError is per-thread on Mac OS X 10.3 and later. The allocation
 // records preserve logical sizes: malloc_size() reports capacity, not Size.
 static thread_local OSErr g_memoryError = noErr;
-struct PtrRecord { Ptr ptr; size_t size; PtrRecord* next; };
+struct PtrRecord { Ptr ptr; size_t size; Handle owner; PtrRecord* next; };
 struct HandleRecord { Handle handle; bool locked; HandleRecord* next; };
 static std::mutex g_recordsLock;
 static PtrRecord* g_pointers = nullptr;
@@ -49,7 +49,7 @@ static HandleRecord* findHandle(Handle handle)
     return nullptr;
 }
 
-static Ptr allocatePtr(size_t size, bool clear)
+static Ptr allocatePtr(size_t size, bool clear, Handle owner = nullptr)
 {
     void* data = clear ? std::calloc(1, size ? size : 1) : std::malloc(size ? size : 1);
     if (!data) { g_memoryError = memFullErr; return nullptr; }
@@ -61,6 +61,7 @@ static Ptr allocatePtr(size_t size, bool clear)
     }
     record->ptr = static_cast<Ptr>(data);
     record->size = size;
+    record->owner = owner;
     {
         std::lock_guard<std::mutex> guard(g_recordsLock);
         record->next = g_pointers;
@@ -94,16 +95,16 @@ Ptr NewPtrClear(long len)
 void DisposePtr(Ptr ptr)
 {
     if (!ptr) { g_memoryError = noErr; return; }
-    {
-        std::lock_guard<std::mutex> guard(g_recordsLock);
-        PtrRecord** slot = &g_pointers;
-        while (*slot && (*slot)->ptr != ptr) slot = &(*slot)->next;
-        if (!*slot) { g_memoryError = memAdrErr; return; }
-        PtrRecord* old = *slot;
-        *slot = old->next;
-        std::free(old);
-    }
-    std::free(ptr);
+    std::lock_guard<std::mutex> guard(g_recordsLock);
+    PtrRecord** slot = &g_pointers;
+    while (*slot && (*slot)->ptr != ptr) slot = &(*slot)->next;
+    if (!*slot) { g_memoryError = memAdrErr; return; }
+    // Never release a handle-owned block via the nonrelocatable Ptr API.
+    if ((*slot)->owner) { g_memoryError = memAdrErr; return; }
+    PtrRecord* old = *slot;
+    *slot = old->next;
+    std::free(old->ptr);
+    std::free(old);
     g_memoryError = noErr;
 }
 
@@ -159,12 +160,18 @@ Handle NewHandle(long size)
     if (size < 0) { g_memoryError = memFullErr; return nullptr; }
     Handle handle = NewEmptyHandle();
     if (!handle) return nullptr;
-    SetHandleSize(handle, size);
-    if (MemError() == noErr) return handle;
-    OSErr error = MemError();
-    DisposeHandle(handle);
-    g_memoryError = error;
-    return nullptr;
+    // SetHandleSize must reject empty handles; allocate the first data block
+    // through the private constructor path instead.
+    Ptr fresh = allocatePtr(static_cast<size_t>(size), false, handle);
+    if (!fresh) {
+        const OSErr error = g_memoryError;
+        DisposeHandle(handle);
+        g_memoryError = error;
+        return nullptr;
+    }
+    *handle = fresh;
+    g_memoryError = noErr;
+    return handle;
 }
 
 Handle NewHandleClear(long size)
@@ -177,16 +184,22 @@ Handle NewHandleClear(long size)
 void DisposeHandle(Handle handle)
 {
     if (!handle) { g_memoryError = nilHandleErr; return; }
-    {
-        std::lock_guard<std::mutex> guard(g_recordsLock);
-        HandleRecord** slot = &g_handles;
-        while (*slot && (*slot)->handle != handle) slot = &(*slot)->next;
-        if (!*slot) { g_memoryError = memWZErr; return; }
-        HandleRecord* old = *slot;
-        *slot = old->next;
-        std::free(old);
+    std::lock_guard<std::mutex> guard(g_recordsLock);
+    HandleRecord** slot = &g_handles;
+    while (*slot && (*slot)->handle != handle) slot = &(*slot)->next;
+    if (!*slot) { g_memoryError = memWZErr; return; }
+    PtrRecord** block = &g_pointers;
+    if (*handle) {
+        while (*block && (*block)->ptr != *handle) block = &(*block)->next;
+        if (!*block || (*block)->owner != handle) { g_memoryError = memWZErr; return; }
+        PtrRecord* oldBlock = *block;
+        *block = oldBlock->next;
+        std::free(oldBlock->ptr);
+        std::free(oldBlock);
     }
-    if (*handle) DisposePtr(*handle);
+    HandleRecord* state = *slot;
+    *slot = state->next;
+    std::free(state);
     std::free(handle);
     g_memoryError = noErr;
 }
@@ -194,50 +207,46 @@ void DisposeHandle(Handle handle)
 void EmptyHandle(Handle handle)
 {
     if (!handle) { g_memoryError = nilHandleErr; return; }
-    {
-        std::lock_guard<std::mutex> guard(g_recordsLock);
-        if (!findHandle(handle)) { g_memoryError = memWZErr; return; }
-    }
-    if (*handle) DisposePtr(*handle);
+    std::lock_guard<std::mutex> guard(g_recordsLock);
+    HandleRecord* state = findHandle(handle);
+    if (!state) { g_memoryError = memWZErr; return; }
+    if (!*handle) { g_memoryError = noErr; return; }
+    if (state->locked) { g_memoryError = memPurErr; return; }
+    PtrRecord** slot = &g_pointers;
+    while (*slot && (*slot)->ptr != *handle) slot = &(*slot)->next;
+    if (!*slot || (*slot)->owner != handle) { g_memoryError = memWZErr; return; }
+    PtrRecord* old = *slot;
+    *slot = old->next;
+    std::free(old->ptr);
+    std::free(old);
     *handle = nullptr;
-    {
-        std::lock_guard<std::mutex> guard(g_recordsLock);
-        HandleRecord* record = findHandle(handle);
-        if (record) record->locked = false;
-    }
     g_memoryError = noErr;
 }
 
 Size GetHandleSize(Handle handle)
 {
     if (!handle) { g_memoryError = nilHandleErr; return 0; }
-    {
-        std::lock_guard<std::mutex> guard(g_recordsLock);
-        if (!findHandle(handle)) { g_memoryError = memWZErr; return 0; }
-    }
+    std::lock_guard<std::mutex> guard(g_recordsLock);
+    if (!findHandle(handle)) { g_memoryError = memWZErr; return 0; }
     if (!*handle) { g_memoryError = nilHandleErr; return 0; }
-    return GetPtrSize(*handle);
+    const PtrRecord* record = findPtr(*handle);
+    if (!record || record->owner != handle) { g_memoryError = memWZErr; return 0; }
+    g_memoryError = noErr;
+    return static_cast<Size>(record->size);
 }
 
 void SetHandleSize(Handle handle, long newSize)
 {
     if (!handle) { g_memoryError = nilHandleErr; return; }
-    {
-        std::lock_guard<std::mutex> guard(g_recordsLock);
-        if (!findHandle(handle)) { g_memoryError = memWZErr; return; }
-    }
-    if (newSize < 0) { g_memoryError = memFullErr; return; }
-    if (!*handle) {
-        Ptr fresh = NewPtr(newSize);
-        if (fresh) *handle = fresh;
-        return;
-    }
     std::lock_guard<std::mutex> guard(g_recordsLock);
-    PtrRecord* record = findPtr(*handle);
     HandleRecord* state = findHandle(handle);
-    if (!record || !state) { g_memoryError = memWZErr; return; }
+    if (!state) { g_memoryError = memWZErr; return; }
+    if (newSize < 0) { g_memoryError = memFullErr; return; }
+    if (!*handle) { g_memoryError = nilHandleErr; return; }
+    PtrRecord* record = findPtr(*handle);
+    if (!record || record->owner != handle) { g_memoryError = memWZErr; return; }
     const size_t desired = static_cast<size_t>(newSize);
-    // A logical shrink or expansion within existing capacity never moves data.
+    // In-place changes of logical size never invalidate the caller's pointer.
     if (desired <= malloc_size(*handle)) {
         record->size = desired;
         g_memoryError = noErr;
@@ -255,38 +264,58 @@ void SetHandleSize(Handle handle, long newSize)
 void ReallocateHandle(Handle handle, Size byteCount)
 {
     if (!handle) { g_memoryError = nilHandleErr; return; }
-    {
-        std::lock_guard<std::mutex> guard(g_recordsLock);
-        if (!findHandle(handle)) { g_memoryError = memWZErr; return; }
-    }
+    std::lock_guard<std::mutex> guard(g_recordsLock);
+    HandleRecord* state = findHandle(handle);
+    if (!state) { g_memoryError = memWZErr; return; }
     if (byteCount < 0) { g_memoryError = memFullErr; return; }
-    Ptr fresh = NewPtr(byteCount);
-    if (!fresh) return; // macOS preserves the original allocation on failure.
-    Ptr old = *handle;
-    *handle = fresh;
-    if (old) DisposePtr(old);
-    {
-        std::lock_guard<std::mutex> guard(g_recordsLock);
-        HandleRecord* state = findHandle(handle);
-        if (state) state->locked = false;
+    // ReallocateHandle replaces the block, not just its size. A locked block
+    // cannot be purged or moved; Apple documents memPurErr for this path.
+    if (*handle && state->locked) { g_memoryError = memPurErr; return; }
+    PtrRecord** oldSlot = &g_pointers;
+    if (*handle) {
+        while (*oldSlot && (*oldSlot)->ptr != *handle) oldSlot = &(*oldSlot)->next;
+        if (!*oldSlot || (*oldSlot)->owner != handle) { g_memoryError = memWZErr; return; }
     }
+    const size_t logical = static_cast<size_t>(byteCount);
+    void* fresh = std::malloc(logical ? logical : 1);
+    if (!fresh) { g_memoryError = memFullErr; return; }
+    PtrRecord* record = static_cast<PtrRecord*>(std::malloc(sizeof(PtrRecord)));
+    if (!record) { std::free(fresh); g_memoryError = memFullErr; return; }
+    // Commit only after both allocations succeeded (Mac OS X semantics).
+    if (*handle) {
+        PtrRecord* old = *oldSlot;
+        *oldSlot = old->next;
+        std::free(old->ptr);
+        std::free(old);
+    }
+    *handle = static_cast<Ptr>(fresh);
+    record->ptr = *handle;
+    record->size = logical;
+    record->owner = handle;
+    record->next = g_pointers;
+    g_pointers = record;
+    state->locked = false;
     g_memoryError = noErr;
 }
 
 void HLock(Handle handle)
 {
+    if (!handle) { g_memoryError = nilHandleErr; return; }
     std::lock_guard<std::mutex> guard(g_recordsLock);
     HandleRecord* state = findHandle(handle);
-    if (!state || !*handle) { g_memoryError = nilHandleErr; return; }
+    if (!state) { g_memoryError = memWZErr; return; }
+    if (!*handle) { g_memoryError = nilHandleErr; return; }
     state->locked = true;
     g_memoryError = noErr;
 }
 void HLockHi(Handle handle) { HLock(handle); }
 void HUnlock(Handle handle)
 {
+    if (!handle) { g_memoryError = nilHandleErr; return; }
     std::lock_guard<std::mutex> guard(g_recordsLock);
     HandleRecord* state = findHandle(handle);
-    if (!state || !*handle) { g_memoryError = nilHandleErr; return; }
+    if (!state) { g_memoryError = memWZErr; return; }
+    if (!*handle) { g_memoryError = nilHandleErr; return; }
     state->locked = false;
     g_memoryError = noErr;
 }
@@ -304,6 +333,11 @@ OSErr PtrToHand(const void* srcPtr, Handle* dstHndl, long size)
 OSErr PtrToXHand(const void* srcPtr, Handle handle, long size)
 {
     if (!handle || size < 0 || (size && !srcPtr)) return g_memoryError = paramErr;
+    {
+        std::lock_guard<std::mutex> guard(g_recordsLock);
+        if (!findHandle(handle)) return g_memoryError = memWZErr;
+        if (!*handle) return g_memoryError = nilHandleErr;
+    }
     // The source may reside in the destination block and be moved by resize.
     void* copy = nullptr;
     if (size) {
@@ -326,14 +360,11 @@ OSErr HandToHand(Handle* handle)
         if (!findHandle(*handle)) return g_memoryError = memWZErr;
     }
     Handle copy = nullptr;
-    if (!**handle) {
-        copy = NewEmptyHandle();
-    } else {
-        const Size size = GetHandleSize(*handle);
-        if (MemError() != noErr) return MemError();
-        copy = NewHandle(size);
-        if (copy && size) std::memcpy(*copy, **handle, static_cast<size_t>(size));
-    }
+    if (!**handle) return g_memoryError = nilHandleErr;
+    const Size size = GetHandleSize(*handle);
+    if (MemError() != noErr) return MemError();
+    copy = NewHandle(size);
+    if (copy && size) std::memcpy(*copy, **handle, static_cast<size_t>(size));
     if (!copy) return MemError();
     *handle = copy;
     return g_memoryError = noErr;
@@ -341,7 +372,9 @@ OSErr HandToHand(Handle* handle)
 
 OSErr HandAndHand(Handle first, Handle second)
 {
-    if (!first || !second || !*first || !*second) return g_memoryError = paramErr;
+    if (!first || !second) return g_memoryError = paramErr;
+    // Validate handles before dereferencing master pointers: a stale handle
+    // must fail rather than fault while checking a supposedly empty block.
     const Size firstSize = GetHandleSize(first);
     if (MemError() != noErr) return MemError();
     const Size secondSize = GetHandleSize(second);
@@ -364,7 +397,6 @@ OSErr HandAndHand(Handle first, Handle second)
 OSErr PtrAndHand(const void* srcPtr, Handle handle, long size)
 {
     if (!handle || size < 0 || (size && !srcPtr)) return g_memoryError = paramErr;
-    if (!*handle) return g_memoryError = nilHandleErr;
     const Size previous = GetHandleSize(handle);
     if (MemError() != noErr) return MemError();
     if (size > LONG_MAX - previous) return g_memoryError = memFullErr;
