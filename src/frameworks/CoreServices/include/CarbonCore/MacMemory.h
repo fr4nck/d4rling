@@ -28,7 +28,6 @@ Handle NewEmptyHandle(void);
 long GetPtrSize(Ptr ptr);
 void SetPtrSize(Ptr p, long newSize);
 void SetHandleSize(Handle h, long newSize);
-long GetHandleSize(Handle h);
 void ReallocateHandle(Handle h, Size byteCount);
 void HLock(Handle h);
 void HLockHi(Handle h);
@@ -36,6 +35,9 @@ void HUnlock(Handle h);
 OSErr HandToHand(Handle* h);
 OSErr HandAndHand(Handle h1, Handle h2);
 OSErr PtrAndHand(const void* ptr1, Handle hand2, long size);
+
+// Returns the last Memory Manager error on the calling thread.
+OSErr MemError(void);
 
 #ifdef __cplusplus
 }
