@@ -36,6 +36,29 @@ La feuille de route consolide les priorités ; elle ne remplace pas les
 rapports datés ni les recettes épinglées. Une preuve récente ne remplace une
 ancienne conclusion que pour **la même révision, architecture et chaîne**.
 
+## Actualisation CarbonCore — 11 novembre 2026 (I1)
+
+**Périmètre borné :** les commits source G4, M1/M2 et R1/R2 sont publiés ;
+I1 qualifie pour la première fois l'assemblage des **vraies unités**
+`MacMemory.cpp` M2 + `ResourcesImpl.cpp` R2 sur un hôte Linux.
+Consulter le [journal CarbonCore](docs/CHANGELOG-CARBONCORE.md) et la
+[qualification I1](docs/evidence/carboncore-memory-resource-i1-2026-11-11.md).
+
+| Porte | Acquis vérifié / statut | Suite nécessaire |
+| --- | --- | --- |
+| Gestalt G4 | Source publiée : `sysv` fondé sur version du produit ; `cbon` refusé honnêtement | Qualifier les capacités Carbon effectives avant toute annonce de version |
+| Memory M1/M2 | Allocations/handles corrigés ; tests hôte archivés | ABI Mach-O i386 et gestion des zones mémoire historiques non qualifiées |
+| Resources R1/R2 | Décodeur, sérialiseur et erreurs d'écriture effectifs ; bancs hôte archivés | Appels publics, ressources véritables et écritures xattr Darwin à qualifier |
+| **I1 — Memory + Resources réels** | **54/54 PASS** sous GCC 14.2 et Clang 17, `-O0` et `-O2`, ASan/UBSan ; **2/2 mutations tuées par compilateur** | Lier les entrées publiques `Resources.cpp`, puis compiler/charger sur Darwin i386 |
+| SoundHack / Logic Studio 8 | **NON QUALIFIÉS** | Vérification des imports, Carbon/HIToolbox/QuickTime et runtime i386 ; aucune extrapolation |
+
+**Résultat I1 précis :** `EmptyHandle` conservait le master pointer
+sans que `ResourceData::getHandle()` recharge ses données. Le correctif
+appelle le vrai `ReallocateHandle` de M2, vérifie `MemError()` et recopie
+les données ; les allocations forcées en échec restent vérifiables.
+Aucun changement de CMake, des préfixes installés, du 5700X ou
+de `x86_64/Cocoa`. **I1 reste un PASS hôte, pas un GO application.**
+
 ## Mise à jour ciblée Q — QuickTime C4-D (10 novembre 2026)
 
 **Reprise du jalon C4-D, sans modifier les priorités globales ni les résultats historiques v0.2.** État Git consulté : `master` = `d50ca8afbe5e6cdbb7574e2e870180ce6a0c972b` ; dernier commit QuickTime C4-D = [`c897c0e7`](https://github.com/fr4nck/d4rling/commit/c897c0e78276c3c5b281e7cbf8d7ea66957ebc0d).

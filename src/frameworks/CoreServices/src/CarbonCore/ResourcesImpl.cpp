@@ -17,6 +17,7 @@ You should have received a copy of the GNU General Public License
 along with Darling.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "ResourcesImpl.h"
+#include <CarbonCore/MacErrors.h>
 #include <stdexcept>
 #include <sys/mman.h>
 #include <fcntl.h>
@@ -135,16 +136,26 @@ Resources::ResourceData::~ResourceData()
 
 Handle Resources::ResourceData::getHandle()
 {
+    if (dataBacking.size() > static_cast<size_t>(std::numeric_limits<long>::max()))
+        return nullptr;
     if (!data)
     {
         Handle newHandle = nullptr;
-        if (dataBacking.size() > static_cast<size_t>(std::numeric_limits<long>::max()))
-            return nullptr;
         if (PtrToHand(dataBacking.empty() ? nullptr : dataBacking.data(),
                       &newHandle, static_cast<long>(dataBacking.size())) != noErr || !newHandle)
             return nullptr;
         data = newHandle;
         parent->m_handleMap.insert({data, this});
+    }
+    else if (!*data)
+    {
+        // A purged resource keeps its master pointer. Rehydrate the same
+        // Handle from its resource backing instead of returning an empty one.
+        ReallocateHandle(data, static_cast<Size>(dataBacking.size()));
+        if (MemError() != noErr || !*data)
+            return nullptr;
+        if (!dataBacking.empty())
+            std::memcpy(*data, dataBacking.data(), dataBacking.size());
     }
     return data;
 }
