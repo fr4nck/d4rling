@@ -606,14 +606,26 @@ void SetResFileAttrs(ResFileRefNum refNum, ResFileAttributes attrs)
 
 void ChangedResource(Handle res)
 {
-	std::unique_lock<std::mutex> l(g_resourcesLock);
-	auto data = findResourceDataByHandle(res);
-	data->dataChanged();
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    auto data = findResourceDataByHandle(res);
+    if (!data) { g_lastError = resNotFound; return; }
+    data->dataChanged();
+    g_lastError = noErr;
 }
 
 void SetResourceSize(Handle res, long size)
 {
-	SetHandleSize(res, size);
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    Resources* owner = nullptr;
+    if (!findResourceDataByHandle(res, &owner)) {
+        g_lastError = resNotFound;
+        return;
+    }
+    SetHandleSize(res, size);
+    const OSErr memoryError = MemError();
+    if (memoryError != noErr) { g_lastError = memoryError; return; }
+    // SetResourceSize must actually persist the updated resource size.
+    g_lastError = owner->save();
 }
 
 static void clearCaches()
@@ -629,42 +641,33 @@ static void clearCaches()
 
 void WriteResource(Handle res)
 {
-	std::unique_lock<std::mutex> l(g_resourcesLock);
-	Resources* resources;
-	auto data = findResourceDataByHandle(res, &resources);
-
-	if (!data)
-	{
-		g_lastError = resNotFound;
-		return;
-	}
-
-	g_lastError = noErr;
-	resources->save();
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    Resources* owner = nullptr;
+    if (!findResourceDataByHandle(res, &owner)) {
+        g_lastError = resNotFound;
+        return;
+    }
+    g_lastError = owner->save();
 }
 
 void UpdateResFile(ResFileRefNum refNum)
 {
-	std::unique_lock<std::mutex> l(g_resourcesLock);
-	auto it = g_resources.find(refNum);
-
-	if (it == g_resources.end())
-	{
-		g_lastError = resFNotFound;
-		return;
-	}
-
-	g_lastError = noErr;
-	it->second->save();
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    auto it = g_resources.find(refNum);
+    if (it == g_resources.end()) {
+        g_lastError = resFNotFound;
+        return;
+    }
+    g_lastError = it->second->save();
 }
 
 void DetachResource(Handle res)
 {
-	std::unique_lock<std::mutex> l(g_resourcesLock);
-	Resources* resources;
-	auto data = findResourceDataByHandle(res, &resources);
-
-	data->releaseHandle(false);
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    auto data = findResourceDataByHandle(res);
+    if (!data) { g_lastError = resNotFound; return; }
+    data->releaseHandle(false);
+    g_lastError = noErr;
 }
 
 void RemoveResource(Handle res)
@@ -688,11 +691,11 @@ void RemoveResource(Handle res)
 
 void ReleaseResource(Handle res)
 {
-	std::unique_lock<std::mutex> l(g_resourcesLock);
-	Resources* resources;
-	auto data = findResourceDataByHandle(res, &resources);
-
-	data->releaseHandle(true);
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    auto data = findResourceDataByHandle(res);
+    if (!data) { g_lastError = resNotFound; return; }
+    data->releaseHandle(true);
+    g_lastError = noErr;
 }
 
 void SetResLoad(Boolean load)
@@ -725,52 +728,33 @@ void AddResource(Handle data, ResType type, ResID resId, ConstStr255Param name)
 
 	std::string cname((char*) &name[1], name[0]);
 	g_currentResources->add(type, resId, cname.c_str(), data);
+	g_lastError = noErr;
+	clearCaches();
 }
 
 void ReadPartialResource(Handle res, long offset, void* buffer, long count)
 {
-	std::unique_lock<std::mutex> l(g_resourcesLock);
-	Size resLen = 0;
-	if (res)
-		resLen = GetHandleSize(res);
-	
-	if (offset + count > resLen)
-	{
-		g_lastError = inputOutOfBounds;
-		return;
-	}
-
-	memcpy(buffer, *res + offset, count);
-	g_lastError = noErr;
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    Resources* owner = nullptr;
+    if (!findResourceDataByHandle(res, &owner)) {
+        g_lastError = resNotFound;
+        return;
+    }
+    // Apple TB40: always read from disk, not the loaded Handle.
+    g_lastError = owner->readPartial(res, offset, buffer, count);
 }
 
 void WritePartialResource(Handle res, long offset, const void* buffer, long count)
 {
-	std::unique_lock<std::mutex> l(g_resourcesLock);
-	if (!res)
-	{
-		g_lastError = resNotFound;
-		return;
-	}
-
-	Resources* rr;
-	auto existingData = findResourceDataByHandle(res, &rr);
-
-	if (!existingData)
-	{
-		g_lastError = resNotFound;
-		return;
-	}
-
-	g_lastError = noErr;
-	if (offset + count > GetHandleSize(res))
-	{
-		SetHandleSize(res, offset+count);
-		g_lastError = writingPastEnd;
-	}
-
-	memcpy(*res + offset, buffer, count);
-	rr->save();
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    Resources* owner = nullptr;
+    if (!findResourceDataByHandle(res, &owner)) {
+        g_lastError = resNotFound;
+        return;
+    }
+    // Never extend data or return a synthetic writingPastEnd/noErr.
+    // Apple TB40: write the on-disk bytes, leave a loaded Handle unchanged.
+    g_lastError = owner->writePartial(res, offset, buffer, count);
 }
 
 ResID UniqueID(ResType type)

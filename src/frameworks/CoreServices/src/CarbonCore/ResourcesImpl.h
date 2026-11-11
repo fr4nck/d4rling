@@ -51,6 +51,7 @@ public:
 		Handle getHandle();
 		void releaseHandle(bool freeMemory);
 		void dataChanged();
+		bool snapshot(std::vector<uint8_t>& out) const;
 private:
 		Handle data = nullptr;
 	};
@@ -70,7 +71,9 @@ private:
 	ResourceData* dataByHandle(Handle h);
 	std::unordered_map<Handle, ResourceData*>& handleMap() { return m_handleMap; }
 
-	void save();
+	OSErr save(bool snapshotHandles = true);
+	OSErr readPartial(Handle resource, long offset, void* buffer, long count);
+	OSErr writePartial(Handle resource, long offset, const void* buffer, long count);
 	void add(ResType type, ResID id, const char* name, Handle data);
 	void remove(Handle data);
 
@@ -84,6 +87,7 @@ protected:
 	const SInt8 m_openMode;
 
 	ResFileAttributes m_attributes;
+	std::vector<uint8_t> m_prefix;
 	
 	std::unordered_map<ResType, ResourceTypeData> m_resourceTypes;
 	std::unordered_map<Handle, ResourceData*> m_handleMap;

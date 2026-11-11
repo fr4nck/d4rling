@@ -1,0 +1,25 @@
+#pragma once
+#include <stdint.h>
+#include <stddef.h>
+#include <memory>
+using SInt8 = int8_t;
+using ResID = int16_t;
+using ResType = uint32_t;
+using ResAttributes = int16_t;
+using ResFileAttributes = int16_t;
+using OSErr = int16_t;
+using Ptr = char*;
+using Handle = Ptr*;
+constexpr OSErr fnfErr = -43;
+constexpr OSErr eofErr = -39;
+constexpr OSErr noErr = 0;
+constexpr SInt8 fsWrPerm = 2;
+constexpr OSErr fsRdPerm = 1;
+constexpr OSErr fsRdWrPerm = 3;
+constexpr OSErr wPrErr = -44;
+constexpr OSErr ioErr = -36;
+constexpr OSErr dskFulErr = -34;
+constexpr OSErr memFullErr = -108;
+constexpr OSErr mapReadErr = -199;
+constexpr OSErr paramErr = -50;
+constexpr OSErr resNotFound = -192;
