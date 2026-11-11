@@ -58,3 +58,19 @@ Les rapports G1 (11 tests), G2 (18) et G3 (38) demeurent archivés comme preuves
 Quand le 5700X est disponible, dans **une copie isolée sans toucher aux installations et arbres historiques** : vérifier les blobs HEAD et le sous-module XNU épinglé ; compiler l'unité de production pour Darwin i386 ; contrôler le lien et les imports `sysctlbyname` ; exécuter un petit Mach-O i386 interrogeant `sysv/sys1/sys2/sys3/sysa/cbon` et comparer avec les réponses produit réellement exposées au processus ; confirmer ensuite seulement la progression de SoundHack `CapabilityCheck()`. **Ne pas assimiler le passage de `sysv` au passage de `cbon`.**
 
 **Verdict : GO source G4 et régressions hôtes ; NO GO compatibilité SoundHack/Logic en invité, issue #13 ouverte.**
+
+## Inventaire concret des capacités Carbon (lecture du HEAD G4)
+
+L'analyse source distingue les **services réellement codés** des exportations qui ne font rien. Les exemples suivants sont propres au snapshot G4 et ne prétendent pas être un inventaire exhaustif de tout Carbon :
+
+| Sous-système | Élément lu | Constat |
+| --- | --- | --- |
+| HIToolbox / Carbon Events | [`CarbonEventsCore.c`](../../src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c) | `CreateEvent`, `SetEventParameter`, `GetEventParameter`, `CopyEvent`, `ReleaseEvent`, `PostEventToQueue` et un `InstallEventHandler` borné contiennent du code effectif ; les contrats ont des restrictions |
+| HIToolbox / réception | même fichier | `ReceiveNextEvent` prend en charge le parcours sans attente, mais renvoie `unimpErr` si `timeout != kEventDurationNoWait` : pas de boucle native générale avec attente/timers |
+| HIToolbox / NIB | [`IBCarbonRuntime.c`](../../src/frameworks/Carbon/HIToolbox/src/IBCarbonRuntime.c) | `CreateWindowFromNib`, `CreateMenuFromNib` et `CreateNibReference` renvoient `noErr` après un message `STUB`, sans écrire les objets demandés : succès de façade |
+| HIToolbox / raccourcis | [`CarbonEvents.c`](../../src/frameworks/Carbon/HIToolbox/src/CarbonEvents.c) | `RegisterEventHotKey` renvoie `0` sans remplir `outRef` et `UnregisterEventHotKey` renvoie `0` : stubs |
+| Carbon / interface | [`Carbon.c`](../../src/frameworks/Carbon/src/Carbon.c) | `RunApplicationEventLoop` ne réalise aucune boucle ; `CreateStandardAlert` et `RunStandardAlert` sont marqués `STUB` ; `GetApplicationEventTarget` renvoie zéro dans cette unité |
+| CarbonCore / mémoire | [`MacMemory.cpp`](../../src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp) | `NewPtr`, `DisposePtr`, `NewHandle`, `SetHandleSize` ont du code effectif, mais `HLock/HUnlock` sont vides ; l'API mémoire est partielle |
+| CarbonCore / fichiers | [`FileManager.cpp`](../../src/frameworks/CoreServices/src/CarbonCore/FileManager.cpp) | Des fonctions `FSRef` sont implémentées, mais des chemins de `FSGetCatalogInfo` conservent des `TODO` |
+
+La coexistence de véritables fonctions événementielles et de stubs GUI empêche de soutenir une annonce générale « Carbon 1.x ». **`gestaltCarbonVersion` continue donc de renvoyer `gestaltUndefSelectorErr`.** Il faut qualifier les appels fonctionnels réellement utilisés par SoundHack et par Logic Studio 8 avant toute promotion ; cette lecture ne prouve pas leur exécution en Mach-O i386.
