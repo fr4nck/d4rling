@@ -156,6 +156,13 @@ int main() {
     CHECK(HomeResFile(h2) == r2 && ResError() == noErr);
     Handle home = GetResource(STR, 129);
     CHECK(home && HomeResFile(home) == r1 && ResError() == noErr);
+    // SetResInfo changes only the in-memory index until written to disk.
+    if (home) {
+        ChangedResource(home);
+        CHECK(ResError() == noErr);
+        WriteResource(home);
+        CHECK(ResError() == noErr);
+    }
     CHECK(HomeResFile(nullptr) == kResFileNotOpened && ResError() == resNotFound);
     if (home) {
         CHECK(GetResourceSizeOnDisk(home) == 3 && ResError() == noErr);
