@@ -171,6 +171,22 @@ Journal opérateur 5700X (Debian WSL2), inventaire en lecture seule `quicktime-c
 
 **Étape suivante, sans faux correctif :** utiliser **ce fichier C4 exact** (et non les mutants) comme unique nouvelle unité mémoire pour compiler un objet i386 isolé avec la commande CMake/Ninja historique, puis reprendre la **commande de liaison CarbonCore qui a déjà réussi**, en ne substituant que cet objet. Contrôler `_GetHandleSize`, `_SetHandleSize` et `_MemError` sur le véritable Mach-O i386, sans copier le candidat vers la source protégée et sans installer. Ceci ne substitue pas la qualification runtime C4 ni l'intégration amont.
 
+## Essai 12 — CarbonCore véritable i386 lié avec le Memory Manager C4 authentique
+
+**Preuve opérateur 5700X**, 12 novembre 2026 : commande de compilation CMake/Ninja du checkout historique, remplacement **d'un unique objet** `MacMemory.cpp.o` par un objet issu du `MacMemory.cpp` C4 authentique, puis reliaison de CarbonCore avec le vrai linker Darling. Artefacts et journaux privés : `validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/carboncore-c4.yPoI6IJx/` ; rapport `result.json`. Aucun accès indépendant de l'agent au 5700X.
+
+- Entrées C4 vérifiées SHA-256 : `MacMemory.cpp` `b04e73789e66a1d6be823ea4e0a3a42a7b623d20071de3a17666e47685949c23` ; patch C4 `2292c5e0ffab54292d895411cbc9f80ad032cb813fa8478add17b7f84189b657` ; rapport C4 `2c83e5442c26559ba8108b87c2ccbc4655ec322fac384a4d939addee08ccd7ac`.
+- Objets C3-M2 `3/3_PASS`, 61 objets C3-M3 `61/61_PASS`, baseline CarbonCore historique `_MemError` absent, fichiers de build/checkout historiques préservés.
+- **Compilation réelle** du fichier C4 : `/usr/bin/clang++-19`, `COMPILE_EXIT=0`, objet `MacMemory-C4.i386.o` Mach-O 32 bits `MH_OBJECT`, **24 892 octets**, SHA-256 `ba97ff3af08cba1edd535a81fd6a6ec859f5f4a962b4cdefbabfe3e88b728165`.
+- **Liaison réelle** de CarbonCore après substitution de ce seul objet : `LINK_EXIT=0`, `CARBONCORE_MACHO_I386=PASS`, `LC_ID_DYLIB=/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore`.
+- **CarbonCore C4** : **1 352 652 octets**, SHA-256 `0f221249af131f56b2930c0c425fcc9621646aa7e3d5b878e4faedda66fef126`.
+- **Contrat exports statique :** `_GetHandleSize`, `_SetHandleSize`, `_MemError` présents dans la table nlist du Mach-O i386, `REQUIRED_EXPORTS_MISSING=[]`.
+- Verdict **`C3_M3_CARBONCORE_C4_LINK_PASS`**, `COMPILE=MACHO_I386_OBJECT_PASS`, `LINK=MACHO_I386_PASS`, `PROTECTED_INPUTS=UNCHANGED`, `DYLD_RUNTIME=NOT_TESTED`, `GITHUB=NOT_COMMITTED` sur le 5700X.
+
+**Portée :** première liaison réussie dans une vraie sous-bibliothèque CarbonCore i386 intégrant le candidat mémoire C4 et les trois exports requis. Les tests C4-A/B/C historiques restent ceux d'un candidat isolé, **non relancés dans cette nouvelle bibliothèque** ; aucune installation, résolution dynamique, exécution invitée, CoreServices, QuickTime, audio ni Logic 8 qualifiés par ce lot. Garder `NO GO` sur la production.
+
+**Suite immédiate :** prévol de la véritable commande Ninja de CoreServices et de ses 9 sous-frameworks pour identifier les sorties disponibles, fournir la nouvelle CarbonCore C4 à `-reexport_library` et planifier les liaisons ciblées sans recompiler la masse d'objets historiques, puis lier QuickTime C3 après qualification.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
