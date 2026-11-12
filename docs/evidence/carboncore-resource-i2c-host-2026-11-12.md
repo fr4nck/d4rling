@@ -38,7 +38,11 @@ Aucune installation 5700X ou 10400 modifiee.
 
 - Consultation Apple Resource Manager : `HomeResFile` retourne le numero du fichier de ressource ; `GetResourceSizeOnDisk` mesure la taille exacte sur disque ; `GetMaxResourceSize` lit la taille en memoire (ou calcule une approximation depuis la resource map lorsque dechargee). Un handle invalide renvoie respectivement -1 / -1 avec `resNotFound`.
 - Baseline test `5d0a6081167f46a85c8400f267e709bd3d179643`, CI `43223822145` : **echec au linker sur les trois fonctions**, references non resolues dans le vrai assemblage hote. Ne pas le compter comme test positif.
-- Candidat production `fa82b561a172271e6f5f71bdf7aa8a158d41acef` : implementations reelles et controle taille memoire 5 octets / disque 3 octets avant persistance. La qualification sur la CI `43224272183` est encore ouverte au moment de cet ajout.
+- Correctif production `fa82b561a172271e6f5f71bdf7aa8a158d41acef` : implementations reelles et controle taille memoire 5 octets / disque 3 octets avant persistance.
+- La CI `43224272183` a lie les unites mais echoue sur deux attentes de taille : apres `SetResInfo` (ID 128 -> 129), l'ID disk etait encore 128. Echec du temoin, pas une validation.
+- Correction d'ordre du temoin `c88bde375f56358e643cc245a67cd065b4c37fd0` : ecriture explicite des metadonnees avant comparaison des tailles.
+- **CI `43224563245` PASS : 74/74 assertions × 4 configurations GCC/Clang O0/O2 = 296/296, I1 54/54 × 4 = 216/216, soit 512/512 PASS au total, ASan/UBSan.**
+- Aucun lien Mach-O i386 et aucun test applicatif reel.
 
 ## Portes encore ouvertes
 
