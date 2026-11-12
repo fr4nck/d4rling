@@ -102,6 +102,18 @@ Journal opérateur 5700X (Debian WSL2), commande Bash locale exécutée le 12 no
 
 **Reste à faire :** qualifier l'ancien objet `rtsig.c.o` divergent si sa dépendance intervient dans la liaison, retrouver la commande de liaison effective CarbonCore depuis Ninja, rediriger strictement toute sortie vers le nouveau dossier privé, vérifier les bibliothèques directes existantes et refuser toute substitution provenant d'un autre graphe non qualifié. Lier CarbonCore, puis ses pairs et CoreServices, enfin QuickTime ; vérifier `LC_ID_DYLIB` et le graphe de réexportation. Ce checkpoint **ne démontre aucune liaison ni fonctionnement invité**.
 
+## Essai 7 — prévol de liaison CarbonCore : bibliothèque libiconv absente
+
+Journal opérateur du 5700X (Bash Debian WSL2), sortie privée `quicktime-c3-m3/g2.0Tfg9onI/carboncore-link.t9h3kuf3/result.json`. Il s'agit d'un **prévol**, sans invocation du linker CarbonCore :
+
+- Objets QuickTime C3-M2 : `3/3_PASS` ; objets nouvellement compilés : `61/61_SHA256_PASS`.
+- Objets CarbonCore nouvellement compilés : `30/30_SHA256_PASS`, tous `MH_OBJECT i386`.
+- Véritable linker Darwin `i386-apple-darwin20-ld` du build historique : SHA-256 `aa4aa977a9f408dba035cba18acf54e27cefb92261a64f8209eced645b7af174`.
+- Entrées immédiates de la commande de liaison : **5 présentes, 1 absente** : `build-hitoolbox-i386/src/external/libiconv/libiconv.2.dylib`.
+- Verdict : `C3_M3_CARBONCORE_BLOCKED`, `LINK=NOT_RUN`, `PROTECTED_INPUTS=UNCHANGED`, pas de production ni d'installation d'une bibliothèque CarbonCore.
+
+L'examen du sous-module exact `darlinghq/darling-libiconv` au gitlink `0d6f47d33a7cc97e468e864099fff74875b41937` montre `charset` → `libcharset.1.dylib` puis `iconv` → `libiconv.2.dylib` (`/usr/lib/libcharset.1.dylib` et `/usr/lib/libiconv.2.dylib` comme identités Darwin). Le seul enchaînement cohérent à essayer est de lier ces deux bibliothèques avec les objets historiques et les quatre objets libiconv manquants produits en C3-M3, puis CarbonCore, **dans un espace privé**, sans remplacer les artefacts de production et sans accepter de résolution artificielle des symboles.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
