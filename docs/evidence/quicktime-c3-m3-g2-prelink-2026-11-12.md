@@ -157,6 +157,20 @@ Résultat transmis depuis le 5700X le 12 novembre 2026, dossier privé : `quickt
 - `docs/evidence/quicktime-e3-b2-c4-checkpoint-2026-11-10.md` signale un candidat Memory Manager **C4 authentique uniquement local**, sous `validation/qt-next/e3/b2/mm-c4/`, avec tests C4-A/B/C rapportés mais non vérifiables à distance.
 - **Action suivante :** retrouver et auditer le candidat C4 authentique sur le 5700X avant toute modification ou recompilation de `MacMemory.cpp`, puis tenter une intégration de qualification isolée des vraies dylibs. Ne pas fabriquer un stub ni activer `GetMediaSample` avec le Memory Manager historique. Aucun `CoreServices`, QuickTime ni `dyld` qualifié par cette liaison.
 
+## Essai 11 — Memory Manager C4 authentique retrouvé localement, encore NON intégré
+
+Journal opérateur 5700X (Debian WSL2), inventaire en lecture seule `quicktime-c3-m3/g2.0Tfg9onI/c4-provenance.yddzax59.json`, verdict `C4_CANDIDATE_LOCATED_UNQUALIFIED`.
+
+- Répertoire de provenance : `/home/Deniel/d4wrling-work/validation/qt-next/e3/b2/mm-c4` **existant** ; scan de 259 fichiers, `C4_SCAN_TRUNCATED=False`, 19 candidats sources et un rapport retrouvé.
+- **`MacMemory.cpp` C4 authentique :** SHA-256 `b04e73789e66a1d6be823ea4e0a3a42a7b623d20071de3a17666e47685949c23`, `MEMERROR_DEF=True`.
+- **`macmemory-c4.patch` :** SHA-256 `2292c5e0ffab54292d895411cbc9f80ad032cb813fa8478add17b7f84189b657`.
+- **`macmemory-c2-to-c4.diff` :** SHA-256 `9102db5cf4b59c4edbbc52e3c90f6fbfaa27c075294db8a6a33d7940a720fa92`.
+- **`RESULTAT-C4.md` :** SHA-256 `2c83e5442c26559ba8108b87c2ccbc4655ec322fac384a4d939addee08ccd7ac`, documente C4-A PASS, C4-B PASS avec un SKIP, C4-C PASS pour liaison **témoin** inter-dylib i386 et blocage d'intégration production.
+- Confirmation d'entrée : CarbonCore historique SHA-256 `901641ce9b2c57d3971bcae9ca016966c501bd047c94425cfe74e94ffd7832eb` inchangé, absence de `MemError` dans `MacMemory.cpp` et `MacMemory.h` historiques, checkout `5b521087...` et modifications locales protégées inchangés.
+- Contrôles `BUILD=NOT_RUN`, `LINK=NOT_RUN`, `PROTECTED_INPUTS=UNCHANGED`, `GITHUB=NOT_COMMITTED` pour le 5700X.
+
+**Étape suivante, sans faux correctif :** utiliser **ce fichier C4 exact** (et non les mutants) comme unique nouvelle unité mémoire pour compiler un objet i386 isolé avec la commande CMake/Ninja historique, puis reprendre la **commande de liaison CarbonCore qui a déjà réussi**, en ne substituant que cet objet. Contrôler `_GetHandleSize`, `_SetHandleSize` et `_MemError` sur le véritable Mach-O i386, sans copier le candidat vers la source protégée et sans installer. Ceci ne substitue pas la qualification runtime C4 ni l'intégration amont.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
