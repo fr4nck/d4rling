@@ -237,6 +237,24 @@ Sortie opérateur 5700X du 12 novembre 2026 ; rapport local `quicktime-c3-m3/g2.
 - Ce blocage **ne prouve pas que ces dix bibliothèques sont nécessaires à LaunchServices**. Ne pas en inventer ni importer des bibliothèques d'autres builds. Il faut valider les vraies entrées positionnelles et les fournisseurs de réexport, accepter les répertoires `-B` vérifiés, transmettre les correspondances génériques au linker et laisser `ld64` constater les dépendances réellement requises (avertissements et erreurs dans le log).
 - **Pas de nouvelle exécution ld64 dans R3, pas de nouvelles dylibs** ; les 8 PASS restent valides. La ligne de `-fuse-ld` historique doit rester corrigée et vérifiée SHA-256 dans les commandes réellement exécutées.
 
+## Essai 16 — R4 : trois liaisons Darwin i386 réussies, chaîne C3-M3 statique atteinte
+
+**OBS / TEST local 5700X rapporté, 12 novembre 2026.** Rapport et commandes dans l'espace de qualification préservé : `validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/coreservices-r4.ezGaAbG2/result.json`. Aucun accès direct du rédacteur aux exécutables privés. Révision source historique `master@5b521087d79d4348ebe312e622a05f1f8b55c110`, sous-module Security et modification locale HIToolbox préservés, `PROTECTED_INPUTS=UNCHANGED`. Prévol de provenance : 8 dylibs précédentes `8/8_PASS`, CarbonCore C4 `PASS`, C3-M2 `3/3_PASS`, 61 objets C3-M3 `61/61_PASS`.
+
+Le correctif de liaison R4 distingue répertoires d'outillage `-B`, fichiers de liaison directs et correspondances génériques `-Wl,-dylib_file`. Réutilisation du linker Darwin historique SHA-256 `aa4aa977a9f408dba035cba18acf54e27cefb92261a64f8209eced645b7af174` ; **aucune compilation ni installation**.
+
+| Bibliothèque nouvellement liée | Résultat | Octets | SHA-256 |
+| --- | --- | ---: | --- |
+| LaunchServices i386 | `LINK_EXIT=0`, `MACHO_I386_LINK_PASS` | 151 084 | `b686abb51ac03bc57a3fc35feb96637c3a2c83546efe13b3d6bd7e4545e43f9d` |
+| CoreServices i386 | `LINK_EXIT=0`, `MACHO_I386_LINK_PASS` | 15 476 | `bf7aa2ab124fdfc64c6feabad4ebe53bc174a2c361a6ed4cee69ddb5a29f7dd2` |
+| QuickTime C3 i386 | `LINK_EXIT=0`, `MACHO_I386_LINK_PASS` | 1 042 800 | `55a7767c7088db4e331d84b014977177e45b9ace80a5d8673436b5f9125d3b03` |
+
+Le script R4 a vérifié les `LC_ID_DYLIB` i386, `CoreServices → CarbonCore` via `LC_REEXPORT_DYLIB`, `QuickTime → CoreServices` sans chargement direct CarbonCore, `_GetMediaSample` exporté par QuickTime et les trois imports QuickTime `_GetHandleSize`, `_SetHandleSize`, `_MemError` attribués à CoreServices par les entrées nlist. CarbonCore C4 est la dylib réellement liée au lot précédent (SHA-256 `0f221249af131f56b2930c0c425fcc9621646aa7e3d5b878e4faedda66fef126`), avec les trois exports présents.
+
+**Verdict borné : `STATUS=C3_M3_STATIC_CHAIN_PASS`, `LINKED_COUNT=3`, `PROTECTED_INPUTS=UNCHANGED`, `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`, `GITHUB=NOT_COMMITTED` pour la session locale.** Les `72/71/70` correspondances génériques `-dylib_file` respectivement indisponibles mais non bloquantes à la liaison **ne démontrent pas une fermeture de dépendances au chargement**. Ni comportement `GetMediaSample`, ni traitement d'erreurs mémoire C4 sur ce nouveau trio, ni chaîne audio, ni Logic Studio 8 qualifiés. Il s'agit d'une liaison réelle vérifiée statiquement, **pas d'un GO de production**.
+
+**Prochain contrôle minimal :** exécuter le garde déjà existant `docs/evidence/quicktime-c4d-2026-11-10/check_c4d_macho_i386.py` sur **ces trois dylibs exactes**, puis, si la structure reste cohérente, préparer une qualification `dyld`/invité i386 dans un nouveau préfixe de test, sans toucher au préfixe de référence ni au moteur audio.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.

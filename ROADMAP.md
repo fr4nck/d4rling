@@ -93,6 +93,14 @@ les données ; les allocations forcées en échec restent vérifiables.
 Aucun changement de CMake, des préfixes installés, du 5700X ou
 de `x86_64/Cocoa`. **I1 reste un PASS hôte, pas un GO application.**
 
+## Mise à jour ciblée Q — chaîne QuickTime i386 C3-M3 (12 novembre 2026)
+
+**OBS opérateur 5700X / preuve de liaison réelle, sans recette invitée.** Le [checkpoint C3-M3 R4](docs/evidence/quicktime-c3-m3-g2-prelink-2026-11-12.md#essai-16--r4--trois-liaisons-darwin-i386-réussies-chaîne-c3-m3-statique-atteinte) contient les SHA-256 et le chemin du rapport local. Après 61 objets i386 compilés séparément et le portage du vrai Memory Manager C4 dans un objet CarbonCore, les bibliothèques LaunchServices, CoreServices et QuickTime C3 ont chacune `LINK_EXIT=0` et les identités Mach-O i386 attendues. CoreServices réexporte CarbonCore C4 ; QuickTime importe `GetHandleSize`, `SetHandleSize`, `MemError` via CoreServices et exporte `GetMediaSample` dans la table nlist. Verdict local **`C3_M3_STATIC_CHAIN_PASS`** ; état historique et sous-modules préservés.
+
+**Portée strictement statique :** aucun chargement de cette chaîne par `dyld`, aucun témoin C4 contre ce trio réel, aucun test audio, aucune exécution de QuickTime Player ni de Logic 8. Les correspondances globales `-dylib_file` manquantes ne sont pas une fermeture de dépendances. **Q-C4-D production : NO GO ; Logic 8 : NON QUALIFIÉ.**
+
+**Prochain jalon :** réutiliser le garde M2 déjà publié sur les trois dylibs réelles (sans reconstruire), puis qualifier le chargement invité sous préfixe neuf et les oracles C3/C4 sans modifier l'installation historique.
+
 ## Mise à jour ciblée Q — QuickTime C4-D (10 novembre 2026)
 
 **Reprise du jalon C4-D, sans modifier les priorités globales ni les résultats historiques v0.2.** État Git consulté : `master` = `d50ca8afbe5e6cdbb7574e2e870180ce6a0c972b` ; dernier commit QuickTime C4-D = [`c897c0e7`](https://github.com/fr4nck/d4rling/commit/c897c0e78276c3c5b281e7cbf8d7ea66957ebc0d).
