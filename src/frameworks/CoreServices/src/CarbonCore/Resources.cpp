@@ -425,7 +425,7 @@ ResourceCount CountResources(ResType type)
 {
 	std::unique_lock<std::mutex> l(g_resourcesLock);
 	auto& allRes = resourcesOfType(type);
-
+	g_lastError = noErr;
 	return allRes.size();
 }
 
@@ -459,7 +459,9 @@ Handle GetIndResource(ResType type, ResourceIndex index)
 		return nullptr;
 	}
 
-	return allRes[index-1]->getHandle();
+	Handle result = allRes[index-1]->getHandle();
+	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
+	return result;
 }
 
 Handle Get1IndResource(ResType type, ResourceIndex index)
@@ -502,7 +504,9 @@ Handle GetResource(ResType type, ResID resId)
 		return nullptr;
 	}
 
-	return it->second->getHandle();
+	Handle result = it->second->getHandle();
+	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
+	return result;
 }
 
 Handle Get1Resource(ResType type, ResID resId)
@@ -529,7 +533,9 @@ Handle Get1Resource(ResType type, ResID resId)
 		return nullptr;
 	}
 
-	return it->second->getHandle();
+	Handle result = it->second->getHandle();
+	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
+	return result;
 }
 
 Handle GetNamedResource(ResType type, ConstStr255Param name)
@@ -546,7 +552,9 @@ Handle GetNamedResource(ResType type, ConstStr255Param name)
 	}
 
 	g_lastError = noErr;
-	return it->second->getHandle();
+	Handle result = it->second->getHandle();
+	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
+	return result;
 }
 
 Handle Get1NamedResource(ResType type, ConstStr255Param name)
@@ -575,7 +583,9 @@ Handle Get1NamedResource(ResType type, ConstStr255Param name)
 	}
 
 	g_lastError = noErr;
-	return it->second->getHandle();
+	Handle result = it->second->getHandle();
+	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
+	return result;
 }
 
 ResFileAttributes GetResFileAttrs(ResFileRefNum refNum)

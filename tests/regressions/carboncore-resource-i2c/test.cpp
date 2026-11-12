@@ -106,10 +106,10 @@ int main() {
     CHECK(GetIndResource(STR, 1) == h1 && ResError() == noErr);
     CHECK(GetResource(STR, 999) == nullptr && ResError() == resNotFound);
     CHECK(GetResource(STR, 128) == h1 && ResError() == noErr); // stale last error
-    CHECK(GetResource(ABSENT, 999) == nullptr && ResError() == noErr); // missing type != missing ID
+    CHECK(GetResource(ABSENT, 999) == nullptr && ResError() == resNotFound); // missing type != missing ID
     CHECK(GetResource(STR, 999) == nullptr && ResError() == resNotFound);
     CHECK(CountResources(STR) == 1 && ResError() == noErr); // count succeeds
-    CHECK(GetIndResource(STR, 0) == nullptr && ResError() == resNotFound);
+    CHECK(GetIndResource(STR, 0) == nullptr && ResError() == inputOutOfBounds);
     UseResFile(r2);
     CHECK(Get1Resource(STR, 128) == nullptr && ResError() == resNotFound);
     CHECK(Get1Resource(ICON, 128) == h2 && ResError() == noErr);
