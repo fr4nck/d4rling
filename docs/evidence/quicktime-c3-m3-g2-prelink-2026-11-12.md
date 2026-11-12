@@ -226,6 +226,17 @@ Journal de liaison R2 transmis par l'opérateur 5700X le 12 novembre 2026. Rappo
 
 **Correction bornée :** reprendre la chaîne LaunchServices→CoreServices→QuickTime avec le même `i386-apple-darwin20-ld` historique SHA-256 `aa4aa977a9f408dba035cba18acf54e27cefb92261a64f8209eced645b7af174`, en remplaçant explicitement l'argument `-fuse-ld=` dans la commande envoyée à clang ; contrôler ensuite les entrées/réexports et arrêter sur toute nouvelle erreur. Aucun code de production ni préfixe privé HIT-23R modifié.
 
+## Essai 15 — R3 : prévol trop strict sur les chemins d'outillage et `-dylib_file`
+
+Sortie opérateur 5700X du 12 novembre 2026 ; rapport local `quicktime-c3-m3/g2.0Tfg9onI/coreservices-r3.zGNutVHw/result.json`.
+
+- `EIGHT_PROVIDERS=PASS`, `CARBONCORE_C4=PASS`, `C3_OBJECTS=3/3_PASS`, `C3M3_OBJECTS=61/61_PASS`.
+- Trois commandes Ninja identifiées ; **LaunchServices `TARGET_STATUS=BLOCKED_INPUTS` avant linker**, puis arrêt séquentiel. `LINKED_COUNT=0`, `PROTECTED_INPUTS=UNCHANGED`.
+- Prévol a énuméré **12 chemins** : deux dossiers `src/external/cctools-port/cctools/{ld64/src,misc}`, puis dix sorties de bibliothèques historiques non produites `Onyx2D`, `libauto`, `libnetwork`, `libresolv`, `libcrypto.44`, `libssl.46`, `libncurses.5.4`, `libcrypto.0.9.8`, `libssl.0.9.8`, `Python-2.7.16/Python`.
+- Le code historique `cmake/use_ld64.cmake` contient des options `-B <répertoire d'outillage>` et une longue table de correspondances `-Wl,-dylib_file,<install-name>:<chemin-build>`. Le script R3 appliquait à tort `Path.is_file()` aux répertoires `-B` et **exigeait tous les fournisseurs de correspondances** au lieu de distinguer résolutions effectivement utilisées.
+- Ce blocage **ne prouve pas que ces dix bibliothèques sont nécessaires à LaunchServices**. Ne pas en inventer ni importer des bibliothèques d'autres builds. Il faut valider les vraies entrées positionnelles et les fournisseurs de réexport, accepter les répertoires `-B` vérifiés, transmettre les correspondances génériques au linker et laisser `ld64` constater les dépendances réellement requises (avertissements et erreurs dans le log).
+- **Pas de nouvelle exécution ld64 dans R3, pas de nouvelles dylibs** ; les 8 PASS restent valides. La ligne de `-fuse-ld` historique doit rester corrigée et vérifiée SHA-256 dans les commandes réellement exécutées.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
