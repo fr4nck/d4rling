@@ -22,7 +22,7 @@ Resources.cpp:3d9add9d7e1ed0125c7f2114857169c32044ba70
 PINS
 TMP="$(mktemp -d -t d4-i2c-public.XXXXXXXX)"
 trap 'rm -rf -- "$TMP"' EXIT
-"$CXX" -std=c++17 "$OPT" -g0 -Wall -Wextra -Werror -Wno-unused-parameter -pthread \
+"$CXX" -std=c++17 "$OPT" -g0 -Wall -Wextra -Werror -Wno-unused-parameter -Wno-error=sign-compare -include cstring -pthread \
  -fno-omit-frame-pointer -fsanitize=address,undefined \
  -I"$SUITE/shims" -I"$HEAD" -I"$I1/shims" -I"$SRC" \
  "$SRC/MacMemory.cpp" "$SRC/ResourcesImpl.cpp" "$SRC/Resources.cpp" "$SUITE/test.cpp" \
