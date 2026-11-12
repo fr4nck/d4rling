@@ -25,6 +25,21 @@ Aucune installation 5700X ou 10400 modifiee.
 - Runner CI repointe sur ces blobs et rejeu I1 integre dans `28a47191ace482495e3c9482959281f1dbc4244e`.
 - **CI `43222535745` PASS (controle des logs GitHub) : 44/44 assertions I2-C1+C2 × GCC/Clang O0/O2 = 176/176 PASS, et I1 54/54 × 4 = 216/216 PASS. Total 392 assertions reussies, ASan/UBSan. Le test utilise de vraies unites C++ avec adaptations FSRef/xattr hote. Aucune preuve Mach-O i386 ou application reelle.**
 
+## I2-C3 — API publique de persistance (CI `43223510649`)
+
+- Commit de test `68f3c88e83ca7116cee5dcd21ace62f0cd3bed77`.
+- Compilations et liens reels des trois unites de production reussis sous GCC/Clang `-O0/-O2` avec ASan/UBSan.
+- **62/62 assertions par configuration, soit 248/248 PASS**, plus rejeu I1 **54/54 par configuration, soit 216/216 PASS** : total 464 PASS.
+- Les API `ChangedResource`, `WriteResource`, `UpdateResFile`, `ReadPartialResource`, `WritePartialResource` et la reouverture d'un fork synthetique sont exercees. Les tests controlent les octets relus du disque, l'absence de mutation du handle lors de l'ecriture partielle, les bornes et le rejet des ecritures sur fork en lecture seule.
+- Aucun correctif supplementaire de production n'a ete necessaire pour ce parcours.
+- Les cas de panne physique d'ecriture, de concurrence et de vrais resource forks Apple demeurent ouverts ; ne pas transformer le resultat en qualification Mach-O i386.
+
+## I2-C4 — symboles publics d'appartenance et de taille
+
+- Consultation Apple Resource Manager : `HomeResFile` retourne le numero du fichier de ressource ; `GetResourceSizeOnDisk` mesure la taille exacte sur disque ; `GetMaxResourceSize` lit la taille en memoire (ou calcule une approximation depuis la resource map lorsque dechargee). Un handle invalide renvoie respectivement -1 / -1 avec `resNotFound`.
+- Baseline test `5d0a6081167f46a85c8400f267e709bd3d179643`, CI `43223822145` : **echec au linker sur les trois fonctions**, references non resolues dans le vrai assemblage hote. Ne pas le compter comme test positif.
+- Candidat production `fa82b561a172271e6f5f71bdf7aa8a158d41acef` : implementations reelles et controle taille memoire 5 octets / disque 3 octets avant persistance. La qualification sur la CI `43224272183` est encore ouverte au moment de cet ajout.
+
 ## Portes encore ouvertes
 
 1. I2-C1/C2 hote : matrice GCC/Clang O0/O2 + rejeu I1 obtenus ; verifier ensuite collisions et allocation cible avant d'elargir la revendication.
