@@ -213,6 +213,19 @@ Les 11 commandes de liaison des sous-frameworks, FMDB, LaunchServices, CoreServi
 
 **Reprise :** réutiliser, sans recopier, les huit sorties du dossier de qualification et CarbonCore C4 ; corriger **uniquement la résolution des chemins relatifs vers ces cibles** dans les trois commandes d'édition de liens historiques, y compris les paramètres `-Wl,-reexport_library` et `-Wl,-dylib_file` le cas échéant. Chaîne LaunchServices → CoreServices → QuickTime ; ne publier aucun code de production tant que le graphe Mach-O, le contrat C3/C4 et le comportement invité ne sont pas qualifiés.
 
+## Essai 14 — R2 arrêté avant ld64 : `-fuse-ld` privé non remappé
+
+Journal de liaison R2 transmis par l'opérateur 5700X le 12 novembre 2026. Rapport privé `quicktime-c3-m3/g2.0Tfg9onI/coreservices-r2.uwlvLdRF/result.json`.
+
+- `EIGHT_PROVIDERS=8/8_SHA256_PASS`, `CARBONCORE_C4=PASS`, `C3_OBJECTS=3/3_PASS`, `C3M3_OBJECTS=61/61_PASS`, source historique inchangée au SHA `5b521087...` avec ses modifications locales protégées.
+- Une commande Ninja a été identifiée sans ambiguïté pour chacune des trois cibles : LaunchServices, CoreServices, QuickTime.
+- **LaunchServices** : `LINK_EXIT=1` avec `clang++-19: error: invalid linker name in argument '-fuse-ld=.../quicktime-c3-m3/g2.0Tfg9onI/cmake-build/src/external/cctools-port/cctools/ld64/src/i386-apple-darwin20-ld'`.
+- **Cause du script** : le garde SHA-256 de l'outil Darwin `ld64` normalisait la provenance PRIV→OLD mais ne remplaçait **pas le token `-fuse-ld=...`** dans la commande exécutée. Clang a donc cherché un linker inexistant dans le build privé ; il n'a pas lancé `ld64`.
+- CoreServices et QuickTime non tentés après cet arrêt séquentiel. Verdict `C3_M3_R2_PARTIAL`, `LINKED_COUNT=0`, `PROTECTED_INPUTS=UNCHANGED`, `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`.
+- Les huit dylibs précédemment liées restent accessibles dans `coreservices-chain.dh0Fxh7f` ; **ne pas les recompiler**.
+
+**Correction bornée :** reprendre la chaîne LaunchServices→CoreServices→QuickTime avec le même `i386-apple-darwin20-ld` historique SHA-256 `aa4aa977a9f408dba035cba18acf54e27cefb92261a64f8209eced645b7af174`, en remplaçant explicitement l'argument `-fuse-ld=` dans la commande envoyée à clang ; contrôler ensuite les entrées/réexports et arrêter sur toute nouvelle erreur. Aucun code de production ni préfixe privé HIT-23R modifié.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
