@@ -23,11 +23,11 @@ Aucune installation 5700X ou 10400 modifiee.
 - **CI `43222067227` FAIL attendu au linker** : trois `undefined reference to LoadResource` avec les vraies unites M2/R2/Resources. L'absence d'implementation n'est plus seulement une deduction statique.
 - Candidat correctif source : `c8c4dd67c14baa377fb5d6d693b5f074efeac8db`. `getHandle(bool loadData=true)` conserve le comportement I1 par defaut. Les recherches publiques respectent `SetResLoad(FALSE)` et creent un vrai master pointer vide via `NewEmptyHandle()` de M2. `LoadResource` charge le contenu via `ReallocateHandle()`, conserve le master pointer en cas de purge et propage les erreurs.
 - Runner CI repointe sur ces blobs et rejeu I1 integre dans `28a47191ace482495e3c9482959281f1dbc4244e`.
-- **Statut de qualification C2 au moment de ce checkpoint : CI en attente ; ne pas annoncer PASS.** Runner CI `43222535745`.
+- **CI `43222535745` PASS (controle des logs GitHub) : 44/44 assertions I2-C1+C2 × GCC/Clang O0/O2 = 176/176 PASS, et I1 54/54 × 4 = 216/216 PASS. Total 392 assertions reussies, ASan/UBSan. Le test utilise de vraies unites C++ avec adaptations FSRef/xattr hote. Aucune preuve Mach-O i386 ou application reelle.**
 
 ## Portes encore ouvertes
 
-1. Terminer la matrice CI I2-C2 ; corriger les echecs si necessaire. Rejouer I1 (54 assertions x 4).
+1. I2-C1/C2 hote : matrice GCC/Clang O0/O2 + rejeu I1 obtenus ; verifier ensuite collisions et allocation cible avant d'elargir la revendication.
 2. C1 negatif : collisions d'identifiants/noms dans `SetResInfo`, allocations et `ResError` en echec.
 3. C2 : cas limites de `SetResLoad` avant ouverture, `ReleaseResource` et chargement pour plusieurs fichiers.
 4. I2-C3 : `ChangedResource`, `WriteResource`, `UpdateResFile`, lecture/ecriture partielles et preuve des octets disque apres reouverture.
