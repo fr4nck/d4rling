@@ -134,20 +134,30 @@ Resources::ResourceData::~ResourceData()
         DisposeHandle(data);
 }
 
-Handle Resources::ResourceData::getHandle()
+Handle Resources::ResourceData::getHandle(bool loadData)
 {
     if (dataBacking.size() > static_cast<size_t>(std::numeric_limits<long>::max()))
         return nullptr;
     if (!data)
     {
         Handle newHandle = nullptr;
-        if (PtrToHand(dataBacking.empty() ? nullptr : dataBacking.data(),
-                      &newHandle, static_cast<long>(dataBacking.size())) != noErr || !newHandle)
+        if (!loadData)
+        {
+            // SetResLoad(FALSE): retain a real master pointer but do not
+            // populate its data until LoadResource or auto-loading is enabled.
+            newHandle = NewEmptyHandle();
+        }
+        else if (PtrToHand(dataBacking.empty() ? nullptr : dataBacking.data(),
+                           &newHandle, static_cast<long>(dataBacking.size())) != noErr)
+        {
+            return nullptr;
+        }
+        if (!newHandle)
             return nullptr;
         data = newHandle;
         parent->m_handleMap.insert({data, this});
     }
-    else if (!*data)
+    else if (loadData && !*data)
     {
         // A purged resource keeps its master pointer. Rehydrate the same
         // Handle from its resource backing instead of returning an empty one.

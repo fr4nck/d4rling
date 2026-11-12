@@ -459,7 +459,7 @@ Handle GetIndResource(ResType type, ResourceIndex index)
 		return nullptr;
 	}
 
-	Handle result = allRes[index-1]->getHandle();
+	Handle result = allRes[index-1]->getHandle(Resources::shouldLoad());
 	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
 	return result;
 }
@@ -489,7 +489,7 @@ Handle Get1IndResource(ResType type, ResourceIndex index)
 
 	g_lastError = noErr;
 
-	return it->second.resources[index-1]->getHandle();
+	return it->second.resources[index-1]->getHandle(Resources::shouldLoad());
 }
 
 Handle GetResource(ResType type, ResID resId)
@@ -504,7 +504,7 @@ Handle GetResource(ResType type, ResID resId)
 		return nullptr;
 	}
 
-	Handle result = it->second->getHandle();
+	Handle result = it->second->getHandle(Resources::shouldLoad());
 	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
 	return result;
 }
@@ -533,7 +533,7 @@ Handle Get1Resource(ResType type, ResID resId)
 		return nullptr;
 	}
 
-	Handle result = it->second->getHandle();
+	Handle result = it->second->getHandle(Resources::shouldLoad());
 	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
 	return result;
 }
@@ -552,7 +552,7 @@ Handle GetNamedResource(ResType type, ConstStr255Param name)
 	}
 
 	g_lastError = noErr;
-	Handle result = it->second->getHandle();
+	Handle result = it->second->getHandle(Resources::shouldLoad());
 	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
 	return result;
 }
@@ -583,7 +583,7 @@ Handle Get1NamedResource(ResType type, ConstStr255Param name)
 	}
 
 	g_lastError = noErr;
-	Handle result = it->second->getHandle();
+	Handle result = it->second->getHandle(Resources::shouldLoad());
 	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
 	return result;
 }
@@ -714,7 +714,18 @@ void ReleaseResource(Handle res)
 
 void SetResLoad(Boolean load)
 {
+	std::unique_lock<std::mutex> lock(g_resourcesLock);
 	Resources::setCreateHandles(load);
+}
+
+void LoadResource(Handle res)
+{
+	std::unique_lock<std::mutex> lock(g_resourcesLock);
+	auto data = findResourceDataByHandle(res);
+	if (!data)
+		return;
+	Handle result = data->getHandle(true);
+	g_lastError = result ? noErr : (MemError() == noErr ? memFullErr : MemError());
 }
 
 void AddResource(Handle data, ResType type, ResID resId, ConstStr255Param name)

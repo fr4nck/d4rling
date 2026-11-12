@@ -48,7 +48,7 @@ public:
 		ResourceData(ResourceData&& that);
 		~ResourceData();
 
-		Handle getHandle();
+		Handle getHandle(bool loadData = true);
 		void releaseHandle(bool freeMemory);
 		void dataChanged();
 		bool snapshot(std::vector<uint8_t>& out) const;
@@ -78,6 +78,7 @@ private:
 	void remove(Handle data);
 
 	static void setCreateHandles(bool create);
+	static bool shouldLoad() { return m_createHandles; }
 private:
 	void loadResources();
 	void loadResources(const uint8_t* mem, size_t length);
