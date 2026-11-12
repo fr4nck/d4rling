@@ -356,6 +356,7 @@ static std::vector<Resources::ResourceData*>& resourcesOfType(ResType type)
 
 	if (resourcesOfTypeCacheType != type)
 	{
+		rv.clear();
 		for (auto const& [refNum, resources] : g_resources)
 		{
 			auto it = resources->data().find(type);
@@ -379,6 +380,7 @@ static std::unordered_map<ResID,Resources::ResourceData*>& resourcesOfTypeMap(Re
 
 	if (resourcesOfTypeMapCacheType != type)
 	{
+		rv.clear();
 		for (auto const& [refNum, resources] : g_resources)
 		{
 			auto it = resources->data().find(type);
@@ -400,8 +402,9 @@ static std::unordered_map<std::string,Resources::ResourceData*>& resourcesOfType
 {
 	std::unordered_map<std::string,Resources::ResourceData*>& rv = resourcesOfTypeNameMapCache;
 
-	if (resourcesOfTypeMapCacheType != type)
+	if (resourcesOfTypeNameMapCacheType != type)
 	{
+		rv.clear();
 		for (auto const& [refNum, resources] : g_resources)
 		{
 			auto it = resources->data().find(type);

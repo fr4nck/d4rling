@@ -4,6 +4,21 @@ Ce journal distingue les corrections de source et leurs qualifications hôte
 des validations Darwin Mach-O i386 et applications. Il complète
 [ROADMAP.md](../ROADMAP.md) ; il ne décrit **pas** CarbonCore comme complet.
 
+## 12 novembre 2026 — I2-A : caches Resource Manager
+
+- Dans le vrai `Resources.cpp`, correction du cache de noms qui consultait
+  le sélecteur du cache d'ID ; vidage des caches type, ID et nom lors d'un
+  changement de type.
+- **Ancien extrait : 9/21 PASS, 12 FAIL** ; **nouvel extrait : 21/21 PASS**
+  sous GCC/Clang, `-O0/-O2`, ASan/UBSan. **4/4 mutations négatives**
+  détectées par compilateur.
+- Niveau de preuve **fonctions de production extraites et compilées** ;
+  pas de qualification de `Resources.cpp` complet ni de liaison
+  `MacMemory.cpp + ResourcesImpl.cpp + Resources.cpp`.
+- [Rapport](evidence/carboncore-resource-i2-cache-2026-11-12.md).
+- I2-B encore ouvert : `SetResInfo`, `ResError`, `SetResLoad`, écritures
+  et lien réel des trois unités. Aucun test Mach-O i386.
+
 ## 11 novembre 2026 — I1 : vraie intégration M2 + R2
 
 - **Fix / test hôte :** le chargement d'une ressource après `EmptyHandle`

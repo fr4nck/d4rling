@@ -36,6 +36,24 @@ La feuille de route consolide les priorités ; elle ne remplace pas les
 rapports datés ni les recettes épinglées. Une preuve récente ne remplace une
 ancienne conclusion que pour **la même révision, architecture et chaîne**.
 
+## I2-A — caches globaux Resource Manager (12 novembre 2026)
+
+Le sous-lot I2-A corrige dans `Resources.cpp` les caches de recherche par
+type, identifiant et nom : leur contenu est remis à zéro lorsqu'on change
+de type, et le cache de noms utilise son propre sélecteur.
+
+**Qualification hôte bornée :** 21/21 contrôles des trois fonctions de cache
+extraites du code de production, GCC 14.2 / Clang 17 en `-O0` et `-O2`,
+ASan/UBSan ; 4/4 mutations négatives tuées par compilateur. L'ancien extrait
+échoue sur 12/21 assertions dans les quatre configurations.
+
+[Preuve I2-A](docs/evidence/carboncore-resource-i2-cache-2026-11-12.md).
+
+**Toujours à faire :** compiler/lier les trois unités CarbonCore, qualifier
+`SetResInfo`, `ResError`, `SetResLoad` et la persistance via l'API
+publique. Aucune qualification Darwin Mach-O i386 ni application.
+La suite QuickTime est indépendante et reste préservée.
+
 ## Actualisation CarbonCore — 11 novembre 2026 (I1)
 
 **Périmètre borné :** les commits source G4, M1/M2 et R1/R2 sont publiés ;
