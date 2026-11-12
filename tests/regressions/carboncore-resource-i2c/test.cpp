@@ -152,6 +152,19 @@ int main() {
     }
     LoadResource(nullptr);
     CHECK(ResError() == resNotFound);
+    // Apple SetResInfo contract: an empty Pascal name retains the old name.
+    Str255 unchangedName{};
+    Handle renamed = GetResource(STR, 129);
+    CHECK(renamed != nullptr && ResError() == noErr);
+    if (renamed) {
+        SetResInfo(renamed, 129, unchangedName);
+        CHECK(ResError() == noErr);
+        CHECK(GetNamedResource(STR, gamma) == renamed);
+        ResID idAfter = 0; ResType typeAfter = 0; Str255 nameAfter{};
+        GetResInfo(renamed, &idAfter, &typeAfter, nameAfter);
+        CHECK(ResError() == noErr && idAfter == 129 && typeAfter == STR &&
+              nameAfter[0] == 5 && std::memcmp(nameAfter+1, "gamma", 5) == 0);
+    }
     // C4: file ownership and distinct in-memory vs on-disk sizes.
     CHECK(HomeResFile(h2) == r2 && ResError() == noErr);
     Handle home = GetResource(STR, 129);
