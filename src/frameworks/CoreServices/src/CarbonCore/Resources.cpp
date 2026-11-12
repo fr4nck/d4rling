@@ -330,7 +330,7 @@ void SetResInfo(Handle res, ResID theID, ConstStr255Param name)
 
 	// Pascal string
 	std::string cname((char*) &name[1], name[0]);
-	if (data->name != cname)
+	if (name[0] != 0 && data->name != cname)
 	{
 		auto it = resources->data().find(data->type);
 		if (it != resources->data().end())
