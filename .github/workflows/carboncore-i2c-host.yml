@@ -5,6 +5,8 @@ on:
     paths:
       - '.github/workflows/carboncore-i2c-host.yml'
       - 'tests/regressions/carboncore-resource-i2c/**'
+      - 'tests/regressions/carboncore-memory-resource-i1/**'
+      - 'src/frameworks/CoreServices/src/CarbonCore/ResourcesImpl.h'
       - 'src/frameworks/CoreServices/src/CarbonCore/Resources.cpp'
       - 'src/frameworks/CoreServices/src/CarbonCore/ResourcesImpl.cpp'
       - 'src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp'
@@ -22,3 +24,7 @@ jobs:
           bash tests/regressions/carboncore-resource-i2c/run.sh g++ -O2
           bash tests/regressions/carboncore-resource-i2c/run.sh clang++ -O0
           bash tests/regressions/carboncore-resource-i2c/run.sh clang++ -O2
+          bash tests/regressions/carboncore-memory-resource-i1/run.sh g++
+          D4_I1_OPT_LEVEL=-O2 bash tests/regressions/carboncore-memory-resource-i1/run.sh g++
+          bash tests/regressions/carboncore-memory-resource-i1/run.sh clang++
+          D4_I1_OPT_LEVEL=-O2 bash tests/regressions/carboncore-memory-resource-i1/run.sh clang++

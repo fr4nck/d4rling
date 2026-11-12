@@ -22,8 +22,8 @@ check_blob() {
 }
 check_blob "$SRC/MacMemory.cpp" '26dfea4803ad1499a542f8843862f8998dc5f292'
 check_blob "$HEAD/CarbonCore/MacMemory.h" '91be5171aee4910f7910f465a1da96519127a96e'
-check_blob "$SRC/ResourcesImpl.cpp" 'f176a1f86d41a772b7fa034788dae2a4889a70eb'
-check_blob "$SRC/ResourcesImpl.h" '1eb79e93c2ad5d91b1b205fe6824b776332a65da'
+check_blob "$SRC/ResourcesImpl.cpp" '71f8785b9e2656209e1d2e7b8a58161353b81c5b'
+check_blob "$SRC/ResourcesImpl.h" '4bb3295ec5bbba97255d9e2712fba4a6e3038843'
 check_blob "$SUITE/test.cpp" '9b821cdfc9b88b35e7c9213766b47f1e9c03020b'
 check_blob "$SUITE/shims/MacTypes.h" '55cbc3ed75e6f8b6b95b7c1a5a99a7cd9628f5b0'
 check_blob "$SUITE/shims/CarbonCore/Resources.h" 'ba25052cbcb61d6660e0f18bb1d8c3237ce4f455'
