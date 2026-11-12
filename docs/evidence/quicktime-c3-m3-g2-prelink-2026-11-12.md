@@ -255,6 +255,18 @@ Le script R4 a vérifié les `LC_ID_DYLIB` i386, `CoreServices → CarbonCore` v
 
 **Prochain contrôle minimal :** exécuter le garde déjà existant `docs/evidence/quicktime-c4d-2026-11-10/check_c4d_macho_i386.py` sur **ces trois dylibs exactes**, puis, si la structure reste cohérente, préparer une qualification `dyld`/invité i386 dans un nouveau préfixe de test, sans toucher au préfixe de référence ni au moteur audio.
 
+## Essai 17 — garde indépendant C4-D-M2 appliqué aux trois dylibs réelles : STATIC_INCONCLUSIVE attendu
+
+Journal de sortie du 5700X, 12 novembre 2026. Outil **préexistant** `docs/evidence/quicktime-c4d-2026-11-10/check_c4d_macho_i386.py` dont le Git blob `2dc11006dce5c6248aa07335befaf60ef03131e0` a été vérifié ; lecteur `macho_audit.py` épinglé par le garde. Rapport privé `quicktime-c3-m3/g2.0Tfg9onI/c4d-m2-real.PMv0Wy20.json`.
+
+- Entrées réelles `3/3_SHA256_PASS` : CarbonCore C4 `0f221249af131f56b2930c0c425fcc9621646aa7e3d5b878e4faedda66fef126` ; CoreServices `bf7aa2ab124fdfc64c6feabad4ebe53bc174a2c361a6ed4cee69ddb5a29f7dd2` ; QuickTime C3 `55a7767c7088db4e331d84b014977177e45b9ace80a5d8673436b5f9125d3b03`.
+- Résultat `STATUS=STATIC_INCONCLUSIVE`, `EXIT_CODE=3`, `ERRORS_COUNT=0`, `INCONCLUSIVE_COUNT=3`.
+- Les **trois** points sont identiques : `LC_DYLD_INFO present; bind/export opcodes uninspected` dans chacune des images QuickTime, CoreServices et CarbonCore.
+- `PROTECTED_INPUTS=UNCHANGED`, `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`.
+- **Interprétation fondée sur le code du garde :** `assess()` ajoute explicitement `STATIC_INCONCLUSIVE` à tout Mach-O contenant `LC_DYLD_INFO` car le lecteur n'interprète **ni bind/weak/lazy-bind opcodes ni export trie**. Un test unitaire préexistant `test_dyld_info_is_inconclusive_not_false_pass` exige précisément ce résultat. `ERRORS_COUNT=0` n'est pas un `STATIC_GATE_PASS`, et aucune modification des binaires ou de leur statut runtime n'est induite.
+
+**Suite minimale :** sans modifier le garde existant, vérifier si l'outil LLVM Mach-O déjà installé (`llvm-objdump-19` ou variante) peut extraire **en lecture seule** `--bind`, `--lazy-bind`, `--weak-bind`, `--exports-trie` des trois fichiers authentifiés et stocker ces traces dans le workspace. Déclarer seulement `DYLD_INFO_EXTRACTED` si LLVM les décode, sans convertir le `STATIC_INCONCLUSIVE` du garde en PASS ni affirmer une résolution dyld. Toute incohérence discriminante sera une anomalie à analyser. Puis seulement préparer un témoin d'exécution invité i386 sur préfixe neuf, sous autorisation de qualification.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
