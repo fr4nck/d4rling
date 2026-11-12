@@ -73,6 +73,7 @@ private:
 
 	OSErr save(bool snapshotHandles = true);
 	OSErr readPartial(Handle resource, long offset, void* buffer, long count);
+	OSErr sizeOnDisk(Handle resource, long* outSize);
 	OSErr writePartial(Handle resource, long offset, const void* buffer, long count);
 	void add(ResType type, ResID id, const char* name, Handle data);
 	void remove(Handle data);

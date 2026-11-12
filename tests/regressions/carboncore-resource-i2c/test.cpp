@@ -171,6 +171,8 @@ int main() {
         CHECK(MemError() == noErr);
         if (MemError() == noErr) {
             std::memcpy(*saved, "HELLO", 5);
+            CHECK(GetMaxResourceSize(saved) == 5 && ResError() == noErr);
+            CHECK(GetResourceSizeOnDisk(saved) == 3 && ResError() == noErr);
             ChangedResource(saved);
             CHECK(ResError() == noErr);
             WriteResource(saved);
@@ -178,6 +180,7 @@ int main() {
             char disk[6]{};
             ReadPartialResource(saved, 0, disk, 5);
             CHECK(ResError() == noErr && std::memcmp(disk, "HELLO", 5) == 0);
+            CHECK(GetResourceSizeOnDisk(saved) == 5 && ResError() == noErr);
             ReadPartialResource(saved, -1, disk, 1);
             CHECK(ResError() == paramErr);
             ReadPartialResource(saved, 5, disk, 1);

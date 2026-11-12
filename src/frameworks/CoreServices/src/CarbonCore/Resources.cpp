@@ -108,6 +108,21 @@ OSErr ResError(void)
 	return g_lastError;
 }
 
+ResFileRefNum HomeResFile(Handle resource)
+{
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    for (const auto& [ref, owner] : g_resources)
+    {
+        if (owner->dataByHandle(resource))
+        {
+            g_lastError = noErr;
+            return ref;
+        }
+    }
+    g_lastError = resNotFound;
+    return kResFileNotOpened;
+}
+
 ResFileRefNum CurResFile(void)
 {
 	return g_currentResFile;
@@ -211,6 +226,46 @@ static Resources::ResourceData* findResourceDataByHandle(Handle res, Resources**
 
 	g_lastError = resNotFound;
 	return nullptr;
+}
+
+long GetResourceSizeOnDisk(Handle res)
+{
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    Resources* owner = nullptr;
+    if (!findResourceDataByHandle(res, &owner))
+        return -1;
+    long result = -1;
+    g_lastError = owner->sizeOnDisk(res, &result);
+    return g_lastError == noErr ? result : -1;
+}
+
+long GetMaxResourceSize(Handle res)
+{
+    std::unique_lock<std::mutex> lock(g_resourcesLock);
+    auto data = findResourceDataByHandle(res);
+    if (!data)
+        return -1;
+    // The in-memory view intentionally differs from the exact on-disk size.
+    const Handle handle = data->getHandle(Resources::shouldLoad());
+    if (!handle)
+    {
+        const OSErr error = MemError();
+        g_lastError = error == noErr ? memFullErr : error;
+        return -1;
+    }
+    if (*handle)
+    {
+        const Size count = GetHandleSize(handle);
+        g_lastError = MemError();
+        return g_lastError == noErr ? count : -1;
+    }
+    if (data->dataBacking.size() > static_cast<size_t>(std::numeric_limits<long>::max()))
+    {
+        g_lastError = memFullErr;
+        return -1;
+    }
+    g_lastError = noErr;
+    return static_cast<long>(data->dataBacking.size());
 }
 
 ResAttributes GetResAttrs(Handle res)

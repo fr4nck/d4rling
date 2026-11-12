@@ -17,8 +17,8 @@ while IFS=':' read -r f blob; do
   [[ "$(git hash-object "$SRC/$f")" == "$blob" ]] || { echo "BLOCKED: source changed: $f" >&2; exit 2; }
 done <<'PINS'
 MacMemory.cpp:26dfea4803ad1499a542f8843862f8998dc5f292
-ResourcesImpl.cpp:71f8785b9e2656209e1d2e7b8a58161353b81c5b
-Resources.cpp:75e194299f1bd209b48892a880eab30eecc38ef7
+ResourcesImpl.cpp:30714d701c18491c806f4a1c45d6c4cf902fd53d
+Resources.cpp:5db6969d6122f77f20f96244d0448553be7aad27
 PINS
 TMP="$(mktemp -d -t d4-i2c-public.XXXXXXXX)"
 trap 'rm -rf -- "$TMP"' EXIT

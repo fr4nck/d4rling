@@ -583,6 +583,35 @@ OSErr Resources::save(bool snapshotHandles)
 // The partial-resource APIs operate on the on-disk resource, not on an
 // application-modified Handle. Reopen the resource fork so reads do not use
 // stale memory; report an error instead of silently extending a resource.
+OSErr Resources::sizeOnDisk(Handle resource, long* outSize)
+{
+    if (!outSize)
+        return paramErr;
+    auto local = m_handleMap.find(resource);
+    if (local == m_handleMap.end())
+        return resNotFound;
+    try
+    {
+        // Reopen the authentic resource fork: the loaded handle and the
+        // on-disk bytes may legitimately differ after a partial write.
+        Resources disk(m_file.c_str(), fsRdPerm, m_resourceFork);
+        auto kind = disk.data().find(local->second->type);
+        if (kind == disk.data().end())
+            return resNotFound;
+        auto record = kind->second.idMap.find(local->second->id);
+        if (record == kind->second.idMap.end())
+            return resNotFound;
+        const size_t length = record->second->dataBacking.size();
+        if (length > static_cast<size_t>(std::numeric_limits<long>::max()))
+            return memFullErr;
+        *outSize = static_cast<long>(length);
+        return noErr;
+    }
+    catch (OSErr error) { return error; }
+    catch (const std::bad_alloc&) { return memFullErr; }
+    catch (const std::length_error&) { return mapReadErr; }
+}
+
 OSErr Resources::readPartial(Handle resource, long offset, void* buffer, long count)
 {
     auto local = m_handleMap.find(resource);
