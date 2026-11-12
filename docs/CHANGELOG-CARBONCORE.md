@@ -4,6 +4,16 @@ Ce journal distingue les corrections de source et leurs qualifications hôte
 des validations Darwin Mach-O i386 et applications. Il complète
 [ROADMAP.md](../ROADMAP.md) ; il ne décrit **pas** CarbonCore comme complet.
 
+## 12 novembre 2026 — I2-B : SetResInfo et invalidation des caches
+
+- Ajout de `clearCaches()` après mise à jour des métadonnées par `SetResInfo`.
+- Avant : 7 échecs sur 20 assertions de recherche après changement d'ID
+  ou de nom ; après : **20/20 PASS** sous GCC et Clang `-O0/-O2`,
+  ASan/UBSan ; **1/1 mutant** détruit par compilateur.
+- Qualification limitée aux **fonctions C++ réelles extraites** ;
+  aucun lien de `Resources.cpp` entier avec M2/R2 et aucun test i386.
+- [Rapport I2-B](evidence/carboncore-resource-i2-setresinfo-2026-11-12.md).
+
 ## 12 novembre 2026 — I2-A : caches Resource Manager
 
 - Dans le vrai `Resources.cpp`, correction du cache de noms qui consultait

@@ -36,6 +36,22 @@ La feuille de route consolide les priorités ; elle ne remplace pas les
 rapports datés ni les recettes épinglées. Une preuve récente ne remplace une
 ancienne conclusion que pour **la même révision, architecture et chaîne**.
 
+## I2-B — invalidation après SetResInfo (12 novembre 2026)
+
+**Correctif ciblé :** `SetResInfo()` invalide désormais les caches
+globaux après modification de l'identifiant ou du nom d'une ressource.
+Les recherches par ID/nom d'un **même type** ne conservent plus les anciennes
+correspondances après la modification.
+
+**Qualification hôte d'extraits réels :** ancien code 13/20 PASS et 7 FAIL ;
+correctif **20/20 PASS** en GCC/Clang `-O0/-O2`, ASan/UBSan ; 1/1 mutation
+négative tuée par compilateur.
+[Preuve I2-B](docs/evidence/carboncore-resource-i2-setresinfo-2026-11-12.md).
+
+**Limites :** aucune compilation intégrale du framework, aucune intégration
+des trois unités, aucun ABI Darwin i386, ni correction des collisions d'ID.
+`ResError` et `SetResLoad` restent prioritaires.
+
 ## I2-A — caches globaux Resource Manager (12 novembre 2026)
 
 Le sous-lot I2-A corrige dans `Resources.cpp` les caches de recherche par

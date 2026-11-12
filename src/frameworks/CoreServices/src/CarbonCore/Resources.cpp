@@ -287,6 +287,7 @@ void SetResInfo(Handle res, ResID theID, ConstStr255Param name)
 
 		data->name = cname;
 	}
+	clearCaches();
 }
 
 void SetResAttrs(Handle res, ResAttributes attrs)
