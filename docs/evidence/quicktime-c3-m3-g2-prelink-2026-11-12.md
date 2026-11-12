@@ -75,6 +75,21 @@ Audit opérateur sur 5700X, `quicktime-c3-m3/g2.0Tfg9onI/reuse-audit.json`, avec
 
 **Interprétation bornée :** 4 282/4 344 (98,57 %) sont des *candidats à réutilisation*, pas des objets certifiés réemployables. La concordance des commandes normalisées et du journal ne prouve pas l'intégrité des dépendances générées, la provenance de toutes les entrées, l'actualité de l'objet ou l'absence de changements d'headers. Avant copie ou construction, inventorier précisément les 61 absents, l'unique divergence, l'empreinte/architecture des artefacts Mach-O, le volume à transférer et la présence de bibliothèques dans des arbres nommés (recherche non tronquée).
 
+## Essai 5 — ventilation précise des écarts et des binaires disponibles
+
+Audit `GAP AUDIT` transmis par l'opérateur depuis le 5700X (Bash Debian WSL2), rapport local `validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/reuse-gaps.oo41csgw.json`. Aucune compilation, copie, installation ou écriture Git lors de cet essai ; `PROTECTED_INPUTS=UNCHANGED`.
+
+- Cibles inspectées : 4 344 commandes de compilation privées et anciennes ; 4 283 objets anciens présents, 4 282 commandes normalisées correspondantes, **61 objets manquants, un objet présent divergent**.
+- Parmi les 61 absents : CarbonCore 30 ; LaunchServices 10 ; FMDB 5 ; libiconv 4 ; AE 2 ; FSEvents 2 ; Metadata 2 ; SearchKit 2 ; CoreServices 1 ; DictionaryServices 1 ; OSServices 1 ; SharedFileList 1.
+- Divergence unique : `src/startup/CMakeFiles/rtsig.dir/rtsig.c.o`, différence explicite `-DINSTALL_PREFIX` pointant vers l'ancien préfixe contre `unused-private-install`. Ne pas traiter automatiquement cet objet comme identique.
+- Taille combinée des 4 282 objets candidats : `289676044` octets, environ 276,3 Mio (0,270 Gio). Espace libre : environ 860,342 Gio.
+- Format apparent : 4 190 Mach-O 32 bits et 92 ELF ; il faut préserver cette mixité pertinente aux outils hôtes et exécutables invités.
+- Recherche de bibliothèques : 10 candidats i386 `CoreFoundation` et `libSystem.B.dylib` dans `L1-CANON-20261108T2019Z/build-core-i386` et `build-master-core-i386`, en préfixes privés et sorties de build. **Aucun `CoreServices` / `CarbonCore` identifié dans la portion parcourue**.
+- La recherche reste **incomplète** : `DIRECTORIES_VISITED=50000`, `SCAN_TRUNCATED=True`, `SCAN_ERRORS=120`. Interdiction d'inférer une absence globale de ces deux bibliothèques.
+- Verdict opérateur : `C3_M3_GAP_AUDIT_PASS` ; `LINK=NOT_TESTED` ; aucun artefact QuickTime produit.
+
+**Suite proportionnée :** rechercher les liens cibles `CarbonCore` et `CoreServices` dans les manifestes Ninja et les chemins explicites, identifier les dépendances directes construites et manquantes. Qualifier les dépendances générées avant tout réemploi ; éviter de copier d'emblée les 4 282 objets candidats ou de démarrer 4 530 compilations. Conserver les travaux du checkout local `5b521087` et le sous-module Security modifié.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
