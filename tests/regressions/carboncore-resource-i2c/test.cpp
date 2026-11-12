@@ -152,6 +152,17 @@ int main() {
     }
     LoadResource(nullptr);
     CHECK(ResError() == resNotFound);
+    // C4: file ownership and distinct in-memory vs on-disk sizes.
+    CHECK(HomeResFile(h2) == r2 && ResError() == noErr);
+    Handle home = GetResource(STR, 129);
+    CHECK(home && HomeResFile(home) == r1 && ResError() == noErr);
+    CHECK(HomeResFile(nullptr) == kResFileNotOpened && ResError() == resNotFound);
+    if (home) {
+        CHECK(GetResourceSizeOnDisk(home) == 3 && ResError() == noErr);
+        CHECK(GetMaxResourceSize(home) == 3 && ResError() == noErr);
+    }
+    CHECK(GetResourceSizeOnDisk(nullptr) == -1 && ResError() == resNotFound);
+    CHECK(GetMaxResourceSize(nullptr) == -1 && ResError() == resNotFound);
     // C3: public persistence and Apple TB40 disk-vs-memory semantics.
     Handle saved = GetResource(STR, 129);
     CHECK(saved && *saved && GetHandleSize(saved) == 3);
