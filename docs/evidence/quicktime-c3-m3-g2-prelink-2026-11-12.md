@@ -126,6 +126,17 @@ Journal opérateur 5700X du 12 novembre 2026 ; qualification privée `quicktime-
 
 **Cause démontrée :** `libiconv` (sortie privée) référence `/usr/lib/libcharset.1.dylib`, mais la commande `CarbonCore` conserve un `-dylib_file` de résolution vers le chemin **historique** où `libcharset.1.dylib` n'a pas été créé. Le correctif est de fournir à `ld64` le chemin **privé** exact de la dylib `libcharset` déjà certifiée, sans reconstruire les 61 objets et sans modifier le préfixe HIT-23R. L'éventuel échec restant sera un **nouveau diagnostic de liaison**, pas une régression des deux dylibs PASS.
 
+## Essai 9 — garde de chemin trop strict, aucune édition de liens
+
+Tentative de reprise CarbonCore depuis `linkchain.ervb2dvb` avec les dylibs privées `libcharset.1.dylib` et `libiconv.2.dylib`, rapport local `quicktime-c3-m3/g2.0Tfg9onI/carboncore-resume.t2iomzga/result.json` (preuve opérateur 5700X).
+
+- Prévol : `LIBCHARSET_SHA256=PASS`, `LIBICONV_SHA256=PASS`, `C3_OBJECTS=3/3_PASS`, `C3M3_OBJECTS=61/61_PASS`.
+- **Blocage avant linker** : `mapping non attendu pour /usr/lib/libiconv.2.dylib: .../build-hitoolbox-i386/src/libiconv/libiconv.2.dylib`.
+- Le script précédent n'acceptait que `.../build-hitoolbox-i386/src/external/libiconv/libiconv.2.dylib`. Or `cmake/use_ld64.cmake` du checkout exact `5b521087` contient effectivement le mapping historique `/usr/lib/libiconv.2.dylib:${CMAKE_BINARY_DIR}/src/libiconv/libiconv.2.dylib` ; en revanche `libcharset.1.dylib` est sous `src/external/libiconv`.
+- Verdict : `C3_M3_CARBONCORE_BLOCKED`, `LINK=NOT_RUN`, `PROTECTED_INPUTS=UNCHANGED`. **Ce n'est pas un échec de ld64 ni un problème de compilation.**
+
+Suite autorisée : relire la commande enregistrée, accepter uniquement les correspondances historiques conformes au `use_ld64.cmake` réel, remplacer les deux destinations vers les dylibs privées SHA-256 vérifiées, lier CarbonCore dans un nouveau dossier privé (sans écrire dans l'ancien build, son préfixe HIT-23R ou les artefacts de C3-M3).
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
