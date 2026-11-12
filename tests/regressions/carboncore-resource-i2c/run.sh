@@ -18,7 +18,7 @@ while IFS=':' read -r f blob; do
 done <<'PINS'
 MacMemory.cpp:26dfea4803ad1499a542f8843862f8998dc5f292
 ResourcesImpl.cpp:f176a1f86d41a772b7fa034788dae2a4889a70eb
-Resources.cpp:3d9add9d7e1ed0125c7f2114857169c32044ba70
+Resources.cpp:1998540aade013a7fb08fbfac74e6c52dd11d245
 PINS
 TMP="$(mktemp -d -t d4-i2c-public.XXXXXXXX)"
 trap 'rm -rf -- "$TMP"' EXIT
