@@ -61,6 +61,20 @@ Après un premier `ninja -n` trompeur limité à `[0/1] Re-running CMake...`, le
 
 **Interprétation :** la construction QuickTime dépend du graphe CoreServices, et les comptes ne s'additionnent pas ; elle ajoute seulement une étape au graphe CoreServices parce que les trois objets C3 sont épinglés. Ces nombres caractérisent un plan de construction **non exécuté**, ni des succès de compilation ni un audit exhaustif de l'absence de réseau. La prochaine étape doit auditer les artefacts déjà construits dans les autres arbres et les possibilités de réemploi avant de lancer 4 530 étapes.
 
+## Essai 4 — recoupement des objets historiques, sans réutilisation effective
+
+Audit opérateur sur 5700X, `quicktime-c3-m3/g2.0Tfg9onI/reuse-audit.json`, avec lecture du graphe privé et du build historique, sans copie, compilation ni installation.
+
+- `PRIVATE_COMPILE_EDGES=4344`, `OLD_COMPILE_EDGES=4344`.
+- `OLD_OBJECT_OUTPUTS_PRESENT=4283` : **61 objets manquants** dans le build historique.
+- `NORMALIZED_COMMAND_MATCH=4282`, `MATCHING_AND_NINJA_LOGGED=4282` : **un objet présent avec commande divergente**, et 4 282 correspondances de commande avec entrée dans `.ninja_log`.
+- `OLD_NINJA_LOG_ENTRIES=5658` ; `UNPARSED_PRIVATE_COMMANDS=0`, `UNPARSED_OLD_COMMANDS=0`.
+- Comparaison CMake : compilateurs, flags, Debug, COMPONENTS identiques ; `CMAKE_INSTALL_PREFIX` et `DEBIAN_PACKAGING` **différents**.
+- Recherche de dylibs : `BINARIES_FOUND=0` **avec** `SCAN_TRUNCATED=True` après 20 000 répertoires ; **absence non démontrée**.
+- Verdict opérateur : `C3_M3_REUSE_AUDIT_PASS`, `PROTECTED_INPUTS=UNCHANGED`, `LINK=NOT_TESTED`.
+
+**Interprétation bornée :** 4 282/4 344 (98,57 %) sont des *candidats à réutilisation*, pas des objets certifiés réemployables. La concordance des commandes normalisées et du journal ne prouve pas l'intégrité des dépendances générées, la provenance de toutes les entrées, l'actualité de l'objet ou l'absence de changements d'headers. Avant copie ou construction, inventorier précisément les 61 absents, l'unique divergence, l'empreinte/architecture des artefacts Mach-O, le volume à transférer et la présence de bibliothèques dans des arbres nommés (recherche non tronquée).
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
