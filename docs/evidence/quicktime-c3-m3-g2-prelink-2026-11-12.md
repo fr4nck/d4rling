@@ -114,6 +114,18 @@ Journal opérateur du 5700X (Bash Debian WSL2), sortie privée `quicktime-c3-m3/
 
 L'examen du sous-module exact `darlinghq/darling-libiconv` au gitlink `0d6f47d33a7cc97e468e864099fff74875b41937` montre `charset` → `libcharset.1.dylib` puis `iconv` → `libiconv.2.dylib` (`/usr/lib/libcharset.1.dylib` et `/usr/lib/libiconv.2.dylib` comme identités Darwin). Le seul enchaînement cohérent à essayer est de lier ces deux bibliothèques avec les objets historiques et les quatre objets libiconv manquants produits en C3-M3, puis CarbonCore, **dans un espace privé**, sans remplacer les artefacts de production et sans accepter de résolution artificielle des symboles.
 
+## Essai 8 — deux dylibs Darwin i386 liées, CarbonCore bloqué sur LC_LOAD_DYLIB transitif
+
+Journal opérateur 5700X du 12 novembre 2026 ; qualification privée `quicktime-c3-m3/g2.0Tfg9onI/linkchain.ervb2dvb/result.json`. Le même journal inclut une session **HIT-23R** concurrente, publiée séparément sous `docs/evidence/hitoolbox-hit23r-guest-i386-2026-11-12.md`. Ne pas modifier son préfixe `build-hitoolbox-i386/private-install` dans ce lot.
+
+- Prévol QuickTime : C3 objets `3/3_SHA256_PASS` ; 61 objets C3-M3 `61/61_SHA256_PASS` ; commandes réelles `charset`, `iconv`, `CarbonCore` identifiées.
+- **libcharset** : `LINK_EXIT=0`, `MH_DYLIB i386`, `LC_ID_DYLIB=/usr/lib/libcharset.1.dylib`, `BYTES=15488`, SHA-256 `921bde34d9853ef032dd006b2630a11c0cdbab22c6cdeb1cad9f71bf06d66566`.
+- **libiconv** : `LINK_EXIT=0`, `MH_DYLIB i386`, `LC_ID_DYLIB=/usr/lib/libiconv.2.dylib`, `BYTES=1156440`, SHA-256 `81426c72276e7b83cb44265133413f028fcd57907f4a3002ac13509e84777652`.
+- **CarbonCore** : liens directs du script présents, puis `LINK_EXIT=1`. Les diagnostics `ld64` sont `ignoring -dylib_file option, file not found: .../build-hitoolbox-i386/src/external/libiconv/libcharset.1.dylib` et `file not found: /usr/lib/libcharset.1.dylib for architecture i386` ; 5 avertissements sur les initialisateurs statiques, distincts de la cause fatale.
+- Verdict `C3_M3_LINK_FAIL`, `LIBRARIES_LINKED=2`, `PROTECTED_INPUTS=UNCHANGED`, `GITHUB=NOT_COMMITTED` depuis la machine ; aucun `CarbonCore` qualifié.
+
+**Cause démontrée :** `libiconv` (sortie privée) référence `/usr/lib/libcharset.1.dylib`, mais la commande `CarbonCore` conserve un `-dylib_file` de résolution vers le chemin **historique** où `libcharset.1.dylib` n'a pas été créé. Le correctif est de fournir à `ld64` le chemin **privé** exact de la dylib `libcharset` déjà certifiée, sans reconstruire les 61 objets et sans modifier le préfixe HIT-23R. L'éventuel échec restant sera un **nouveau diagnostic de liaison**, pas une régression des deux dylibs PASS.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
