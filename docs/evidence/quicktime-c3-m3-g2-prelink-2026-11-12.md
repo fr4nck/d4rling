@@ -90,6 +90,18 @@ Audit `GAP AUDIT` transmis par l'opérateur depuis le 5700X (Bash Debian WSL2), 
 
 **Suite proportionnée :** rechercher les liens cibles `CarbonCore` et `CoreServices` dans les manifestes Ninja et les chemins explicites, identifier les dépendances directes construites et manquantes. Qualifier les dépendances générées avant tout réemploi ; éviter de copier d'emblée les 4 282 objets candidats ou de démarrer 4 530 compilations. Conserver les travaux du checkout local `5b521087` et le sous-module Security modifié.
 
+## Essai 6 — compilation ciblée des 61 objets absents, réussite réelle
+
+Journal opérateur 5700X (Debian WSL2), commande Bash locale exécutée le 12 novembre 2026. Écriture bornée dans `quicktime-c3-m3/g2.0Tfg9onI/compile61.20748agn`. Rapport `result.json` sous ce répertoire (non transféré). **Il s'agit d'une preuve déclarée par les sorties terminal et non d'une exécution indépendante par l'agent.**
+
+- Contrôles initiaux : historique `master@5b521087d79d4348ebe312e622a05f1f8b55c110`, changements locaux préservés sur `src/external/security` et `src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c`.
+- `C3_OBJECTS=3/3_PASS`, `C3_SOURCE=PASS`, `MISSING_OBJECTS=61`, `COMMANDS_PREFLIGHT=61/61_PASS`.
+- `DIVERGENT_RTSIG=EXCLUDED`, aucun des 4 282 objets historiques correspondants copié, compilation séquentielle sans installation.
+- Compilations `10/61`, `20/61`, `30/61`, `40/61`, `50/61`, `60/61`, `61/61` terminées. **61/61 objets produits**, volume final **6 554 824 octets** (≈ 6,25 Mio), format Mach-O 32 bits exigé pour les objets CoreServices/CarbonCore.
+- Verdict : `STATUS=C3_M3_61_OBJECTS_PASS`, `COMPILED=61`, `PROTECTED_INPUTS=UNCHANGED`, `LINK=NOT_TESTED`, `GITHUB=NOT_COMMITTED` pour la session locale.
+
+**Reste à faire :** qualifier l'ancien objet `rtsig.c.o` divergent si sa dépendance intervient dans la liaison, retrouver la commande de liaison effective CarbonCore depuis Ninja, rediriger strictement toute sortie vers le nouveau dossier privé, vérifier les bibliothèques directes existantes et refuser toute substitution provenant d'un autre graphe non qualifié. Lier CarbonCore, puis ses pairs et CoreServices, enfin QuickTime ; vérifier `LC_ID_DYLIB` et le graphe de réexportation. Ce checkpoint **ne démontre aucune liaison ni fonctionnement invité**.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
