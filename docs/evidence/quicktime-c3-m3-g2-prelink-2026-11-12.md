@@ -137,6 +137,26 @@ Tentative de reprise CarbonCore depuis `linkchain.ervb2dvb` avec les dylibs priv
 
 Suite autorisée : relire la commande enregistrée, accepter uniquement les correspondances historiques conformes au `use_ld64.cmake` réel, remplacer les deux destinations vers les dylibs privées SHA-256 vérifiées, lier CarbonCore dans un nouveau dossier privé (sans écrire dans l'ancien build, son préfixe HIT-23R ou les artefacts de C3-M3).
 
+## Essai 10 — CarbonCore réellement lié, export `_MemError` absent
+
+Résultat transmis depuis le 5700X le 12 novembre 2026, dossier privé : `quicktime-c3-m3/g2.0Tfg9onI/carboncore-remap.1IpMt2ur/result.json`.
+
+- Provenance : checkout historique `master@5b521087d79d4348ebe312e622a05f1f8b55c110`, fichiers modifiés et sous-module Security préservés.
+- Sources et entrées : `libcharset`/ `libiconv` privées SHA-256 PASS, trois objets QuickTime C3-M2 PASS, 61 objets C3-M3 PASS.
+- Les deux mappings ld64 vers ces dylibs privées sont vérifiés. `DIRECT_INPUTS=34`, linker i386 SHA-256 PASS.
+- **`LINK_EXIT=0`, `MACHO_I386=PASS`**, `LC_ID_DYLIB=/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore`.
+- Binaire CarbonCore : **1 346 888 octets**, SHA-256 `901641ce9b2c57d3971bcae9ca016966c501bd047c94425cfe74e94ffd7832eb`.
+- Export nlist `_GetHandleSize` présent, `_SetHandleSize` présent, **`_MemError` absent**.
+- Verdict local : `C3_M3_CARBONCORE_EXPORT_GAP` ; `LINK=MACHO_I386_PASS`, `PROTECTED_INPUTS=UNCHANGED`, `DYLD_RUNTIME=NOT_TESTED`.
+
+### Diagnostic documentaire confirmé
+
+- Dans le checkout historique, `src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp` et `include/CarbonCore/MacMemory.h` ne contiennent aucune implémentation ni déclaration `MemError`.
+- Le patch archivé `docs/evidence/quicktime-e3-b2-c3-2026-11-09/macmemory-c2.patch` contient un `MemError` expérimental et un état d'erreur mémoire ; **ce patch n'est pas une correction de production qualifiée**.
+- Le contrat QuickTime C3 archivé utilise `MemError` après `GetHandleSize` et `SetHandleSize`, et le test structurel `check_c4d_macho_i386.py` attend explicitement `_MemError` dans les exports CarbonCore.
+- `docs/evidence/quicktime-e3-b2-c4-checkpoint-2026-11-10.md` signale un candidat Memory Manager **C4 authentique uniquement local**, sous `validation/qt-next/e3/b2/mm-c4/`, avec tests C4-A/B/C rapportés mais non vérifiables à distance.
+- **Action suivante :** retrouver et auditer le candidat C4 authentique sur le 5700X avant toute modification ou recompilation de `MacMemory.cpp`, puis tenter une intégration de qualification isolée des vraies dylibs. Ne pas fabriquer un stub ni activer `GetMediaSample` avec le Memory Manager historique. Aucun `CoreServices`, QuickTime ni `dyld` qualifié par cette liaison.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
