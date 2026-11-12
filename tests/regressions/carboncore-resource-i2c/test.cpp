@@ -123,6 +123,35 @@ int main() {
     ResID rid = 0; ResType rtype = 0; Str255 actual{};
     GetResInfo(h1, &rid, &rtype, actual);
     CHECK(ResError() == noErr && rid == 129 && rtype == STR && actual[0] == 5 && std::memcmp(actual+1,"gamma",5) == 0);
+    // C2: SetResLoad controls data population, not Handle existence.
+    ReleaseResource(h1);
+    CHECK(ResError() == noErr);
+    SetResLoad(0);
+    Handle lazy = GetResource(STR, 129);
+    CHECK(lazy != nullptr);
+    CHECK(lazy && *lazy == nullptr);
+    CHECK(lazy && GetNamedResource(STR, gamma) == lazy && ResError() == noErr);
+    if (lazy) {
+        LoadResource(lazy);
+        CHECK(ResError() == noErr && *lazy && GetHandleSize(lazy) == 3 && std::memcmp(*lazy, "ABC", 3) == 0);
+        EmptyHandle(lazy);
+        CHECK(MemError() == noErr && *lazy == nullptr);
+        CHECK(GetResource(STR, 129) == lazy && *lazy == nullptr);
+        LoadResource(lazy);
+        CHECK(ResError() == noErr && *lazy && std::memcmp(*lazy, "ABC", 3) == 0);
+        EmptyHandle(lazy);
+        CHECK(MemError() == noErr && *lazy == nullptr);
+        SetResLoad(1);
+        CHECK(GetResource(STR, 129) == lazy && *lazy && std::memcmp(*lazy, "ABC", 3) == 0);
+        CHECK(ResError() == noErr);
+        ReleaseResource(lazy);
+        CHECK(ResError() == noErr);
+        CHECK(GetResource(STR, 129) != nullptr && ResError() == noErr);
+    } else {
+        SetResLoad(1);
+    }
+    LoadResource(nullptr);
+    CHECK(ResError() == resNotFound);
     CloseResFile(r2); CHECK(ResError() == noErr);
     CloseResFile(r1); CHECK(ResError() == noErr);
     unlink(p1.c_str()); unlink(p2.c_str());
