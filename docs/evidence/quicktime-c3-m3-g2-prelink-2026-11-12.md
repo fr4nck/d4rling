@@ -187,6 +187,32 @@ Journal opérateur 5700X (Debian WSL2), inventaire en lecture seule `quicktime-c
 
 **Suite immédiate :** prévol de la véritable commande Ninja de CoreServices et de ses 9 sous-frameworks pour identifier les sorties disponibles, fournir la nouvelle CarbonCore C4 à `-reexport_library` et planifier les liaisons ciblées sans recompiler la masse d'objets historiques, puis lier QuickTime C3 après qualification.
 
+## Essai 13 — huit sous-frameworks i386 liés, trois chemins relatifs à reprendre
+
+**Preuve de sortie opérateur sur 5700X**, qualifiée au plus jusqu'à la liaison statique, le 12 novembre 2026. Script de liaison ciblé avec source `master@5b521087...`, trois objets C3 authentiques, 61 objets C3-M3 authentifiés, et CarbonCore C4 authentifiée. Rapport privé : `quicktime-c3-m3/g2.0Tfg9onI/coreservices-chain.bqOl1t9U/result.json`. `PROTECTED_INPUTS=UNCHANGED`, aucune installation ni exécution invitée.
+
+Les huit dylibs ci-dessous ont `LINK_EXIT=0`, `TARGET_STATUS=MACHO_I386_LINK_PASS` et un `LC_ID_DYLIB` conforme au chemin vérifié :
+
+| Bibliothèque | SHA-256 | Octets |
+| --- | --- | ---: |
+| AE | `780627976119b450a969f2f62965ae031fa0b9436b2651577bf1445b06d4eb68` | 9 208 |
+| DictionaryServices | `1f1a5d7a6629fce13d8ddf4e7acb8b0dd7c96553a8515491c7d136c4bae93986` | 4 136 |
+| FSEvents | `ffea7e6de2fe041960726c8a7fd30fbdfde848557cf50cf014680d8a17b2062e` | 30 244 |
+| Metadata | `5d3343ca096c9604b48b943b248b0bc32f4cef15534e604b8c62778f9dc93211` | 32 932 |
+| OSServices | `93974df4306b5c2b0b204d5b82a10c19726db8583a17d14d2f5d12067203fadd` | 4 136 |
+| SearchKit | `764fe238326fa9620240af34ae7c3faa001feaf33f085102696c644162093f61` | 10 028 |
+| SharedFileList | `f69a6d2021ea200b81f63700a1b4cf97be2be136becca4d27377d747cf6cd7b3` | 8 800 |
+| FMDB | `99d82e44214f459debb484b682f4061a8f87dfe30d3efea98122e691befd28f7` | 132 400 |
+
+Les 11 commandes de liaison des sous-frameworks, FMDB, LaunchServices, CoreServices et QuickTime étaient détectées **sans ambiguïté** dans le graphe Ninja privé : `MATCHES=1`.
+
+- `LaunchServices`: **`LINK_EXIT=1`**, erreur clang `no such file or directory: 'src/frameworks/CoreServices/src/CarbonCore/CarbonCore'` et `'src/external/fmdb/FMDB'`. Ce sont des chemins **relatifs sans suffixe `.dylib`** que le remappeur précédent a omis : les fournisseurs i386 qualifiés existent déjà (`CarbonCore C4` et `FMDB` produite dans cet essai).
+- `CoreServices`: `BLOCKED_INPUTS` (LaunchServices absente dans le build historique).
+- `QuickTime`: `LINK_EXIT=1`, `no such file or directory: 'src/frameworks/CoreServices/CoreServices'` pour la même raison de chemin relatif sans suffixe.
+- Verdict borné `C3_M3_CHAIN_PARTIAL`, `LINKED_COUNT=8`, `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`.
+
+**Reprise :** réutiliser, sans recopier, les huit sorties du dossier de qualification et CarbonCore C4 ; corriger **uniquement la résolution des chemins relatifs vers ces cibles** dans les trois commandes d'édition de liens historiques, y compris les paramètres `-Wl,-reexport_library` et `-Wl,-dylib_file` le cas échéant. Chaîne LaunchServices → CoreServices → QuickTime ; ne publier aucun code de production tant que le graphe Mach-O, le contrat C3/C4 et le comportement invité ne sont pas qualifiés.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
