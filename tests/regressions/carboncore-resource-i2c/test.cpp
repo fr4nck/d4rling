@@ -152,8 +152,53 @@ int main() {
     }
     LoadResource(nullptr);
     CHECK(ResError() == resNotFound);
+    // C3: public persistence and Apple TB40 disk-vs-memory semantics.
+    Handle saved = GetResource(STR, 129);
+    CHECK(saved && *saved && GetHandleSize(saved) == 3);
+    if (saved && *saved) {
+        SetHandleSize(saved, 5);
+        CHECK(MemError() == noErr);
+        if (MemError() == noErr) {
+            std::memcpy(*saved, "HELLO", 5);
+            ChangedResource(saved);
+            CHECK(ResError() == noErr);
+            WriteResource(saved);
+            CHECK(ResError() == noErr);
+            char disk[6]{};
+            ReadPartialResource(saved, 0, disk, 5);
+            CHECK(ResError() == noErr && std::memcmp(disk, "HELLO", 5) == 0);
+            ReadPartialResource(saved, -1, disk, 1);
+            CHECK(ResError() == paramErr);
+            ReadPartialResource(saved, 5, disk, 1);
+            CHECK(ResError() == paramErr);
+            WritePartialResource(saved, 5, "X", 1);
+            CHECK(ResError() == paramErr);
+            WritePartialResource(saved, 1, "xx", 2);
+            CHECK(ResError() == noErr);
+            CHECK(std::memcmp(*saved, "HELLO", 5) == 0); // unchanged loaded handle
+            ReadPartialResource(saved, 0, disk, 5);
+            CHECK(ResError() == noErr && std::memcmp(disk, "HxxLO", 5) == 0);
+        }
+    }
+    // An explicit update on a different fork must not rewrite this file.
+    UpdateResFile(r2);
+    CHECK(ResError() == noErr);
     CloseResFile(r2); CHECK(ResError() == noErr);
     CloseResFile(r1); CHECK(ResError() == noErr);
+    ResFileRefNum reopened = kResFileNotOpened;
+    CHECK(FSOpenResourceFile(&f1, 0, nullptr, fsRdPerm, &reopened) == noErr);
+    UseResFile(reopened);
+    Handle rehydrated = Get1Resource(STR, 129);
+    CHECK(rehydrated && *rehydrated && GetHandleSize(rehydrated) == 5);
+    CHECK(rehydrated && *rehydrated && std::memcmp(*rehydrated, "HxxLO", 5) == 0);
+    if (rehydrated) {
+        WriteResource(rehydrated);
+        CHECK(ResError() == wPrErr);
+        WritePartialResource(rehydrated, 0, "Z", 1);
+        CHECK(ResError() == wPrErr);
+    }
+    CloseResFile(reopened);
+    CHECK(ResError() == noErr);
     unlink(p1.c_str()); unlink(p2.c_str());
     std::printf("I2C_C1_REAL_THREE_UNITS: %d PASS, %d FAIL\n", passed, failed);
     return failed ? 1 : 0;
