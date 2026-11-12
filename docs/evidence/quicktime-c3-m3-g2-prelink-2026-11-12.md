@@ -267,6 +267,28 @@ Journal de sortie du 5700X, 12 novembre 2026. Outil **préexistant** `docs/evide
 
 **Suite minimale :** sans modifier le garde existant, vérifier si l'outil LLVM Mach-O déjà installé (`llvm-objdump-19` ou variante) peut extraire **en lecture seule** `--bind`, `--lazy-bind`, `--weak-bind`, `--exports-trie` des trois fichiers authentifiés et stocker ces traces dans le workspace. Déclarer seulement `DYLD_INFO_EXTRACTED` si LLVM les décode, sans convertir le `STATIC_INCONCLUSIVE` du garde en PASS ni affirmer une résolution dyld. Toute incohérence discriminante sera une anomalie à analyser. Puis seulement préparer un témoin d'exécution invité i386 sur préfixe neuf, sous autorisation de qualification.
 
+## Essai 18 — LLVM 19 extrait les binds QuickTime, mais signale un rebase CarbonCore C4 invalide au niveau section
+
+**OBS opérateur 5700X**, 12 novembre 2026, rapport `quicktime-c3-m3/g2.0Tfg9onI/dyld-info-llvm.s_1t9zc3/result.json`. `llvm-objdump` réel : Debian LLVM `19.1.7`, SHA-256 `c904a20cf0caeb812b542b69488e5c79738951a92ca99098fbb8941505eb789d`. Entrées QuickTime, CoreServices et CarbonCore `3/3_SHA256_PASS`, garde préexistant C4-D-M2 `STATIC_INCONCLUSIVE` avec zéro défaut statique démontré.
+
+| Image réelle | LLVM | Evidence |
+| --- | --- | --- |
+| QuickTime C3 i386 | `TOOL_EXIT=0`, dump 173 802 octets, SHA-256 `e09ba5b6364f4ca58a166db810b77d82327e3cd2ec6a81dff8bd4167ff31fd2e` | Trie d'exports avec `_GetMediaSample`; lazy binds `_GetHandleSize`, `_MemError`, `_SetHandleSize` vers **CoreServices** |
+| CoreServices i386 | `TOOL_EXIT=0`, dump 4 728 octets, SHA-256 `49cfca9bbfeaa679b8da374edffc56913a70c7618460df15ad430d0255b09992` | Aucun diagnostic LLVM |
+| CarbonCore C4 i386 | `TOOL_EXIT=1`, dump 87 898 octets, SHA-256 `ec9958728b73855414bd3a0f5ef3781e5c6b7f9936bc1ae3f1b52ca1f096ce04` | Exports des trois symboles mémoire visibles ; **erreur LLVM de rebase** |
+
+Diagnostic exact `llvm-objdump` CarbonCore :
+
+```text
+truncated or malformed object (for REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB bad offset, extends beyond section boundary for opcode at: 0x3b)
+```
+
+Verdict `STATUS=DYLD_INFO_DUMP_REVIEW_REQUIRED`, `PROTECTED_INPUTS=UNCHANGED`, `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`.
+
+**Interprétation prudente :** la liaison statique `C3_M3_STATIC_CHAIN_PASS` reste acquise ; **l'information de rebase CarbonCore ne doit pas être considérée comme qualifiée**. Le garde C4-D-M2 était correctement inconclusif : le décodage LLVM identifie une nouvelle anomalie indépendante de la table nlist. Il faut isoler le flux `LC_DYLD_INFO.rebase` et comparer les fixups aux **bornes des sections ET des segments**. Le code LLVM 19 (`MachORebaseEntry::moveToNext`, `RebaseEntryCheckSegAndOffsets`) vérifie la section ; la source historique Apple dyld i386 (`ImageLoaderMachOCompressed::doRebase`) vérifie le segment. Le message LLVM ne suffit pas **à lui seul** à démontrer que le chargeur Darwin/Darling refuserait le fichier. Ne pas exécuter un test invité avant ce diagnostic, ni modifier ou relier CarbonCore sans cause établie.
+
+**Prochaine étape** : inspection bornée, en lecture seule, du même `CarbonCore` C4 **et** du précédent `CarbonCore` sans C4 (SHA-256 `901641ce9b2c57d3971bcae9ca016966c501bd047c94425cfe74e94ffd7832eb`), avec `llvm-objdump --rebase` ciblé et décodage des offsets du rebase stream ; conserver les résultats sous `quicktime-c3-m3/g2.0Tfg9onI`. Décision GO/NO GO après distinction : franchissement d'une frontière de section mais fixups valides dans le segment, ou réel débordement d'image.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
