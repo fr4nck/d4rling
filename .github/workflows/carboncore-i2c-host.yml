@@ -1,0 +1,24 @@
+name: CarbonCore I2-C public API host regression
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/carboncore-i2c-host.yml'
+      - 'tests/regressions/carboncore-resource-i2c/**'
+      - 'src/frameworks/CoreServices/src/CarbonCore/Resources.cpp'
+      - 'src/frameworks/CoreServices/src/CarbonCore/ResourcesImpl.cpp'
+      - 'src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp'
+  workflow_dispatch:
+jobs:
+  real-three-unit-host:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile/link the genuine three units; GCC and Clang, O0 and O2
+        shell: bash
+        run: |
+          bash tests/regressions/carboncore-resource-i2c/run.sh g++ -O0
+          bash tests/regressions/carboncore-resource-i2c/run.sh g++ -O2
+          bash tests/regressions/carboncore-resource-i2c/run.sh clang++ -O0
+          bash tests/regressions/carboncore-resource-i2c/run.sh clang++ -O2
