@@ -47,6 +47,20 @@ PROTECTED_INPUTS=UNCHANGED (rapport opérateur)
 
 **À ne pas conclure :** le succès de la configuration privée n'est pas une liaison Mach-O, le nombre de symboles d'objets n'atteste aucune API QuickTime opérationnelle, et les dylibs issues de builds différents ne constituent pas une chaîne intégrée.
 
+## Essai 3 — dry-run Ninja réel, sans compilation
+
+Après un premier `ninja -n` trompeur limité à `[0/1] Re-running CMake...`, le build **privé uniquement** a été régénéré avec `-DCMAKE_SUPPRESS_REGENERATION=ON` (`CMAKE_EXIT=0`). Les sorties opérateur indiquent :
+
+| Cible i386 | Commandes du graphe | Étapes `ninja -n` | Exit | Commandes réseau potentielles détectées |
+| --- | ---: | ---: | ---: | ---: |
+| CarbonCore | 3640 | 3640 | 0 | 0 |
+| CoreServices | 4529 | 4529 | 0 | 0 |
+| QuickTime | 4530 | 4530 | 0 | 0 |
+
+`REGENERATION_ONLY=False` pour les trois cibles ; `PROTECTED_INPUTS=UNCHANGED`; `LINK=NOT_TESTED`; `GITHUB=NOT_COMMITTED` sur le 5700X. Rapport local opérateur : `quicktime-c3-m3/g2.0Tfg9onI/core-preflight-real.json`.
+
+**Interprétation :** la construction QuickTime dépend du graphe CoreServices, et les comptes ne s'additionnent pas ; elle ajoute seulement une étape au graphe CoreServices parce que les trois objets C3 sont épinglés. Ces nombres caractérisent un plan de construction **non exécuté**, ni des succès de compilation ni un audit exhaustif de l'absence de réseau. La prochaine étape doit auditer les artefacts déjà construits dans les autres arbres et les possibilités de réemploi avant de lancer 4 530 étapes.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
