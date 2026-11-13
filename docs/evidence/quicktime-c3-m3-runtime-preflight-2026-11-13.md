@@ -148,3 +148,17 @@ LOGIC8=NOT_TESTED
 
 **Suite technique :** qualification comportementale isolée Memory Manager C4, puis API QuickTime ciblée avec contrat source réellement identifié, tests d'erreurs et négatifs, sans audio. Conserver le bind privé et les deux préfixes non modifiés ; ne pas intégrer de correctif de production à ce stade.
 
+
+## Guest 06 — exécution réelle C4 Memory Manager + initialisation QuickTime C3 (5700X, 13 novembre 2026)
+
+**Observation opérateur WSL2**, source historique épinglée `5b521087d79d4348ebe312e622a05f1f8b55c110` (arbre local modifié protégé), en espace de noms privé (utilisateur, PID, montage, réseau), bind du clone `qt-runtime-stage.Pbj5aTGV/private-install/libexec/darling` sur le `LIBEXEC_PATH` historique pour l'invité seulement. Rapport local **`qt-c4guest06.SH42oz76/result.json`** (non versé au dépôt), copie `qt-guest05-r2.fx5we445/result.json` qualifiée en prévol.
+
+- SHA-256 CarbonCore C4, QuickTime C3, ld64 i386 : `PASS`; `PROTECTED_PREFIX_SNAPSHOT=PASS`, `PROTECTED_INPUTS=UNCHANGED`.
+- **`COMPILE_EXIT=0`**, **`LINK_EXIT=0`** pour la fixture Darwin Mach-O i386 réellement liée à CarbonCore C4, QuickTime C3 et libSystem.
+- **`GUEST_EXIT=0`**, `PRIVATE_BINDMAP=PASS`, **`C4_MEMORY=PASS`** / marqueur `D4W-C4-MEMORY-I386-OK`, **`QUICKTIME_INIT=PASS`** / marqueur `D4W-QT-C3-INIT-I386-OK`.
+- Contrat mémoire effectivement exercé : `NewHandle(4)` ; `MemError` et `GetHandleSize` à 4 ; écriture de quatre octets connus ; `SetHandleSize(8)` et préservation des octets ; `SetHandleSize(2)` et conservation du préfixe ; `SetHandleSize(-1)` doit renvoyer `paramErr=-50` en laissant taille et octets inchangés ; `DisposeHandle` et `MemError=0`. Contrat QuickTime : `EnterMovies()=noErr`, `GetMoviesError()=noErr`, `ExitMovies()`.
+- Stderr : `Setting up a new Darling prefix at /tmp/d4r-c4guest06.rk67q9fk/prefix`; avertissement non bloquant `failed to increase FD rlimit`.
+- Verdict local **`STATUS=C4_MEMORY_QT_C3_INIT_GUEST_PASS`**. Cela constitue une **preuve d'exécution comportementale circonscrite**, pas une qualification générale des API mémoire, des échecs d'allocation injectés ou de la sûreté multithread. **`GET_MEDIA_SAMPLE_BEHAVIOR=NOT_TESTED`**, `AUDIO=NOT_TESTED`, `LOGIC8=NOT_TESTED`.
+
+**Suite :** exécuter le contrat positif et négatif `GetMediaSample` sur un MOV PCM synthétique en mémoire avec vérification des octets, des bornes, du redimensionnement et des erreurs, toujours **sans moteur audio** et sans modifier le build HIT-23R ni son clone. Réutiliser `docs/evidence/quicktime-e3-b2-c3-2026-11-09/witness-c3.c` comme référence des cas, mais distinguer le candidat préfixé actuel du binaire historique `QuickTime.c` dont `GetMediaSample` est encore un stub.
+
