@@ -289,6 +289,26 @@ Verdict `STATUS=DYLD_INFO_DUMP_REVIEW_REQUIRED`, `PROTECTED_INPUTS=UNCHANGED`, `
 
 **Prochaine étape** : inspection bornée, en lecture seule, du même `CarbonCore` C4 **et** du précédent `CarbonCore` sans C4 (SHA-256 `901641ce9b2c57d3971bcae9ca016966c501bd047c94425cfe74e94ffd7832eb`), avec `llvm-objdump --rebase` ciblé et décodage des offsets du rebase stream ; conserver les résultats sous `quicktime-c3-m3/g2.0Tfg9onI`. Décision GO/NO GO après distinction : franchissement d'une frontière de section mais fixups valides dans le segment, ou réel débordement d'image.
 
+## Essai 19 — CarbonCore C4 : 996 fixups segment/section valides selon le décodeur indépendant, divergence LLVM sur l'opcode 0x3b
+
+**OBS opérateur 5700X**, rapport local `quicktime-c3-m3/g2.0Tfg9onI/rebase-analysis.8MVODKR1/result.json`. Analyse en lecture seule de deux binaires authentifiés, sans compilation, lien, installation ni invité : base CarbonCore SHA-256 `901641ce9b2c57d3971bcae9ca016966c501bd047c94425cfe74e94ffd7832eb` ; CarbonCore C4 SHA-256 `0f221249af131f56b2930c0c425fcc9621646aa7e3d5b878e4faedda66fef126`. `PROTECTED_INPUTS=UNCHANGED`.
+
+| Mesure | CarbonCore avant C4 | CarbonCore avec C4 |
+| --- | ---: | ---: |
+| `llvm-objdump-19 --macho --arch=i386 --rebase` | `EXIT=0` | `EXIT=1` |
+| `LC_DYLD_INFO.rebase_size` | 68 octets | 68 octets |
+| Rebases décomprimés par l'outil ciblé | 996 | 996 |
+| `SEGMENT_OUT_OF_BOUNDS` | 0 | 0 |
+| `OUTSIDE_SECTION` | 0 | 0 |
+| `GROUPS_CROSSING_SECTIONS` | 1 | 1 |
+| `REBASE_OPCODE_DO_REBASE_ULEB_TIMES_SKIPPING_ULEB` @ `0x3b` | 465 fixups, stride=6, offsets `0x39c42…0x3a722` | 465 fixups, stride=6, offsets `0x3ac32…0x3b712` |
+
+Les deux blocs `0x3b` se trouvent **entièrement dans `__symbol_stub` selon les adresses de segments LC_SEGMENT du décodeur**, sans aucun fixup en dehors des bornes des sections. Le groupe `0x0d` comportant 91 fixups `__la_symbol_ptr`/ `__mod_init_func` traverse deux sections **dans les deux versions**, mais ce n'est pas le groupe signalé par LLVM. Ne pas attribuer sans preuve l'erreur LLVM C4 à ce franchissement.
+
+**Vérification du code primaire LLVM 19.1.7 :** `llvm/lib/Object/MachOObjectFile.cpp`, méthodes `BindRebaseSegInfo::BindRebaseSegInfo`, `BindRebaseSegInfo::checkSegAndOffsets` et `MachORebaseEntry::moveToNext` (source au tag `llvmorg-19.1.7`). Le lecteur établit `CurSegAddress = Info.Address` sur la première **section**, puis `OffsetInSegment = Info.Address - CurSegAddress`. Il vérifie chaque `SegOffset + i*(PointerSize+Skip)` et son `End` contre ces bornes ainsi dérivées. Le décodeur privé, lui, reconstruit les adresses depuis `LC_SEGMENT.vmaddr` et vérifie sections et segments. **Hypothèse discriminante :** un décalage de la première section par rapport au `vmaddr` du segment peut déplacer les rebases dans la lecture LLVM sans que les fixups réels dépassent les sections Mach-O. Cela expliquerait `EXIT=1` après C4 sans constituer, à ce stade, une preuve de corruption ni un PASS dyld.
+
+**Prochaine action ciblée :** exploiter le `result.json` existant pour afficher, dans chacun des deux binaires, `LC_SEGMENT.vmaddr`, première section `addr`, décalage, fin de `__symbol_stub` et première position du groupe `0x3b` que la règle LLVM déclarerait hors section. Reproduire la condition du code LLVM et la comparer à la condition basée sur les adresses LC_SEGMENT. Ne pas modifier `ld64`, CarbonCore ou LLVM avant la preuve. `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`, `NO GO` production inchangé.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
