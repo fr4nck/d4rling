@@ -60,3 +60,32 @@ PROTECTED_INPUTS=UNCHANGED
 **Ne pas conclure :** B06, B07 et B08 restent `FAIL/NOT_QUALIFIED` comme chaîne complète. `MOCK_EXIT=NOT_RUN` signifie que le banc n'est pas allé jusqu'au `wait` du récepteur ; ce n'est pas une preuve de panne du mock. Aucune émission acoustique, aucun serveur PulseAudio, aucune preuve Logic 8. Les données historiques n'ont pas été altérées d'après les contrôles transmis.
 
 **Reprise R2 recommandée :** préserver ce répertoire ; copier `hal.cpp`, `batch.c`, `mock_host.py` et `oracle.json` dans un nouvel espace. Remplacer la condition de la boucle par trois verdicts séparés, et journaliser `pump`, callbacks, frames, indice et phase avant/après chaque itération. Inspecter `src/pulse_mock.c` et les appels attendus `src/transport.c` sans modifier C10. Journaliser le protocole côté hôte dans la copie privée du mock. Vérifier les entrées SHA et le statut Git local ; ne pas changer la HAL ni le moteur audio, ne pas lancer de serveur PulseAudio. Publier `PASS` seulement après exécution et comparaison des paquets.
+
+## B06–B08 R2 — échec d'instrumentation en compilation, non diagnostic de la HAL (13 novembre 2026)
+
+**Preuve d'origine :** transcription fournie du terminal WSL2 du 5700X, non rejouée depuis GitHub ; référence locale `/home/Deniel/d4wrling-work/validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/qt-batch-b0608-r2.cqvuRDip/`, notamment `result.json`, `hal.cpp`, `compile.log`, `mock_host.py`.
+
+Résumé rapporté :
+```text
+B0608_R1_PROVENANCE=PASS
+B0608_R1_FAILURE=188
+HAL_PUMP_LOOP_INSTRUMENTED=PASS
+CALLBACK_ENTRY_INSTRUMENTED=PASS
+FIFO_REQUEST_REPLY_INSTRUMENTED=PASS
+STATUS=BATCH_B0608_R2_BLOCKED
+PHASE=COMPILE COMPILE_EXIT=1 LINK_EXIT=NOT_RUN GUEST_EXIT=NOT_RUN MOCK_EXIT=NOT_RUN
+PROTECTED_INPUTS=UNCHANGED
+```
+Diagnostic de compilation explicite, `hal.cpp:236:13` et `:244:12` :
+```text
+error: use of undeclared identifier 'stderr'
+fprintf(stderr,...)
+fflush(stderr)
+2 warnings and 2 errors generated.
+```
+
+**Cause :** instrumentation de test ajoutée utilisant `stderr`, non déclaré dans les en-têtes C++ accessibles par la compilation du témoin i386 ; la compilation C++ R1 employait déjà `puts`, `printf`, `fflush(stdout)`. Aucune exécution HAL R2 n'a eu lieu. Les avertissements `TARGET_IPHONE_SIMULATOR` et `TARGET_OS_NANO` redéfinis restent non bloquants.
+
+**Reprise R3** : ne pas modifier ce dossier R2 ; copier `hal.cpp`, `mock_host.py`, `batch.o`, oracle et bibliothèques dans un nouveau dossier. Corriger uniquement les 2 usages `fprintf(stderr,...)` en `printf(...)` et les 2 `fflush(stderr)` en `fflush(stdout)`, corriger les fins de ligne des traces instrumentées si nécessaire, compiler, relier, relancer sous un nouveau préfixe privé, puis journaliser `pump`/callbacks/trames/phase et les requêtes/réponses FIFO. Ne pas confondre compilation R3 réussie et succès de la chaîne HAL.
+
+**État conservé :** R1, `AudioDeviceCreateIOProcID` et `AudioDeviceStart` observés `PASS`, puis `GUEST_EXIT=188` (pump/compteur/trames encore à départager). R2 `BLOCKED_COMPILE` ; `B06–B08=NOT_QUALIFIED`, `PULSEAUDIO_SERVER=NOT_USED`, `AUDIO=NOT_RUN`, `LOGIC8=NOT_TESTED`.
