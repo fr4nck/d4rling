@@ -89,3 +89,22 @@ fflush(stderr)
 **Reprise R3** : ne pas modifier ce dossier R2 ; copier `hal.cpp`, `mock_host.py`, `batch.o`, oracle et bibliothèques dans un nouveau dossier. Corriger uniquement les 2 usages `fprintf(stderr,...)` en `printf(...)` et les 2 `fflush(stderr)` en `fflush(stdout)`, corriger les fins de ligne des traces instrumentées si nécessaire, compiler, relier, relancer sous un nouveau préfixe privé, puis journaliser `pump`/callbacks/trames/phase et les requêtes/réponses FIFO. Ne pas confondre compilation R3 réussie et succès de la chaîne HAL.
 
 **État conservé :** R1, `AudioDeviceCreateIOProcID` et `AudioDeviceStart` observés `PASS`, puis `GUEST_EXIT=188` (pump/compteur/trames encore à départager). R2 `BLOCKED_COMPILE` ; `B06–B08=NOT_QUALIFIED`, `PULSEAUDIO_SERVER=NOT_USED`, `AUDIO=NOT_RUN`, `LOGIC8=NOT_TESTED`.
+
+## B06–B08 R3 — le diagnostic reste bloqué avant exécution (13 novembre 2026)
+
+**Observation opérateur 5700X, non rejouée par cet agent.** Nouveau répertoire préservé : `/home/Deniel/d4wrling-work/validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/qt-batch-b0608-r3.1CbbWSgk` ; `result.json` et `compile.log` locaux. `R2_SOURCE_PROVENANCE=PASS` ; `R2_COMPILER_BLOCKER=CONFIRMED` ; `STDERR_COMPILER_FIX=PASS`, `PUMP_TRACE=READY`, `CALLBACK_TRACE=READY`, `FIFO_TRACE=READY` vérifient la réécriture textuelle, **pas** son exécution.
+
+```text
+STATUS=BATCH_B0608_R3_BLOCKED
+PHASE=COMPILE COMPILE_EXIT=1 LINK_EXIT=NOT_RUN GUEST_EXIT=NOT_RUN MOCK_EXIT=NOT_RUN
+PROTECTED_INPUTS=UNCHANGED
+hal.cpp:236:5: error: use of undeclared identifier 'printf'
+hal.cpp:244:12: error: use of undeclared identifier 'stdout'
+2 warnings and 2 errors generated.
+```
+
+**Racine immédiate** : la transformation R2→R3 remplace `fprintf(stderr,...)` par `printf(...)` et `fflush(stderr)` par `fflush(stdout)` dans une fonction définie **avant** le `#include <stdio.h>` ajouté plus bas par `hal.cpp`. Les déclarations ne sont pas visibles au point d'utilisation. Ce n'est pas une panne de HAL B14 ou de `d4rl_mock_pump`.
+
+**R4 conseillé :** cloner uniquement les objets et sources R3 vers un répertoire de validation neuf, ajouter `#include <stdio.h>` **en tête de `hal.cpp`**, recompiler et relier sans modifier la HAL, les bins, le checkout historique ni les essais précédents. Ensuite relancer avec mock FIFO privé. Produire `B0608_R3_PUMP`, `B0608_R3_CALLBACK`, `B0608_R3_RPC_REQUEST` séparément, en conservant les valeurs et les journaux sous le nouvel OUT même si l'invité sort avec 188, 194 ou 195. Garder `FAIL` tant que `GUEST_EXIT=0`, les 16 paquets, l'oracle et la fermeture ne sont pas tous attestés.
+
+**Bornes toujours en vigueur** : `B03–B05 R1=PASS`; R1 HAL enregistrement et démarrage observés, callback et FIFO non qualifiés ; R2 et R3 erreurs de compilation du banc ; C11 séparé ; aucun son, aucun PulseAudio serveur, aucune suppression et aucune écriture production.
