@@ -31,3 +31,16 @@ Prévol intégralement en lecture seule, `PREFIX_LAYOUT=INSPECTED`, `PROTECTED_I
 La recherche de liens `Current` sous `System/Library` a trouvé **cinq liens historiques existants** : `CoreFoundation.framework/Versions/Current`, `Foundation.framework/Versions/Current`, `Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/Current`, `Carbon.framework/Versions/Current`, `SystemConfiguration.framework/Versions/Current`. Ceux-ci ne doivent pas être écrasés.
 
 **Décision de chantier :** conserver intact `build-hitoolbox-i386/private-install` (171 Mo) comme témoin HIT-23R. Les douze dylibs i386 authentifiées (CarbonCore C4 + 7 subframeworks + FMDB + LaunchServices + CoreServices + QuickTime) sont à préparer exclusivement sous un **nouveau préfixe privé**, avec prévol de leurs install-names et inventaire des dépendances après ajout, puis fermeture du graphe *avant* toute exécution invitée. Aucun GO runtime ni Logic 8 n'est déduit.
+
+## Staging 01 — copie isolée et 12 dylibs qualifiées (5700X, 13 novembre 2026)
+
+**Observation opérateur**, en exécution locale WSL2 sur le checkout historique `5b521087d79d4348ebe312e622a05f1f8b55c110` : aucun build, aucun linker, aucun guest ni installation système. Source du rapport : `/home/Deniel/d4wrling-work/validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/qt-runtime-stage.Pbj5aTGV/result.json`.
+
+Prévol : `RUNNER=PASS`, `REPORTS=PASS`, `CANDIDATES=12/12_SHA256_MACHO_I386_PASS`, tous les `LC_ID_DYLIB` conformes à la destination. Copie intégrale du préfixe privé HIT-23R sous `qt-runtime-stage.Pbj5aTGV/private-install` : `PREFIX_FILES_AND_LINKS=6021`, `SOURCE_LOGICAL_BYTES=161138982`, budget estimé `EXPECTED_COPY_BYTES=163932878`, `PRIVATE_PREFIX_COPY=PASS` par inventaires et hashes comparés. Aucune écriture dans le préfixe historique.
+
+**12/12 dylibs installées en chemins invités `libexec/darling/<LC_ID_DYLIB>` avec SHA-256 recontrôlés :** CarbonCore C4, AE, DictionaryServices, FSEvents, Metadata, OSServices, SearchKit, SharedFileList, FMDB, LaunchServices, CoreServices et QuickTime C3. `DIRECT_DEPENDENCIES_CHECKED=51`, `REQUIRED_MISSING=1`, `WEAK_MISSING=0`, `DYNAMIC_UNRESOLVED=0`.
+
+**Seul fournisseur direct manquant :** `CarbonCore -> /usr/lib/libiconv.2.dylib`. Le binaire qualifié lors du lot précédent se trouve dans `quicktime-c3-m3/g2.0Tfg9onI/linkchain.ervb2dvb/libiconv.2.dylib`, avec SHA-256 attendu `81426c72276e7b83cb44265133413f028fcd57907f4a3002ac13509e84777652` **à recontrôler** et identité Mach-O `/usr/lib/libiconv.2.dylib` **à vérifier avant installation**. Installer dans la *copie isolée uniquement*, sous `libexec/darling/usr/lib/libiconv.2.dylib`, sans écrasement. Examiner les propres dépendances de libiconv (notamment libcharset si présente). Vérifier ensuite le graphe d'imports/réexports avant tentative dyld.
+
+Verdict local : **`STAGED_DEPENDENCY_REVIEW_REQUIRED`**, `STAGED_COUNT=12`, `PROTECTED_INPUTS=UNCHANGED`, `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`, `GITHUB=NOT_COMMITTED` pour les artefacts locaux. **Ne pas promouvoir à PASS runtime** sur la seule fermeture des dépendances directes.
+
