@@ -44,3 +44,17 @@ Prévol : `RUNNER=PASS`, `REPORTS=PASS`, `CANDIDATES=12/12_SHA256_MACHO_I386_PAS
 
 Verdict local : **`STAGED_DEPENDENCY_REVIEW_REQUIRED`**, `STAGED_COUNT=12`, `PROTECTED_INPUTS=UNCHANGED`, `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`, `GITHUB=NOT_COMMITTED` pour les artefacts locaux. **Ne pas promouvoir à PASS runtime** sur la seule fermeture des dépendances directes.
 
+
+## Closure 02 — libiconv et libcharset intégrées, zéro manque direct (5700X, 13 novembre 2026)
+
+**Observation opérateur en local**, sur le préfixe privé existant `qt-runtime-stage.Pbj5aTGV/private-install`, journal `qt-runtime-closure02.FLZWJ6YB/result.json`. Lecture du dépôt historique `master@5b521087d79d4348ebe312e622a05f1f8b55c110` avec les modifications locales protégées. Aucune copie supplémentaire du préfixe, aucun build, lien, installation système, invité ni écriture Git.
+
+- Prévol `HISTORICAL_PREFIX=6021_ENTRIES_PASS`, `STAGED_PREFIX=12_DYLIBS_PASS`, `PROVIDER_SHA256=2/2_PASS` ; contrôle d'intégrité finale `PROTECTED_INPUTS=UNCHANGED`.
+- `libiconv.2.dylib` installée dans le **préfixe d'essai seul**, identité Mach-O `/usr/lib/libiconv.2.dylib`, SHA-256 `81426c72276e7b83cb44265133413f028fcd57907f4a3002ac13509e84777652`.
+- Dépendances libiconv observées : `/usr/lib/libcharset.1.dylib` et `/usr/lib/libSystem.B.dylib`. `libcharset.1.dylib` installée dans le préfixe d'essai, SHA-256 `921bde34d9853ef032dd006b2630a11c0cdbab22c6cdeb1cad9f71bf06d66566`.
+- **14 dylibs candidates présentes** : CarbonCore C4, AE, DictionaryServices, FSEvents, Metadata, OSServices, SearchKit, SharedFileList, FMDB, LaunchServices, CoreServices, QuickTime C3, libiconv, libcharset.
+- Vérification des importations immédiates des quatorze images : `DIRECT_DEPENDENCIES_CHECKED=54`, `REQUIRED_MISSING=0`, `WEAK_MISSING=0`, `DYNAMIC_UNRESOLVED=0`.
+- Verdict local `STATUS=STAGED_DIRECT_DEPS_PRESENT`, `TRANSITIVE_CLOSURE=NOT_TESTED`, `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`, `GITHUB=NOT_COMMITTED` (artefacts locaux).
+
+**Point de contrôle suivant :** auditer en lecture seule le graphe de dépendances **transitives** de ces quatorze images (y compris les dylibs historiquement présentes dans le préfixe HIT-23R), vérifier leur architecture i386, leurs identités et les liens symboliques, classifier les éventuels imports à chemin non absolu ; ne pas prétendre avoir exercé `dyld`, le Memory Manager, l'audio ou Logic 8. Ne pas reconstruire ni recopier l'installation.
+
