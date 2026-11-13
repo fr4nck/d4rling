@@ -54,3 +54,18 @@ Sources techniques : [le témoin C3 préexistant](quicktime-e3-b2-c3-2026-11-09/
 **Contrat réellement codé dans ce témoin** : MOV synthétique en mémoire, une piste son `twos` PCM signé 16 bits big-endian mono, taux `8000` et `100` échantillons, référence PCM de 200 octets générée par `(i*29+5+(i>>4)) mod 256`. Il appelle `NewMovieFromDataRef`, inspecte piste/média, puis `GetMediaSample` à `time=0` (1 échantillon, 2 octets, `sampleTime=0`, `duration=1`, `descriptionIndex=1`, `flags=0`), et à `time=10` (4 échantillons, 8 octets). Les octets sont comparés à `pcm_ref` et le `Handle` initial d'un octet est agrandi. Les cas négatifs testent : plafond de lecture d'un octet (`-2027`), temps négatif (`-2032`), `Handle` nul (`-50`) et média après `DisposeMovie` (`-2008`). L'intégrité des octets après erreur est contrôlée dans certains cas.
 
 **Portée :** ce relevé précise le contenu du témoin précédemment non publié ; il ne transforme ni une seule passe locale en démonstration de robustesse, ni 2 lectures ponctuelles en vérification du flux complet. Le plan Guest 08 cible donc les 100 échantillons en blocs, les limites exactes, les sentinelles et les horodatages ; aucune sortie sonore ni compatibilité Logic 8 n'est revendiquée.
+
+## PCM Guest 08 — premier essai sur 5700X : BLOCKED au linker (13 novembre 2026)
+
+**Preuve opérateur transmise depuis Bash WSL2.** Script local vérifié : `D4rling_PCM_Guest08_5700X.sh` SHA-256 `421731b248c0bd78c67329e785b9e538dd76cb082ba92f403fe8f849679df178`. La première tentative `STOP=SCRIPT_NOT_FOUND` est devenue un contrôle SHA `OK` après mise à disposition du fichier ; elle n'est pas un échec du code.
+
+- Source locale toujours à `master@5b521087d79d4348ebe312e622a05f1f8b55c110`, avec les mêmes modifications protégées dans `src/external/security` et `src/frameworks/Carbon/HIToolbox/src/CarbonEventsCore.c`.
+- Préflight : bibliothèque QuickTime C3 et CarbonCore C4 qualifiées dans le **clone privé**.
+- `COMPILE_EXIT=0` : objet Mach-O i386 de la fixture Guest 08 compilé.
+- `LINK_EXIT=1` : sortie `ld: warning: directory not found for option '-F/System/Library/Frameworks/'` puis **`ld: file not found: /usr/lib/system/libsystem_sandbox.dylib for architecture i386`**.
+- `GUEST_EXIT=NOT_RUN` ; `STATUS=QT_C3_PCM_GUEST08_BLOCKED`, `PHASE=BUILD`, `PROTECTED_INPUTS=UNCHANGED`.
+- Rapport local : `quicktime-c3-m3/g2.0Tfg9onI/qt-pcmguest08.hq5dPVNw/result.json` ; pas d'artefact GitHub.
+
+**Diagnostic provisoire fondé sur la commande réelle :** ld64 avait reçu les chemins absolus des dylibs directes QuickTime, CarbonCore et libSystem, **sans** `-syslibroot` pointant vers le filesystem invité cloné. Les dépendances indirectes exprimées en chemins invités absolus peuvent donc manquer à la résolution. Cela ne démontre ni un défaut QuickTime ni un manque effectif dans le préfixe : vérifier d'abord la présence du fournisseur demandé et refaire la liaison avec `-syslibroot <clone>/libexec/darling` dans une sortie neuve. Selon le manuel ld64, cette option préfixe les chemins de recherche. Ne copier aucune dylib dans le préfixe historique, ne pas transformer le correctif supposé en `PASS` sans test.
+
+**Candidat R1 autonome** : `D4rling_PCM_Guest08_R1_5700X.sh`, SHA-256 `06a27032da4eb03201eef1be9acfbc1bc4c1027c2f2807ea1bcfa91d022b2f7f` ; revue syntaxique Bash hors du 5700X uniquement. Ajoute le prévol `libsystem_sandbox.dylib` dans le clone et `-syslibroot` à ld64, toutes les autres protections et cas d'essai restent conservés. **R1 n'a pas été exécuté sur 5700X.** Audio et Logic 8 toujours non testés.
