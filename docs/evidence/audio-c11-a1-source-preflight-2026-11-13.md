@@ -29,3 +29,18 @@ Dans une **copie privée** du vrai banc C10 (aucune modification des runs r01–
 4. Reproduire le second Play de façon contrôlée **uniquement lorsque l'exécution audio aura été autorisée** ; aucun audio n'a été lancé par ce checkpoint.
 
 **A1 = BLOCKED (source et journaux C10/r11 non accessibles dans cette session).** **A2 = NON COMMENCÉ.** Aucun PASS i386, acoustique ou Logic 8 nouveau n'est revendiqué. Le prévol du dépôt et la distinction entre les implémentations sont, eux, vérifiés directement.
+
+## Complément C11-A1 : chemin du second uncork (13 novembre 2026)
+
+**OBS rapportée** par l'opérateur du 5700X, non rejouée par l'agent : sortie de lecture seule avec vérification SHA-256 `89cbd31202294267fe51a347572b18ee05915e60a1d6cc6e3fb03f40239904d8` du `src/pulse_host.c` local, SHA des logs `pulse.log` = `3628072b0ac00a18d3f22efb88c2fce28373a39150d4ed6359ad12aad6c2866b` et `guest.log` = `545bf5d93e1166b1aed4d3282cabbbd0ac90716437e88b5b623e2b4f07c29fc2`. Code source lignes 20–164 et logs de r11 ont été communiqués textuellement ; la provenance du binaire exécuté n'a pas été contrôlée directement par l'agent.
+
+**Inférence forte sur le chemin de contrôle (pas encore cause PulseAudio démontrée)** :
+
+- `suspend_stream()` exécute avec succès `pa_stream_cork(stream,1)` puis `pa_stream_flush()`, et remet `corked=1`, `prefilled=0`.
+- `write_pcm()` incrémente `bytes` et `blocks` après `pa_stream_write` et l'écriture de capture, puis, lorsque `corked && ++prefilled >= 2`, appelle `operation(pa_stream_cork(stream,0,completed,NULL))` **avant** `corked=0`, `starts++` et le marqueur `C10_PULSE_UNCORKED=PASS`.
+- Stop : `bytes=11296768` (1 379 blocs). Sortie d'erreur : `bytes=11313152` (1 381 blocs). Les **deux blocs supplémentaires = 16 384 octets** correspondent exactement au seuil de préremplissage, sans nouvel `UNCORKED=PASS` ; le `status:2` est attribué dans la branche `if(!write_pcm(...))` à l'opération RPC C10.
+- Le second `C10_COREAUDIO_START` est à `435530.988051` et le `C10_COREAUDIO_STOP` consécutif à `435531.990420`, environ 1,002 s plus tard. L'attente `operation()` a précisément une échéance de 1,0 s : **timeout plausible**, sans exclusion d'un échec immédiat ou d'un callback négatif. Les heures du log invité ne donnent pas seules le temps de réponse PulseAudio exact.
+
+**Diagnostic A1 raffiné :** la **branche en échec** est fortement localisée dans la demande d'uncork asynchrone du deuxième Play, sous réserve de vérification du lien entre source et binaire r11. Le **motif** reste à départager : `pa_stream_cork` renvoie NULL ; opération `RUNNING` à 1 s ; `CANCELLED` ; état `DONE` sans `success=1` ; erreur de contexte/flux. Ne pas augmenter arbitrairement les délais ni changer l'ordonnancement avant instrumentation.
+
+**Suite bornée :** fabriquer une seule copie instrumentée hors du dépôt et des campagnes historiques ; compiler si les dépendances libpulse sont déjà présentes, **ne pas exécuter de son** ni le banc C10 avant autorisation distincte. Source de production, QuickTime, moteur Logic, HAL et backend C++ : inchangés. A1 reproduction instrumentée = **NON EXÉCUTÉE** ; A2 correctif = **NON COMMENCÉ**.
