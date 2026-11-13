@@ -32,3 +32,32 @@
 5. Exécution en namespace invité isolé, sans réseau, audio, installation, nettoyage, git write, modification de préfixes historiques. Sauvegarder `result.json`, hashes et marqueurs d'une nouvelle campagne ; distinguer pass de conversion/horaire de toute vraie `CoreAudio API` ou sortie acoustique.
 
 **Statut actuel : Bridge 02 en conception/qualification, non encore exécuté.** `COREAUDIO=NOT_TESTED`, `AUDIO=NOT_TESTED`, `LOGIC8=NOT_TESTED`.
+
+## Bridge 02 — qualification runtime rapportée du 5700X (13 novembre 2026)
+
+**Preuve :** journal de l'opérateur WSL2, non réexécuté par GitHub. Le script de test est resté dans une nouvelle zone isolée, sans commit de code de production.
+
+**Répertoire des preuves locales** : `/home/Deniel/d4wrling-work/validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/qt-pcmbridge02.l6aF2xzN`. Rapport `result.json`, source `bridge02.c`, objet et exécutable Mach-O i386, `oracle.json`, logs compile/link/guest, instantanés des entrées. Préfixe temporaire : `/tmp/d4r-qtbridge02.9DH1zzEV/prefix`.
+
+Résultats transmis :
+```text
+QUALIFIED_INPUT=QT_PCM_BRIDGE01_R1_PASS
+QUALIFIED_INPUT=QT_C3_PCM_GUEST08_PASS
+REFERENCE_FNV64=460bcbe2c02d9d4d
+REFERENCE_OUTPUT_FRAMES=551
+REFERENCE_PADDING_BYTES=3784
+QT_PCM_BRIDGE02_ALL_MARKERS=PASS
+QT_PCM_BRIDGE02_ORACLE=PASS
+PCM_PACKET_FNV64=460bcbe2c02d9d4d
+BRIDGE02_OFFLINE_CONTRACT=QUALIFIED
+STATUS=QT_PCM_BRIDGE02_PASS
+PHASE=VERIFY COMPILE_EXIT=0 LINK_EXIT=0 GUEST_EXIT=0
+PROTECTED_INPUTS=UNCHANGED
+```
+Les marqueurs du guest incluent bind-mount privé, `D4W-QT-C3-PCM-OPEN-PASS`, `READ-PASS`, `ERRORS-PASS`, puis `D4W-QT-BRIDGE02-BASELINE-PASS`, `NEGATIVE-PASS`, `GETMEDIASAMPLE-PASS`, `C10-PACKET-SHAPE-PASS` et `PASS`. Objets/binaire identifiés comme Mach-O i386. Avertissement `failed to increase FD rlimit` sans impact constaté sur le résultat de ce test.
+
+**Portée exacte du PASS** : `GetMediaSample` a fourni le PCM `twos` synthétique de 100 trames mono 16 bits à 8 kHz. Un resampler linéaire **expérimental réservé au banc** a produit `floor(100*44100/8000)=551` trames Float32 little-endian stéréo entrelacées, soit 4 408 octets, avec 3 784 octets nuls pour remplir **un paquet 8 192 octets**, la taille attendue par le témoin C10. Hash FNV-1a 64-bit du paquet intégral = `460bcbe2c02d9d4d`, identique à celui de l'oracle Python. Essais négatifs de paramètres, garde après tampon et absence d'altération des entrées signalés PASS par les marqueurs.
+
+**Réserves obligatoires :** l'oracle Python et la routine C utilisent la même définition mathématique de l'interpolation linéaire ; ce succès prouve l'accord sur ce **vecteur fini**, pas la qualité d'un rééchantillonneur musical. Le silence ajouté est **un simple remplissage de banc**, et la coupure de fin de clip/phase non entière doivent être réglées par un futur contrat de flux. Aucune injection dans `AudioDeviceIOProc`, aucune API CoreAudio, aucun `pa_stream_write`, aucune audition, aucun essai Logic 8. `COREAUDIO_CALL=NO`, `AUDIO=NOT_TESTED`, `LOGIC8=NOT_TESTED`.
+
+**Décision de séquence :** Bridge 02 = `PASS` en mode hors audio. La suite doit qualifier les règles de **continuité d'horloge et de phase**, le format de `AudioBufferList`, le découpage/consommation des 1 024 trames et les limites des appels C10. Ne pas confondre le flux d'essai avec un moteur temps réel, ni modifier `src/CoreAudio` ou le chantier parallèle AUD-C11-A1 sans protocole séparé.
