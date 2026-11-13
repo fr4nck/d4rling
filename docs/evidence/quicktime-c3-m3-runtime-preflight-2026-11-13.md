@@ -117,3 +117,34 @@ Verdict local **`STATUS=TRANSITIVE_IMAGE_GRAPH_PASS`**, `PROTECTED_INPUTS=UNCHAN
 
 **Suite recommandée :** contrôler l'empreinte et les chaînes `INSTALL_PREFIX` incorporées dans les binaires `STAGE/bin/darling` et `HIST/bin/darlingserver`, comparer aux chemins exacts du clone. Une fois confirmé, exécuter le témoin **déjà compilé** via un *montage bind privé*, strictement dans un espace de noms de montage séparé, substituant le `libexec/darling` du clone au `LIBEXEC_PATH` historique **sans changer les fichiers historiques**. Contrôler que la substitution est visible dans cet espace de noms avant d'exécuter Darling. Requalifier le résultat selon le runtime réel ; conserver `GET_MEDIA_SAMPLE_BEHAVIOR=NOT_TESTED`, `AUDIO=NOT_TESTED`, `LOGIC8=NOT_TESTED`.
 
+
+## Guest 05-R2 — premier chargement Darwin i386 réussi de QuickTime C3 sous dyld (5700X, 13 novembre 2026)
+
+**Observation opérateur WSL2** sur clone protégé `qt-runtime-stage.Pbj5aTGV/private-install` et témoin Mach-O i386 construit à Guest05-R1, avec import fort `_GetMediaSample` (adresse prise, fonction non appelée). Rapport privé `qt-guest05-r2.fx5we445/result.json`, journaux `guest-stdout.log` et `guest-stderr.log`.
+
+Prévol sur `source@5b521087d79d4348ebe312e622a05f1f8b55c110` : `PROBE_SHA256=PASS`, `QUICKTIME_SHA256=PASS`; contrôle des chemins intégrés `LAUNCHER_EMBEDDED_SERVER=PASS` et `SERVER_EMBEDDED_LIBEXEC=PASS` ; `HISTORICAL_PREFIX=SNAPSHOT_PASS`, `CLONE_PREFIX=SNAPSHOT_PASS`.
+
+**Méthode :** espace de noms Linux `unshare` utilisateur, montage, PID, IPC, UTS et réseau ; montage bind privé de `STAGE/libexec/darling` sur le `HIST/libexec/darling` historique compilé en dur, remonté en lecture seule, et contrôle dans cet espace de noms de la SHA-256 QuickTime. Le serveur démarre un nouveau `DPREFIX` sous `/tmp/d4r-qt5-r2.xr2n4v35/prefix`. **Aucun montage ni écriture propagé à l'environnement hôte**.
+
+Sortie opérateur :
+```text
+GUEST_EXIT=0
+PRIVATE_BINDMAP=PASS
+QUICKTIME_MARKER=PASS
+GUEST_STDOUT_TAIL:
+D4W_BINDMAP_PASS
+D4RLING-QT-C3-I386-DYLD-OK
+GUEST_STDERR_TAIL:
+Setting up a new Darling prefix at /tmp/d4r-qt5-r2.xr2n4v35/prefix
+Warning: failed to increase FD rlimit: Operation not permitted
+STATUS=QT_C3_GUEST_LOAD_PASS
+PROTECTED_INPUTS=UNCHANGED
+GET_MEDIA_SAMPLE_BEHAVIOR=NOT_TESTED
+AUDIO=NOT_TESTED
+LOGIC8=NOT_TESTED
+```
+
+**Portée de preuve :** exécutable i386 chargé sous Darling avec un import QuickTime C3 réel, adresse de `GetMediaSample` non nulle et résolution dyld suffisante pour atteindre `main` et sortir `0`. Le résultat ne prouve **ni appel comportemental à `GetMediaSample`**, ni validation de `NewHandle`/`SetHandleSize`/`MemError` CarbonCore C4, ni extraction MOV, audio, QuickTime Player ou Logic 8. Il confirme le diagnostic de Guest05-R1 : le `LIBEXEC_PATH` historique compilé dans `darlingserver` masque les bibliothèques ajoutées seulement dans un clone jusqu'au bind privé.
+
+**Suite technique :** qualification comportementale isolée Memory Manager C4, puis API QuickTime ciblée avec contrat source réellement identifié, tests d'erreurs et négatifs, sans audio. Conserver le bind privé et les deux préfixes non modifiés ; ne pas intégrer de correctif de production à ce stade.
+
