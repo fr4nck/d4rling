@@ -58,3 +58,24 @@ Verdict local : **`STAGED_DEPENDENCY_REVIEW_REQUIRED`**, `STAGED_COUNT=12`, `PRO
 
 **Point de contrôle suivant :** auditer en lecture seule le graphe de dépendances **transitives** de ces quatorze images (y compris les dylibs historiquement présentes dans le préfixe HIT-23R), vérifier leur architecture i386, leurs identités et les liens symboliques, classifier les éventuels imports à chemin non absolu ; ne pas prétendre avoir exercé `dyld`, le Memory Manager, l'audio ou Logic 8. Ne pas reconstruire ni recopier l'installation.
 
+
+## Closure 03 — graphe transitif i386 du préfixe isolé : PASS (5700X, 13 novembre 2026)
+
+**OBS opérateur WSL2 sur le 5700X**, diagnostic de fichiers en lecture seule, rapport privé `qt-runtime-transitive.QLaDCiia.json` dans `quicktime-c3-m3/g2.0Tfg9onI`. `SOURCE_HEAD=5b521087d79d4348ebe312e622a05f1f8b55c110`. Audit exécuté sur le préfixe `qt-runtime-stage.Pbj5aTGV/private-install`, avec comparaison intégrale des inventaires SHA-256 au préfixe de référence HIT-23R (`6021` entrées) et aux `14/14` fournisseurs ajoutés.
+
+| Mesure | Résultat |
+| --- | --- |
+| `IMAGES_VISITED` | **75** Mach-O i386 analysés |
+| `DEPENDENCY_EDGES` | **465** dépendances |
+| `MAX_DEPTH` | **4** |
+| `MISSING_REQUIRED` | **0** |
+| `MISSING_WEAK` | **0** |
+| `UNRESOLVED_PATHS` | **0** |
+| `INVALID_IMAGES` | **0** |
+| `IDENTITY_MISMATCHES` | **0** |
+| `OUTSIDE_STAGE` | **0** |
+
+Verdict local **`STATUS=TRANSITIVE_IMAGE_GRAPH_PASS`**, `PROTECTED_INPUTS=UNCHANGED`, `DYLD_BINDING=NOT_TESTED`, `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`. Le graphe porte sur les **liens directs et transitifs de chargement des quatorze fournisseurs** et n'est ni une preuve de résolution dyld effective ni une vérification de toutes les références de symboles.
+
+**Décision de passage :** prévol de l'exécution invitée **autorisé uniquement dans le préfixe cloné**. Rejouer d'abord la fixture Carbon HIT-07 qui avait passé HIT-23R sur le préfixe original via `bash reproduction/run-guest.sh STAGE GUEST normal 45`, en vérifiant les fichiers sources, le runner Git blob `7b654180dae2184433b799e81ec06ff60146a180`, l'intégrité du clone et du préfixe historique. La fixture HIT-07 ne charge **pas nécessairement QuickTime C3** et ne saurait valider CarbonCore C4 ou GetMediaSample ; un témoin i386 explicitement lié à QuickTime sera nécessaire ensuite. Aucune modification `master` ni du moteur audio.
+
