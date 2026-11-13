@@ -1,6 +1,6 @@
 # D4rling — B06–B08, jonction QuickTime → HAL B14 → FIFO privé (13 novembre 2026)
 
-**Statut courant : `BATCH_B0608_BLOCKED` en `PHASE=SOURCE`.** Le résultat transmis vient du terminal Debian WSL2 sur le 5700X, sans reproduction sur GitHub. Ce n'est **pas** un résultat d'exécution CoreAudio.
+**Statut courant : `B0608_R5_PASS`, qualifié dans une campagne isolée sur le 5700X, selon le journal transmis par l'opérateur (non rejoué par l'agent GitHub).** Les sections R0–R4 ci-dessous retracent les blocages historiques qui ont précédé ce succès. La HAL B14 i386, le callback réel, le pont FIFO vers un hôte Python simulé, 16 blocs PCM et leur fermeture sont qualifiés **dans ce périmètre expérimental précis**, sans serveur PulseAudio réel ni son.
 
 ## Contrat et précautions
 
@@ -136,3 +136,57 @@ B0608_R3_RPC_REPLY op=1 status=0 value=1
 Le FIFO privé répond à la validation du format et à l'ouverture ; **aucun paquet PCM n'a été observé** dans R4. Le callback ayant refusé les données, cette absence de paquets n'établit pas une panne indépendante du transport.
 
 **Reprise R5 bornée** : créer un nouveau dossier à partir de R4, conserver intégralement les données R1–R4, remplacer le littéral de périphérique uniquement dans `stream_cb` par une variable i386 `AudioDeviceID` initialisée à 7 pour les tests directs B03/B04, puis assigner à cette variable l'ID de périphérique réel avant l'enregistrement HAL de B06. Ne pas désactiver les contrôles de taille, canaux, pointeurs ou ordre de callbacks. Reconstruire uniquement `hal.o` et l'exécutable privé, sans toucher à C10, à PulseAudio ni au checkout historique. Conserver les traces pompe/callback/FIFO et exiger 16 paquets / 131072 octets et oracle SHA-256 avant un PASS global. Ce correctif est **non testé à la date de ce checkpoint**.
+
+## B06–B08 R5 — chaîne HAL B14 i386 → transport FIFO privé qualifiée (13 novembre 2026)
+
+**Preuve d'origine :** transcription du terminal Debian WSL2 opérateur 5700X, **non rejouée par l'agent GitHub**. Nouveau répertoire de sortie local :
+
+`/home/Deniel/d4wrling-work/validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/qt-batch-b0608-r5.pkA8UB1m`
+
+Le rapport local est `result.json`. Le préfixe Darling créé pour cette campagne est `/tmp/d4r-b0608-r5.GiC3WhO4/prefix`.
+
+### Contrat de test et correction privée
+
+- R4 avait démontré `device:2` et `callbacks_after:0` alors que le callback d'origine exigeait l'ID fictif `7`. R5 introduit uniquement dans la **copie privée** de `hal.cpp` un `AudioDeviceID g_expected_stream_device=7u` par défaut pour les tests directs B03/B04, puis l'initialise à l'ID `2` découvert par `AudioObjectGetPropertyData` avant `AudioDeviceCreateIOProcID` pour B06.
+- Les contrôles de format `AudioBufferList`, canaux `2`, taille `8192`, pointeurs, échantillons Float32 et continuité de phase restent en place. La modification n'est **pas** une modification du moteur de production ou de C10.
+- Le banc rejoue les acquis B03–B05, puis lit les 100 trames synthétiques depuis QuickTime `GetMediaSample` et les boucle artificiellement pour les 16 callbacks HAL.
+- Les callbacks enregistrés dans la HAL B14 sont déclenchés par `d4rl_mock_pump()`, pas par une horloge audio réelle. Le client PulseAudio `libpulse-B14.dylib` parle au **récepteur FIFO Python simulé**, qui n'est pas un serveur PulseAudio réel.
+
+### Preuves transmises
+
+```text
+R4_PROVENANCE=PASS
+HAL_DEVICE_MISMATCH=CONFIRMED
+B03_B04_SYNTHETIC_DEVICE_DEFAULT=7
+B06_REAL_DEVICE_SELECTED_FROM_HAL=YES
+CALLBACK_BUFFER_VALIDATIONS=PRESERVED
+B0608_R5_ACTIVE_DEVICE=2
+B0608_R3_PUMP n:1 result:1 callbacks_before:0 callbacks_after:1 frames_before:0 frames_after:1024 source_index:185 phase:33500
+B0608_R3_PUMP n:16 result:1 callbacks_before:15 callbacks_after:16 frames_before:15360 frames_after:16384 source_index:2972 phase:6800
+B06_REAL_HAL_16_CALLBACKS_PASS
+B08_REAL_HAL_STOP_DESTROY_PASS
+B07_FIFO_16_BLOCKS=PASS
+B08_PACKET_ORACLE=PASS
+B06_REAL_HAL_16_CALLBACKS=PASS
+B07_FIFO_16_BLOCKS=PASS
+B08_ORACLE_AND_SHUTDOWN=PASS
+B0608_R5_VERIFIED=PASS
+STATUS=B0608_R5_PASS PHASE=VERIFY COMPILE=0 LINK=0 GUEST=0 MOCK=0
+PROTECTED_INPUTS=UNCHANGED
+```
+
+- Les 16 pompages sont rapportés `result:1`, avec callbacks `1..16`, trames `1024..16384`, indice source final `2972` et reste de phase `6800`.
+- Le récepteur privé a accepté les opérations RPC de spécification `version=1 op=2`, ouverture `version=3 op=1`, puis exactement **16 opérations PCM `version=3 op=2 length=8192`**, séquences `3..18`, toutes `status=0 value=8192`. Une opération Stop `op=3 seq=19` puis Finish `op=4 seq=722440` ont été acquittées `status=0 value=1`.
+- **16 384 trames / 131 072 octets** Float32LE stéréo. Le test `B08_PACKET_ORACLE=PASS` et le contrôleur Python R5 comparent FNV64 `627f9a49f841751d` et SHA-256 `553c73503849bc2a6e809ba7e61b011496f2a4a1dc4f5ab989d079b0832a0a5e` au calcul indépendant B05.
+- Compilation et édition de liens i386, exécution invité et sortie du mock : codes **0**. `PROTECTED_INPUTS=UNCHANGED` selon le snapshot avant/après et l'état Git local.
+- Avertissements non bloquants : redéfinition `TARGET_IPHONE_SIMULATOR` et `TARGET_OS_NANO`, et avertissements `printf` sur format `UInt32` (à nettoyer dans le banc de test pour éliminer l'ambiguïté de format). Pas d'installation, pas de changement du dépôt historique, pas de sortie audio.
+
+### Verdict, limites et suite
+
+**B06, B07, B08 : `PASS` dans la configuration expérimentale `HAL B14 i386 + mock-pump + FIFO vers récepteur Python`.**
+
+Cela démontre une traversée `QuickTime GetMediaSample → interpolation/paquets Float32 → callback HAL B14 → libpulse-B14/FIFO → récepteur simulé` avec conservation octet pour octet du flux de référence, arrêt/désenregistrement et fermeture contrôlés.
+
+**Non qualifié :** utilisation d'un serveur PulseAudio, comportement audio temps réel (jitter, latence, underflows), lecture acoustique, chaîne longue QuickTime non synthétique, prise en charge complète des formats, intégration dans Logic Studio 8 / Audio Units, stabilité de Play/Stop/Play. Le chantier partagé `AUD-C11-A1` reste propriétaire du problème de reprise PulseAudio et de sa correction.
+
+**Suite proposée :** B09–B11, campagne de résilience **sans audio** en dossiers isolés : plusieurs cycles indépendants de création/enregistrement/pompage/Stop/destruction avec contrôle que les séquences ne fuient pas d'un cycle à l'autre ; épreuves négatives et délais/fermetures FIFO ; plusieurs vecteurs PCM (mono S16BE/silence/extrémités) avec oracles indépendants et protocole documenté. Ne pas extrapoler `PASS` sans preuves exécutées.
