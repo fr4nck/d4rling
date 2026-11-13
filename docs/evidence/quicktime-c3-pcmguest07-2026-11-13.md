@@ -87,3 +87,19 @@ Les marqueurs `D4W-QT-C3-PCM-OPEN-PASS`, `READ-PASS`, `ERRORS-PASS` et surtout *
 **Erreur supplémentaire du témoin découverte par revue de la source R2 :** `return 63` est un test groupé du dernier échantillon à `time=99` qui exige par erreur `sample_index == 100`. La valeur de `sampleDescriptionIndex` attendue pour une seule entrée stsd est `1`; le code QuickTime C3 conservé lui assigne `1`. Cette assertion suffit à faire échouer le témoin, mais les autres conditions groupées n'ont pas été diagnostiquées séparément. Il ne s'agit **pas d'une régression QuickTime démontrée**.
 
 **Candidat R3 indépendant** : `D4rling_PCM_Guest08_R3_5700X.sh`, SHA-256 `b86f558ec85e770f50bdde80aa04627c9f197b4d97ae245008eaf7d2188f2dac`. Diff exact R2→R3 : titre actualisé et `sample_index!=100` remplacé par `sample_index!=1`. Contrôles `bash -n`, assertions d'oracle, sysroot, isolation réseau et snapshots **PASS sur le script préparé**, mais **aucun R3 guest exécuté à ce checkpoint**. Réexécuter sur le 5700X dans la nouvelle sortie privée, conserver les préfixes et les témoins R1/R2. Verdict final seulement après exécution avec `guest_exit=0` et tous les marqueurs. 
+
+## Guest 08 R3 — PASS séquentiel, bornes et erreurs (13 novembre 2026)
+
+**Qualification rapportée depuis le terminal Debian WSL2 du 5700X, non rejouée depuis GitHub.** Script `D4rling_PCM_Guest08_R3_5700X.sh`, SHA-256 `b86f558ec85e770f50bdde80aa04627c9f197b4d97ae245008eaf7d2188f2dac`, vérification locale `sha256sum -c = OK`. Conserve le seul changement d'oracle `sampleDescriptionIndex == 1` pour le dernier échantillon, avec les autres contrôles inchangés.
+
+- `STATUS=QT_C3_PCM_GUEST08_PASS`, `PHASE=GUEST`, `COMPILE_EXIT=0`, `LINK_EXIT=0`, `GUEST_EXIT=0`.
+- Mach-O i386 exécutable obtenu avec `-syslibroot` pointant sur le système invité du clone ; `libsystem_sandbox.dylib` du clone a une tranche i386 ; bind privé validé.
+- Marqueurs vus dans stdout du guest : `D4W_QT_PCM08_BINDMAP_PASS`, `D4W-QT-C3-PCM-OPEN-PASS`, `D4W-QT-C3-PCM-READ-PASS`, `D4W-QT-C3-PCM-ERRORS-PASS`, `D4W-QT-C3-PCM08-SEQUENTIAL-PASS`, `D4W-QT-C3-PCM08-BOUNDS-PASS`, `D4W-QT-C3-PCM08-GROW-PASS`, `D4W-QT-C3-PCM08-ERRORS-PASS`, `D4W-QT-C3-PCM08-PASS`. `GUEST08_ALL_MARKERS=PASS`.
+- Reconstitution du cas synthétique C3 : 100 échantillons / 200 octets PCM mono 16 bits 8 kHz, en lectures successives, comparaison de contenu et des temps/tailles/indices selon le témoin ; épreuves de limites, croissance et erreurs conformément aux marqueurs du banc.
+- `PROTECTED_INPUTS=UNCHANGED`; modifications préexistantes au dépôt historique maintenues, pas de changement production.
+- Rapport opérateur (conservé localement, non publié) : `/home/Deniel/d4wrling-work/validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/qt-pcmguest08.lC9eD1tc/result.json`. Préfixe Darling neuf : `/tmp/d4r-qtpcm08.qdvuMNQX/prefix`.
+- Stderr : `failed to increase FD rlimit: Operation not permitted` (warning non bloquant pour cet essai). Réseau guest isolé, pas de sortie audio.
+
+**Conclusion bornée : `QT_C3_PCM_GUEST08_PASS` pour le contrat MOV PCM synthétique mono testé et sa séquence complète.** Cela ne prouve pas la prise en charge QuickTime générale, les autres formats audio/canaux, la stabilité à long terme, le raccord transport HAL/CoreAudio/PulseAudio, l'écoute réelle, ni Logic Studio 8. `AUDIO=NOT_TESTED`, `LOGIC8=NOT_TESTED`. Le moteur audio n'est pas modifié.
+
+**Suite de chantier** : conserver les artefacts et leurs empreintes, étudier le contrat format/horloge/frames entre QuickTime PCM C3 et l'interface audio i386 déjà présente ; noter les conversions d'endianness et les écarts de formats sans écrire de pont ni démarrer d'audio avant qualification distincte. Les prochaines instructions utilisateur seront données en un unique bloc Bash WSL2 directement collable (pas de fichiers à télécharger).
