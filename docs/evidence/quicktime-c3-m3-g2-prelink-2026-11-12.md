@@ -309,6 +309,27 @@ Les deux blocs `0x3b` se trouvent **entièrement dans `__symbol_stub` selon les 
 
 **Prochaine action ciblée :** exploiter le `result.json` existant pour afficher, dans chacun des deux binaires, `LC_SEGMENT.vmaddr`, première section `addr`, décalage, fin de `__symbol_stub` et première position du groupe `0x3b` que la règle LLVM déclarerait hors section. Reproduire la condition du code LLVM et la comparer à la condition basée sur les adresses LC_SEGMENT. Ne pas modifier `ld64`, CarbonCore ou LLVM avant la preuve. `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`, `NO GO` production inchangé.
 
+## Essai 20 — Origine de la divergence LLVM 19 reproduite : la base de la première section diffère de la base du segment Mach-O
+
+**Observation opérateur 5700X**, rapport local en lecture seule `quicktime-c3-m3/g2.0Tfg9onI/rebase-llvm-base.KGLkb3Xl.json`. Fichiers CarbonCore *avant C4* et *C4* identifiés par SHA-256 (respectivement `901641ce9b2c57d3971bcae9ca016966c501bd047c94425cfe74e94ffd7832eb` et `0f221249af131f56b2930c0c425fcc9621646aa7e3d5b878e4faedda66fef126`). Source `5b521087...` et modifications locales protégées ; `PROTECTED_INPUTS=UNCHANGED`, `DYLD_RUNTIME=NOT_TESTED`, `DARLING_GUEST=NOT_TESTED`.
+
+| Mesure | Avant C4 | Après C4 |
+| --- | --- | --- |
+| `LLVM_REBASE_EXIT` | `0` | `1` |
+| `LC_SEGMENT (__TEXT).vmaddr` | `0x0` | `0x0` |
+| Adresse de la première section `__text` | `0xE00` | `0x1420` |
+| Écart de base première section — segment | `0xE00` | `0x1420` |
+| Groupe de rebases opcode `0x3b` | 465 pointeurs, stride 6 | 465 pointeurs, stride 6 |
+| `ACTUAL_SECTION_ERRORS` (base segment Mach-O) | `0` | `0` |
+| `LLVM_STYLE_SECTION_ERRORS` (base première section) | `0` | **`1`** |
+| Première erreur LLVM reproduite | aucune | **fixup `index=316`**, adresse reconstituée `0x3C7BA`, `EXTENDS_SECTION` dans `__cstring` |
+
+**Comparaison discriminante :** avec `LC_SEGMENT.vmaddr=0`, l'adresse du fixup C4 à l'index 316 du groupe `0x3b` est `0x3B39A`, comprise dans `__symbol_stub=[0x3AC30,0x3B71C)`. Avec la base première section `0x1420`, le même fixup serait situé à `0x3C7BA`, dans `__cstring` mais trop proche de sa fin pour un pointeur de 4 octets. Le résultat `STATUS=LLVM_SECTION_BASE_DIVERGENCE_REPRODUCED` reproduit exactement le **type** d'erreur de `llvm-objdump` 19.1.7 (opcode `0x3b`, dépassement de section) et montre comment l'outil peut rejeter le fichier à tort. Le code LLVM épinglé `llvmorg-19.1.7`, `BindRebaseSegInfo::BindRebaseSegInfo`, prend `CurSegAddress = Info.Address` sur la première section et `checkSegAndOffsets` valide les adresses relatives à cette base.
+
+**Verdict limité :** l'échec du décodage `--rebase` de CarbonCore C4 est expliqué par une **divergence de base d'adresse de LLVM** ; aucun rebase du flux C4 ne déborde les sections/segments *selon le décodeur indépendant*. Le critère `C3_M3_STATIC_CHAIN_PASS` et la table d'imports QuickTime précédemment validés restent acquis. Cela **ne prouve pas** qu'Apple dyld ou Darling exécutent les rebases, et ne vaut ni correction permanente LLVM, ni GO de production.
+
+**Suite utile :** passer à un prévol minimal du **chargeur invité i386 déjà qualifié**, rechercher les commandes originales du témoin HIT-23R (ou autre témoin équivalent) et identifier une installation privée entièrement distincte, sans exécuter QuickTime ni toucher au préfixe historique à ce stade ; ensuite préparer un chargement invité contrôlé de la chaîne CoreServices/QuickTime dans ce préfixe neuf, et des contrôles comportementaux GetMediaSample / C4. Aucun travail x86_64/Cocoa demandé.
+
 ## Prochaine action exacte
 
 1. Réutiliser le graphe CMake/Ninja privé déjà configuré, sans nouvelle copie volumineuse ni mutation de l'ancien build.
