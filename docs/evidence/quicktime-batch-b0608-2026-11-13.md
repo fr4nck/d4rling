@@ -108,3 +108,31 @@ hal.cpp:244:12: error: use of undeclared identifier 'stdout'
 **R4 conseillé :** cloner uniquement les objets et sources R3 vers un répertoire de validation neuf, ajouter `#include <stdio.h>` **en tête de `hal.cpp`**, recompiler et relier sans modifier la HAL, les bins, le checkout historique ni les essais précédents. Ensuite relancer avec mock FIFO privé. Produire `B0608_R3_PUMP`, `B0608_R3_CALLBACK`, `B0608_R3_RPC_REQUEST` séparément, en conservant les valeurs et les journaux sous le nouvel OUT même si l'invité sort avec 188, 194 ou 195. Garder `FAIL` tant que `GUEST_EXIT=0`, les 16 paquets, l'oracle et la fermeture ne sont pas tous attestés.
 
 **Bornes toujours en vigueur** : `B03–B05 R1=PASS`; R1 HAL enregistrement et démarrage observés, callback et FIFO non qualifiés ; R2 et R3 erreurs de compilation du banc ; C11 séparé ; aucun son, aucun PulseAudio serveur, aucune suppression et aucune écriture production.
+
+## B06–B08 R4 — cause discriminée : AudioDeviceID HAL ≠ ID du banc synthétique
+
+**Preuve d'origine :** sortie de terminal opérateur WSL2 5700X, non rejouée sur GitHub. Dossier R4 conservé : `/home/Deniel/d4wrling-work/validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/qt-batch-b0608-r4.xadVmab7` avec `result.json`, `hal.cpp`, objets et logs `guest.stdout.log` / `mock.stdout.log`.
+
+```text
+R3_PROVENANCE=PASS
+STDIO_HEADER_POSITION=FIXED
+PHASE=GUEST COMPILE=0 LINK=0 GUEST=194 MOCK=NOT_RUN
+STATUS=B0608_R4_DIAGNOSTIC
+PROTECTED_INPUTS=UNCHANGED
+B06_QUICKTIME_GETMEDIASAMPLE_PASS
+B06_PRIVATE_FIFO_BIND_PASS
+B06_REAL_IOPROC_REGISTERED_PASS
+B06_REAL_AUDIODEVICE_START_PASS
+B0608_R3_CALLBACK device:2 now:1 when:1 out:1 buffers:1 channels:2 bytes:8192
+B0608_R3_PUMP n:1 result:1 callbacks_before:0 callbacks_after:0 frames_before:0 frames_after:0 source_index:0 phase:0
+B0608_R3_RPC_REQUEST version=1 op=2 length=12 seq=1
+B0608_R3_RPC_REPLY op=2 status=0 value=1
+B0608_R3_RPC_REQUEST version=3 op=1 length=12 seq=2
+B0608_R3_RPC_REPLY op=1 status=0 value=1
+```
+
+**Explication technique étayée :** le callback `stream_cb()` hérité du banc B04 comporte une condition de rejet `device!=7u`, adaptée au test **synthétique** où le périphérique est fixé à 7. Dans la HAL réelle B14, le callback enregistré par `AudioDeviceCreateIOProcID` a reçu `device:2`, correspondant au périphérique découvert par `AudioObjectGetPropertyData`. Le callback rejette donc cet appel avant `generate` et avant incrémentation des compteurs : `callbacks_after:0`, `frames_after:0`, tandis que `d4rl_mock_pump()` indique `result:1` (activation du chemin, pas succès de rendu). L'échec 194 signifie précisément `s.callbacks != i+1`, et non un échec de chargement, d'enregistrement ou de démarrage. `B06=PARTIAL`, B07/B08 non qualifiés.
+
+Le FIFO privé répond à la validation du format et à l'ouverture ; **aucun paquet PCM n'a été observé** dans R4. Le callback ayant refusé les données, cette absence de paquets n'établit pas une panne indépendante du transport.
+
+**Reprise R5 bornée** : créer un nouveau dossier à partir de R4, conserver intégralement les données R1–R4, remplacer le littéral de périphérique uniquement dans `stream_cb` par une variable i386 `AudioDeviceID` initialisée à 7 pour les tests directs B03/B04, puis assigner à cette variable l'ID de périphérique réel avant l'enregistrement HAL de B06. Ne pas désactiver les contrôles de taille, canaux, pointeurs ou ordre de callbacks. Reconstruire uniquement `hal.o` et l'exécutable privé, sans toucher à C10, à PulseAudio ni au checkout historique. Conserver les traces pompe/callback/FIFO et exiger 16 paquets / 131072 octets et oracle SHA-256 avant un PASS global. Ce correctif est **non testé à la date de ce checkpoint**.
