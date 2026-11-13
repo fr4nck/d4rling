@@ -92,3 +92,28 @@ Verdict local **`STATUS=TRANSITIVE_IMAGE_GRAPH_PASS`**, `PROTECTED_INPUTS=UNCHAN
 
 **Prochain témoin minimal ciblé** : produire uniquement en **espace de validation privé** un exécutable Mach-O i386 compilé à partir d'une source C courte prenant l'adresse de `GetMediaSample` (sans l'appeler), puis le lier explicitement au **QuickTime C3 du clone** et au `libSystem.B.dylib` existant. Vérifier qu'il possède une dépendance directe `LC_LOAD_DYLIB` vers QuickTime et une importation forte `_GetMediaSample` avec l'ordinal QuickTime ; l'exécuter via le runner épinglé dans un nouveau préfixe temporaire. Cela distinguera le **chargement réel de la chaîne dyld** et la **résolution de symbole** du fonctionnement de `GetMediaSample`, de la mémoire C4 et de l'audio. Si le témoin échoue, collecter stdout/stderr sans modifier `darling`, `dyld` ou le préfixe de référence. **NO GO Logic 8 / moteur audio.**
 
+
+## Guest 05-R1 — vrai témoin QuickTime i386 : liaison PASS, dyld FAIL (5700X, 13 novembre 2026)
+
+**Observation opérateur WSL2** sur le préfixe isolé `qt-runtime-stage.Pbj5aTGV/private-install`, rapport `qt-guest05-r1.v7RMmd5K/result.json`. La reprise R1 corrige le mauvais chemin du linker dans le premier essai Guest 05. Linker i386 historique `build-hitoolbox-i386/src/external/cctools-port/cctools/ld64/src/i386-apple-darwin20-ld` : SHA-256 `aa4aa977a9f408dba035cba18acf54e27cefb92261a64f8209eced645b7af174`.
+
+- Prévol `LINKER_I386=PASS`, `TRANSITIVE_GRAPH=PASS`, `HIT07_BASELINE=PASS`, `PROTECTED_PREFIX_SNAPSHOT=PASS`.
+- `COMPILE_EXIT=0`, `LINK_EXIT=0` pour une fixture Mach-O i386 prenant l'adresse de `GetMediaSample` sans invoquer la fonction.
+- `MACHO_I386=PASS`, `QUICKTIME_LOAD_COMMAND=PASS`, `GETMEDIASAMPLE_IMPORT=PASS` (import fort dans QuickTime selon nlist/ordinal). **Ce sont des preuves statiques du programme invité réel**, pas du chargement.
+- `GUEST-RUNNER_EXIT=1`, `GUEST_EXIT=1`, `GUEST_MARKER=MISSING`. Erreur textuelle dyld : `Library not loaded: /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime`, `Reason: no suitable image found` puis essais `/Users`, `/Library`, `/System` « not a file ». `STATUS=QT_C3_GUEST_LOAD_FAIL`.
+- `PROTECTED_INPUTS=UNCHANGED`. L'installation originale, le clone et le dépôt historique ne sont pas endommagés.
+- Les essais antérieurs `Guest05` sans R1 affichaient un `PROTECTED_INPUTS=INCONCLUSIVE` provoqué par un prévol bloqué et un `finally` écrasant le motif d'échec ; **aucune mutation d'entrée n'a été démontrée**.
+
+### Hypothèse causale fondée sur le code historique
+
+**Un répertoire `private-install` copié n'est pas un runtime Darling relocalisé.** Sources lues à `master@5b521087d79d4348ebe312e622a05f1f8b55c110` :
+
+- `src/startup/CMakeLists.txt` définit `-DINSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}"` au build.
+- `src/startup/darling.c` (ligne ~827) démarre le serveur avec `execl(INSTALL_PREFIX "/bin/darlingserver", ...)` **sans utiliser le chemin du binaire lanceur exécuté**.
+- `src/include/darling-config.h.in` définit `LIBEXEC_PATH "${CMAKE_INSTALL_PREFIX}/libexec/darling"`.
+- Au gitlink darlingserver épinglé `89751e64bc6c2082f7725061824ee0e33395b0de` (`darlinghq/darlingserver`, `src/darlingserver.cpp` lignes ~629-635), le serveur utilise **`LIBEXEC_PATH` précompilé comme `lowerdir` de l'overlay invité** ; le mode copie utilise aussi cette variable. Il positionne `__mldr_DYLD_ROOT_PATH = LIBEXEC_PATH` lors de `spawnLaunchd`.
+
+**Conséquence probable :** le `STAGE/bin/darling` copié déclenche le serveur et la racine systèmes de l'installation **originale**, où QuickTime n'est pas présent, malgré le `TRANSITIVE_IMAGE_GRAPH_PASS` du **clone sur disque**. Le résultat HIT07 PASS sur ce clone ne prouve **pas** que ses 14 nouveaux fournisseurs ont été effectivement montés. Cette hypothèse doit être confirmée sur les binaires réels avec `strings` ou par un contrôle du chemin `INSTALL_PREFIX/LIBEXEC_PATH` avant toute solution runtime. Ne surtout pas copier QuickTime dans le préfixe historique ni modifier `ld64`, dyld, ou les dossiers initiaux pour contourner ce défaut de relocalisation.
+
+**Suite recommandée :** contrôler l'empreinte et les chaînes `INSTALL_PREFIX` incorporées dans les binaires `STAGE/bin/darling` et `HIST/bin/darlingserver`, comparer aux chemins exacts du clone. Une fois confirmé, exécuter le témoin **déjà compilé** via un *montage bind privé*, strictement dans un espace de noms de montage séparé, substituant le `libexec/darling` du clone au `LIBEXEC_PATH` historique **sans changer les fichiers historiques**. Contrôler que la substitution est visible dans cet espace de noms avant d'exécuter Darling. Requalifier le résultat selon le runtime réel ; conserver `GET_MEDIA_SAMPLE_BEHAVIOR=NOT_TESTED`, `AUDIO=NOT_TESTED`, `LOGIC8=NOT_TESTED`.
+
