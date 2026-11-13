@@ -31,3 +31,32 @@ Répertoire d'essai local conservé : `/home/Deniel/d4wrling-work/validation/570
 **État de vérité :** B03–B05 R1 reste `PASS`. B06 `NOT_RUN` ; B07 `NOT_RUN` ; B08 `NOT_RUN`. `COREAUDIO_WITH_QUICKTIME=NOT_TESTED`, `PULSEAUDIO_SERVER=NOT_USED`, `AUDIO=NOT_TESTED`, `LOGIC8=NOT_TESTED`.
 
 Le fait que le script avait prévu un hôte Python privé ne démontre pas la prise en charge réelle de l'ABI de transport : elle doit être testée séparément, notamment les réponses RPC, le chargement de CoreAudio-B14, le comportement du FIFO et la fermeture de flux.
+
+## B06–B08 R1 — compilation et HAL démarrée, échec du pompage (13 novembre 2026)
+
+**Origine :** journal du terminal opérateur WSL2 du 5700X ; aucun exécutable ni journal brut copié sur GitHub, aucune exécution locale effectuée par cet agent. État de synchronisation GitHub vérifié avant publication.
+
+- Nouvelle campagne : `/home/Deniel/d4wrling-work/validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/qt-batch-b0608-r1.aSBqmVEk/`; rapport local `result.json`. Préfixe invité `/tmp/d4r-b0608-r1.Zk0C86So/prefix`.
+- Contrôles d'entrée `B0305_PRECONDITIONS=PASS`, `B0608_OLD_BLOCKER=CONFIRMED`, `MAIN_REWRITE=UNIQUE_SIGNATURE_BOTH_LAYOUTS`, `PYTHON_MOCK_SYNTAX=PASS`.
+- Deux objets Mach-O i386 `batch.o` et `hal.o` compilés ; liaison réussie, `batch-b0608-r1-i386` identifié comme exécutable Mach-O i386.
+- Marqueurs invités obtenus jusqu'à :
+```text
+B0305_PRECONDITIONS_PASS
+B06_QUICKTIME_GETMEDIASAMPLE_PASS
+B06_PRIVATE_FIFO_BIND_PASS
+B06_REAL_IOPROC_REGISTERED_PASS
+B06_REAL_AUDIODEVICE_START_PASS
+```
+- Verdict :
+```text
+STATUS=BATCH_B0608_R1_FAIL
+PHASE=GUEST COMPILE_EXIT=0 LINK_EXIT=0 GUEST_EXIT=188 MOCK_EXIT=NOT_RUN
+PROTECTED_INPUTS=UNCHANGED
+```
+- Deux avertissements C++ `TARGET_IPHONE_SIMULATOR` et `TARGET_OS_NANO` ; avertissement invité `failed to increase FD rlimit`, non déterminants pour la cause du code 188.
+
+**Sémantique du code 188 :** dans le témoin `b06_hal_run()`, une seule condition agrégée dans la boucle 16 appels peut mener à `return 188` : `d4rl_mock_pump()!=1` **ou** `s.callbacks!=i+1` **ou** `s.frames_out!=(i+1)*1024`. Le premier appel, le numéro d'itération, le retour du pump, les compteurs et l'état du dialogue FIFO n'étaient pas instrumentés séparément. La réussite de `AudioDeviceStart` ne démontre pas qu'un callback a été invoqué ni qu'un paquet a été transmis.
+
+**Ne pas conclure :** B06, B07 et B08 restent `FAIL/NOT_QUALIFIED` comme chaîne complète. `MOCK_EXIT=NOT_RUN` signifie que le banc n'est pas allé jusqu'au `wait` du récepteur ; ce n'est pas une preuve de panne du mock. Aucune émission acoustique, aucun serveur PulseAudio, aucune preuve Logic 8. Les données historiques n'ont pas été altérées d'après les contrôles transmis.
+
+**Reprise R2 recommandée :** préserver ce répertoire ; copier `hal.cpp`, `batch.c`, `mock_host.py` et `oracle.json` dans un nouvel espace. Remplacer la condition de la boucle par trois verdicts séparés, et journaliser `pump`, callbacks, frames, indice et phase avant/après chaque itération. Inspecter `src/pulse_mock.c` et les appels attendus `src/transport.c` sans modifier C10. Journaliser le protocole côté hôte dans la copie privée du mock. Vérifier les entrées SHA et le statut Git local ; ne pas changer la HAL ni le moteur audio, ne pas lancer de serveur PulseAudio. Publier `PASS` seulement après exécution et comparaison des paquets.
