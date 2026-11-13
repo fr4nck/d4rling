@@ -79,3 +79,16 @@ Verdict local **`STATUS=TRANSITIVE_IMAGE_GRAPH_PASS`**, `PROTECTED_INPUTS=UNCHAN
 
 **Décision de passage :** prévol de l'exécution invitée **autorisé uniquement dans le préfixe cloné**. Rejouer d'abord la fixture Carbon HIT-07 qui avait passé HIT-23R sur le préfixe original via `bash reproduction/run-guest.sh STAGE GUEST normal 45`, en vérifiant les fichiers sources, le runner Git blob `7b654180dae2184433b799e81ec06ff60146a180`, l'intégrité du clone et du préfixe historique. La fixture HIT-07 ne charge **pas nécessairement QuickTime C3** et ne saurait valider CarbonCore C4 ou GetMediaSample ; un témoin i386 explicitement lié à QuickTime sera nécessaire ensuite. Aucune modification `master` ni du moteur audio.
 
+
+## Guest Baseline 04 — HIT-07 exécuté dans le préfixe QuickTime isolé : PASS (5700X, 13 novembre 2026)
+
+**Observation opérateur WSL2**, exécution réelle `bash reproduction/run-guest.sh` (mode `normal`, limite 45 secondes) sur `qt-runtime-stage.Pbj5aTGV/private-install`, avec la fixture historique `build-hitoolbox-i386/hit07-production-guest/hit07-carbon-production-i386`. Journal privé `qt-runtime-h07.rx5zk6q9/result.json` ; sortie du lanceur `/tmp/d4rl-replay.VHQgNz0e`.
+
+- Prévol `HISTORICAL_ENTRIES=6021_PASS`, `CLOSURE_03=PASS`, `STAGED_PROVIDERS=14/14_PASS`, `RUNNER=PASS`.
+- Exécution invité : `RUNNER_EXIT=0`, `GUEST_EXIT=0`, `GUEST_MARKER=PASS`, stdout exact `D4RLING-CARBON-EVENT-I386-OK`.
+- Stderr non bloquant : `Setting up a new Darling prefix at /tmp/d4rl-replay.VHQgNz0e/prefix` et `Warning: failed to increase FD rlimit: Operation not permitted`. Ces lignes ne sont pas prises comme preuve de comportement QuickTime.
+- Post-vol : `PROTECTED_INPUTS=UNCHANGED` en inventaires fichier/hash du préfixe HIT-23R de référence et de son clone, et état Git historique inchangé.
+- Verdict local : **`STATUS=STAGED_HIT07_GUEST_PASS`**. Le témoin exerce un parcours **Carbon Event** (`CreateEvent`, `SetEventParameter`, `GetEventParameter`, `ReleaseEvent`), **pas** `GetMediaSample`, et ne garantit pas le chargement de la nouvelle QuickTime C3 ni de CarbonCore C4.
+
+**Prochain témoin minimal ciblé** : produire uniquement en **espace de validation privé** un exécutable Mach-O i386 compilé à partir d'une source C courte prenant l'adresse de `GetMediaSample` (sans l'appeler), puis le lier explicitement au **QuickTime C3 du clone** et au `libSystem.B.dylib` existant. Vérifier qu'il possède une dépendance directe `LC_LOAD_DYLIB` vers QuickTime et une importation forte `_GetMediaSample` avec l'ordinal QuickTime ; l'exécuter via le runner épinglé dans un nouveau préfixe temporaire. Cela distinguera le **chargement réel de la chaîne dyld** et la **résolution de symbole** du fonctionnement de `GetMediaSample`, de la mémoire C4 et de l'audio. Si le témoin échoue, collecter stdout/stderr sans modifier `darling`, `dyld` ou le préfixe de référence. **NO GO Logic 8 / moteur audio.**
+
