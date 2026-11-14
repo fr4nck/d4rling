@@ -17,6 +17,17 @@ le plafond de trois morceaux par artiste. Ce repère éditorial ne vaut pas
 validation technique : les critères R/U/A/M/QT/L/P et leurs statuts restent
 indépendants.
 
+## QuickTime B11E — `GetMediaSample` i386 en production (14 novembre 2026)
+
+**TEST / PASS borné.**
+- **R1** : le véritable extracteur `qt_mov_pcm.c` passe 144/0 + 20 223/0 sur clang x64, clang i686 et gcc, avec ASan/UBSan ; 6 088 inversions d'un bit et 761 troncatures par vecteur ; 3 mutants rejetés.
+- **R2** : `GetMediaSample` sert le PCM 16 bits via le vrai Memory Manager CarbonCore : natif 137/0 ; Mach-O i386 dans l'invité **139/0** avec une `libdyld` corrigée ; tas stable sur 1 000 cycles.
+- **R3** : la cible QuickTime est construite par CMake/Ninja (`gui_stubs`, dépendance CoreServices nécessaire et prouvée), avec 4 600 exports inchangés et les témoins QuickTime existants inchangés ; la chaîne MOV → `GetMediaSample` → HAL → FIFO donne 6/6 empreintes B11C, sans injection.
+- **Défaut découvert :** en i386, `tlv_get_addr` de `libdyld` lit `%gs` au lieu du TSD Darwin `%fs`. `MemError()` rend toujours 0 et chaque accès TLS perd 16 octets ; R2 donne 120/139 avec la `libdyld` actuelle. Correctif candidat et PR amont **préparés, non intégrés** (gitlink `dyld` inchangé).
+- B12 (son audible), vidéo et Player : NOT_RUN.
+
+[Preuves et reproduction](docs/evidence/quicktime-b11e-2026-11-14.md).
+
 ## Security i386 — fermeture du chargement CarbonCore (14 novembre 2026)
 
 **TEST / PASS borné :** Security final i386/x86_64 lié, signé et chargé dans le banc privé à mappings délégués. CarbonCore exact de #2089 se charge sans `-dead_strip_dylibs` ; HomeResFile **88/88 normal + 88/88 bypass**, Carbon Events et témoin SSL borné passent. Le défaut de commande longue Clang est corrigé dans le sous-module Security ; aucune API cryptographique n’est modifiée. TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction](docs/evidence/security-i386-loading-2026-11-14.md).
@@ -370,6 +381,11 @@ conserve certains échantillons PCM dans l'objet Movie (40 contrôles i386,
 ne restituent pas encore de son, ne couvrent pas les pistes publiques et ne
 valident ni QTKit ni le Player ; construction de la cible `QuickTime`
 par CMake/Ninja toujours BLOCKED.
+**Actualisation 14 novembre (B11E) :** cible `QuickTime` construite par
+CMake/Ninja ; `GetMediaSample` (PCM 16 bits) en production, qualifié en
+Mach-O i386 sous réserve de la correction TLS de `libdyld`
+([rapport](docs/evidence/quicktime-b11e-2026-11-14.md)). QT3 reste ouvert :
+aucun son restitué.
 
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |

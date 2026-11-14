@@ -6,8 +6,10 @@ dans une mémoire appartenant au Movie, libérée par `DisposeMovie` et
 `qt_mov_pcm.c` (visibilité cachée) réutilise `qt_mov_probe.c`. La copie est
 bornée par le tampon de l'appelant. Un film sans PCM exploitable s'ouvre comme
 avant, sans échantillons. Échec d'allocation : `memFullErr` (-108), sans film
-ni allocation orpheline. Aucun son n'est joué ; `GetMediaSample`,
-`GetTrackMedia` et `GetMovieIndTrack` restent des stubs.
+ni allocation orpheline. Aucun son n'est joué. À cette date, `GetMediaSample`,
+`GetTrackMedia` et `GetMovieIndTrack` étaient des stubs ; ils ont été
+implémentés depuis ([pistes](../quicktime-tracks/README.md),
+[B11E](../quicktime-getmediasample-b11e/README.md)).
 
 Sous-ensemble PCM : une piste `soun`, `stsd` v0 `twos`/`sowt` 16 bits,
 1-2 canaux, fréquence entière égale à l'échelle `mdhd`, une entrée `stts`
