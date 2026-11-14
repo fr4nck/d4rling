@@ -1,0 +1,22 @@
+[
+  {
+    "case": "i386-original",
+    "returncode": 1,
+    "baseline_bug_reproduced": true
+  },
+  {
+    "case": "i386-fixed",
+    "returncode": 0,
+    "baseline_bug_reproduced": false
+  },
+  {
+    "case": "x86_64-original",
+    "returncode": 1,
+    "baseline_bug_reproduced": true
+  },
+  {
+    "case": "x86_64-fixed",
+    "returncode": 0,
+    "baseline_bug_reproduced": false
+  }
+]

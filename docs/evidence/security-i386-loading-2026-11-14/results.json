@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-14",
+  "machine": "5700X / Debian WSL2",
+  "darling_upstream": "91dcc9d639314097bf559042c6c98e194f547e38",
+  "d4rling_base": "f45d3a93382ff952e230dfa7031fc673f3139377",
+  "qualified_build_source": "4be2603c62a6b0ec0148e60c7dff2e4f8b61c931",
+  "security_base": "75effd7ee2e75217b8de030f92443cb3cfba0298",
+  "security_fix": "a536cfff5b857b214d939415cf6040e347fcf785",
+  "carboncore_code": "b52a309cfb2f4b020aa8e356df107ad92d6a76f3",
+  "carboncore_prior_evidence": "c15880def50850ca408c168040b7365dd12d36e0",
+  "carboncore_sha256": "7efb2ba0bcfe773e4ab5c760e8ce00cce025d8ca6fc8597c8846d5d381625a7e",
+  "security_final_sha256": "8237e996e3fb7d49d1fcf7c8f3a46ca383efd7461b6d533eb90e8736c2e6d354",
+  "compiled_missing_dependency_edges": 108,
+  "home_res_normal": {
+    "status": "PASS",
+    "assertions": 88
+  },
+  "home_res_bypass": {
+    "status": "PASS",
+    "assertions": 88
+  },
+  "required_symbols": {
+    "i386": 28,
+    "x86_64": 28
+  },
+  "security_context_and_closed_transport": {
+    "i386": "PASS",
+    "x86_64": "PASS",
+    "handshake_status": -9806
+  },
+  "carbon_events": "PASS",
+  "standard_i386_loading": "PASS",
+  "dependency_closure_images": 62,
+  "loaded_images_home_res": 66,
+  "unchanged_defined_external_symbols": {
+    "i386": 4080,
+    "x86_64": 4148
+  },
+  "full_tls_certificate_trust_keychain": "NOT_RUN",
+  "clean_full_security_rebuild": "NOT_RUN",
+  "final_runs": [
+    {
+      "label": "1794656281835230425-signed-home-normal",
+      "program": "witness",
+      "mode": "normal",
+      "rc": 0
+    },
+    {
+      "label": "1794656281835230425-signed-home-bypass",
+      "program": "witness",
+      "mode": "bypass",
+      "rc": 0
+    },
+    {
+      "label": "1794656281835230425-signed-api-i386",
+      "program": "security-smoke-i386",
+      "mode": "normal",
+      "rc": 0
+    },
+    {
+      "label": "1794656281835230425-signed-api-x64",
+      "program": "security-smoke-x86_64",
+      "mode": "normal",
+      "rc": 0
+    },
+    {
+      "label": "1794656281835230425-signed-carbon",
+      "program": "carbon",
+      "mode": "normal",
+      "rc": 0
+    }
+  ],
+  "frozen_existing_build_inputs": 92,
+  "private_artifact_files": 18329
+}

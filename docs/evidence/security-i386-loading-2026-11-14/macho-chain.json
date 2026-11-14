@@ -1,0 +1,498 @@
+{
+  "CarbonCore": {
+    "sha256": "7efb2ba0bcfe773e4ab5c760e8ce00cce025d8ca6fc8597c8846d5d381625a7e",
+    "slices": [
+      {
+        "arch": "i386",
+        "slice_sha256": "7efb2ba0bcfe773e4ab5c760e8ce00cce025d8ca6fc8597c8846d5d381625a7e",
+        "slice_bytes": 1653100,
+        "load_commands": [
+          {
+            "command": "LC_ID_DYLIB",
+            "path": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libicucore.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libiconv.2.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libc++.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libSystem.B.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libc++abi.dylib"
+          }
+        ]
+      }
+    ]
+  },
+  "Foundation": {
+    "sha256": "f5cd42423b941a290fdf86f20dc295838677764017f8e2d766cb931b611d7fed",
+    "slices": [
+      {
+        "arch": "i386",
+        "slice_sha256": "d30e91d83cbab739a7329efd8c8a7bb4eb6901eee966a73968750709e97842b7",
+        "slice_bytes": 3316208,
+        "load_commands": [
+          {
+            "command": "LC_ID_DYLIB",
+            "path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
+          },
+          {
+            "command": "LC_REEXPORT_DYLIB",
+            "path": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+          },
+          {
+            "command": "LC_REEXPORT_DYLIB",
+            "path": "/usr/lib/libobjc.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CFNetwork.framework/Versions/A/CFNetwork"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libxml2.2.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libicucore.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libc++.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libz.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libSystem.B.dylib"
+          }
+        ]
+      },
+      {
+        "arch": "x86_64",
+        "slice_sha256": "abe52bd36f086a12eb0d75ce8b80c4f9250922163ba80b428d16cd3224417f44",
+        "slice_bytes": 3992960,
+        "load_commands": [
+          {
+            "command": "LC_ID_DYLIB",
+            "path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
+          },
+          {
+            "command": "LC_REEXPORT_DYLIB",
+            "path": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+          },
+          {
+            "command": "LC_REEXPORT_DYLIB",
+            "path": "/usr/lib/libobjc.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CFNetwork.framework/Versions/A/CFNetwork"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libxml2.2.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libicucore.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libc++.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libz.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libSystem.B.dylib"
+          }
+        ]
+      }
+    ]
+  },
+  "CFNetwork": {
+    "sha256": "56e5857910a85a66bb08b62def0f0509cef413b225b1456eaf7016d751250414",
+    "slices": [
+      {
+        "arch": "x86_64",
+        "slice_sha256": "5f73452b5b32e4e133156831820751cdfd71c846cb481e9584bf8c876408427c",
+        "slice_bytes": 915232,
+        "load_commands": [
+          {
+            "command": "LC_ID_DYLIB",
+            "path": "/System/Library/Frameworks/CFNetwork.framework/Versions/A/CFNetwork"
+          },
+          {
+            "command": "LC_LOAD_UPWARD_DYLIB",
+            "path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/Security.framework/Versions/A/Security"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libz.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libobjc.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libicucore.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libc++.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libSystem.B.dylib"
+          }
+        ]
+      },
+      {
+        "arch": "i386",
+        "slice_sha256": "d263202100dcbe64742a9d9abbdb5964c0023f182db49796aa77c4d7c9066d85",
+        "slice_bytes": 826800,
+        "load_commands": [
+          {
+            "command": "LC_ID_DYLIB",
+            "path": "/System/Library/Frameworks/CFNetwork.framework/Versions/A/CFNetwork"
+          },
+          {
+            "command": "LC_LOAD_UPWARD_DYLIB",
+            "path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/Security.framework/Versions/A/Security"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libz.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libobjc.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libicucore.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libc++.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libSystem.B.dylib"
+          }
+        ]
+      }
+    ]
+  },
+  "Security": {
+    "sha256": "8237e996e3fb7d49d1fcf7c8f3a46ca383efd7461b6d533eb90e8736c2e6d354",
+    "slices": [
+      {
+        "arch": "i386",
+        "slice_sha256": "7d5c22ea317507c3146805d3d15602bf99aef2fcec9b1920efab0c05a3d4a250",
+        "slice_bytes": 15054816,
+        "load_commands": [
+          {
+            "command": "LC_ID_DYLIB",
+            "path": "/System/Library/Frameworks/Security.framework/Versions/A/Security"
+          },
+          {
+            "command": "LC_LOAD_UPWARD_DYLIB",
+            "path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libcoretls_cfhelpers.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libMobileGestalt.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/PrivateFrameworks/AppleFSCompression.framework/Versions/A/AppleFSCompression"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libbsm.0.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/LocalAuthentication.framework/Versions/A/LocalAuthentication"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libcoretls.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CryptoTokenKit.framework/Versions/A/CryptoTokenKit"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libpam.2.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libsqlite3.0.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libxar.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libobjc.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libbz2.1.0.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libxml2.2.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libicucore.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libDiagnosticMessagesClient.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libz.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libc++.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libSystem.B.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libc++abi.dylib"
+          }
+        ]
+      },
+      {
+        "arch": "x86_64",
+        "slice_sha256": "35571184170bfbe58e1cedca40fe841d127d70fc73a2ecfd4deeca3c960e4cc0",
+        "slice_bytes": 15617104,
+        "load_commands": [
+          {
+            "command": "LC_ID_DYLIB",
+            "path": "/System/Library/Frameworks/Security.framework/Versions/A/Security"
+          },
+          {
+            "command": "LC_LOAD_UPWARD_DYLIB",
+            "path": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libcoretls_cfhelpers.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libMobileGestalt.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/PrivateFrameworks/AppleFSCompression.framework/Versions/A/AppleFSCompression"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libbsm.0.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/LocalAuthentication.framework/Versions/A/LocalAuthentication"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libcoretls.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CryptoTokenKit.framework/Versions/A/CryptoTokenKit"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libpam.2.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libsqlite3.0.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libxar.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libobjc.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libbz2.1.0.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libxml2.2.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libicucore.A.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libDiagnosticMessagesClient.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libz.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libc++.1.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libSystem.B.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libc++abi.dylib"
+          }
+        ]
+      }
+    ]
+  },
+  "coretls_cfhelpers": {
+    "sha256": "4daffaae62c288c1838b16fed802e09a317ba714015ef61d0574dbae7196ad4c",
+    "slices": [
+      {
+        "arch": "x86_64",
+        "slice_sha256": "bdf4d9f1954014f3a8f71892474c5b3a437491071d8ee9c748d96f33e6721e3e",
+        "slice_bytes": 26400,
+        "load_commands": [
+          {
+            "command": "LC_ID_DYLIB",
+            "path": "/usr/lib/libcoretls_cfhelpers.dylib"
+          },
+          {
+            "command": "LC_LOAD_UPWARD_DYLIB",
+            "path": "/System/Library/Frameworks/Security.framework/Versions/A/Security"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libcoretls.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libSystem.B.dylib"
+          }
+        ]
+      },
+      {
+        "arch": "i386",
+        "slice_sha256": "85566514dce9cd1ca5f9d222fcb811b96c05ffe633f6f9bd827ae15876ebb30e",
+        "slice_bytes": 25568,
+        "load_commands": [
+          {
+            "command": "LC_ID_DYLIB",
+            "path": "/usr/lib/libcoretls_cfhelpers.dylib"
+          },
+          {
+            "command": "LC_LOAD_UPWARD_DYLIB",
+            "path": "/System/Library/Frameworks/Security.framework/Versions/A/Security"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libcoretls.dylib"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation"
+          },
+          {
+            "command": "LC_LOAD_DYLIB",
+            "path": "/usr/lib/libSystem.B.dylib"
+          }
+        ]
+      }
+    ]
+  }
+}

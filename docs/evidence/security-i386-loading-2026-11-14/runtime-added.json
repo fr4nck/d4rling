@@ -1,0 +1,72 @@
+[
+  {
+    "id": "/System/Library/Frameworks/Security.framework/Versions/A/Security",
+    "source": "$STAGE/artifacts/Security",
+    "sha256": "042ede4a2724a75b7d113ed5ff5ca3b83b60228dbc6212d1d60c64830b00f93d"
+  },
+  {
+    "id": "/usr/lib/libcoretls_cfhelpers.dylib",
+    "source": "$STAGE/artifacts/libcoretls_cfhelpers.dylib",
+    "sha256": "4daffaae62c288c1838b16fed802e09a317ba714015ef61d0574dbae7196ad4c"
+  },
+  {
+    "id": "/usr/lib/libMobileGestalt.dylib",
+    "source": "$STAGE/build-before/src/libMobileGestalt/libMobileGestalt.dylib",
+    "sha256": "f8d9c1c0a767238262c1ce8bd6df73f3a707abd6a98c946f5264210c42c283d1"
+  },
+  {
+    "id": "/System/Library/PrivateFrameworks/AppleFSCompression.framework/Versions/A/AppleFSCompression",
+    "source": "$STAGE/build-before/src/private-frameworks/AppleFSCompression/AppleFSCompression",
+    "sha256": "f1abb03b1f22038afb07129bf57878badd161df1df7956fa1687b3dba89564cc"
+  },
+  {
+    "id": "/System/Library/Frameworks/LocalAuthentication.framework/Versions/A/LocalAuthentication",
+    "source": "$STAGE/build-before/src/frameworks/LocalAuthentication/LocalAuthentication",
+    "sha256": "4e2ecfff9354ca63116c67bfc7bf119f0f950daaabeb12c2f66c7ad3869dbc26"
+  },
+  {
+    "id": "/System/Library/Frameworks/CryptoTokenKit.framework/Versions/A/CryptoTokenKit",
+    "source": "$STAGE/build-before/src/frameworks/CryptoTokenKit/CryptoTokenKit",
+    "sha256": "bddfe6de84e4c6e0d27dd50fb22f7f05b830492ca584137ae0a631f2d2ae1137"
+  },
+  {
+    "id": "/usr/lib/libpam.2.dylib",
+    "source": "$STAGE/build-before/src/external/openpam/libpam.2.dylib",
+    "sha256": "123d7e0f9ffb8742330fe325e9dc25d7e500f9322feb56908234f7ab37dbe265"
+  },
+  {
+    "id": "/usr/lib/libsqlite3.0.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/external/sqlite/libsqlite3.0.dylib",
+    "sha256": "9a09790553d62b3146659a8ea53c1b09e0a6a5314f5b010c76e96f671a403a19"
+  },
+  {
+    "id": "/usr/lib/libxar.1.dylib",
+    "source": "$STAGE/build-before/src/external/xar/libxar.1.dylib",
+    "sha256": "e548621ddf3c6fcb15f75ca94b9de7eb1ad3b1bce976b8d7b93a7d32e67977a4"
+  },
+  {
+    "id": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/external/IOKitUser/IOKit",
+    "sha256": "37be169ef0769c8093c2a68019138dd565b8aeb904d31274792ef9c8a97088f7"
+  },
+  {
+    "id": "/usr/lib/libbz2.1.0.dylib",
+    "source": "$STAGE/build-before/src/external/bzip2/libbz2.1.0.dylib",
+    "sha256": "433d0eb669b613c65786b0164bf04fbbfe037aa6947f1512be892b47261122dc"
+  },
+  {
+    "id": "/usr/lib/libDiagnosticMessagesClient.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/libDiagnosticMessagesClient/libDiagnosticMessagesClient.dylib",
+    "sha256": "e4976bc5e7f8fa36d7beb4b17318ad6580d7ea1c32f771d466291eda343662d7"
+  },
+  {
+    "id": "/usr/lib/libenergytrace.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/external/energytrace/libenergytrace.dylib",
+    "sha256": "70f38ab07bc16c22808569474443d1bf84b52d819bff4449ba80a23ef770708c"
+  },
+  {
+    "id": "/usr/lib/system/libkxld.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/external/xnu/libkern/kxld/libkxld.dylib",
+    "sha256": "530490c45e1bb8da97f62d28e34a9709d116d8148bd683ed34509faf8f4ace56"
+  }
+]

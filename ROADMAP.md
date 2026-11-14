@@ -17,6 +17,10 @@ le plafond de trois morceaux par artiste. Ce repère éditorial ne vaut pas
 validation technique : les critères R/U/A/M/QT/L/P et leurs statuts restent
 indépendants.
 
+## Security i386 — fermeture du chargement CarbonCore (14 novembre 2026)
+
+**TEST / PASS borné :** Security final i386/x86_64 lié, signé et chargé dans le banc privé à mappings délégués. CarbonCore exact de #2089 se charge sans `-dead_strip_dylibs` ; HomeResFile **88/88 normal + 88/88 bypass**, Carbon Events et témoin SSL borné passent. Le défaut de commande longue Clang est corrigé dans le sous-module Security ; aucune API cryptographique n’est modifiée. TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction](docs/evidence/security-i386-loading-2026-11-14.md).
+
 ## Intention et lecture
 
 D4RLING développe un socle Darwin/macOS réutilisable sous Linux. **Logic
