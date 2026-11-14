@@ -1,0 +1,53 @@
+{
+ "file_bytes": 353329,
+ "file_sha256": "a63a98ed2bd4dfaa8a911fbbfc8f95b1ee4f8f7e3c1b73a8e47d6849e454b4d0",
+ "format": "twos",
+ "rate": 44100,
+ "channels": 2,
+ "bits": 16,
+ "big_endian": true,
+ "frames": 88200,
+ "duration_s": 2.0,
+ "movie_time_scale": 600,
+ "movie_duration": 1200,
+ "pcm_offset": 28,
+ "pcm_bytes": 352800,
+ "pcm_sha256": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+ "pcm_fnv64": "650e02020185ef2a",
+ "peak": 8192,
+ "notes": [
+  {
+   "hz": 440.0,
+   "left": 1,
+   "right": 1,
+   "start_frame": 0,
+   "frames": 22050
+  },
+  {
+   "hz": 554.365,
+   "left": 1,
+   "right": 0,
+   "start_frame": 22050,
+   "frames": 22050
+  },
+  {
+   "hz": 659.255,
+   "left": 0,
+   "right": 1,
+   "start_frame": 44100,
+   "frames": 22050
+  },
+  {
+   "hz": 880.0,
+   "left": 1,
+   "right": 1,
+   "start_frame": 66150,
+   "frames": 22050
+  }
+ ],
+ "device_buffer_frames": 1024,
+ "last_partial_block_frames": 136,
+ "getmediasample_max_bytes": 65536,
+ "getmediasample_calls": 6,
+ "getmediasample_last_bytes": 25120
+}
