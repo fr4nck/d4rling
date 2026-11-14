@@ -1,11 +1,13 @@
 # Synchronisation darlinghq/darling → D4rling — checkpoint du 14 novembre 2026
 
-**Statut : candidat de fusion construit et testé côté hôte, NON publié sur
-`master`.** L'exécution invitée i386 est **BLOCKED** (banc rootless
-incompatible avec le nouveau modèle de privilèges amont). Aucune conclusion
-Logic Studio 8, QuickTime Player ou audio réel n'est tirée de ce lot.
+**Statut : fusion qualifiée et publiée sur `master`.** Build, CTest amont,
+régressions hôte D4rling et quatre témoins invités i386 conformes à
+l'installation pré-fusion, sur un banc rootless à mappings UID/GID délégués
+où `setgroups()` est réellement autorisé. Aucune conclusion Logic Studio 8,
+QuickTime Player ou audio réel n'est tirée de ce lot.
 
-Suivi : [PR #15](https://github.com/fr4nck/d4rling/pull/15) (non fusionnée).
+Suivi : [PR #15](https://github.com/fr4nck/d4rling/pull/15) (historique ;
+la fusion a été faite localement, pas par le bouton GitHub).
 
 ## Révisions
 
@@ -14,27 +16,25 @@ Suivi : [PR #15](https://github.com/fr4nck/d4rling/pull/15) (non fusionnée).
 | D4rling `master` de départ | `f1173c698fff0ca0b9323f794e5dd83f6d8e09f9` |
 | Amont `darlinghq/darling` `master` | `36536a662356001194a7cfad2b42b509003d6bd8` |
 | Base commune | `60ba801decee7a00782f74f6be4c8ffb013f79ff` (6 sept. 2026) |
-| Merge candidat (local) | `95f7b4254fd77e4669cef0cd365a2f3f0b878c29` |
-| + garde CMake hostcerts | `1e5ce20fc…` |
-| + requalification I2-C (tête candidate) | `5885bf547601e64e48300cc850fa9920ff1fd568` |
+| Merge amont | `95f7b4254fd77e4669cef0cd365a2f3f0b878c29` |
+| + garde CMake hostcerts | `1e5ce20fc` |
+| + requalification I2-C | `5885bf547601e64e48300cc850fa9920ff1fd568` |
+| Réconciliation avec `master` `305ab561` (documentaire seulement) | `16c7ce1ea94f5728e06a6237a14ed1c20af18cc2` |
+| Ce checkpoint | commit enfant direct de `16c7ce1e` |
 
 Écart : amont +1049 commits (dont 58 sous-modules avancés, 2 ajoutés :
 `bomutils`, `libpcap`) ; D4rling +277 commits, **aucun** gitlink modifié.
-Seuls 29 fichiers étaient modifiés des deux côtés.
-
-Le candidat existe sur le poste 5700X uniquement : worktree détaché
-`validation/upstream-sync-20261114/src` (sous `/home/Deniel/d4wrling-work`),
-référence locale `refs/sync/upstream-merge-candidate-20261114` (pas une
-branche) et bundle vérifié `reports/candidate-5885bf54.bundle`. Le checkout
-canonique historique n'a reçu que des objets et ces références : arbre de
-travail et index intacts.
+Seuls 29 fichiers étaient modifiés des deux côtés. La réconciliation
+n'ajoute que `docs/evidence/quicktime-b09-b11-2026-11-13.md` (d870aa9d) et
+la version précédente de ce fichier (305ab561) : hors `docs/`, l'arbre
+publié est identique à `5885bf54`, celui qui a été construit et testé.
 
 ## Conflits résolus (11) et doublons silencieux (2)
 
 | Fichier | Résolution |
 | --- | --- |
 | `.gitmodules` | URL absolues D4rling + `bomutils`/`libpcap` en URL absolues darlinghq |
-| `AGENTS.md` | Guide D4rling conservé ; texte amont intact dans `docs/upstream/darlinghq-AGENTS.md` (candidat) + renvoi |
+| `AGENTS.md` | Guide D4rling conservé ; texte amont intact dans `docs/upstream/darlinghq-AGENTS.md` + renvoi |
 | `AudioHardware.h` | `AudioHardwareGetPropertyInfo` (D4rling) + `kAudioDeviceTransportTypeVirtual` (amont) |
 | `FileManager.h` | Même correction `FSGetCatalogInfo` des deux côtés + `FSSetCatalogInfo` amont |
 | `Gestalt.h` | Forme D4rling (sémantique identique, empreinte épinglée par la fixture G4) |
@@ -65,9 +65,9 @@ source mldr et les shims I2-C, ci-dessous).
 3. **I2-C** : shims hôte étendus aux ajouts amont de `Resources.cpp`,
    empreinte requalifiée.
 
-## Résultats (5700X, Debian WSL2, clang-19, 14 nov. 2026)
+## Résultats hôte (5700X, Debian WSL2, clang-19, 14 nov. 2026)
 
-| Test | Avant (`f1173c69`) | Candidat | Commentaire |
+| Test | Avant (`f1173c69`) | Fusion | Commentaire |
 | --- | --- | --- | --- |
 | Configuration `core` i386+x86_64 | — | PASS | après garde hostcerts |
 | Build `core` | — | **PASS** 5189/5189 | installation privée 5961 fichiers, 0 hors préfixe |
@@ -83,43 +83,99 @@ source mldr et les shims I2-C, ci-dessous).
 | mldr-r4d-source-guard | **FAIL** 9/10 | **PASS** 10/10 | |
 | carboncore-memory-m1, i2-setresinfo, resource-r1, resource-r2 | BLOCKED | BLOCKED | empreintes déjà périmées avant fusion |
 | carboncore-resource-reader (amont) | absent | FAIL (compilation) | shims amont sans Memory Manager M2 ; non applicable à `ResourcesImpl.cpp` D4rling, inchangé par la fusion |
-| Témoins invités i386 (Carbon dynamique normal/bypass, contrôle négatif, QuickTime QA3v2) | — | **BLOCKED** | voir ci-dessous |
 
-## Blocage réel : exécution invitée i386
+Les régressions hôte ont été rejouées à l'identique sur l'arbre réconcilié
+`16c7ce1e`.
 
-Banc : copie du runner R0 (`unshare --user --map-root-user`, namespaces
-mount/pid/ipc/uts/net privés, installation en lecture seule, préfixe neuf,
-délai 60 s). Avec l'installation fusionnée, les 4 essais échouent avant le
-programme : `Cannot switch to your user and group ids` (darlingserver,
-`runAsUser`) puis expiration ; aucun processus ni montage résiduel.
+## Exécution invitée i386
 
-Contrôle discriminant, même banc et même jour, installation pré-fusion
-`build-master-core-i386` : témoin Carbon i386 `rc=0`
-(`D4RLING-CARBON-EVENT-I386-OK`) et contrôle négatif `rc=1`. Le blocage
-vient donc du nouveau modèle de privilèges amont (darlingserver et
-lanceur appellent `setgroups()`), refusé par le noyau dans un espace de
-noms utilisateur créé sans `newgidmap` (`/proc/self/setgroups = deny`).
-Un contournement local de banc sur darlingserver (non publié, retiré)
-fait seulement apparaître le même refus dans le lanceur
-(`launcherDropPrivileges`) : la chasse aux contournements a été arrêtée.
+### Banc à mappings délégués
 
-Ce n'est **pas** une preuve de régression i386 ; ce n'est pas non plus
-une qualification. Les nouveaux `dyld`, `libsystem`, `xnu`, `objc4`,
-`darlingserver` amont n'ont pas été exercés par un invité i386.
+Le premier banc (`unshare --map-root-user`) était inutilisable : cette
+option impose `/proc/self/setgroups = deny`, et le nouveau modèle de
+privilèges amont appelle `setgroups()` dans darlingserver (`runAsUser`) et
+dans le lanceur (`launcherDropPrivileges`).
 
-**Condition de reprise (décision du responsable du projet)** : fournir un
-banc où `setgroups()` est autorisé, par exemple le paquet Debian `uidmap`
-(`newuidmap`/`newgidmap` ; `/etc/subuid` contient déjà une plage pour
-l'utilisateur) avec `unshare --map-users/--map-groups`, ou une installation
-setuid-root conforme à l'amont. HYP : l'une ou l'autre suffit ; à vérifier.
-Puis rejouer les 4 témoins et publier le candidat seulement s'ils
-retrouvent les résultats pré-fusion.
+Nouveau banc, sans installation setuid-root et sans contournement de
+`setgroups()` :
 
-## Autre constat pour le socle BSD i386
+- paquet Debian `uidmap` 1:4.17.4-2 (`newuidmap`/`newgidmap`), plage
+  existante `/etc/subuid` et `/etc/subgid` de 65536 identifiants ;
+- `unshare --user --map-users=0:<uid>:1 --map-users=1:<subuid>:65536
+  --map-groups=0:<gid>:1 --map-groups=1:<subgid>:65536 --setgroups=allow`
+  plus les espaces de noms mount, pid, ipc, uts et net privés,
+  l'installation en lecture seule, un préfixe neuf par essai et un délai
+  maximal ;
+- contrôle avant chaque lancement de Darling : `/proc/self/setgroups =
+  allow`, `uid_map`/`gid_map` attendus, puis un vrai appel `setgroups()`
+  (liste courante puis `{0}`) qui doit réussir. Contre-épreuve : la même
+  sonde sous `--map-root-user` échoue (`EPERM`) ;
+- groupes supplémentaires de l'invité normalisés à `{0}` (gid principal
+  de l'hôte) par `setpriv --groups=0`. Les groupes hôte hérités (`adm`,
+  `sudo`, …) ne sont pas délégables : ils apparaissent comme 65534 dans
+  l'espace de noms. Après `setgroups()`, le noyau les retrie par gid réel,
+  l'ordre change, et la vérification `groupsAre()` du lanceur (comparaison
+  `memcmp` sensible à l'ordre) échoue avec `Cannot drop root privileges`.
+  C'est un artefact du banc, car hors espace de noms la vue est
+  l'identité et la liste reste triée. `setgroups()` reste réellement
+  exercé par darlingserver et par le lanceur.
 
-L'amont a modifié `bsd_syscall.S` i386 (préservation de `%ecx`, 6f3e5d7)
-et `lseek` 64 bits sur i386 (5ed20eb), mais **pas** la convention d'erreur
-par retenue (CF) de notre candidat issue #11. Les artefacts
-`reproduction/patches/bsd-i386-return*-fa29287.patch` ne s'appliquent
-plus sur xnu `fb8f932` : rebasage et requalification à prévoir dans un lot
-distinct.
+### Résultats
+
+Mêmes binaires témoins, même banc et même jour pour les deux
+installations : référence pré-fusion `build-master-core-i386` et
+installation fusionnée `build-core-i386`.
+
+| Témoin | Attendu | Pré-fusion | Fusion |
+| --- | --- | --- | --- |
+| Carbon dynamique i386, normal | `rc=0`, `D4RLING-CARBON-EVENT-I386-OK` | **conforme** (1,4 s) | **conforme** (1,5 s) |
+| Carbon dynamique i386, bypass (`DSERVER_INIT=shellspawn`) | idem | **conforme** (1,4 s) | **conforme** (11,4 s, voir note 2) |
+| Contrôle négatif (dylib absente) | échec dyld, aucun marqueur OK | **conforme**, `rc=1` | **conforme**, `rc=134` (voir note 1) |
+| QuickTime QA3v2 i386 | `D4RLING-QA3V2-I386-OK`, `checks=62 failures=0` | **conforme** | **conforme** |
+
+Pour chaque essai : aucun processus résiduel, aucun darlingserver restant,
+nombre de montages hôte inchangé (41).
+
+Notes :
+
+1. Le contrôle négatif s'arrête au même endroit des deux côtés
+   (`abort_with_payload: dyld … Library not loaded:
+   @loader_path/libD4CarbonEvents.dylib`). Depuis le commit amont
+   `1d801ee57`, shellspawn rapporte `128 + signal` pour un programme tué
+   par un signal, ici SIGABRT (6), d'où 134. Avant, le statut était lu
+   par un `WEXITSTATUS` brut. Le message de dyld est aussi plus précis
+   (`image not found`).
+2. En mode bypass, shellspawn attend jusqu'à 10 s la configuration
+   système (commit amont `a34d77565`). `darling-prefsd` ne tourne pas dans
+   ce mode : l'attente atteint sa borne, ce qui est le comportement prévu.
+3. `DYLD_PRINT_LIBRARIES` n'est plus transmis à `vchroot`, launchd ni
+   shellspawn : la fusion journalise 43 chargements, contre 160 avant.
+   En images distinctes : 43 contre 46. Côté pré-fusion seulement :
+   `launchd`, `vchroot`, `shellspawn` et `libbsm.0.dylib` (les journaux
+   ne disent pas quel processus l'a chargée). Côté fusion seulement :
+   `libsystem_featureflags.dylib`, ajoutée par l'amont à libSystem.
+
+Empreintes SHA-256 des installations :
+
+- pré-fusion : `darling` `46e38ff3…`, `mldr32` `20c31f7f…`, `dyld`
+  `2794abce…` ;
+- fusion : `darling` `0b7ccb3e…`, `mldr32` `beb15083…`, `dyld` `8147a54b…`.
+
+Les nouveaux `dyld`, `libsystem`, `xnu`, `objc4` et `darlingserver` amont
+sont exercés par ces quatre témoins i386. Ce n'est pas une qualification
+d'applications réelles.
+
+## Points ouverts
+
+- **Lanceur amont** : `groupsAre()` compare les groupes supplémentaires
+  dans l'ordre. C'est fragile dans un espace de noms utilisateur
+  partiellement mappé. Remarque à proposer éventuellement à l'amont, sans
+  effet sur une installation hôte normale.
+- **Socle BSD i386** : l'amont a modifié `bsd_syscall.S` i386
+  (préservation de `%ecx`, 6f3e5d7) et `lseek` 64 bits sur i386
+  (5ed20eb), mais **pas** la convention d'erreur par retenue (CF) de notre
+  candidat issue #11. Les artefacts
+  `reproduction/patches/bsd-i386-return*-fa29287.patch` ne s'appliquent
+  plus sur xnu `fb8f932` : rebasage et requalification à prévoir dans un
+  lot distinct.
+- **hostcerts** : garde CMake à proposer à l'amont.
