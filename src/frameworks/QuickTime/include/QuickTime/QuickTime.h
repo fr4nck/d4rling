@@ -29,6 +29,8 @@
 typedef struct MovieType **Movie;
 typedef struct TrackType **Track;
 typedef struct MediaType **Media;
+/* Opaque here: GetMediaSample does not return sample descriptions yet. */
+typedef struct SampleDescription **SampleDescriptionHandle;
 
 #ifdef __cplusplus
 extern "C" {
@@ -69,6 +71,16 @@ Track GetMovieIndTrack(Movie theMovie, SInt32 index);
 Media GetTrackMedia(Track theTrack);
 SInt32 GetMediaSampleCount(Media theMedia);
 TimeScale GetMediaTimeScale(Media theMedia);
+/* Uncompressed 16-bit PCM of the supported sound subset only, at most 64 KiB
+ * per call. dataOut must be a Memory Manager handle (possibly empty); it is
+ * resized to the returned bytes. sampleDescriptionH must be NULL (unimpErr).
+ * Apple's long parameters are 32 bits on Darwin i386: SInt32 keeps the width. */
+OSErr GetMediaSample(Media theMedia, Handle dataOut, SInt32 maxSizeToGrow,
+                     SInt32 *size, TimeValue time, TimeValue *sampleTime,
+                     TimeValue *durationPerSample,
+                     SampleDescriptionHandle sampleDescriptionH,
+                     SInt32 *sampleDescriptionIndex, SInt32 maxNumberOfSamples,
+                     SInt32 *numberOfSamples, SInt16 *sampleFlags);
 
 #ifdef __cplusplus
 }
@@ -755,7 +767,6 @@ void* GetMediaPlayHints(void);
 void* GetMediaPreferredChunkSize(void);
 void* GetMediaPropertyAtom(void);
 void* GetMediaQuality(void);
-void* GetMediaSample(void);
 void* GetMediaSample2(void);
 void* GetMediaSampleDescription(void);
 void* GetMediaSampleDescriptionCount(void);

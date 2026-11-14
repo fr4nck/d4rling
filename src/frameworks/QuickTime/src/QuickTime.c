@@ -24,6 +24,7 @@
 #include <string.h>
 #include "qt_mov_probe.h"
 #include "qt_movie_internal.h"
+#include <CarbonCore/MacMemory.h>
 
 static int verbose = 0;
 
@@ -36,6 +37,7 @@ enum {
     d4rlMovieUnimplemented = -4,
     d4rlMovieParamErr = -50,
     d4rlMovieMemFullErr = -108,
+    d4rlNilHandleErr = -109,
     d4rlBadPublicMovieAtom = -2002,
     d4rlCantFindHandler = -2003,
     d4rlInvalidMedia = -2008,
@@ -44,7 +46,9 @@ enum {
     d4rlInvalidDataRef = -2012,
     d4rlInvalidDuration = -2014,
     d4rlMovieToolboxUninitialized = -2020,
+    d4rlMaxSizeToGrowTooSmall = -2027,
     d4rlBadTrackIndex = -2028,
+    d4rlTimeNotInMedia = -2032,
     d4rlNoMovieFound = -2048
 };
 
@@ -4309,10 +4313,109 @@ void* GetMediaQuality(void)
     return NULL;
 }
 
-void* GetMediaSample(void)
+/* Owner of a live track; the track was validated by track_lookup. */
+static struct MovieType *track_owner(const struct D4RLTrackStorage *track)
 {
-    if (verbose) puts("STUB: GetMediaSample called");
+    struct D4RLMovieStorage *storage;
+    for (storage = movie_list; storage; storage = storage->next) {
+        if (storage->value.track_count > 0 && track >= storage->value.tracks &&
+            track < storage->value.tracks + storage->value.track_count)
+            return &storage->value;
+    }
     return NULL;
+}
+
+enum { d4rlMaxSampleBytesPerCall = 65536 };
+
+/* Supported subset: the uncompressed 16-bit PCM copied by
+ * NewMovieFromDataRef (one sample = one frame, duration 1, media time scale =
+ * sample rate, one sync chunk). Other media return unimpErr. maxSizeToGrow and
+ * maxNumberOfSamples are upper bounds (0: no caller limit); at most 64 KiB is
+ * returned per call. dataOut is validated and resized through the Memory
+ * Manager before any copy; an empty handle is reallocated. Memory Manager
+ * errors are returned unchanged and leave dataOut and all outputs untouched. */
+OSErr GetMediaSample(Media theMedia, Handle dataOut, SInt32 maxSizeToGrow,
+                     SInt32 *size, TimeValue time, TimeValue *sampleTime,
+                     TimeValue *durationPerSample,
+                     SampleDescriptionHandle sampleDescriptionH,
+                     SInt32 *sampleDescriptionIndex, SInt32 maxNumberOfSamples,
+                     SInt32 *numberOfSamples, SInt16 *sampleFlags)
+{
+    struct D4RLTrackStorage *track = track_lookup(theMedia, 1);
+    const struct MovieType *movie;
+    const struct d4rl_qt_mov_pcm_info *info;
+    size_t frame_bytes, count, start, bytes;
+    Size handle_size;
+    OSErr error;
+    Boolean empty;
+
+    if (!track)
+        return movie_error;
+    if (!dataOut || maxSizeToGrow < 0 || maxNumberOfSamples < 0)
+        return movie_fail(d4rlMovieParamErr);
+    if (sampleDescriptionH)
+        return movie_fail(d4rlMovieUnimplemented);
+    movie = track_owner(track);
+    if (!movie || !movie->pcm || track->track.handler != 0x736F756EU /* 'soun' */)
+        return movie_fail(d4rlMovieUnimplemented);
+    info = &movie->pcm_info;
+    frame_bytes = (size_t)info->channels * 2u;
+    if (info->bits_per_sample != 16 || info->channels < 1 || info->channels > 2 ||
+        info->frame_count == 0 || info->frame_count > INT32_MAX ||
+        info->byte_count / frame_bytes != info->frame_count ||
+        info->byte_count % frame_bytes != 0 ||
+        track->media.sample_count != (SInt32)info->frame_count ||
+        track->media.time_scale != (TimeScale)info->sample_rate)
+        return movie_fail(d4rlMovieUnimplemented);
+    if (time < 0 || (uint32_t)time >= info->frame_count)
+        return movie_fail(d4rlTimeNotInMedia);
+
+    count = (size_t)info->frame_count - (size_t)time;
+    if (maxNumberOfSamples > 0 && count > (size_t)maxNumberOfSamples)
+        count = (size_t)maxNumberOfSamples;
+    if (maxSizeToGrow > 0 && count > (size_t)maxSizeToGrow / frame_bytes)
+        count = (size_t)maxSizeToGrow / frame_bytes;
+    if (count > d4rlMaxSampleBytesPerCall / frame_bytes)
+        count = d4rlMaxSampleBytesPerCall / frame_bytes;
+    if (count == 0)
+        return movie_fail(d4rlMaxSizeToGrowTooSmall);
+    start = (size_t)time * frame_bytes;
+    bytes = count * frame_bytes;
+    if (start > info->byte_count || bytes > info->byte_count - start)
+        return movie_fail(d4rlMovieUnimplemented);
+
+    /* Never dereference *dataOut before the Memory Manager accepted it. */
+    handle_size = GetHandleSize(dataOut);
+    error = MemError();
+    empty = error == d4rlNilHandleErr; /* registered handle without a block */
+    if (error != noErr && !empty)
+        return movie_fail(error);
+    if (empty)
+        ReallocateHandle(dataOut, (Size)bytes);
+    else if (handle_size < 0 || (size_t)handle_size != bytes)
+        SetHandleSize(dataOut, (long)bytes);
+    error = (empty || (size_t)handle_size != bytes) ? MemError() : noErr;
+    if (error != noErr)
+        return movie_fail(error);
+    handle_size = GetHandleSize(dataOut);
+    if (MemError() != noErr || !*dataOut || handle_size < 0 || (size_t)handle_size != bytes)
+        return movie_fail(d4rlMovieMemFullErr);
+
+    memcpy(*dataOut, (const unsigned char *)movie->pcm + start, bytes);
+    if (size)
+        *size = (SInt32)bytes;
+    if (sampleTime)
+        *sampleTime = time;
+    if (durationPerSample)
+        *durationPerSample = 1;
+    if (sampleDescriptionIndex)
+        *sampleDescriptionIndex = 1;
+    if (numberOfSamples)
+        *numberOfSamples = (SInt32)count;
+    if (sampleFlags)
+        *sampleFlags = 0; /* sync sample: mediaSampleNotSync clear */
+    movie_error = noErr;
+    return noErr;
 }
 
 void* GetMediaSample2(void)
