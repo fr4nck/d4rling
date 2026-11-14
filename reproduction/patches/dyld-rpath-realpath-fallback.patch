@@ -1,0 +1,37 @@
+diff --git a/src/ImageLoaderMachO.cpp b/src/ImageLoaderMachO.cpp
+--- a/src/ImageLoaderMachO.cpp
++++ b/src/ImageLoaderMachO.cpp
+@@ -1498,8 +1498,14 @@
+ 						dyld::warn("LC_RPATH %s in %s being ignored in restricted program because of @loader_path (Codesign main executable with Library Validation to allow @ paths)\n", path, this->getPath());
+ 						break;
+ 					}
+-					char resolvedPath[PATH_MAX];
+-					if ( realpath(this->getPath(), resolvedPath) != NULL ) {
++					const char* loadedPath = this->getPath();
++					char resolvedPath[PATH_MAX];
++					bool pathReady = (loadedPath != NULL && realpath(loadedPath, resolvedPath) != NULL);
++					// The loaded guest image can have a valid absolute path even when
++					// Darling's realpath() cannot canonicalize its /Volumes mapping.
++					if ( !pathReady && (loadedPath != NULL) && (loadedPath[0] == '/') )
++						pathReady = (strlcpy(resolvedPath, loadedPath, sizeof(resolvedPath)) < sizeof(resolvedPath));
++					if ( pathReady ) {
+ 						char newRealPath[strlen(resolvedPath) + strlen(path)];
+ 						strcpy(newRealPath, resolvedPath);
+ 						char* addPoint = strrchr(newRealPath,'/');
+@@ -1514,8 +1520,14 @@
+ 						dyld::warn("LC_RPATH %s in %s being ignored in restricted program because of @executable_path (Codesign main executable with Library Validation to allow @ paths)\n", path, this->getPath());
+ 						break;
+ 					}
+-					char resolvedPath[PATH_MAX];
+-					if ( realpath(context.mainExecutable->getPath(), resolvedPath) != NULL ) {
++					const char* loadedPath = context.mainExecutable->getPath();
++					char resolvedPath[PATH_MAX];
++					bool pathReady = (loadedPath != NULL && realpath(loadedPath, resolvedPath) != NULL);
++					// Preserve the executable's already-loaded absolute guest path
++					// if it cannot be canonicalized; never accept a relative path.
++					if ( !pathReady && (loadedPath != NULL) && (loadedPath[0] == '/') )
++						pathReady = (strlcpy(resolvedPath, loadedPath, sizeof(resolvedPath)) < sizeof(resolvedPath));
++					if ( pathReady ) {
+ 						char newRealPath[strlen(resolvedPath) + strlen(path)];
+ 						strcpy(newRealPath, resolvedPath);
+ 						char* addPoint = strrchr(newRealPath,'/');
