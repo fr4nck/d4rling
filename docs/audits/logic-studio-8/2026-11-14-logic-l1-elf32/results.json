@@ -1,0 +1,696 @@
+{
+  "source_head": "69bde0a6192247e2e4624761e1d09e86c7dd9576",
+  "packages": [
+    {
+      "Package": "libfreetype6",
+      "Version": "2.13.3+dfsg-1+deb13u1",
+      "Architecture": "i386",
+      "Depends": "libbrotli1 (>= 0.6.0), libbz2-1.0, libc6 (>= 2.33), libpng16-16t64 (>= 1.6.46), zlib1g (>= 1:1.1.4)",
+      "Filename": "pool/main/f/freetype/libfreetype6_2.13.3+dfsg-1+deb13u1_i386.deb",
+      "SHA256": "fbe01c5a6e2654ed7c8fbb08b39c9b20cf19bd24554088d11762c330f7af1dd2",
+      "Size": "464480",
+      "url": "https://deb.debian.org/debian/pool/main/f/freetype/libfreetype6_2.13.3+dfsg-1+deb13u1_i386.deb"
+    },
+    {
+      "Package": "libbrotli1",
+      "Version": "1.1.0-2+deb13u1",
+      "Architecture": "i386",
+      "Depends": "libc6 (>= 2.29)",
+      "Filename": "pool/updates/main/b/brotli/libbrotli1_1.1.0-2+deb13u1_i386.deb",
+      "SHA256": "b686eb23b57276622a8517f75e31a479eae82d736cae449e873695ff38508611",
+      "Size": "295664",
+      "url": "https://security.debian.org/debian-security/pool/updates/main/b/brotli/libbrotli1_1.1.0-2+deb13u1_i386.deb"
+    },
+    {
+      "Package": "libpng16-16t64",
+      "Version": "1.6.48-1+deb13u6",
+      "Architecture": "i386",
+      "Depends": "libc6 (>= 2.29), zlib1g (>= 1:1.2.3.4)",
+      "Filename": "pool/updates/main/libp/libpng1.6/libpng16-16t64_1.6.48-1+deb13u6_i386.deb",
+      "SHA256": "087f92b31fa6c4ff047e539c944a3f97432d15b6b8e5ef4127a7e13b72643847",
+      "Size": "290192",
+      "url": "https://security.debian.org/debian-security/pool/updates/main/libp/libpng1.6/libpng16-16t64_1.6.48-1+deb13u6_i386.deb"
+    },
+    {
+      "Package": "zlib1g",
+      "Version": "1:1.3.dfsg+really1.3.1-1+deb13u1",
+      "Architecture": "i386",
+      "Depends": "libc6 (>= 2.4)",
+      "Filename": "pool/updates/main/z/zlib/zlib1g_1.3.dfsg+really1.3.1-1+deb13u1_i386.deb",
+      "SHA256": "afae7e13993b441bcedf77b1497d81483ed0cec29c2ed90abbc03a46edb93754",
+      "Size": "84544",
+      "url": "https://security.debian.org/debian-security/pool/updates/main/z/zlib/zlib1g_1.3.dfsg+really1.3.1-1+deb13u1_i386.deb"
+    },
+    {
+      "Package": "libbz2-1.0",
+      "Version": "1.0.8-6",
+      "Architecture": "i386",
+      "Depends": "libc6 (>= 2.4)",
+      "Filename": "pool/main/b/bzip2/libbz2-1.0_1.0.8-6_i386.deb",
+      "SHA256": "c23dee450dcee574135cbe004d463be3f413cdc017b22d8273c5ce0a18a7de10",
+      "Size": "38060",
+      "url": "https://deb.debian.org/debian/pool/main/b/bzip2/libbz2-1.0_1.0.8-6_i386.deb"
+    }
+  ],
+  "metadata": [
+    {
+      "signed_sha256": "0584fba32e13e0ab8285fb16c27adea1ec03a73669c18702821094fd6ca86675",
+      "index_sha256": "1e864b05cc1acc937760ddcdfd8cf724347d71b9b99e9ffbca4768b392634f34",
+      "index_bytes": 9436656,
+      "signers": [
+        "04B54C3CDCA79751B16BC6B5225629DF75B188BD",
+        "41587F7DB8C774BCCF131416762F67A0B2C39DE4",
+        "B8B80B5B623EAB6AD8775C45B7C5D7D6350947F8"
+      ]
+    },
+    {
+      "signed_sha256": "2cd3748b137484f546b252aff64d21b756cb7067460e3bb565766ad2a147cb17",
+      "index_sha256": "bb980809549dfcac60051d2b8715a2be0df59c7aa7e071ff641e4b17e4b8d055",
+      "index_bytes": 252000,
+      "signers": [
+        "05AB90340C0C5E797F44A8C8254CF3B5AEC0A8F0",
+        "5E04A1E3223A19A20706E20F9904613D4CCE68C6"
+      ]
+    }
+  ],
+  "runs": [
+    {
+      "name": "ft32-before",
+      "status": "EXPECTED_FAILURE",
+      "rc": 134,
+      "expected_rc": 134,
+      "label": "elf32-replay-1794690068834505797-ft32-before",
+      "program": "ft-api-i386",
+      "mode": "normal",
+      "binary_sha256": "e311956a01622364afb17771313b9f4495c7d0b4f0378e865aa3079781142a48",
+      "native_images": [
+        {
+          "path": "<QUALIFIED-BANK>/build-core-i386/private-install/libexec/darling/usr/libexec/darling/mldr32",
+          "sha256": "beb150834a94424c27e613680f6fdb58d63763e0fbd19150f4e050ab24e91a78",
+          "elf_class": 32
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+          "sha256": "c8438e4fde1934e61c88311633f00949ff645d5c04cdb8671fa3d78164d2f307",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+          "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libexpat.so.1.13.0",
+          "sha256": "36e7e50d21edcabed383bfddc594bb261c1c7cce456afdf23c5f53e849cda67c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+          "sha256": "30c61ab012a4241bed033725a09b61f5fdd3bb7df95ee852d0b096520524c7af",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/liblzma.so.5.8.1",
+          "sha256": "7ca392e92ebb94b6f8ee094cbd5243185e4452377b94acc657f7ba8c8f9dda2c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+          "sha256": "6d567d53e895273ca14a1f9dc164fc6c8d39aed2f60aa46a733c2784228915f3",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+          "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libtinfo.so.6.5",
+          "sha256": "4013e7651ac68f547d8333517def25b2366c97eec7de7f06e105dbf3444ffebf",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libxml2.so.2.9.14",
+          "sha256": "8f2643af68a9eba917929046806dabd1848867068d0eee0f6799288a8e886963",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1",
+          "sha256": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7",
+          "sha256": "27f07c9a49c2c956bcfb64cd4712976586a66facbf15fc7f09bc37413b5f2b21",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib32/ld-linux.so.2",
+          "sha256": "73e22dd41a5404b75db70b4c51be08075ddec01261eeed91546655def92b284c",
+          "elf_class": 32
+        },
+        {
+          "path": "/usr/lib32/libc.so.6",
+          "sha256": "f2ed349542c0be517ea7e66381f342eda08857e01772d6aa33916ca41702f61c",
+          "elf_class": 32
+        }
+      ],
+      "process_teardown": {
+        "namespace": "pid:[4026532412]",
+        "remaining_pids": [],
+        "polls": 1,
+        "status": "PASS"
+      },
+      "global_server_counts": [
+        "0",
+        "0"
+      ]
+    },
+    {
+      "name": "ft32-private",
+      "status": "PASS",
+      "rc": 0,
+      "expected_rc": 0,
+      "label": "elf32-replay-1794690068834505797-ft32-private",
+      "program": "ft-api-i386",
+      "mode": "normal",
+      "binary_sha256": "e311956a01622364afb17771313b9f4495c7d0b4f0378e865aa3079781142a48",
+      "native_images": [
+        {
+          "path": "<REPLAY>/sysroot/usr/lib/i386-linux-gnu/libbrotlicommon.so.1.1.0",
+          "sha256": "ccd7231d13f1bd5529d2074a37b044ee25f3e04e48079848f39cba7fac445185",
+          "elf_class": 32
+        },
+        {
+          "path": "<REPLAY>/sysroot/usr/lib/i386-linux-gnu/libbrotlidec.so.1.1.0",
+          "sha256": "4f86ea7d99a84ad35a895190706bcbf07ed550542b3f617f347d1a4dafbb11f2",
+          "elf_class": 32
+        },
+        {
+          "path": "<REPLAY>/sysroot/usr/lib/i386-linux-gnu/libbz2.so.1.0.4",
+          "sha256": "0a672cf33845f12fa1e5be29ef689b29d01efa95e25acf33e4fd130cefe2f597",
+          "elf_class": 32
+        },
+        {
+          "path": "<REPLAY>/sysroot/usr/lib/i386-linux-gnu/libfreetype.so.6.20.2",
+          "sha256": "c222f4442e4eee602eeb92f5e8eee8058fb912cc18bb9db0ecbaaa5ec4f03fef",
+          "elf_class": 32
+        },
+        {
+          "path": "<REPLAY>/sysroot/usr/lib/i386-linux-gnu/libpng16.so.16.48.0",
+          "sha256": "51cd474b6ad1da1a97f3c88a30466c1a9c6de6fced0bd094eeafe4b636d04cfc",
+          "elf_class": 32
+        },
+        {
+          "path": "<REPLAY>/sysroot/usr/lib/i386-linux-gnu/libz.so.1.3.1",
+          "sha256": "cbd8e2d6d4333db26831200000c80af2065d082a6f93a70a0b806680634579f5",
+          "elf_class": 32
+        },
+        {
+          "path": "<QUALIFIED-BANK>/build-core-i386/private-install/libexec/darling/usr/libexec/darling/mldr32",
+          "sha256": "beb150834a94424c27e613680f6fdb58d63763e0fbd19150f4e050ab24e91a78",
+          "elf_class": 32
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+          "sha256": "c8438e4fde1934e61c88311633f00949ff645d5c04cdb8671fa3d78164d2f307",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+          "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libexpat.so.1.13.0",
+          "sha256": "36e7e50d21edcabed383bfddc594bb261c1c7cce456afdf23c5f53e849cda67c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+          "sha256": "30c61ab012a4241bed033725a09b61f5fdd3bb7df95ee852d0b096520524c7af",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/liblzma.so.5.8.1",
+          "sha256": "7ca392e92ebb94b6f8ee094cbd5243185e4452377b94acc657f7ba8c8f9dda2c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+          "sha256": "6d567d53e895273ca14a1f9dc164fc6c8d39aed2f60aa46a733c2784228915f3",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+          "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libtinfo.so.6.5",
+          "sha256": "4013e7651ac68f547d8333517def25b2366c97eec7de7f06e105dbf3444ffebf",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libxml2.so.2.9.14",
+          "sha256": "8f2643af68a9eba917929046806dabd1848867068d0eee0f6799288a8e886963",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1",
+          "sha256": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7",
+          "sha256": "27f07c9a49c2c956bcfb64cd4712976586a66facbf15fc7f09bc37413b5f2b21",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib32/ld-linux.so.2",
+          "sha256": "73e22dd41a5404b75db70b4c51be08075ddec01261eeed91546655def92b284c",
+          "elf_class": 32
+        },
+        {
+          "path": "/usr/lib32/libc.so.6",
+          "sha256": "f2ed349542c0be517ea7e66381f342eda08857e01772d6aa33916ca41702f61c",
+          "elf_class": 32
+        },
+        {
+          "path": "/usr/lib32/libm.so.6",
+          "sha256": "e578f5c12edbad0dcbf5a53dd04834dac70897890ce905978d2e5fc39c1aa858",
+          "elf_class": 32
+        }
+      ],
+      "process_teardown": {
+        "namespace": "pid:[4026532414]",
+        "remaining_pids": [],
+        "polls": 1,
+        "status": "PASS"
+      },
+      "global_server_counts": [
+        "0",
+        "0"
+      ]
+    },
+    {
+      "name": "ft64-private",
+      "status": "PASS",
+      "rc": 0,
+      "expected_rc": 0,
+      "label": "elf32-replay-1794690068834505797-ft64-private",
+      "program": "ft-api-x86_64",
+      "mode": "normal",
+      "binary_sha256": "86506ee970eeb3aa98f025cc8e2451a0c48bbddcfbcb69c419b6af2faeff756d",
+      "native_images": [
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+          "sha256": "c8438e4fde1934e61c88311633f00949ff645d5c04cdb8671fa3d78164d2f307",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libbrotlicommon.so.1.1.0",
+          "sha256": "7b0b0de90d8d3d4f07b99738c0285c6a0dbb6611d774ca44e7ea53a19a01ea68",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libbrotlidec.so.1.1.0",
+          "sha256": "06530583d5927000480f4214d80d0213fec3d34cc448527f932a6eceb50cefef",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libbz2.so.1.0.4",
+          "sha256": "c630f057efedc12f848710d71f40283895591e5b4608539f387895c64e0553da",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+          "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libexpat.so.1.13.0",
+          "sha256": "36e7e50d21edcabed383bfddc594bb261c1c7cce456afdf23c5f53e849cda67c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libfreetype.so.6.20.2",
+          "sha256": "9e376992a91e92d86809893a3b9eea22a4e27849db1686f6ca58032f79cdafb5",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+          "sha256": "30c61ab012a4241bed033725a09b61f5fdd3bb7df95ee852d0b096520524c7af",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/liblzma.so.5.8.1",
+          "sha256": "7ca392e92ebb94b6f8ee094cbd5243185e4452377b94acc657f7ba8c8f9dda2c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+          "sha256": "6d567d53e895273ca14a1f9dc164fc6c8d39aed2f60aa46a733c2784228915f3",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libpng16.so.16.48.0",
+          "sha256": "7dd8e62ca2f3b2b3bb642e485b1324b01950aad82eb63bad2c783ac94d80c001",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+          "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libtinfo.so.6.5",
+          "sha256": "4013e7651ac68f547d8333517def25b2366c97eec7de7f06e105dbf3444ffebf",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libxml2.so.2.9.14",
+          "sha256": "8f2643af68a9eba917929046806dabd1848867068d0eee0f6799288a8e886963",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1",
+          "sha256": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7",
+          "sha256": "27f07c9a49c2c956bcfb64cd4712976586a66facbf15fc7f09bc37413b5f2b21",
+          "elf_class": 64
+        }
+      ],
+      "process_teardown": {
+        "namespace": "pid:[4026532413]",
+        "remaining_pids": [],
+        "polls": 1,
+        "status": "PASS"
+      },
+      "global_server_counts": [
+        "0",
+        "0"
+      ]
+    },
+    {
+      "name": "carbon32-private",
+      "status": "BLOCKED",
+      "rc": 134,
+      "expected_rc": 134,
+      "label": "elf32-replay-1794690068834505797-carbon32-private",
+      "program": "logic-load-probe",
+      "mode": "normal",
+      "binary_sha256": "6c03344a1dd015d24a5b0cb65765a99c13cf0e224af3e1308fbd83b84f604853",
+      "native_images": [
+        {
+          "path": "<QUALIFIED-BANK>/build-core-i386/private-install/libexec/darling/usr/libexec/darling/mldr32",
+          "sha256": "beb150834a94424c27e613680f6fdb58d63763e0fbd19150f4e050ab24e91a78",
+          "elf_class": 32
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+          "sha256": "c8438e4fde1934e61c88311633f00949ff645d5c04cdb8671fa3d78164d2f307",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+          "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libexpat.so.1.13.0",
+          "sha256": "36e7e50d21edcabed383bfddc594bb261c1c7cce456afdf23c5f53e849cda67c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+          "sha256": "30c61ab012a4241bed033725a09b61f5fdd3bb7df95ee852d0b096520524c7af",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/liblzma.so.5.8.1",
+          "sha256": "7ca392e92ebb94b6f8ee094cbd5243185e4452377b94acc657f7ba8c8f9dda2c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+          "sha256": "6d567d53e895273ca14a1f9dc164fc6c8d39aed2f60aa46a733c2784228915f3",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+          "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libtinfo.so.6.5",
+          "sha256": "4013e7651ac68f547d8333517def25b2366c97eec7de7f06e105dbf3444ffebf",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libxml2.so.2.9.14",
+          "sha256": "8f2643af68a9eba917929046806dabd1848867068d0eee0f6799288a8e886963",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1",
+          "sha256": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7",
+          "sha256": "27f07c9a49c2c956bcfb64cd4712976586a66facbf15fc7f09bc37413b5f2b21",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib32/ld-linux.so.2",
+          "sha256": "73e22dd41a5404b75db70b4c51be08075ddec01261eeed91546655def92b284c",
+          "elf_class": 32
+        },
+        {
+          "path": "/usr/lib32/libc.so.6",
+          "sha256": "f2ed349542c0be517ea7e66381f342eda08857e01772d6aa33916ca41702f61c",
+          "elf_class": 32
+        }
+      ],
+      "process_teardown": {
+        "namespace": "pid:[4026532413]",
+        "remaining_pids": [],
+        "polls": 1,
+        "status": "PASS"
+      },
+      "global_server_counts": [
+        "0",
+        "0"
+      ]
+    },
+    {
+      "name": "homeres32-normal",
+      "status": "PASS",
+      "rc": 0,
+      "expected_rc": 0,
+      "label": "elf32-replay-1794690068834505797-homeres32-normal",
+      "program": "witness",
+      "mode": "normal",
+      "binary_sha256": "ebd1c391a422b23fcc8b60e5f1a9c3bee470b6f7f50c87610deeab87aa384e00",
+      "native_images": [
+        {
+          "path": "<QUALIFIED-BANK>/build-core-i386/private-install/libexec/darling/usr/libexec/darling/mldr32",
+          "sha256": "beb150834a94424c27e613680f6fdb58d63763e0fbd19150f4e050ab24e91a78",
+          "elf_class": 32
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+          "sha256": "c8438e4fde1934e61c88311633f00949ff645d5c04cdb8671fa3d78164d2f307",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+          "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libexpat.so.1.13.0",
+          "sha256": "36e7e50d21edcabed383bfddc594bb261c1c7cce456afdf23c5f53e849cda67c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+          "sha256": "30c61ab012a4241bed033725a09b61f5fdd3bb7df95ee852d0b096520524c7af",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/liblzma.so.5.8.1",
+          "sha256": "7ca392e92ebb94b6f8ee094cbd5243185e4452377b94acc657f7ba8c8f9dda2c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+          "sha256": "6d567d53e895273ca14a1f9dc164fc6c8d39aed2f60aa46a733c2784228915f3",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+          "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libtinfo.so.6.5",
+          "sha256": "4013e7651ac68f547d8333517def25b2366c97eec7de7f06e105dbf3444ffebf",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libxml2.so.2.9.14",
+          "sha256": "8f2643af68a9eba917929046806dabd1848867068d0eee0f6799288a8e886963",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1",
+          "sha256": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7",
+          "sha256": "27f07c9a49c2c956bcfb64cd4712976586a66facbf15fc7f09bc37413b5f2b21",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib32/ld-linux.so.2",
+          "sha256": "73e22dd41a5404b75db70b4c51be08075ddec01261eeed91546655def92b284c",
+          "elf_class": 32
+        },
+        {
+          "path": "/usr/lib32/libc.so.6",
+          "sha256": "f2ed349542c0be517ea7e66381f342eda08857e01772d6aa33916ca41702f61c",
+          "elf_class": 32
+        }
+      ],
+      "process_teardown": {
+        "namespace": "pid:[4026532413]",
+        "remaining_pids": [],
+        "polls": 1,
+        "status": "PASS"
+      },
+      "global_server_counts": [
+        "0",
+        "0"
+      ]
+    },
+    {
+      "name": "homeres32-bypass",
+      "status": "PASS",
+      "rc": 0,
+      "expected_rc": 0,
+      "label": "elf32-replay-1794690068834505797-homeres32-bypass",
+      "program": "witness",
+      "mode": "bypass",
+      "binary_sha256": "ebd1c391a422b23fcc8b60e5f1a9c3bee470b6f7f50c87610deeab87aa384e00",
+      "native_images": [
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+          "sha256": "c8438e4fde1934e61c88311633f00949ff645d5c04cdb8671fa3d78164d2f307",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+          "sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+          "sha256": "8ae56f0a9481280a68c19f59809cd242a07a91ad7142944d21a878221992244b",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libexpat.so.1.13.0",
+          "sha256": "36e7e50d21edcabed383bfddc594bb261c1c7cce456afdf23c5f53e849cda67c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+          "sha256": "30c61ab012a4241bed033725a09b61f5fdd3bb7df95ee852d0b096520524c7af",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/liblzma.so.5.8.1",
+          "sha256": "7ca392e92ebb94b6f8ee094cbd5243185e4452377b94acc657f7ba8c8f9dda2c",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+          "sha256": "6d567d53e895273ca14a1f9dc164fc6c8d39aed2f60aa46a733c2784228915f3",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+          "sha256": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libtinfo.so.6.5",
+          "sha256": "4013e7651ac68f547d8333517def25b2366c97eec7de7f06e105dbf3444ffebf",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libxml2.so.2.9.14",
+          "sha256": "8f2643af68a9eba917929046806dabd1848867068d0eee0f6799288a8e886963",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1",
+          "sha256": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e",
+          "elf_class": 64
+        },
+        {
+          "path": "/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7",
+          "sha256": "27f07c9a49c2c956bcfb64cd4712976586a66facbf15fc7f09bc37413b5f2b21",
+          "elf_class": 64
+        }
+      ],
+      "process_teardown": {
+        "namespace": "pid:[4026532413]",
+        "remaining_pids": [],
+        "polls": 1,
+        "status": "PASS"
+      },
+      "global_server_counts": [
+        "0",
+        "0"
+      ]
+    }
+  ],
+  "host_files_unchanged": {
+    "/etc/ld.so.cache": "3ffa6037471f2ec983ca2a4e9cf29a171b956676e6ccd53012881aaf62ae0996",
+    "/var/lib/dpkg/status": "2a4ff8dd15a5a02fa74408e2d3ec9b2ad5ae6b3aed8d1f1989cdc9dc7ec74a8e",
+    "/etc/apt/sources.list.d/0000debian.sources": "253c7fc0f05df188204d65c6750e90f18c01f8e08ee8473a2dfe4eada81a5f85"
+  },
+  "global_foreign_architectures": []
+}

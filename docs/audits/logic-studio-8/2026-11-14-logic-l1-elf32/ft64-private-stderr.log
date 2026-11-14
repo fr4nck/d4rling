@@ -1,0 +1,53 @@
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=7efb2ba0bcfe773e4ab5c760e8ce00cce025d8ca6fc8597c8846d5d381625a7e
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/elf32-replay-1794690068834505797-ft64-private
+dyld: loaded: <A69E2B10-8581-365D-B363-1DEF2968AABD> /Volumes/SystemRoot<REPLAY>/bin/ft-api-x86_64
+dyld: loaded: <0554F799-1781-3D69-86DA-9E1229552BBF> /usr/lib/libSystem.B.dylib
+dyld: loaded: <2F7FB26E-4DD5-39D2-8897-27170654E814> /usr/lib/system/libsystem_sandbox.dylib
+dyld: loaded: <DF495C40-E0FF-301B-BEDB-FC285E4657E4> /usr/lib/system/libquarantine.dylib
+dyld: loaded: <AAF84915-8AEB-31FE-8C65-205790D90CF3> /usr/lib/system/libremovefile.dylib
+dyld: loaded: <3B65B28A-8035-32A9-A1FD-B8F610AF9F8D> /usr/lib/system/libcopyfile.dylib
+dyld: loaded: <94EC5A69-3738-3135-A3B3-9384A0AB3CC0> /usr/lib/system/libsystem_coreservices.dylib
+dyld: loaded: <5EBC72E0-72BD-39DD-8CB1-EB7B3E76C1C3> /usr/lib/system/libsystem_featureflags.dylib
+dyld: loaded: <95EF68D7-86ED-335C-95D6-512B0B0F72C6> /usr/lib/system/libsystem_coretls.dylib
+dyld: loaded: <66D9B540-3201-3680-B9E3-78291663F061> /usr/lib/system/libsystem_malloc.dylib
+dyld: loaded: <A5F91A09-AA76-31F6-8CC1-F577A159E96B> /usr/lib/system/libsystem_c.dylib
+dyld: loaded: <3F9189E7-D7DC-3AF2-BBB2-ABEAAB09B00B> /usr/lib/system/libsystem_kernel.dylib
+dyld: loaded: <3560EE4C-E922-3864-BDBF-53036D8978DC> /usr/lib/system/libsystem_trace.dylib
+dyld: loaded: <66483D65-3AAD-396C-AFE8-B943E6E50F1B> /usr/lib/system/libkeymgr.dylib
+dyld: loaded: <12E77B55-9718-38F0-92DB-E146539AC579> /usr/lib/system/libsystem_m.dylib
+dyld: loaded: <75E19FEB-86B8-3D16-8D03-420EAB10BEE5> /usr/lib/system/libsystem_info.dylib
+dyld: loaded: <53C32FA0-1F37-311A-BEB5-3FCE45F85074> /usr/lib/system/libsystem_notify.dylib
+dyld: loaded: <E0105055-5121-33B4-8A3B-20E3B00D6659> /usr/lib/system/libdispatch.dylib
+dyld: loaded: <BFADC16E-1611-3727-89BB-81E1DA9A1123> /usr/lib/system/liblaunch.dylib
+dyld: loaded: <4D026A2E-A442-30FC-8467-C7CA4A0CE325> /usr/lib/system/libcompiler_rt.dylib
+dyld: loaded: <57A6A934-293B-3F0A-9375-D7F8204359A0> /usr/lib/system/libdyld.dylib
+dyld: loaded: <5BC2DF42-12DA-3366-B961-9A72545F9FA0> /usr/lib/system/libmacho.dylib
+dyld: loaded: <C08575B4-716A-30A6-A3F5-41C94BC76E1A> /usr/lib/system/libsystem_pthread.dylib
+dyld: loaded: <449883C4-230C-3444-B825-27D64CD8F992> /usr/lib/system/libsystem_platform.dylib
+dyld: loaded: <978514C6-9D9E-3673-A806-B61E3E80A8DA> /usr/lib/system/libsystem_asl.dylib
+dyld: loaded: <34DD3BF9-D942-39BC-8CA1-E70662540679> /usr/lib/system/libsystem_duct.dylib
+dyld: loaded: <224F8BFC-A4CB-3FF9-A3E1-5A4355AF9B1B> /usr/lib/system/libsystem_blocks.dylib
+dyld: loaded: <85935B77-7521-3980-A641-D50CAFB8ED5A> /usr/lib/system/libxpc.dylib
+dyld: loaded: <EB7D57FB-8880-3800-AB4E-DFEF6072025C> /usr/lib/system/libcorecrypto.dylib
+dyld: loaded: <7828BB79-8B6B-3A0D-A30E-08BF89457E38> /usr/lib/system/libcommonCrypto.dylib
+dyld: loaded: <957B8FEF-35C3-385D-8C62-BB0F9803EB7B> /usr/lib/system/libsystem_dnssd.dylib
+dyld: loaded: <0BAB1D32-A612-39A8-93FE-F08CDD76F09A> /usr/lib/system/libsystem_networkextension.dylib
+dyld: loaded: <45EB8890-7A4B-379E-961E-663B3CD3961D> /usr/lib/system/libunwind.dylib
+dyld: loaded: <8E655597-023C-34CE-9BAD-98A91FAFC923> /usr/lib/system/libsystem_darwin.dylib
+dyld: loaded: <10C68DE1-0105-3D13-B444-E02834166675> /usr/lib/system/libcache.dylib
+dyld: loaded: <E85DAD5F-C5EC-3699-8B7C-C41E3CA84354> /usr/lib/system/libsystem_configuration.dylib
+dyld: loaded: <268384A9-C0BB-351A-86F8-83ACECD043A1> /usr/lib/libobjc.A.dylib
+dyld: loaded: <278F5319-0BDE-3BF7-9721-6BD5B5751BBA> /usr/lib/libc++.1.dylib
+dyld: loaded: <FBD845D3-BEAD-3491-985D-48F63D5DAA03> /usr/lib/libc++abi.dylib
+dyld: loaded: <45DA51C2-8941-3D7F-8CA5-FD83E03D1C9A> /usr/lib/libresolv.9.dylib
+dyld: loaded: <D5886CA9-8178-3FA3-9142-8ED9A8CC9B42> /usr/lib/native/libFreeType.dylib

@@ -1,0 +1,9 @@
+746 libs found in cache `<REPLAY>/ld.so.cache'
+	libz.so.1 (libc6) => <REPLAY>/sysroot/usr/lib/i386-linux-gnu/libz.so.1
+	libpng16.so.16 (libc6) => <REPLAY>/sysroot/usr/lib/i386-linux-gnu/libpng16.so.16
+	libfreetype.so.6 (libc6,x86-64) => /lib/x86_64-linux-gnu/libfreetype.so.6
+	libfreetype.so.6 (libc6) => <REPLAY>/sysroot/usr/lib/i386-linux-gnu/libfreetype.so.6
+	libbz2.so.1.0 (libc6) => <REPLAY>/sysroot/usr/lib/i386-linux-gnu/libbz2.so.1.0
+	libbrotlienc.so.1 (libc6) => <REPLAY>/sysroot/usr/lib/i386-linux-gnu/libbrotlienc.so.1
+	libbrotlidec.so.1 (libc6) => <REPLAY>/sysroot/usr/lib/i386-linux-gnu/libbrotlidec.so.1
+	libbrotlicommon.so.1 (libc6) => <REPLAY>/sysroot/usr/lib/i386-linux-gnu/libbrotlicommon.so.1

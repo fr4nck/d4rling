@@ -1,0 +1,9 @@
+{
+  "run-deleg.sh": "2e1c2f2088d8163c501f31486d8245b6022b097ce2572bc3b8bb0a6e62cff176",
+  "bin/witness": "ebd1c391a422b23fcc8b60e5f1a9c3bee470b6f7f50c87610deeab87aa384e00",
+  "bin/logic-load-probe": "6c03344a1dd015d24a5b0cb65765a99c13cf0e224af3e1308fbd83b84f604853",
+  "commands/native-freetype-i386-compile.json": "4b83602c7c64cfe4a9ebee3a5da8f15fe242a2fd13be84b187c83e2f964c55f1",
+  "commands/native-freetype-i386-link.json": "d333f091b7f13d2b63017d02530fd5cbb46fa40d962175427a7d6d484c057ebb",
+  "commands/native-freetype-x86_64-compile.json": "394a2eae7bc78f73134b608b79e23f8b13205f5045822402578ec56b54c84938",
+  "commands/native-freetype-x86_64-link.json": "aeb34015e37528d1a67240058cdeed6ee617316c252f5389953a9892d18edcdb"
+}

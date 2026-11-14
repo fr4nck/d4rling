@@ -1,0 +1,52 @@
+[
+  {
+    "install_path": "/usr/lib/native/libFreeType.dylib",
+    "sha256": "23215ae76649edabe423e5536df87d89c6c1494b27c9b4724e0fb968a005fc6d",
+    "i386_uuid": [
+      "746E6CB9-BFEB-34E7-96BD-9A3F41510539"
+    ],
+    "loaded_in_carbon_attempt": [
+      "746E6CB9-BFEB-34E7-96BD-9A3F41510539"
+    ]
+  },
+  {
+    "install_path": "/usr/lib/native/libfontconfig.dylib",
+    "sha256": "49ea20f83c9e2c476a8c2c096e9f5e784d7fbcb822d122ed6be56805e6e3d7c2",
+    "i386_uuid": [
+      "D88C29CC-9A8D-310D-9702-6E6D23CEE292"
+    ],
+    "loaded_in_carbon_attempt": [
+      "D88C29CC-9A8D-310D-9702-6E6D23CEE292"
+    ]
+  },
+  {
+    "install_path": "/System/Library/Frameworks/Carbon.framework/Versions/A/Carbon",
+    "sha256": "29a91d7a628ef2db79a52a3e5e8b9fbf9bc8cba290db0d85d40f55cc6f4c0d5a",
+    "i386_uuid": [
+      "E0EA19F4-455A-389B-8382-98438CDFC6D9"
+    ],
+    "loaded_in_carbon_attempt": [
+      "E0EA19F4-455A-389B-8382-98438CDFC6D9"
+    ]
+  },
+  {
+    "install_path": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+    "sha256": "7efb2ba0bcfe773e4ab5c760e8ce00cce025d8ca6fc8597c8846d5d381625a7e",
+    "i386_uuid": [
+      "A41DF141-BDE2-3855-A76E-61D2CFCE5982"
+    ],
+    "loaded_in_carbon_attempt": [
+      "A41DF141-BDE2-3855-A76E-61D2CFCE5982"
+    ]
+  },
+  {
+    "install_path": "/System/Library/Frameworks/Security.framework/Versions/A/Security",
+    "sha256": "f2b2e87cbe7cca03e49e20184e6a54779a4b482aebf4b450a05d5d0821f3433b",
+    "i386_uuid": [
+      "24EC5952-1639-3F47-97ED-79438FB55277"
+    ],
+    "loaded_in_carbon_attempt": [
+      "24EC5952-1639-3F47-97ED-79438FB55277"
+    ]
+  }
+]

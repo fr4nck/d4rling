@@ -1,0 +1,10 @@
+variant=candidate label=elf32-replay-1794690068834505797-homeres32-normal mode=normal
+library_sha256=7efb2ba0bcfe773e4ab5c760e8ce00cce025d8ca6fc8597c8846d5d381625a7e
+program_sha256=ebd1c391a422b23fcc8b60e5f1a9c3bee470b6f7f50c87610deeab87aa384e00
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-14T22:01:20+01:00
+rc=0
+end=2026-11-14T22:01:22+01:00
+host_mounts_after=41
+darlingserver_after=0

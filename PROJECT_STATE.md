@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## LOGIC-L1 — FreeType ELF32 privé qualifié (14 novembre 2026)
+
+**FreeType PASS borné, Carbon/L2 BLOCKED.** Cinq paquets Debian i386 authentifiés et extraits en privé ; init/version/erreur de police absente/destruction passent via le vrai pont Darling i386 et en contrôle x86_64. Le chargement Carbon sans suppression de dépendances franchit FreeType puis échoue sur **libfontconfig.so.1 ELF32 absente**. HomeResFile **88/88 normal + 88/88 bypass** ; artefacts S4 gelés inchangés, aucun résidu dans les namespaces du lot. Aucune installation globale ni exécution de Logic. [Preuves et reproduction](docs/audits/logic-studio-8/2026-11-14-logic-l1-elf32.md).
+
 ## LOGIC-L1 — besoin réel et obstacle de chargement (14 novembre 2026)
 
 **L2 BLOCKED, aucun lancement de Logic.** Inventaire privé du 4 novembre repris : 73 SHA vérifiés, Logic Pro 8.0 build 800B237 en i386/PPC, 40 dépendances (39 fortes/1 faible), 2 398 imports et surface Cocoa confirmée. Dans le banc L1, la fermeture Carbon atteint le pont ELF puis échoue sur FreeType ELF32 non résolu ; le témoin x86_64 passe. Lookup natif : 680/689 noms trouvés sur huit fournisseurs, sept noms d’API ordinaires absents et deux noms GNU `.eh` à expertiser. Aucun framework partagé modifié ; QuickTime/libdyld restent au propriétaire de B11E. [Matrice, preuves et prochaine priorité](docs/audits/logic-studio-8/2026-11-14-logic-l1.md).

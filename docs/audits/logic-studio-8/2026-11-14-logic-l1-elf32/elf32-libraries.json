@@ -1,0 +1,67 @@
+[
+  {
+    "file": "libbrotlicommon.so.1.1.0",
+    "sha256": "ccd7231d13f1bd5529d2074a37b044ee25f3e04e48079848f39cba7fac445185",
+    "class": "ELF32",
+    "needed": [
+      "libc.so.6"
+    ]
+  },
+  {
+    "file": "libbrotlidec.so.1.1.0",
+    "sha256": "4f86ea7d99a84ad35a895190706bcbf07ed550542b3f617f347d1a4dafbb11f2",
+    "class": "ELF32",
+    "needed": [
+      "libbrotlicommon.so.1",
+      "libc.so.6"
+    ]
+  },
+  {
+    "file": "libbrotlienc.so.1.1.0",
+    "sha256": "ba8ff2bae21f9c4d934d2d30d33e3101a9dfd365d32bb45254fc4d7a3e94d301",
+    "class": "ELF32",
+    "needed": [
+      "libm.so.6",
+      "libbrotlicommon.so.1",
+      "libc.so.6"
+    ]
+  },
+  {
+    "file": "libbz2.so.1.0.4",
+    "sha256": "0a672cf33845f12fa1e5be29ef689b29d01efa95e25acf33e4fd130cefe2f597",
+    "class": "ELF32",
+    "needed": [
+      "libc.so.6"
+    ]
+  },
+  {
+    "file": "libfreetype.so.6.20.2",
+    "sha256": "c222f4442e4eee602eeb92f5e8eee8058fb912cc18bb9db0ecbaaa5ec4f03fef",
+    "class": "ELF32",
+    "needed": [
+      "libz.so.1",
+      "libbz2.so.1.0",
+      "libpng16.so.16",
+      "libbrotlidec.so.1",
+      "libc.so.6"
+    ]
+  },
+  {
+    "file": "libpng16.so.16.48.0",
+    "sha256": "51cd474b6ad1da1a97f3c88a30466c1a9c6de6fced0bd094eeafe4b636d04cfc",
+    "class": "ELF32",
+    "needed": [
+      "libz.so.1",
+      "libm.so.6",
+      "libc.so.6"
+    ]
+  },
+  {
+    "file": "libz.so.1.3.1",
+    "sha256": "cbd8e2d6d4333db26831200000c80af2065d082a6f93a70a0b806680634579f5",
+    "class": "ELF32",
+    "needed": [
+      "libc.so.6"
+    ]
+  }
+]

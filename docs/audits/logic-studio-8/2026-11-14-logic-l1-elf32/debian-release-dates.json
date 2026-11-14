@@ -1,0 +1,19 @@
+[
+  {
+    "Origin": "Debian",
+    "Label": "Debian",
+    "Suite": "stable",
+    "Version": "13.7",
+    "Codename": "trixie",
+    "Date": "Sat, 12 Sep 2026 07:55:41 UTC"
+  },
+  {
+    "Origin": "Debian",
+    "Label": "Debian-Security",
+    "Suite": "stable-security",
+    "Version": "13",
+    "Codename": "trixie-security",
+    "Date": "Sat, 14 Nov 2026 20:03:59 UTC",
+    "Valid-Until": "Sat, 21 Nov 2026 20:03:59 UTC"
+  }
+]

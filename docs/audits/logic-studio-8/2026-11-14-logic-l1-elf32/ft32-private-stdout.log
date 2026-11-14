@@ -1,0 +1,7 @@
+FT_API_BEGIN pointer_size=4
+FT_WRAPPER image=/usr/lib/native/libFreeType.dylib
+FT_INIT rc=0 library_nonnull=1
+FT_VERSION 2.13.3
+FT_MISSING_FACE rc=1 face_null=1
+FT_DONE rc=0
+FT_API_PASS init/version/missing-face/done
