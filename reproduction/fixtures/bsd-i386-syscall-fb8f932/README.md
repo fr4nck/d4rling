@@ -3,6 +3,8 @@
 Banc de qualification du correctif
 [`bsd-i386-syscall-dispatch-fb8f932.patch`](../../patches/bsd-i386-syscall-dispatch-fb8f932.patch).
 Rapport : [docs/evidence/bsd-i386-xnu-fb8f932-syscall-2026-11-14.md](../../../docs/evidence/bsd-i386-xnu-fb8f932-syscall-2026-11-14.md).
+Depuis darling-xnu `e72d43f0` (gitlink actuel), le correctif est dans l'amont :
+un build non modifié doit donner `fixed` ([rapport d'intégration](../../../docs/evidence/bsd-i386-xnu-e72d43f-integration-2026-11-14.md)).
 
 | Fichier | Rôle |
 | --- | --- |

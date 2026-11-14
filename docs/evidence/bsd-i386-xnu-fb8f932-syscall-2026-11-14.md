@@ -6,6 +6,12 @@ décrit ici. Correctif **qualifié en exécution invitée** et versionné comme
 patch du superprojet ; **gitlink XNU inchangé** (voir « Intégration »).
 Aucune conclusion Logic Studio 8, audio, QuickTime Player ou x86_64.
 
+> **Suite (14 novembre 2026) :** correctif fusionné en amont
+> ([darling-xnu#102](https://github.com/darlinghq/darling-xnu/pull/102)) et
+> gitlink avancé sur `e72d43f0` après requalification :
+> [rapport d'intégration](bsd-i386-xnu-e72d43f-integration-2026-11-14.md).
+> Le patch ci-dessous ne doit plus être appliqué.
+
 ## Base examinée
 
 | Élément | Référence |
