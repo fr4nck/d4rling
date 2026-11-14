@@ -20,3 +20,10 @@ constexpr OSErr memWZErr = -111;
 constexpr OSErr memPurErr = -112;
 constexpr OSErr memLockedErr = -117;
 constexpr OSErr paramErr = -50;
+// Upstream Darling (2026-11) FSCreateResFile error results.
+constexpr OSErr bdNamErr = -37;
+constexpr OSErr dupFNErr = -48;
+constexpr OSErr permErr = -54;
+constexpr OSErr dirNFErr = -120;
+constexpr OSErr errFSBadForkName = -1413;
+constexpr OSErr unimpErr = -4;

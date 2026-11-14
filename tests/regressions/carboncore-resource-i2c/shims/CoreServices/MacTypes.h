@@ -19,3 +19,6 @@ using Size = long;
 using Boolean = uint8_t;
 using Str255 = UInt8[256];
 using ConstStr255Param = const UInt8*;
+// Upstream Darling (2026-11) Resources.h SPI declarations need these types.
+using UInt64 = uint64_t;
+using StringPtr = UInt8*;
