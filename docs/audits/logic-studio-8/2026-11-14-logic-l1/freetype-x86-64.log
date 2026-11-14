@@ -1,0 +1,2 @@
+NATIVE_FREETYPE_BEGIN pointer_size=8
+NATIVE_FREETYPE_LOAD_PASS image=/usr/lib/native/libFreeType.dylib

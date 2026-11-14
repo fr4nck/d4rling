@@ -1,0 +1,122 @@
+[
+  {
+    "symbol": "_MIDIClientCreate",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIClientDispose",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIEndpointGetEntity",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIEntityGetDevice",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIGetDestination",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIGetNumberOfDestinations",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIGetNumberOfSources",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIGetSource",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIInputPortCreate",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIObjectFindByUniqueID",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIObjectGetDataProperty",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIObjectGetIntegerProperty",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIObjectGetStringProperty",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIOutputPortCreate",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIPortConnectSource",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIPortDisconnectSource",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIReceived",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDIRestart",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDISend",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_MIDISourceCreate",
+    "source_classification": "explicit-stub"
+  },
+  {
+    "symbol": "_kMIDIPropertyConnectionUniqueID",
+    "source_classification": "constant-definition"
+  },
+  {
+    "symbol": "_kMIDIPropertyDisplayName",
+    "source_classification": "constant-definition"
+  },
+  {
+    "symbol": "_kMIDIPropertyDriverOwner",
+    "source_classification": "constant-definition"
+  },
+  {
+    "symbol": "_kMIDIPropertyIsBroadcast",
+    "source_classification": "constant-definition"
+  },
+  {
+    "symbol": "_kMIDIPropertyManufacturer",
+    "source_classification": "constant-definition"
+  },
+  {
+    "symbol": "_kMIDIPropertyModel",
+    "source_classification": "constant-definition"
+  },
+  {
+    "symbol": "_kMIDIPropertyName",
+    "source_classification": "constant-definition"
+  },
+  {
+    "symbol": "_kMIDIPropertyReceiveChannels",
+    "source_classification": "constant-definition"
+  },
+  {
+    "symbol": "_kMIDIPropertySupportsGeneralMIDI",
+    "source_classification": "constant-definition"
+  },
+  {
+    "symbol": "_kMIDIPropertyUniqueID",
+    "source_classification": "constant-definition"
+  }
+]

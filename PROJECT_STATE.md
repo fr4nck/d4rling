@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## LOGIC-L1 — besoin réel et obstacle de chargement (14 novembre 2026)
+
+**L2 BLOCKED, aucun lancement de Logic.** Inventaire privé du 4 novembre repris : 73 SHA vérifiés, Logic Pro 8.0 build 800B237 en i386/PPC, 40 dépendances (39 fortes/1 faible), 2 398 imports et surface Cocoa confirmée. Dans le banc L1, la fermeture Carbon atteint le pont ELF puis échoue sur FreeType ELF32 non résolu ; le témoin x86_64 passe. Lookup natif : 680/689 noms trouvés sur huit fournisseurs, sept noms d’API ordinaires absents et deux noms GNU `.eh` à expertiser. Aucun framework partagé modifié ; QuickTime/libdyld restent au propriétaire de B11E. [Matrice, preuves et prochaine priorité](docs/audits/logic-studio-8/2026-11-14-logic-l1.md).
+
 ## S4 — référence Security officielle qualifiée (14 novembre 2026)
 
 **TEST / PASS borné :** gitlink Security `84c0a3e1` (#16 officielle), après comparaison des cinq fichiers supplémentaires par rapport à `a536cfff`, recompilation de 44 objets FAT et reliaison des deux architectures. Chargement standard sans `-dead_strip_dylibs`, HomeResFile **88/88 normal + 88/88 bypass**, témoins SSL bornés et Carbon Events passent. Exports inchangés ; test du trousseau compilé mais non exécuté (banc UID Darwin 0). TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction S4](docs/evidence/security-s4-official-reference-2026-11-14.md).

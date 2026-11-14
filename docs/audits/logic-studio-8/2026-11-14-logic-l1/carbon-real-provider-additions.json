@@ -1,0 +1,202 @@
+[
+  {
+    "id": "/System/Library/Frameworks/Carbon.framework/Versions/A/Carbon",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/Carbon/Carbon",
+    "sha256": "29a91d7a628ef2db79a52a3e5e8b9fbf9bc8cba290db0d85d40f55cc6f4c0d5a"
+  },
+  {
+    "id": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/CommonPanels.framework/Versions/A/CommonPanels",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/Carbon/CommonPanels/CommonPanels",
+    "sha256": "4b03b738fe937d72f32864eebb333cba58cc869c2c7f578ced26d9e9cc265134"
+  },
+  {
+    "id": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/Help.framework/Versions/A/Help",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/Carbon/Help/Help",
+    "sha256": "ea97c5869b0e065abf4f160915c10b5dda2ad645efa6e2e60f881edf85381978"
+  },
+  {
+    "id": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/HIToolbox",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/Carbon/HIToolbox/HIToolbox",
+    "sha256": "05f770a88fdb54df5dbfcc062a148061f95cf26e25527c5f3ded5f63fdf8f86a"
+  },
+  {
+    "id": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/ImageCapture.framework/Versions/A/ImageCapture",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/Carbon/ImageCapture/ImageCapture",
+    "sha256": "c5d585316f992049337d1537f43079ee0440d7c9e9495cb49535fb72ba5b7e73"
+  },
+  {
+    "id": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/Ink.framework/Versions/A/Ink",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/Carbon/Ink/Ink",
+    "sha256": "f5d5f534a3a79543e8bc4c6035b4b0bf0e904536d3b8e34025d312734c29c294"
+  },
+  {
+    "id": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/OpenScripting.framework/Versions/A/OpenScripting",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/Carbon/OpenScripting/OpenScripting",
+    "sha256": "8efd2542da788dcba7213d4a167d1743a44fb11d7d91402b40c35d0206132769"
+  },
+  {
+    "id": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/Print.framework/Versions/A/Print",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/Carbon/Print/Print",
+    "sha256": "086b0242514c58f00166626b7289cb8f911b0ad96bad4b2f1640f46705218757"
+  },
+  {
+    "id": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/SecurityHI.framework/Versions/A/SecurityHI",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/Carbon/SecurityHI/SecurityHI",
+    "sha256": "4073187e3774034a548a0953ede621664f0cbef8fcb9a3fb0f732c87f12d8658"
+  },
+  {
+    "id": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/SpeechRecognition.framework/Versions/A/SpeechRecognition",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/Carbon/SpeechRecognition/SpeechRecognition",
+    "sha256": "e8c07d531b9ac267a51c979314ec6baf6d31629393c990b67c90826ccdf3a3a7"
+  },
+  {
+    "id": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/ApplicationServices",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/ApplicationServices/ApplicationServices",
+    "sha256": "c72266aa795840f18912252873a0b697e14b8fe1a9cd4b438c452c21d173ef8b"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/external/cocotron/CoreGraphics/CoreGraphics",
+    "sha256": "95005f0b32ff79c1e5b0460650ce57e68f6dc4c1c23ba367608305e5f4b4f0e2"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreText.framework/Versions/A/CoreText",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/external/cocotron/CoreText/CoreText",
+    "sha256": "ba9e0bac45171be7e2d32d8d17dd6b2cb5238654c3da8e0c4ea76f525fd87f83"
+  },
+  {
+    "id": "/System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/ImageIO/ImageIO",
+    "sha256": "3d2674dca821e3e32114a2458d92bf00147b7d7a7a192c3556fa6714b52fb2ab"
+  },
+  {
+    "id": "/System/Library/Frameworks/ColorSync.framework/Versions/A/ColorSync",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/ColorSync/ColorSync",
+    "sha256": "bc5ffd012aec3100b3251ba41d43d2d5f391b69abb977ef3e06adf2ecb484717"
+  },
+  {
+    "id": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/ATS",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/ApplicationServices/ATS/ATS",
+    "sha256": "6dda8f38bc90f0fe10c0be6b69ee4fb07a5757731588f1ebde9e3cc09225a71a"
+  },
+  {
+    "id": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ColorSyncLegacy.framework/Versions/A/ColorSyncLegacy",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/ApplicationServices/ColorSyncLegacy/ColorSyncLegacy",
+    "sha256": "3ccb6733ac0f38ff5558cf7f0f5160d15776973235911afa8d37e6cbe9b908d0"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/CoreServices/CoreServices",
+    "sha256": "ac53bd2ba7332fe0cf2d305b830b622ff1b2b1e0b192c5b5af556c4eaf70bfa0"
+  },
+  {
+    "id": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/HIServices",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/ApplicationServices/HIServices/HIServices",
+    "sha256": "a9f27f33f8083810a640a8760071847e9452d0497946ac02176de25b81909d84"
+  },
+  {
+    "id": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/LangAnalysis.framework/Versions/A/LangAnalysis",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/ApplicationServices/LangAnalysis/LangAnalysis",
+    "sha256": "ea530d51db1694730b3b7f9d84b7085b9ba676e72386f0008e1f72cbbb5bd2df"
+  },
+  {
+    "id": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/PrintCore.framework/Versions/A/PrintCore",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/ApplicationServices/PrintCore/PrintCore",
+    "sha256": "e6bebe8a111fad17ada5436a556419247bedb9b69486736a1c3b713fa749d456"
+  },
+  {
+    "id": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/QD.framework/Versions/A/QD",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/ApplicationServices/QD/QD",
+    "sha256": "72da00095e17ea91863c632cfeea3d7f1662691259899d857e77f6e72c5363a0"
+  },
+  {
+    "id": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesis",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/ApplicationServices/SpeechSynthesis/SpeechSynthesis",
+    "sha256": "f487a3907a4fa1b59ad279d99a5381cfd1d6946a5bb373834381aba9c15e70b3"
+  },
+  {
+    "id": "/System/Library/PrivateFrameworks/Onyx2D.framework/Versions/A/Onyx2D",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/external/cocotron/Onyx2D/Onyx2D",
+    "sha256": "b055a85775abf05b5d961040cde65e5bf5db4b8cca38d021ca9759072f83404f"
+  },
+  {
+    "id": "/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/native/libGL.dylib",
+    "sha256": "ffd01aad67718e594c52a328976a9dc8231e156b9f8ac7c698cea65ddaf1a5ae"
+  },
+  {
+    "id": "/usr/lib/native/libFreeType.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/native/libFreeType.dylib",
+    "sha256": "23215ae76649edabe423e5536df87d89c6c1494b27c9b4724e0fb968a005fc6d"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/FSEvents",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/CoreServices/src/FSEvents/FSEvents",
+    "sha256": "b0ada56b9afd3c4d2fa3df3ea14ae2005b4d113917f66dbc23b34ba9d12c850c"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/LaunchServices",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/CoreServices/src/LaunchServices/LaunchServices",
+    "sha256": "de29b9e01b7d37253d5da8165c8c328eebb5a05e58022c549ed9c23e19853ee2"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/CoreServices/src/AE/AE",
+    "sha256": "c52211f82940f43274e722c8cfd3b48d6ed7f37ad8d255d1d7ae7013f93495aa"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/DictionaryServices",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/CoreServices/src/DictionaryServices/DictionaryServices",
+    "sha256": "d8348608003c07245dc2849e5e9dcdee9dab7174d7dc95660c0c69a483c88ee7"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Metadata",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/CoreServices/src/Metadata/Metadata",
+    "sha256": "7930d16409c15342050e47155fc42107acb13f39a2606e644cb3054d2fb17542"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SearchKit.framework/Versions/A/SearchKit",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/CoreServices/src/SearchKit/SearchKit",
+    "sha256": "d68480b7924dfdf1da63b609c422f27949622b5352b3027358716f8a75846927"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SharedFileList.framework/Versions/A/SharedFileList",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/CoreServices/src/SharedFileList/SharedFileList",
+    "sha256": "867228f343b716f706541cac4bf26fb58ba19a386781c24754a4f8fa97936bd8"
+  },
+  {
+    "id": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/OSServices.framework/Versions/A/OSServices",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/frameworks/CoreServices/src/OSServices/OSServices",
+    "sha256": "e71a0a54cbb692f4e43915bd90eecd75b69c7f8258c13d0f771fadc9534d4038"
+  },
+  {
+    "id": "/usr/lib/native/libfontconfig.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/native/libfontconfig.dylib",
+    "sha256": "49ea20f83c9e2c476a8c2c096e9f5e784d7fbcb822d122ed6be56805e6e3d7c2"
+  },
+  {
+    "id": "/usr/lib/native/libjpeg.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/native/libjpeg.dylib",
+    "sha256": "751572a2c15f5a4e68997d545f6ee1e004ce4507ff99477f832b10ee23c3e81b"
+  },
+  {
+    "id": "/usr/lib/native/libpng.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/native/libpng.dylib",
+    "sha256": "74962590947dab5d7ddde8f92f83bac00689028ab01d190d5fd15b16f83041c0"
+  },
+  {
+    "id": "/usr/lib/native/libtiff.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/native/libtiff.dylib",
+    "sha256": "4e76003cc1e58d3a4881eca6eab456d0a1712c9c128153579136fa4e19693d9a"
+  },
+  {
+    "id": "/usr/lib/native/libgif.dylib",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/native/libgif.dylib",
+    "sha256": "c5085bc54959deb532b03c3a670081a7a139866d5f48c7ca8fb6b0fd8013b6f8"
+  },
+  {
+    "id": "/System/Library/PrivateFrameworks/FMDB.framework/Versions/A/FMDB",
+    "source": "$QUALIFIED_SYNC/build-gui-i386/src/external/fmdb/FMDB",
+    "sha256": "17ef6ceb8c6ffbb554b7437cf1c5e5e47ed114863743f66494a266e09a259267"
+  }
+]

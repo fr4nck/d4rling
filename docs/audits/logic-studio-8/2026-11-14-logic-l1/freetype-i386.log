@@ -1,0 +1,2 @@
+NATIVE_FREETYPE_BEGIN pointer_size=4
+Cannot load libfreetype.so.6 (ELF): libfreetype.so.6: cannot open shared object file: No such file or directory

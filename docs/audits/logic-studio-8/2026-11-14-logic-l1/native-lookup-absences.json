@@ -1,0 +1,56 @@
+[
+  {
+    "provider": "/usr/lib/libSystem.B.dylib",
+    "name_for_dlsym": "pthread_cancel",
+    "classification": "ordinary-API-name",
+    "functional_result": "NOT_EXECUTED"
+  },
+  {
+    "provider": "/usr/lib/libSystem.B.dylib",
+    "name_for_dlsym": "pthread_cond_init",
+    "classification": "ordinary-API-name",
+    "functional_result": "NOT_EXECUTED"
+  },
+  {
+    "provider": "/usr/lib/libSystem.B.dylib",
+    "name_for_dlsym": "pthread_cond_wait",
+    "classification": "ordinary-API-name",
+    "functional_result": "NOT_EXECUTED"
+  },
+  {
+    "provider": "/usr/lib/libSystem.B.dylib",
+    "name_for_dlsym": "pthread_join",
+    "classification": "ordinary-API-name",
+    "functional_result": "NOT_EXECUTED"
+  },
+  {
+    "provider": "/usr/lib/libSystem.B.dylib",
+    "name_for_dlsym": "pthread_mutexattr_destroy",
+    "classification": "ordinary-API-name",
+    "functional_result": "NOT_EXECUTED"
+  },
+  {
+    "provider": "/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration",
+    "name_for_dlsym": "SCDynamicStoreCopyMultiple",
+    "classification": "ordinary-API-name",
+    "functional_result": "NOT_EXECUTED"
+  },
+  {
+    "provider": "/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration",
+    "name_for_dlsym": "SCError",
+    "classification": "ordinary-API-name",
+    "functional_result": "NOT_EXECUTED"
+  },
+  {
+    "provider": "/usr/lib/libstdc++.6.dylib",
+    "name_for_dlsym": "_ZStplIcSt11char_traitsIcESaIcEESbIT_T0_T1_EPKS3_RKS6_.eh",
+    "classification": "legacy-GNU-EH-metadata-name-not-API",
+    "functional_result": "NOT_EXECUTED"
+  },
+  {
+    "provider": "/usr/lib/libstdc++.6.dylib",
+    "name_for_dlsym": "_ZStplIcSt11char_traitsIcESaIcEESbIT_T0_T1_ERKS6_S8_.eh",
+    "classification": "legacy-GNU-EH-metadata-name-not-API",
+    "functional_result": "NOT_EXECUTED"
+  }
+]

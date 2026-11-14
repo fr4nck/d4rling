@@ -7,6 +7,8 @@ Depuis le worktree privé contenant ces sources :
 ```bash
 set -Eeuo pipefail
 stage="$HOME/d4wrling-work/validation/security-s4-logic-l1-20261114"
+test -d "$stage/src/.git" || test -f "$stage/src/.git"
+cd -- "$stage/src"
 test -f "$stage/reports/S4-RESULTS.json"
 python3 tests/regressions/security-official-reference/reproduce.py --stage "$stage"
 python3 tests/regressions/security-official-reference/reproduce.py --stage "$stage" --run

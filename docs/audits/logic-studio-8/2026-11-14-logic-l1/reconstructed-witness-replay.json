@@ -1,0 +1,42 @@
+[
+  {
+    "label": "l1-replay-1794686621840316198-carbon-before",
+    "program": "logic-load-probe",
+    "expected_returncode": 20,
+    "actual_returncode": 20,
+    "marker_present": true,
+    "binary_sha256": "eef69c5263a1c00f190b2e4046f02877368d6db7779a2f1b76e9d213f4dbdf1b"
+  },
+  {
+    "label": "l1-replay-1794686621840316198-carbon-present",
+    "program": "logic-load-probe",
+    "expected_returncode": 134,
+    "actual_returncode": 134,
+    "marker_present": true,
+    "binary_sha256": "eef69c5263a1c00f190b2e4046f02877368d6db7779a2f1b76e9d213f4dbdf1b"
+  },
+  {
+    "label": "l1-replay-1794686621840316198-freetype-i386",
+    "program": "native-freetype-i386",
+    "expected_returncode": 134,
+    "actual_returncode": 134,
+    "marker_present": true,
+    "binary_sha256": "4917337be47b7ff40361519fbffe8bf8cc3712b182eeb46c1d188af6b2162d4b"
+  },
+  {
+    "label": "l1-replay-1794686621840316198-freetype-x64",
+    "program": "native-freetype-x86_64",
+    "expected_returncode": 0,
+    "actual_returncode": 0,
+    "marker_present": true,
+    "binary_sha256": "60cd2b89902f055301035ea8e0eee13b4eaba0dee5f3a19b8664552705cd02bd"
+  },
+  {
+    "label": "l1-replay-1794686621840316198-symbols",
+    "program": "logic-system-symbols",
+    "expected_returncode": 0,
+    "actual_returncode": 0,
+    "marker_present": true,
+    "binary_sha256": "6aa80b0b36f4551084c01d15c33c4382963dcad578b5bc97c3a83ad20cc5061e"
+  }
+]

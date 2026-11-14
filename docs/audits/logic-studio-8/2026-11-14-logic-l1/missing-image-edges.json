@@ -1,0 +1,147 @@
+[
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/MacOS/Logic Pro",
+    "dependency": "/System/Library/Frameworks/AddressBook.framework/Versions/A/AddressBook",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/MacOS/Logic Pro",
+    "dependency": "/System/Library/Frameworks/DiscRecording.framework/Versions/A/DiscRecording",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/MacOS/Logic Pro",
+    "dependency": "/System/Library/Frameworks/DiskArbitration.framework/Versions/A/DiskArbitration",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/MacOS/Logic Pro",
+    "dependency": "/System/Library/Frameworks/ExceptionHandling.framework/Versions/A/ExceptionHandling",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/MacOS/Logic Pro",
+    "dependency": "/usr/lib/libcrypto.0.9.7.dylib",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/MacOS/Logic Pro",
+    "dependency": "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/MacOS/Logic Pro",
+    "dependency": "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/MacOS/Logic Pro",
+    "dependency": "/usr/local/lib/libEuConDLL.dylib",
+    "kind": "weak"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/MacOS/Logic Pro",
+    "dependency": "/System/Library/Frameworks/CoreAudioKit.framework/Versions/A/CoreAudioKit",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/XAudioUnits.framework/Versions/A/XAudioUnits",
+    "dependency": "/System/Library/Frameworks/CoreAudioKit.framework/Versions/A/CoreAudioKit",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/XAudioUnits.framework/Versions/A/XAudioUnits",
+    "dependency": "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/XAudioUnits.framework/Versions/A/XAudioUnits",
+    "dependency": "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/MusicAudioDataServices.framework/Versions/A/MusicAudioDataServices",
+    "dependency": "/System/Library/Frameworks/SyncServices.framework/Versions/A/SyncServices",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/ELoop.framework/Versions/A/ELoop",
+    "dependency": "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/LogicLoopBrowser.framework/Versions/A/LogicLoopBrowser",
+    "dependency": "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+    "kind": "load"
+  },
+  {
+    "parent": "/System/Library/PrivateFrameworks/ProKit.framework/Versions/A/ProKit",
+    "dependency": "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+    "kind": "load"
+  },
+  {
+    "parent": "/System/Library/PrivateFrameworks/ProKit.framework/Versions/A/ProKit",
+    "dependency": "/System/Library/PrivateFrameworks/Bom.framework/Versions/A/Bom",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/ECore.framework/Versions/A/ECore",
+    "dependency": "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/ECore.framework/Versions/A/ECore",
+    "dependency": "/usr/lib/libcrypto.0.9.7.dylib",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/ECore.framework/Versions/A/ECore",
+    "dependency": "/System/Library/Frameworks/ExceptionHandling.framework/Versions/A/ExceptionHandling",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/ECore.framework/Versions/A/ECore",
+    "dependency": "/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/EHardwareSupport.framework/Versions/A/EHardwareSupport",
+    "dependency": "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/LogicFileBrowser.framework/Versions/A/LogicFileBrowser",
+    "dependency": "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/LogicFileBrowser.framework/Versions/A/LogicFileBrowser",
+    "dependency": "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/XLogicImages.framework/Versions/A/XLogicImages",
+    "dependency": "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/AERegistration.framework/Versions/A/AERegistration",
+    "dependency": "/System/Library/Frameworks/AddressBook.framework/Versions/A/AddressBook",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/AERegistration.framework/Versions/A/AERegistration",
+    "dependency": "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/AERegistration.framework/Versions/A/AERegistration",
+    "dependency": "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+    "kind": "load"
+  },
+  {
+    "parent": "/Applications/Logic Pro.app/Contents/Frameworks/AEProfiling.framework/Versions/A/AEProfiling",
+    "dependency": "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+    "kind": "load"
+  }
+]

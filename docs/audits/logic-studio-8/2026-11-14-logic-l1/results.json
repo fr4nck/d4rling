@@ -1,0 +1,70 @@
+{
+  "source": "existing private audit 2026-11-04; 73 copied input hashes rechecked",
+  "main_sha256": "273e33c4558f97ef4d4fba7cb9a8d2332857a9bb299d419246f177a0db668d24",
+  "main_bytes": 46429148,
+  "architectures": [
+    "ppc",
+    "i386"
+  ],
+  "direct_dependencies": 40,
+  "strong_dependencies": 39,
+  "weak_dependencies": 1,
+  "main_i386_imports": 2398,
+  "direct_required_imports": 2279,
+  "declared_graph_images": 134,
+  "declared_graph_edges": 764,
+  "class_imports": 168,
+  "cocoa_NS_class_imports": 142,
+  "dynamic_loader_imports": [
+    "_CFBundleGetBundleWithIdentifier",
+    "_CFBundleGetFunctionPointerForName",
+    "_CFBundleLoadExecutable",
+    "_NSAddImage",
+    "_dlopen"
+  ],
+  "states_runtime": {
+    "owned-original-static-only": 15,
+    "runtime-i386": 10,
+    "missing": 15
+  },
+  "states_available": {
+    "owned-original-static-only": 15,
+    "runtime-i386": 10,
+    "missing": 9,
+    "built-i386-not-installed": 6
+  },
+  "first_system_image_not_installed": "/System/Library/Frameworks/AddressBook.framework/Versions/A/AddressBook",
+  "logic_execution": "NOT_RUN_L2_NOT_AUTHORIZED",
+  "matrix_view": "logic-runtime (S4 plus 40 unchanged built Darling providers for Carbon closure)",
+  "s4_runtime_providers_native_checked": 8,
+  "native_symbol_lookups": 689,
+  "native_symbols_found": 680,
+  "native_names_absent": 9,
+  "ordinary_api_names_absent": 7,
+  "legacy_gnu_eh_names_absent": 2,
+  "first_tested_loading_failure": "Cannot load libfreetype.so.6 (ELF): libfreetype.so.6: cannot open shared object file: No such file or directory",
+  "freetype_i386_rc": 134,
+  "freetype_x86_64_rc": 0,
+  "carbon_closure_images": 105,
+  "carbon_real_images_added": 40,
+  "L2_decision": "BLOCKED",
+  "logic_itself_executed": false,
+  "apple_framework_code_executed": false,
+  "system_installation_performed": false,
+  "framework_source_modified": false,
+  "strong_missing_ids_in_available_view": [
+    "/System/Library/Frameworks/Accelerate.framework/Versions/A/Accelerate",
+    "/System/Library/Frameworks/AddressBook.framework/Versions/A/AddressBook",
+    "/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit",
+    "/System/Library/Frameworks/Cocoa.framework/Versions/A/Cocoa",
+    "/System/Library/Frameworks/CoreAudioKit.framework/Versions/A/CoreAudioKit",
+    "/System/Library/Frameworks/DiscRecording.framework/Versions/A/DiscRecording",
+    "/System/Library/Frameworks/DiskArbitration.framework/Versions/A/DiskArbitration",
+    "/System/Library/Frameworks/ExceptionHandling.framework/Versions/A/ExceptionHandling",
+    "/System/Library/Frameworks/QuartzCore.framework/Versions/A/QuartzCore",
+    "/System/Library/Frameworks/SyncServices.framework/Versions/A/SyncServices",
+    "/System/Library/PrivateFrameworks/Bom.framework/Versions/A/Bom",
+    "/usr/lib/libcrypto.0.9.7.dylib"
+  ],
+  "strong_missing_id_count": 12
+}

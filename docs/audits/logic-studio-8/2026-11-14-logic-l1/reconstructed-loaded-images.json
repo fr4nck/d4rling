@@ -1,0 +1,1477 @@
+{
+  "l1-replay-1794686621840316198-carbon-before": [
+    {
+      "image": "/Volumes/SystemRoot$STAGE/l1-replay-1794686621840316198/bin/logic-load-probe",
+      "uuid": "DB47319C-3921-3BB4-B6E5-BA5D5A92122D",
+      "sha256": "eef69c5263a1c00f190b2e4046f02877368d6db7779a2f1b76e9d213f4dbdf1b"
+    },
+    {
+      "image": "/usr/lib/libSystem.B.dylib",
+      "uuid": "F30E0490-5E81-30C7-A81A-67C72F65F368",
+      "sha256": "87e428bd0b96b14e7af93924e3a8b90d7a3caca89395ac6bd872d0250ee1cae5"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_sandbox.dylib",
+      "uuid": "3BB93F95-47F2-38CD-81C8-90C093F1E0D0",
+      "sha256": "de963de5c533a9d336b583ef03306fe91bc89111746aff2fcccd1502986fc14a"
+    },
+    {
+      "image": "/usr/lib/system/libquarantine.dylib",
+      "uuid": "89766C70-7F3D-35FE-A521-FB494101B523",
+      "sha256": "bf66727b2a03f01e961e592c706ca783c3feda5d84bccd886bddd883ab93f1be"
+    },
+    {
+      "image": "/usr/lib/system/libremovefile.dylib",
+      "uuid": "AC58BD2D-B1C8-33BE-BE4D-144DD7A9BFC8",
+      "sha256": "0652683b6671e3c20fdb4f53284e7002bed9dbc5701b13abac20bd0a48b61671"
+    },
+    {
+      "image": "/usr/lib/system/libcopyfile.dylib",
+      "uuid": "D1EEFD35-EB08-393E-98E2-63EEE1EA7FF6",
+      "sha256": "68d1b8a5994a9ab6486554d68d172ad1baa8489f9412ab7cd8bbcb8caf78b7ee"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_coreservices.dylib",
+      "uuid": "6AC03F6A-E1FC-37FD-AE52-8DB07DB92BD4",
+      "sha256": "25020c3c75c38e8b90b8fcfb9ddf57f7446be002b29a8e85b9e852aab56ef1be"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_featureflags.dylib",
+      "uuid": "F2BE09C4-C303-3CC2-8275-86540B888A15",
+      "sha256": "d961731c51f745107b788248ae3450472e93682b4b8848316bf89782df773ddf"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_coretls.dylib",
+      "uuid": "13E07809-77F4-3052-BF66-C1BBDA913587",
+      "sha256": "b192e826f394258597cd82528771012b2434318b3cda2f314ce2f7ba650e9a1a"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_malloc.dylib",
+      "uuid": "BB24749C-EBC1-3808-9403-FAA8673FCAE9",
+      "sha256": "0f3ccf4736437612484095a6aef8d0f5e6891951319070c26ac8c74232792a42"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_c.dylib",
+      "uuid": "9EEE58B9-2551-3676-84B7-4BD934E928B6",
+      "sha256": "9d9d0d366be5744ec1c94e044f35ed62a4fcc679bfbda90fb75940e59afcaec9"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_kernel.dylib",
+      "uuid": "AE72613C-48E0-33C8-9503-237A65B4FCEB",
+      "sha256": "a97b930e7853d0b114bf33ecaadd9b7ceb09dcde9b3513dc303b40e169873b88"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_trace.dylib",
+      "uuid": "37CF0824-AC26-3227-9EA6-1B6C9B9886AB",
+      "sha256": "d2ea9df4325148cd27dd39acce2e9515d91936326965308edd5070e452d312db"
+    },
+    {
+      "image": "/usr/lib/system/libkeymgr.dylib",
+      "uuid": "BC06DDDA-B237-3878-8892-7C7DD5565FF5",
+      "sha256": "b269448a2122682b9d06b47ce355f5ec0c226b82d33858bbc80a29b6d9a3d102"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_m.dylib",
+      "uuid": "EA640F5B-34C3-386F-86A5-9B1DE8BDF690",
+      "sha256": "e862023863089bc646fc2a3a14e760b6a859700e1c5a8e76775a65fa083a2b7b"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_info.dylib",
+      "uuid": "6A6375AA-2C8A-31C6-9DCD-E3F5136BB3A7",
+      "sha256": "3cf656bff862dac3d003591a2c963163c4ee710624e8c138c4030ceb603fe947"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_notify.dylib",
+      "uuid": "CB0CBFC7-3CAD-3B92-8E19-6762321680AE",
+      "sha256": "6d25d52ac16ad5108fbca91a74bad37c1def7107e4f1b33e5ed496d4ac532aa8"
+    },
+    {
+      "image": "/usr/lib/system/libdispatch.dylib",
+      "uuid": "44D86CBB-2E78-36F7-A469-B3E2BF932BD3",
+      "sha256": "ff78527d76d7ad9217a69dd175c1985011c659430f07a28bfdc7ac025e11f61a"
+    },
+    {
+      "image": "/usr/lib/system/liblaunch.dylib",
+      "uuid": "03FBFD03-D77F-334C-9971-7A995849123A",
+      "sha256": "1a79433d76961ca121b03315d4d7ab425fcd8c3f43dcc4653ffe07b457fadbb8"
+    },
+    {
+      "image": "/usr/lib/system/libcompiler_rt.dylib",
+      "uuid": "2C443B01-CA95-377B-B337-1139ADB64645",
+      "sha256": "ae5f65f6605bb1aa0dbc03220773194599be81ee4ae697b49bf2fda2177279fa"
+    },
+    {
+      "image": "/usr/lib/system/libdyld.dylib",
+      "uuid": "8BB608A0-783E-3F94-B134-8DDF3A5D64A9",
+      "sha256": "4962ce130409df9a4f9e9d1812711b45201af2e937675247ce32516a5e9e0357"
+    },
+    {
+      "image": "/usr/lib/system/libmacho.dylib",
+      "uuid": "B0D2A04B-0BDB-3299-ACCD-FA0FD5B7B306",
+      "sha256": "df588ed0f5f06550138120ae707aba884bbc6b8c915000f04344613d2bf0e108"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_pthread.dylib",
+      "uuid": "C33044A9-244B-37E2-9401-18658F7852F6",
+      "sha256": "3b30e8715b0d8a623be1ba53c57bd4dbe9cd5d2c15563724f715f77958de1431"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_platform.dylib",
+      "uuid": "9DD16B75-2522-3F29-9461-8031212E6C48",
+      "sha256": "dbcab1a17aa695ff20ee2ddb93b86268b0e00739de01369a7719a0a03255e697"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_asl.dylib",
+      "uuid": "27550444-F512-33EC-965A-75390270CAC9",
+      "sha256": "1fdb6df0ee4ed53a1ebafcf80d56ce8f7861af36f3ec326b1df0224fe7c8a5c0"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_duct.dylib",
+      "uuid": "730645BA-361F-3322-B941-6A2FB04E550B",
+      "sha256": "b81b87fde94a44f7f7ce9460619253581927ae949164669023c6fbb89d11e3d3"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_blocks.dylib",
+      "uuid": "712FBC6C-F6D5-33B4-9B6D-8CBCEBAD4F03",
+      "sha256": "d6eab2a7279d3bf298e15d9ca88752b1192ebb378739855388485768cd5c6eac"
+    },
+    {
+      "image": "/usr/lib/system/libxpc.dylib",
+      "uuid": "1094C912-E661-3FCD-AFBF-F1D71E367887",
+      "sha256": "f53e2a392ea6afc0054c31f4e0080d4532d30352a4d8c1f9562aa39c27e588f2"
+    },
+    {
+      "image": "/usr/lib/system/libcorecrypto.dylib",
+      "uuid": "AA925430-5EEC-35FD-961E-ABC1EC3F5269",
+      "sha256": "20182719f7d5fda49652e8339f7cf9a3d85f993b9208540f6d99e22b20c9d9f2"
+    },
+    {
+      "image": "/usr/lib/system/libcommonCrypto.dylib",
+      "uuid": "13C7D299-3658-38A6-ABAA-9148C129EF57",
+      "sha256": "a35a7d034811c9be307fe604b58e0e0d6bc3ed338ff434a010de44c32d52729d"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_dnssd.dylib",
+      "uuid": "AAC8FF29-AD9A-395C-8781-2D1E6FED0B08",
+      "sha256": "ffaa00085d5449d7bf5c70861b1ed87be451385ed38237323f20ee143ac8db26"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_networkextension.dylib",
+      "uuid": "7D2FBE68-407B-3D86-AD7B-B7473C736BED",
+      "sha256": "da86b093c02fc0290814896a0b068751b2d657020300548e7dbfaee16580ddb6"
+    },
+    {
+      "image": "/usr/lib/system/libunwind.dylib",
+      "uuid": "B494FE41-F691-3320-9C65-378670896CA5",
+      "sha256": "642dc7d34b4eed4cf519378c46b8b915a76c9b75fe725ee96060613c02de9a0a"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_darwin.dylib",
+      "uuid": "5F3CF594-63DA-3CDF-B5C5-CA5BCAF54775",
+      "sha256": "492b070914973eacf4d3a0e262ff0afc88e89d80efeaf7f5ad2287d35b713e05"
+    },
+    {
+      "image": "/usr/lib/system/libcache.dylib",
+      "uuid": "B2A5F165-5F11-3366-AC33-DA824CC1230E",
+      "sha256": "00b5031c9f453e0c77096f292782cc49e1c030552ef925e3702cf2e1253d6258"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_configuration.dylib",
+      "uuid": "B6BCCDE7-BDF6-339A-88ED-F2E0C90A123A",
+      "sha256": "92806b281bf9e30bac0344a1b0c5195443f3a796605132a514624c20bd4dbdf3"
+    },
+    {
+      "image": "/usr/lib/libobjc.A.dylib",
+      "uuid": "7473D41F-915A-3117-A427-CCDA4580C017",
+      "sha256": "80f59114372455bc2589f50f8ae688d1b86069cbd19aa2475533522e2c7bb397"
+    },
+    {
+      "image": "/usr/lib/libc++.1.dylib",
+      "uuid": "FE605492-9F3C-3520-9999-E479BCDBB2A2",
+      "sha256": "5ec46f6845beaa3e4559a59b9f68de5f42d7f5daed3650fd0554f328c6d00948"
+    },
+    {
+      "image": "/usr/lib/libc++abi.dylib",
+      "uuid": "117A2FEB-1CB6-3AE7-B87B-C1287417B748",
+      "sha256": "d3000d0a3d60dddf911e7f954519ab9f2c95f89b72e1c4160308fb15643e30c6"
+    },
+    {
+      "image": "/usr/lib/libresolv.9.dylib",
+      "uuid": "5CEA9B94-4E17-3588-8A2F-1AB418F5820A",
+      "sha256": "87c1a15a11ce4258b74394179a2a444637807aa5b803f249a6e30cac8cc144bd"
+    }
+  ],
+  "l1-replay-1794686621840316198-carbon-present": [
+    {
+      "image": "/Volumes/SystemRoot$STAGE/l1-replay-1794686621840316198/bin/logic-load-probe",
+      "uuid": "DB47319C-3921-3BB4-B6E5-BA5D5A92122D",
+      "sha256": "eef69c5263a1c00f190b2e4046f02877368d6db7779a2f1b76e9d213f4dbdf1b"
+    },
+    {
+      "image": "/usr/lib/libSystem.B.dylib",
+      "uuid": "F30E0490-5E81-30C7-A81A-67C72F65F368",
+      "sha256": "87e428bd0b96b14e7af93924e3a8b90d7a3caca89395ac6bd872d0250ee1cae5"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_sandbox.dylib",
+      "uuid": "3BB93F95-47F2-38CD-81C8-90C093F1E0D0",
+      "sha256": "de963de5c533a9d336b583ef03306fe91bc89111746aff2fcccd1502986fc14a"
+    },
+    {
+      "image": "/usr/lib/system/libquarantine.dylib",
+      "uuid": "89766C70-7F3D-35FE-A521-FB494101B523",
+      "sha256": "bf66727b2a03f01e961e592c706ca783c3feda5d84bccd886bddd883ab93f1be"
+    },
+    {
+      "image": "/usr/lib/system/libremovefile.dylib",
+      "uuid": "AC58BD2D-B1C8-33BE-BE4D-144DD7A9BFC8",
+      "sha256": "0652683b6671e3c20fdb4f53284e7002bed9dbc5701b13abac20bd0a48b61671"
+    },
+    {
+      "image": "/usr/lib/system/libcopyfile.dylib",
+      "uuid": "D1EEFD35-EB08-393E-98E2-63EEE1EA7FF6",
+      "sha256": "68d1b8a5994a9ab6486554d68d172ad1baa8489f9412ab7cd8bbcb8caf78b7ee"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_coreservices.dylib",
+      "uuid": "6AC03F6A-E1FC-37FD-AE52-8DB07DB92BD4",
+      "sha256": "25020c3c75c38e8b90b8fcfb9ddf57f7446be002b29a8e85b9e852aab56ef1be"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_featureflags.dylib",
+      "uuid": "F2BE09C4-C303-3CC2-8275-86540B888A15",
+      "sha256": "d961731c51f745107b788248ae3450472e93682b4b8848316bf89782df773ddf"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_coretls.dylib",
+      "uuid": "13E07809-77F4-3052-BF66-C1BBDA913587",
+      "sha256": "b192e826f394258597cd82528771012b2434318b3cda2f314ce2f7ba650e9a1a"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_malloc.dylib",
+      "uuid": "BB24749C-EBC1-3808-9403-FAA8673FCAE9",
+      "sha256": "0f3ccf4736437612484095a6aef8d0f5e6891951319070c26ac8c74232792a42"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_c.dylib",
+      "uuid": "9EEE58B9-2551-3676-84B7-4BD934E928B6",
+      "sha256": "9d9d0d366be5744ec1c94e044f35ed62a4fcc679bfbda90fb75940e59afcaec9"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_kernel.dylib",
+      "uuid": "AE72613C-48E0-33C8-9503-237A65B4FCEB",
+      "sha256": "a97b930e7853d0b114bf33ecaadd9b7ceb09dcde9b3513dc303b40e169873b88"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_trace.dylib",
+      "uuid": "37CF0824-AC26-3227-9EA6-1B6C9B9886AB",
+      "sha256": "d2ea9df4325148cd27dd39acce2e9515d91936326965308edd5070e452d312db"
+    },
+    {
+      "image": "/usr/lib/system/libkeymgr.dylib",
+      "uuid": "BC06DDDA-B237-3878-8892-7C7DD5565FF5",
+      "sha256": "b269448a2122682b9d06b47ce355f5ec0c226b82d33858bbc80a29b6d9a3d102"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_m.dylib",
+      "uuid": "EA640F5B-34C3-386F-86A5-9B1DE8BDF690",
+      "sha256": "e862023863089bc646fc2a3a14e760b6a859700e1c5a8e76775a65fa083a2b7b"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_info.dylib",
+      "uuid": "6A6375AA-2C8A-31C6-9DCD-E3F5136BB3A7",
+      "sha256": "3cf656bff862dac3d003591a2c963163c4ee710624e8c138c4030ceb603fe947"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_notify.dylib",
+      "uuid": "CB0CBFC7-3CAD-3B92-8E19-6762321680AE",
+      "sha256": "6d25d52ac16ad5108fbca91a74bad37c1def7107e4f1b33e5ed496d4ac532aa8"
+    },
+    {
+      "image": "/usr/lib/system/libdispatch.dylib",
+      "uuid": "44D86CBB-2E78-36F7-A469-B3E2BF932BD3",
+      "sha256": "ff78527d76d7ad9217a69dd175c1985011c659430f07a28bfdc7ac025e11f61a"
+    },
+    {
+      "image": "/usr/lib/system/liblaunch.dylib",
+      "uuid": "03FBFD03-D77F-334C-9971-7A995849123A",
+      "sha256": "1a79433d76961ca121b03315d4d7ab425fcd8c3f43dcc4653ffe07b457fadbb8"
+    },
+    {
+      "image": "/usr/lib/system/libcompiler_rt.dylib",
+      "uuid": "2C443B01-CA95-377B-B337-1139ADB64645",
+      "sha256": "ae5f65f6605bb1aa0dbc03220773194599be81ee4ae697b49bf2fda2177279fa"
+    },
+    {
+      "image": "/usr/lib/system/libdyld.dylib",
+      "uuid": "8BB608A0-783E-3F94-B134-8DDF3A5D64A9",
+      "sha256": "4962ce130409df9a4f9e9d1812711b45201af2e937675247ce32516a5e9e0357"
+    },
+    {
+      "image": "/usr/lib/system/libmacho.dylib",
+      "uuid": "B0D2A04B-0BDB-3299-ACCD-FA0FD5B7B306",
+      "sha256": "df588ed0f5f06550138120ae707aba884bbc6b8c915000f04344613d2bf0e108"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_pthread.dylib",
+      "uuid": "C33044A9-244B-37E2-9401-18658F7852F6",
+      "sha256": "3b30e8715b0d8a623be1ba53c57bd4dbe9cd5d2c15563724f715f77958de1431"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_platform.dylib",
+      "uuid": "9DD16B75-2522-3F29-9461-8031212E6C48",
+      "sha256": "dbcab1a17aa695ff20ee2ddb93b86268b0e00739de01369a7719a0a03255e697"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_asl.dylib",
+      "uuid": "27550444-F512-33EC-965A-75390270CAC9",
+      "sha256": "1fdb6df0ee4ed53a1ebafcf80d56ce8f7861af36f3ec326b1df0224fe7c8a5c0"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_duct.dylib",
+      "uuid": "730645BA-361F-3322-B941-6A2FB04E550B",
+      "sha256": "b81b87fde94a44f7f7ce9460619253581927ae949164669023c6fbb89d11e3d3"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_blocks.dylib",
+      "uuid": "712FBC6C-F6D5-33B4-9B6D-8CBCEBAD4F03",
+      "sha256": "d6eab2a7279d3bf298e15d9ca88752b1192ebb378739855388485768cd5c6eac"
+    },
+    {
+      "image": "/usr/lib/system/libxpc.dylib",
+      "uuid": "1094C912-E661-3FCD-AFBF-F1D71E367887",
+      "sha256": "f53e2a392ea6afc0054c31f4e0080d4532d30352a4d8c1f9562aa39c27e588f2"
+    },
+    {
+      "image": "/usr/lib/system/libcorecrypto.dylib",
+      "uuid": "AA925430-5EEC-35FD-961E-ABC1EC3F5269",
+      "sha256": "20182719f7d5fda49652e8339f7cf9a3d85f993b9208540f6d99e22b20c9d9f2"
+    },
+    {
+      "image": "/usr/lib/system/libcommonCrypto.dylib",
+      "uuid": "13C7D299-3658-38A6-ABAA-9148C129EF57",
+      "sha256": "a35a7d034811c9be307fe604b58e0e0d6bc3ed338ff434a010de44c32d52729d"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_dnssd.dylib",
+      "uuid": "AAC8FF29-AD9A-395C-8781-2D1E6FED0B08",
+      "sha256": "ffaa00085d5449d7bf5c70861b1ed87be451385ed38237323f20ee143ac8db26"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_networkextension.dylib",
+      "uuid": "7D2FBE68-407B-3D86-AD7B-B7473C736BED",
+      "sha256": "da86b093c02fc0290814896a0b068751b2d657020300548e7dbfaee16580ddb6"
+    },
+    {
+      "image": "/usr/lib/system/libunwind.dylib",
+      "uuid": "B494FE41-F691-3320-9C65-378670896CA5",
+      "sha256": "642dc7d34b4eed4cf519378c46b8b915a76c9b75fe725ee96060613c02de9a0a"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_darwin.dylib",
+      "uuid": "5F3CF594-63DA-3CDF-B5C5-CA5BCAF54775",
+      "sha256": "492b070914973eacf4d3a0e262ff0afc88e89d80efeaf7f5ad2287d35b713e05"
+    },
+    {
+      "image": "/usr/lib/system/libcache.dylib",
+      "uuid": "B2A5F165-5F11-3366-AC33-DA824CC1230E",
+      "sha256": "00b5031c9f453e0c77096f292782cc49e1c030552ef925e3702cf2e1253d6258"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_configuration.dylib",
+      "uuid": "B6BCCDE7-BDF6-339A-88ED-F2E0C90A123A",
+      "sha256": "92806b281bf9e30bac0344a1b0c5195443f3a796605132a514624c20bd4dbdf3"
+    },
+    {
+      "image": "/usr/lib/libobjc.A.dylib",
+      "uuid": "7473D41F-915A-3117-A427-CCDA4580C017",
+      "sha256": "80f59114372455bc2589f50f8ae688d1b86069cbd19aa2475533522e2c7bb397"
+    },
+    {
+      "image": "/usr/lib/libc++.1.dylib",
+      "uuid": "FE605492-9F3C-3520-9999-E479BCDBB2A2",
+      "sha256": "5ec46f6845beaa3e4559a59b9f68de5f42d7f5daed3650fd0554f328c6d00948"
+    },
+    {
+      "image": "/usr/lib/libc++abi.dylib",
+      "uuid": "117A2FEB-1CB6-3AE7-B87B-C1287417B748",
+      "sha256": "d3000d0a3d60dddf911e7f954519ab9f2c95f89b72e1c4160308fb15643e30c6"
+    },
+    {
+      "image": "/usr/lib/libresolv.9.dylib",
+      "uuid": "5CEA9B94-4E17-3588-8A2F-1AB418F5820A",
+      "sha256": "87c1a15a11ce4258b74394179a2a444637807aa5b803f249a6e30cac8cc144bd"
+    },
+    {
+      "image": "/System/Library/Frameworks/Carbon.framework/Versions/A/Carbon",
+      "uuid": "E0EA19F4-455A-389B-8382-98438CDFC6D9",
+      "sha256": "29a91d7a628ef2db79a52a3e5e8b9fbf9bc8cba290db0d85d40f55cc6f4c0d5a"
+    },
+    {
+      "image": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/CommonPanels.framework/Versions/A/CommonPanels",
+      "uuid": "BEBE8536-FD45-35A1-9A00-347BAB372946",
+      "sha256": "4b03b738fe937d72f32864eebb333cba58cc869c2c7f578ced26d9e9cc265134"
+    },
+    {
+      "image": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/Help.framework/Versions/A/Help",
+      "uuid": "3F85920E-E1C2-310B-B594-C8FADAD23A0E",
+      "sha256": "ea97c5869b0e065abf4f160915c10b5dda2ad645efa6e2e60f881edf85381978"
+    },
+    {
+      "image": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/HIToolbox.framework/Versions/A/HIToolbox",
+      "uuid": "19371F4D-51E2-367D-8DCD-50D7EA9EE505",
+      "sha256": "05f770a88fdb54df5dbfcc062a148061f95cf26e25527c5f3ded5f63fdf8f86a"
+    },
+    {
+      "image": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/ImageCapture.framework/Versions/A/ImageCapture",
+      "uuid": "79ADA431-4915-3C4D-869E-D49BDF44A0CB",
+      "sha256": "c5d585316f992049337d1537f43079ee0440d7c9e9495cb49535fb72ba5b7e73"
+    },
+    {
+      "image": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/Ink.framework/Versions/A/Ink",
+      "uuid": "377DCE65-3C4D-3E0E-8DD8-A7424E826252",
+      "sha256": "f5d5f534a3a79543e8bc4c6035b4b0bf0e904536d3b8e34025d312734c29c294"
+    },
+    {
+      "image": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/OpenScripting.framework/Versions/A/OpenScripting",
+      "uuid": "517B40C4-3E1C-34BC-9F69-CC502B71F011",
+      "sha256": "8efd2542da788dcba7213d4a167d1743a44fb11d7d91402b40c35d0206132769"
+    },
+    {
+      "image": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/Print.framework/Versions/A/Print",
+      "uuid": "C1980CCB-1EF0-331E-996F-8A5A441F42AE",
+      "sha256": "086b0242514c58f00166626b7289cb8f911b0ad96bad4b2f1640f46705218757"
+    },
+    {
+      "image": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/SecurityHI.framework/Versions/A/SecurityHI",
+      "uuid": "DF17F398-C3D9-3A3C-ABAD-DDDC1BE577B6",
+      "sha256": "4073187e3774034a548a0953ede621664f0cbef8fcb9a3fb0f732c87f12d8658"
+    },
+    {
+      "image": "/System/Library/Frameworks/Carbon.framework/Versions/A/Frameworks/SpeechRecognition.framework/Versions/A/SpeechRecognition",
+      "uuid": "A70FAD00-D3B5-3531-BDC5-2AC76F7E8B3A",
+      "sha256": "e8c07d531b9ac267a51c979314ec6baf6d31629393c990b67c90826ccdf3a3a7"
+    },
+    {
+      "image": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/ApplicationServices",
+      "uuid": "3E10CDBB-D33C-363E-95DA-9724BA446164",
+      "sha256": "c72266aa795840f18912252873a0b697e14b8fe1a9cd4b438c452c21d173ef8b"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+      "uuid": "46E3A7D3-0288-3D58-B686-FAFB84F96AAE",
+      "sha256": "da3015c0347c9692c865ebf35c6670419ec318bb771a74ab921049a98a57d6fc"
+    },
+    {
+      "image": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+      "uuid": "DC3115BF-93D4-37C1-A0C1-BE4FF0A568EE",
+      "sha256": "f5cd42423b941a290fdf86f20dc295838677764017f8e2d766cb931b611d7fed"
+    },
+    {
+      "image": "/System/Library/Frameworks/CFNetwork.framework/Versions/A/CFNetwork",
+      "uuid": "A255E19D-61FD-3DD2-8075-B1A159EE350F",
+      "sha256": "56e5857910a85a66bb08b62def0f0509cef413b225b1456eaf7016d751250414"
+    },
+    {
+      "image": "/usr/lib/libxml2.2.dylib",
+      "uuid": "B20637CA-7FF9-3AB8-BB72-879CBDE6EF7E",
+      "sha256": "815385d6aee51bbf51dd55fad9ed0318b587ad076075f709f6663fccfee2aecd"
+    },
+    {
+      "image": "/usr/lib/libicucore.A.dylib",
+      "uuid": "AE3D665A-C4B3-3DBA-9E38-A7CC6B27FD17",
+      "sha256": "fb35cddc4c205272e5610ffa470e3ef39981dddafeb39f2fbeb9ca3c96563208"
+    },
+    {
+      "image": "/usr/lib/libz.1.dylib",
+      "uuid": "292F70CA-ECD1-3E8F-B86D-00B12A42F233",
+      "sha256": "3b2cb2faa9e29e0fdd7ba177acf931cb3f80a9ab3d81bc2a60bd034483f296fd"
+    },
+    {
+      "image": "/System/Library/Frameworks/Security.framework/Versions/A/Security",
+      "uuid": "24EC5952-1639-3F47-97ED-79438FB55277",
+      "sha256": "f2b2e87cbe7cca03e49e20184e6a54779a4b482aebf4b450a05d5d0821f3433b"
+    },
+    {
+      "image": "/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration",
+      "uuid": "C9ECFB4B-7ECD-3CF7-8F4E-049E74264EC2",
+      "sha256": "d913bffd36677b3228f1f472ae4bc8cadad6bff40be09f7f270cbf120b548813"
+    },
+    {
+      "image": "/usr/lib/libcoretls_cfhelpers.dylib",
+      "uuid": "276459A0-78BE-396D-9026-90E36542EA58",
+      "sha256": "4daffaae62c288c1838b16fed802e09a317ba714015ef61d0574dbae7196ad4c"
+    },
+    {
+      "image": "/usr/lib/libMobileGestalt.dylib",
+      "uuid": "2417F9C2-A0C2-36D3-B7B3-C6AD9B3AED41",
+      "sha256": "f8d9c1c0a767238262c1ce8bd6df73f3a707abd6a98c946f5264210c42c283d1"
+    },
+    {
+      "image": "/System/Library/PrivateFrameworks/AppleFSCompression.framework/Versions/A/AppleFSCompression",
+      "uuid": "D95B086E-F989-3F8A-A24D-5DEA6EE6085A",
+      "sha256": "f1abb03b1f22038afb07129bf57878badd161df1df7956fa1687b3dba89564cc"
+    },
+    {
+      "image": "/usr/lib/libbsm.0.dylib",
+      "uuid": "89CA0BC2-6835-3D51-8164-2C3B02E8681C",
+      "sha256": "507e0aca1aed6b487448a0aea392c69df975d8d54912225e26fbb75df477b1f2"
+    },
+    {
+      "image": "/System/Library/Frameworks/LocalAuthentication.framework/Versions/A/LocalAuthentication",
+      "uuid": "FF6B343E-CC0C-324A-920A-38293412A163",
+      "sha256": "4e2ecfff9354ca63116c67bfc7bf119f0f950daaabeb12c2f66c7ad3869dbc26"
+    },
+    {
+      "image": "/usr/lib/libcoretls.dylib",
+      "uuid": "BAE7C512-6223-3E2F-B904-50AFA6DAA8E3",
+      "sha256": "1025abf5448b7cb987e0e1467422b991dd74fd65b3b1c2334112584f8d68f644"
+    },
+    {
+      "image": "/System/Library/Frameworks/CryptoTokenKit.framework/Versions/A/CryptoTokenKit",
+      "uuid": "3706FE86-5C38-301A-8C98-6F0561B55688",
+      "sha256": "bddfe6de84e4c6e0d27dd50fb22f7f05b830492ca584137ae0a631f2d2ae1137"
+    },
+    {
+      "image": "/usr/lib/libpam.2.dylib",
+      "uuid": "269E2C07-415B-3EA2-9214-CC2DDEEEB68E",
+      "sha256": "123d7e0f9ffb8742330fe325e9dc25d7e500f9322feb56908234f7ab37dbe265"
+    },
+    {
+      "image": "/usr/lib/libsqlite3.0.dylib",
+      "uuid": "9EF1094F-871A-3831-822B-25C642CD1532",
+      "sha256": "9a09790553d62b3146659a8ea53c1b09e0a6a5314f5b010c76e96f671a403a19"
+    },
+    {
+      "image": "/usr/lib/libxar.1.dylib",
+      "uuid": "41FB2B12-A981-3E3B-92B8-CBFEFC94797A",
+      "sha256": "e548621ddf3c6fcb15f75ca94b9de7eb1ad3b1bce976b8d7b93a7d32e67977a4"
+    },
+    {
+      "image": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+      "uuid": "7A94D2F2-EB08-366B-A836-B14A01517240",
+      "sha256": "37be169ef0769c8093c2a68019138dd565b8aeb904d31274792ef9c8a97088f7"
+    },
+    {
+      "image": "/usr/lib/libbz2.1.0.dylib",
+      "uuid": "81435C64-6116-34A7-80E8-2358DDD469EA",
+      "sha256": "433d0eb669b613c65786b0164bf04fbbfe037aa6947f1512be892b47261122dc"
+    },
+    {
+      "image": "/usr/lib/libDiagnosticMessagesClient.dylib",
+      "uuid": "11F87085-D4DD-32BE-9EB8-6E3027BAAD72",
+      "sha256": "e4976bc5e7f8fa36d7beb4b17318ad6580d7ea1c32f771d466291eda343662d7"
+    },
+    {
+      "image": "/usr/lib/libenergytrace.dylib",
+      "uuid": "AB96566D-E635-388D-9FC9-871720705763",
+      "sha256": "70f38ab07bc16c22808569474443d1bf84b52d819bff4449ba80a23ef770708c"
+    },
+    {
+      "image": "/usr/lib/system/libkxld.dylib",
+      "uuid": "F30E75D7-1D4C-3D0B-A641-06F86F1E0519",
+      "sha256": "530490c45e1bb8da97f62d28e34a9709d116d8148bd683ed34509faf8f4ace56"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreGraphics.framework/Versions/A/CoreGraphics",
+      "uuid": "D8305D25-5C2E-370A-B111-999A1581804E",
+      "sha256": "95005f0b32ff79c1e5b0460650ce57e68f6dc4c1c23ba367608305e5f4b4f0e2"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreText.framework/Versions/A/CoreText",
+      "uuid": "F9DCCD7F-26A4-3ACC-AEC4-646FD1BC1822",
+      "sha256": "ba9e0bac45171be7e2d32d8d17dd6b2cb5238654c3da8e0c4ea76f525fd87f83"
+    },
+    {
+      "image": "/System/Library/Frameworks/ImageIO.framework/Versions/A/ImageIO",
+      "uuid": "9BCA6CC6-BDC2-3247-9890-69ED1B17DC38",
+      "sha256": "3d2674dca821e3e32114a2458d92bf00147b7d7a7a192c3556fa6714b52fb2ab"
+    },
+    {
+      "image": "/System/Library/Frameworks/ColorSync.framework/Versions/A/ColorSync",
+      "uuid": "EDFECCFD-FD6F-3FBD-B256-8DE65FABFDB0",
+      "sha256": "bc5ffd012aec3100b3251ba41d43d2d5f391b69abb977ef3e06adf2ecb484717"
+    },
+    {
+      "image": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ATS.framework/Versions/A/ATS",
+      "uuid": "A9BC74A9-C9A2-38FD-A740-AB96C732D69E",
+      "sha256": "6dda8f38bc90f0fe10c0be6b69ee4fb07a5757731588f1ebde9e3cc09225a71a"
+    },
+    {
+      "image": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/ColorSyncLegacy.framework/Versions/A/ColorSyncLegacy",
+      "uuid": "2722DAF5-C9C7-3CE2-9E33-B28D9A6948DC",
+      "sha256": "3ccb6733ac0f38ff5558cf7f0f5160d15776973235911afa8d37e6cbe9b908d0"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreServices.framework/Versions/A/CoreServices",
+      "uuid": "82AE061E-CE8B-3B2D-BC97-4B1A1DA5C367",
+      "sha256": "ac53bd2ba7332fe0cf2d305b830b622ff1b2b1e0b192c5b5af556c4eaf70bfa0"
+    },
+    {
+      "image": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/HIServices.framework/Versions/A/HIServices",
+      "uuid": "70B80DAD-C416-33C8-BB9B-4BAC6581B3E0",
+      "sha256": "a9f27f33f8083810a640a8760071847e9452d0497946ac02176de25b81909d84"
+    },
+    {
+      "image": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/LangAnalysis.framework/Versions/A/LangAnalysis",
+      "uuid": "DB85F842-423C-36FD-97E3-F0D7DCE6AC7C",
+      "sha256": "ea530d51db1694730b3b7f9d84b7085b9ba676e72386f0008e1f72cbbb5bd2df"
+    },
+    {
+      "image": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/PrintCore.framework/Versions/A/PrintCore",
+      "uuid": "A3BFC940-3D33-3D3B-9861-55F734C3FCB6",
+      "sha256": "e6bebe8a111fad17ada5436a556419247bedb9b69486736a1c3b713fa749d456"
+    },
+    {
+      "image": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/QD.framework/Versions/A/QD",
+      "uuid": "97916BAF-A6E9-3848-89F6-AD0C5EDB3180",
+      "sha256": "72da00095e17ea91863c632cfeea3d7f1662691259899d857e77f6e72c5363a0"
+    },
+    {
+      "image": "/System/Library/Frameworks/ApplicationServices.framework/Versions/A/Frameworks/SpeechSynthesis.framework/Versions/A/SpeechSynthesis",
+      "uuid": "686F2E4A-EE6B-3D2B-845C-1F97A425FD73",
+      "sha256": "f487a3907a4fa1b59ad279d99a5381cfd1d6946a5bb373834381aba9c15e70b3"
+    },
+    {
+      "image": "/System/Library/PrivateFrameworks/Onyx2D.framework/Versions/A/Onyx2D",
+      "uuid": "9682A21A-1947-3F1D-B82A-2A2EEBD85A89",
+      "sha256": "b055a85775abf05b5d961040cde65e5bf5db4b8cca38d021ca9759072f83404f"
+    },
+    {
+      "image": "/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib",
+      "uuid": "017D87AB-4FF8-3947-A4C3-E197D769688F",
+      "sha256": "ffd01aad67718e594c52a328976a9dc8231e156b9f8ac7c698cea65ddaf1a5ae"
+    },
+    {
+      "image": "/usr/lib/native/libFreeType.dylib",
+      "uuid": "746E6CB9-BFEB-34E7-96BD-9A3F41510539",
+      "sha256": "23215ae76649edabe423e5536df87d89c6c1494b27c9b4724e0fb968a005fc6d"
+    },
+    {
+      "image": "/usr/lib/native/libfontconfig.dylib",
+      "uuid": "D88C29CC-9A8D-310D-9702-6E6D23CEE292",
+      "sha256": "49ea20f83c9e2c476a8c2c096e9f5e784d7fbcb822d122ed6be56805e6e3d7c2"
+    },
+    {
+      "image": "/usr/lib/native/libjpeg.dylib",
+      "uuid": "1D3A22F3-ADB0-3227-A99B-904D3D946EE6",
+      "sha256": "751572a2c15f5a4e68997d545f6ee1e004ce4507ff99477f832b10ee23c3e81b"
+    },
+    {
+      "image": "/usr/lib/native/libpng.dylib",
+      "uuid": "28D89488-59D0-3E86-BE7B-2ADE3E7EA581",
+      "sha256": "74962590947dab5d7ddde8f92f83bac00689028ab01d190d5fd15b16f83041c0"
+    },
+    {
+      "image": "/usr/lib/native/libtiff.dylib",
+      "uuid": "917DFA69-4B4E-31DC-B3FC-988D6FE29A3C",
+      "sha256": "4e76003cc1e58d3a4881eca6eab456d0a1712c9c128153579136fa4e19693d9a"
+    },
+    {
+      "image": "/usr/lib/native/libgif.dylib",
+      "uuid": "7E63CA88-09A5-36F4-9ACE-9D778EEAC17C",
+      "sha256": "c5085bc54959deb532b03c3a670081a7a139866d5f48c7ca8fb6b0fd8013b6f8"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/FSEvents.framework/Versions/A/FSEvents",
+      "uuid": "15DE54C7-5422-33CF-BE8E-86FBD8396EF5",
+      "sha256": "b0ada56b9afd3c4d2fa3df3ea14ae2005b4d113917f66dbc23b34ba9d12c850c"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/LaunchServices.framework/Versions/A/LaunchServices",
+      "uuid": "8105E382-2C32-347C-BBAE-7D58787851F2",
+      "sha256": "de29b9e01b7d37253d5da8165c8c328eebb5a05e58022c549ed9c23e19853ee2"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/AE.framework/Versions/A/AE",
+      "uuid": "D8858D09-FA04-3E39-ABBE-E907D346AE7C",
+      "sha256": "c52211f82940f43274e722c8cfd3b48d6ed7f37ad8d255d1d7ae7013f93495aa"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+      "uuid": "A41DF141-BDE2-3855-A76E-61D2CFCE5982",
+      "sha256": "7efb2ba0bcfe773e4ab5c760e8ce00cce025d8ca6fc8597c8846d5d381625a7e"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/DictionaryServices.framework/Versions/A/DictionaryServices",
+      "uuid": "111E7C1B-81E7-341F-B374-51971D89D940",
+      "sha256": "d8348608003c07245dc2849e5e9dcdee9dab7174d7dc95660c0c69a483c88ee7"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/Metadata.framework/Versions/A/Metadata",
+      "uuid": "439A341F-0D47-35AB-AE02-2AE716A161BB",
+      "sha256": "7930d16409c15342050e47155fc42107acb13f39a2606e644cb3054d2fb17542"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SearchKit.framework/Versions/A/SearchKit",
+      "uuid": "8F7E5802-BA96-3414-AE20-CDC94BDD804C",
+      "sha256": "d68480b7924dfdf1da63b609c422f27949622b5352b3027358716f8a75846927"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/SharedFileList.framework/Versions/A/SharedFileList",
+      "uuid": "5FE71C25-CFCD-337B-9048-839A03DDBC52",
+      "sha256": "867228f343b716f706541cac4bf26fb58ba19a386781c24754a4f8fa97936bd8"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/OSServices.framework/Versions/A/OSServices",
+      "uuid": "55B8F517-1A04-3B28-A614-0F64ACC48286",
+      "sha256": "e71a0a54cbb692f4e43915bd90eecd75b69c7f8258c13d0f771fadc9534d4038"
+    },
+    {
+      "image": "/System/Library/PrivateFrameworks/FMDB.framework/Versions/A/FMDB",
+      "uuid": "EE2AF091-0452-3B1A-9060-63C9EC305CD9",
+      "sha256": "17ef6ceb8c6ffbb554b7437cf1c5e5e47ed114863743f66494a266e09a259267"
+    },
+    {
+      "image": "/usr/lib/libiconv.2.dylib",
+      "uuid": "27532CC4-BBC8-3F8C-BE19-427F427C8402",
+      "sha256": "896efc07bb58fd2c1b155a2da777dc46693a5594e15c9a772434be97249432d7"
+    },
+    {
+      "image": "/usr/lib/libcharset.1.dylib",
+      "uuid": "B1D6D6EB-331C-37C7-9CC5-03C2FBEF6396",
+      "sha256": "622bf7dff5070280503d316daf4ce8de50f5b2f7006f21bec41de678ac3b4ad2"
+    }
+  ],
+  "l1-replay-1794686621840316198-freetype-i386": [
+    {
+      "image": "/Volumes/SystemRoot$STAGE/l1-replay-1794686621840316198/bin/native-freetype-i386",
+      "uuid": "EF8B3902-019E-3C30-991E-D9366F26C567",
+      "sha256": "4917337be47b7ff40361519fbffe8bf8cc3712b182eeb46c1d188af6b2162d4b"
+    },
+    {
+      "image": "/usr/lib/libSystem.B.dylib",
+      "uuid": "F30E0490-5E81-30C7-A81A-67C72F65F368",
+      "sha256": "87e428bd0b96b14e7af93924e3a8b90d7a3caca89395ac6bd872d0250ee1cae5"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_sandbox.dylib",
+      "uuid": "3BB93F95-47F2-38CD-81C8-90C093F1E0D0",
+      "sha256": "de963de5c533a9d336b583ef03306fe91bc89111746aff2fcccd1502986fc14a"
+    },
+    {
+      "image": "/usr/lib/system/libquarantine.dylib",
+      "uuid": "89766C70-7F3D-35FE-A521-FB494101B523",
+      "sha256": "bf66727b2a03f01e961e592c706ca783c3feda5d84bccd886bddd883ab93f1be"
+    },
+    {
+      "image": "/usr/lib/system/libremovefile.dylib",
+      "uuid": "AC58BD2D-B1C8-33BE-BE4D-144DD7A9BFC8",
+      "sha256": "0652683b6671e3c20fdb4f53284e7002bed9dbc5701b13abac20bd0a48b61671"
+    },
+    {
+      "image": "/usr/lib/system/libcopyfile.dylib",
+      "uuid": "D1EEFD35-EB08-393E-98E2-63EEE1EA7FF6",
+      "sha256": "68d1b8a5994a9ab6486554d68d172ad1baa8489f9412ab7cd8bbcb8caf78b7ee"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_coreservices.dylib",
+      "uuid": "6AC03F6A-E1FC-37FD-AE52-8DB07DB92BD4",
+      "sha256": "25020c3c75c38e8b90b8fcfb9ddf57f7446be002b29a8e85b9e852aab56ef1be"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_featureflags.dylib",
+      "uuid": "F2BE09C4-C303-3CC2-8275-86540B888A15",
+      "sha256": "d961731c51f745107b788248ae3450472e93682b4b8848316bf89782df773ddf"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_coretls.dylib",
+      "uuid": "13E07809-77F4-3052-BF66-C1BBDA913587",
+      "sha256": "b192e826f394258597cd82528771012b2434318b3cda2f314ce2f7ba650e9a1a"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_malloc.dylib",
+      "uuid": "BB24749C-EBC1-3808-9403-FAA8673FCAE9",
+      "sha256": "0f3ccf4736437612484095a6aef8d0f5e6891951319070c26ac8c74232792a42"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_c.dylib",
+      "uuid": "9EEE58B9-2551-3676-84B7-4BD934E928B6",
+      "sha256": "9d9d0d366be5744ec1c94e044f35ed62a4fcc679bfbda90fb75940e59afcaec9"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_kernel.dylib",
+      "uuid": "AE72613C-48E0-33C8-9503-237A65B4FCEB",
+      "sha256": "a97b930e7853d0b114bf33ecaadd9b7ceb09dcde9b3513dc303b40e169873b88"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_trace.dylib",
+      "uuid": "37CF0824-AC26-3227-9EA6-1B6C9B9886AB",
+      "sha256": "d2ea9df4325148cd27dd39acce2e9515d91936326965308edd5070e452d312db"
+    },
+    {
+      "image": "/usr/lib/system/libkeymgr.dylib",
+      "uuid": "BC06DDDA-B237-3878-8892-7C7DD5565FF5",
+      "sha256": "b269448a2122682b9d06b47ce355f5ec0c226b82d33858bbc80a29b6d9a3d102"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_m.dylib",
+      "uuid": "EA640F5B-34C3-386F-86A5-9B1DE8BDF690",
+      "sha256": "e862023863089bc646fc2a3a14e760b6a859700e1c5a8e76775a65fa083a2b7b"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_info.dylib",
+      "uuid": "6A6375AA-2C8A-31C6-9DCD-E3F5136BB3A7",
+      "sha256": "3cf656bff862dac3d003591a2c963163c4ee710624e8c138c4030ceb603fe947"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_notify.dylib",
+      "uuid": "CB0CBFC7-3CAD-3B92-8E19-6762321680AE",
+      "sha256": "6d25d52ac16ad5108fbca91a74bad37c1def7107e4f1b33e5ed496d4ac532aa8"
+    },
+    {
+      "image": "/usr/lib/system/libdispatch.dylib",
+      "uuid": "44D86CBB-2E78-36F7-A469-B3E2BF932BD3",
+      "sha256": "ff78527d76d7ad9217a69dd175c1985011c659430f07a28bfdc7ac025e11f61a"
+    },
+    {
+      "image": "/usr/lib/system/liblaunch.dylib",
+      "uuid": "03FBFD03-D77F-334C-9971-7A995849123A",
+      "sha256": "1a79433d76961ca121b03315d4d7ab425fcd8c3f43dcc4653ffe07b457fadbb8"
+    },
+    {
+      "image": "/usr/lib/system/libcompiler_rt.dylib",
+      "uuid": "2C443B01-CA95-377B-B337-1139ADB64645",
+      "sha256": "ae5f65f6605bb1aa0dbc03220773194599be81ee4ae697b49bf2fda2177279fa"
+    },
+    {
+      "image": "/usr/lib/system/libdyld.dylib",
+      "uuid": "8BB608A0-783E-3F94-B134-8DDF3A5D64A9",
+      "sha256": "4962ce130409df9a4f9e9d1812711b45201af2e937675247ce32516a5e9e0357"
+    },
+    {
+      "image": "/usr/lib/system/libmacho.dylib",
+      "uuid": "B0D2A04B-0BDB-3299-ACCD-FA0FD5B7B306",
+      "sha256": "df588ed0f5f06550138120ae707aba884bbc6b8c915000f04344613d2bf0e108"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_pthread.dylib",
+      "uuid": "C33044A9-244B-37E2-9401-18658F7852F6",
+      "sha256": "3b30e8715b0d8a623be1ba53c57bd4dbe9cd5d2c15563724f715f77958de1431"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_platform.dylib",
+      "uuid": "9DD16B75-2522-3F29-9461-8031212E6C48",
+      "sha256": "dbcab1a17aa695ff20ee2ddb93b86268b0e00739de01369a7719a0a03255e697"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_asl.dylib",
+      "uuid": "27550444-F512-33EC-965A-75390270CAC9",
+      "sha256": "1fdb6df0ee4ed53a1ebafcf80d56ce8f7861af36f3ec326b1df0224fe7c8a5c0"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_duct.dylib",
+      "uuid": "730645BA-361F-3322-B941-6A2FB04E550B",
+      "sha256": "b81b87fde94a44f7f7ce9460619253581927ae949164669023c6fbb89d11e3d3"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_blocks.dylib",
+      "uuid": "712FBC6C-F6D5-33B4-9B6D-8CBCEBAD4F03",
+      "sha256": "d6eab2a7279d3bf298e15d9ca88752b1192ebb378739855388485768cd5c6eac"
+    },
+    {
+      "image": "/usr/lib/system/libxpc.dylib",
+      "uuid": "1094C912-E661-3FCD-AFBF-F1D71E367887",
+      "sha256": "f53e2a392ea6afc0054c31f4e0080d4532d30352a4d8c1f9562aa39c27e588f2"
+    },
+    {
+      "image": "/usr/lib/system/libcorecrypto.dylib",
+      "uuid": "AA925430-5EEC-35FD-961E-ABC1EC3F5269",
+      "sha256": "20182719f7d5fda49652e8339f7cf9a3d85f993b9208540f6d99e22b20c9d9f2"
+    },
+    {
+      "image": "/usr/lib/system/libcommonCrypto.dylib",
+      "uuid": "13C7D299-3658-38A6-ABAA-9148C129EF57",
+      "sha256": "a35a7d034811c9be307fe604b58e0e0d6bc3ed338ff434a010de44c32d52729d"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_dnssd.dylib",
+      "uuid": "AAC8FF29-AD9A-395C-8781-2D1E6FED0B08",
+      "sha256": "ffaa00085d5449d7bf5c70861b1ed87be451385ed38237323f20ee143ac8db26"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_networkextension.dylib",
+      "uuid": "7D2FBE68-407B-3D86-AD7B-B7473C736BED",
+      "sha256": "da86b093c02fc0290814896a0b068751b2d657020300548e7dbfaee16580ddb6"
+    },
+    {
+      "image": "/usr/lib/system/libunwind.dylib",
+      "uuid": "B494FE41-F691-3320-9C65-378670896CA5",
+      "sha256": "642dc7d34b4eed4cf519378c46b8b915a76c9b75fe725ee96060613c02de9a0a"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_darwin.dylib",
+      "uuid": "5F3CF594-63DA-3CDF-B5C5-CA5BCAF54775",
+      "sha256": "492b070914973eacf4d3a0e262ff0afc88e89d80efeaf7f5ad2287d35b713e05"
+    },
+    {
+      "image": "/usr/lib/system/libcache.dylib",
+      "uuid": "B2A5F165-5F11-3366-AC33-DA824CC1230E",
+      "sha256": "00b5031c9f453e0c77096f292782cc49e1c030552ef925e3702cf2e1253d6258"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_configuration.dylib",
+      "uuid": "B6BCCDE7-BDF6-339A-88ED-F2E0C90A123A",
+      "sha256": "92806b281bf9e30bac0344a1b0c5195443f3a796605132a514624c20bd4dbdf3"
+    },
+    {
+      "image": "/usr/lib/libobjc.A.dylib",
+      "uuid": "7473D41F-915A-3117-A427-CCDA4580C017",
+      "sha256": "80f59114372455bc2589f50f8ae688d1b86069cbd19aa2475533522e2c7bb397"
+    },
+    {
+      "image": "/usr/lib/libc++.1.dylib",
+      "uuid": "FE605492-9F3C-3520-9999-E479BCDBB2A2",
+      "sha256": "5ec46f6845beaa3e4559a59b9f68de5f42d7f5daed3650fd0554f328c6d00948"
+    },
+    {
+      "image": "/usr/lib/libc++abi.dylib",
+      "uuid": "117A2FEB-1CB6-3AE7-B87B-C1287417B748",
+      "sha256": "d3000d0a3d60dddf911e7f954519ab9f2c95f89b72e1c4160308fb15643e30c6"
+    },
+    {
+      "image": "/usr/lib/libresolv.9.dylib",
+      "uuid": "5CEA9B94-4E17-3588-8A2F-1AB418F5820A",
+      "sha256": "87c1a15a11ce4258b74394179a2a444637807aa5b803f249a6e30cac8cc144bd"
+    },
+    {
+      "image": "/usr/lib/native/libFreeType.dylib",
+      "uuid": "746E6CB9-BFEB-34E7-96BD-9A3F41510539",
+      "sha256": "23215ae76649edabe423e5536df87d89c6c1494b27c9b4724e0fb968a005fc6d"
+    }
+  ],
+  "l1-replay-1794686621840316198-freetype-x64": [
+    {
+      "image": "/Volumes/SystemRoot$STAGE/l1-replay-1794686621840316198/bin/native-freetype-x86_64",
+      "uuid": "5B6B30FA-C7B4-3A0E-A2CD-F4AE018D960E",
+      "sha256": "60cd2b89902f055301035ea8e0eee13b4eaba0dee5f3a19b8664552705cd02bd"
+    },
+    {
+      "image": "/usr/lib/libSystem.B.dylib",
+      "uuid": "0554F799-1781-3D69-86DA-9E1229552BBF",
+      "sha256": "87e428bd0b96b14e7af93924e3a8b90d7a3caca89395ac6bd872d0250ee1cae5"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_sandbox.dylib",
+      "uuid": "2F7FB26E-4DD5-39D2-8897-27170654E814",
+      "sha256": "de963de5c533a9d336b583ef03306fe91bc89111746aff2fcccd1502986fc14a"
+    },
+    {
+      "image": "/usr/lib/system/libquarantine.dylib",
+      "uuid": "DF495C40-E0FF-301B-BEDB-FC285E4657E4",
+      "sha256": "bf66727b2a03f01e961e592c706ca783c3feda5d84bccd886bddd883ab93f1be"
+    },
+    {
+      "image": "/usr/lib/system/libremovefile.dylib",
+      "uuid": "AAF84915-8AEB-31FE-8C65-205790D90CF3",
+      "sha256": "0652683b6671e3c20fdb4f53284e7002bed9dbc5701b13abac20bd0a48b61671"
+    },
+    {
+      "image": "/usr/lib/system/libcopyfile.dylib",
+      "uuid": "3B65B28A-8035-32A9-A1FD-B8F610AF9F8D",
+      "sha256": "68d1b8a5994a9ab6486554d68d172ad1baa8489f9412ab7cd8bbcb8caf78b7ee"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_coreservices.dylib",
+      "uuid": "94EC5A69-3738-3135-A3B3-9384A0AB3CC0",
+      "sha256": "25020c3c75c38e8b90b8fcfb9ddf57f7446be002b29a8e85b9e852aab56ef1be"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_featureflags.dylib",
+      "uuid": "5EBC72E0-72BD-39DD-8CB1-EB7B3E76C1C3",
+      "sha256": "d961731c51f745107b788248ae3450472e93682b4b8848316bf89782df773ddf"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_coretls.dylib",
+      "uuid": "95EF68D7-86ED-335C-95D6-512B0B0F72C6",
+      "sha256": "b192e826f394258597cd82528771012b2434318b3cda2f314ce2f7ba650e9a1a"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_malloc.dylib",
+      "uuid": "66D9B540-3201-3680-B9E3-78291663F061",
+      "sha256": "0f3ccf4736437612484095a6aef8d0f5e6891951319070c26ac8c74232792a42"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_c.dylib",
+      "uuid": "A5F91A09-AA76-31F6-8CC1-F577A159E96B",
+      "sha256": "9d9d0d366be5744ec1c94e044f35ed62a4fcc679bfbda90fb75940e59afcaec9"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_kernel.dylib",
+      "uuid": "3F9189E7-D7DC-3AF2-BBB2-ABEAAB09B00B",
+      "sha256": "a97b930e7853d0b114bf33ecaadd9b7ceb09dcde9b3513dc303b40e169873b88"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_trace.dylib",
+      "uuid": "3560EE4C-E922-3864-BDBF-53036D8978DC",
+      "sha256": "d2ea9df4325148cd27dd39acce2e9515d91936326965308edd5070e452d312db"
+    },
+    {
+      "image": "/usr/lib/system/libkeymgr.dylib",
+      "uuid": "66483D65-3AAD-396C-AFE8-B943E6E50F1B",
+      "sha256": "b269448a2122682b9d06b47ce355f5ec0c226b82d33858bbc80a29b6d9a3d102"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_m.dylib",
+      "uuid": "12E77B55-9718-38F0-92DB-E146539AC579",
+      "sha256": "e862023863089bc646fc2a3a14e760b6a859700e1c5a8e76775a65fa083a2b7b"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_info.dylib",
+      "uuid": "75E19FEB-86B8-3D16-8D03-420EAB10BEE5",
+      "sha256": "3cf656bff862dac3d003591a2c963163c4ee710624e8c138c4030ceb603fe947"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_notify.dylib",
+      "uuid": "53C32FA0-1F37-311A-BEB5-3FCE45F85074",
+      "sha256": "6d25d52ac16ad5108fbca91a74bad37c1def7107e4f1b33e5ed496d4ac532aa8"
+    },
+    {
+      "image": "/usr/lib/system/libdispatch.dylib",
+      "uuid": "E0105055-5121-33B4-8A3B-20E3B00D6659",
+      "sha256": "ff78527d76d7ad9217a69dd175c1985011c659430f07a28bfdc7ac025e11f61a"
+    },
+    {
+      "image": "/usr/lib/system/liblaunch.dylib",
+      "uuid": "BFADC16E-1611-3727-89BB-81E1DA9A1123",
+      "sha256": "1a79433d76961ca121b03315d4d7ab425fcd8c3f43dcc4653ffe07b457fadbb8"
+    },
+    {
+      "image": "/usr/lib/system/libcompiler_rt.dylib",
+      "uuid": "4D026A2E-A442-30FC-8467-C7CA4A0CE325",
+      "sha256": "ae5f65f6605bb1aa0dbc03220773194599be81ee4ae697b49bf2fda2177279fa"
+    },
+    {
+      "image": "/usr/lib/system/libdyld.dylib",
+      "uuid": "57A6A934-293B-3F0A-9375-D7F8204359A0",
+      "sha256": "4962ce130409df9a4f9e9d1812711b45201af2e937675247ce32516a5e9e0357"
+    },
+    {
+      "image": "/usr/lib/system/libmacho.dylib",
+      "uuid": "5BC2DF42-12DA-3366-B961-9A72545F9FA0",
+      "sha256": "df588ed0f5f06550138120ae707aba884bbc6b8c915000f04344613d2bf0e108"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_pthread.dylib",
+      "uuid": "C08575B4-716A-30A6-A3F5-41C94BC76E1A",
+      "sha256": "3b30e8715b0d8a623be1ba53c57bd4dbe9cd5d2c15563724f715f77958de1431"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_platform.dylib",
+      "uuid": "449883C4-230C-3444-B825-27D64CD8F992",
+      "sha256": "dbcab1a17aa695ff20ee2ddb93b86268b0e00739de01369a7719a0a03255e697"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_asl.dylib",
+      "uuid": "978514C6-9D9E-3673-A806-B61E3E80A8DA",
+      "sha256": "1fdb6df0ee4ed53a1ebafcf80d56ce8f7861af36f3ec326b1df0224fe7c8a5c0"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_duct.dylib",
+      "uuid": "34DD3BF9-D942-39BC-8CA1-E70662540679",
+      "sha256": "b81b87fde94a44f7f7ce9460619253581927ae949164669023c6fbb89d11e3d3"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_blocks.dylib",
+      "uuid": "224F8BFC-A4CB-3FF9-A3E1-5A4355AF9B1B",
+      "sha256": "d6eab2a7279d3bf298e15d9ca88752b1192ebb378739855388485768cd5c6eac"
+    },
+    {
+      "image": "/usr/lib/system/libxpc.dylib",
+      "uuid": "85935B77-7521-3980-A641-D50CAFB8ED5A",
+      "sha256": "f53e2a392ea6afc0054c31f4e0080d4532d30352a4d8c1f9562aa39c27e588f2"
+    },
+    {
+      "image": "/usr/lib/system/libcorecrypto.dylib",
+      "uuid": "EB7D57FB-8880-3800-AB4E-DFEF6072025C",
+      "sha256": "20182719f7d5fda49652e8339f7cf9a3d85f993b9208540f6d99e22b20c9d9f2"
+    },
+    {
+      "image": "/usr/lib/system/libcommonCrypto.dylib",
+      "uuid": "7828BB79-8B6B-3A0D-A30E-08BF89457E38",
+      "sha256": "a35a7d034811c9be307fe604b58e0e0d6bc3ed338ff434a010de44c32d52729d"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_dnssd.dylib",
+      "uuid": "957B8FEF-35C3-385D-8C62-BB0F9803EB7B",
+      "sha256": "ffaa00085d5449d7bf5c70861b1ed87be451385ed38237323f20ee143ac8db26"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_networkextension.dylib",
+      "uuid": "0BAB1D32-A612-39A8-93FE-F08CDD76F09A",
+      "sha256": "da86b093c02fc0290814896a0b068751b2d657020300548e7dbfaee16580ddb6"
+    },
+    {
+      "image": "/usr/lib/system/libunwind.dylib",
+      "uuid": "45EB8890-7A4B-379E-961E-663B3CD3961D",
+      "sha256": "642dc7d34b4eed4cf519378c46b8b915a76c9b75fe725ee96060613c02de9a0a"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_darwin.dylib",
+      "uuid": "8E655597-023C-34CE-9BAD-98A91FAFC923",
+      "sha256": "492b070914973eacf4d3a0e262ff0afc88e89d80efeaf7f5ad2287d35b713e05"
+    },
+    {
+      "image": "/usr/lib/system/libcache.dylib",
+      "uuid": "10C68DE1-0105-3D13-B444-E02834166675",
+      "sha256": "00b5031c9f453e0c77096f292782cc49e1c030552ef925e3702cf2e1253d6258"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_configuration.dylib",
+      "uuid": "E85DAD5F-C5EC-3699-8B7C-C41E3CA84354",
+      "sha256": "92806b281bf9e30bac0344a1b0c5195443f3a796605132a514624c20bd4dbdf3"
+    },
+    {
+      "image": "/usr/lib/libobjc.A.dylib",
+      "uuid": "268384A9-C0BB-351A-86F8-83ACECD043A1",
+      "sha256": "80f59114372455bc2589f50f8ae688d1b86069cbd19aa2475533522e2c7bb397"
+    },
+    {
+      "image": "/usr/lib/libc++.1.dylib",
+      "uuid": "278F5319-0BDE-3BF7-9721-6BD5B5751BBA",
+      "sha256": "5ec46f6845beaa3e4559a59b9f68de5f42d7f5daed3650fd0554f328c6d00948"
+    },
+    {
+      "image": "/usr/lib/libc++abi.dylib",
+      "uuid": "FBD845D3-BEAD-3491-985D-48F63D5DAA03",
+      "sha256": "d3000d0a3d60dddf911e7f954519ab9f2c95f89b72e1c4160308fb15643e30c6"
+    },
+    {
+      "image": "/usr/lib/libresolv.9.dylib",
+      "uuid": "45DA51C2-8941-3D7F-8CA5-FD83E03D1C9A",
+      "sha256": "87c1a15a11ce4258b74394179a2a444637807aa5b803f249a6e30cac8cc144bd"
+    },
+    {
+      "image": "/usr/lib/native/libFreeType.dylib",
+      "uuid": "D5886CA9-8178-3FA3-9142-8ED9A8CC9B42",
+      "sha256": "23215ae76649edabe423e5536df87d89c6c1494b27c9b4724e0fb968a005fc6d"
+    }
+  ],
+  "l1-replay-1794686621840316198-symbols": [
+    {
+      "image": "/Volumes/SystemRoot$STAGE/l1-replay-1794686621840316198/bin/logic-system-symbols",
+      "uuid": "3304915B-4937-3069-B402-F9FCC01BCF57",
+      "sha256": "6aa80b0b36f4551084c01d15c33c4382963dcad578b5bc97c3a83ad20cc5061e"
+    },
+    {
+      "image": "/usr/lib/libSystem.B.dylib",
+      "uuid": "F30E0490-5E81-30C7-A81A-67C72F65F368",
+      "sha256": "87e428bd0b96b14e7af93924e3a8b90d7a3caca89395ac6bd872d0250ee1cae5"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_sandbox.dylib",
+      "uuid": "3BB93F95-47F2-38CD-81C8-90C093F1E0D0",
+      "sha256": "de963de5c533a9d336b583ef03306fe91bc89111746aff2fcccd1502986fc14a"
+    },
+    {
+      "image": "/usr/lib/system/libquarantine.dylib",
+      "uuid": "89766C70-7F3D-35FE-A521-FB494101B523",
+      "sha256": "bf66727b2a03f01e961e592c706ca783c3feda5d84bccd886bddd883ab93f1be"
+    },
+    {
+      "image": "/usr/lib/system/libremovefile.dylib",
+      "uuid": "AC58BD2D-B1C8-33BE-BE4D-144DD7A9BFC8",
+      "sha256": "0652683b6671e3c20fdb4f53284e7002bed9dbc5701b13abac20bd0a48b61671"
+    },
+    {
+      "image": "/usr/lib/system/libcopyfile.dylib",
+      "uuid": "D1EEFD35-EB08-393E-98E2-63EEE1EA7FF6",
+      "sha256": "68d1b8a5994a9ab6486554d68d172ad1baa8489f9412ab7cd8bbcb8caf78b7ee"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_coreservices.dylib",
+      "uuid": "6AC03F6A-E1FC-37FD-AE52-8DB07DB92BD4",
+      "sha256": "25020c3c75c38e8b90b8fcfb9ddf57f7446be002b29a8e85b9e852aab56ef1be"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_featureflags.dylib",
+      "uuid": "F2BE09C4-C303-3CC2-8275-86540B888A15",
+      "sha256": "d961731c51f745107b788248ae3450472e93682b4b8848316bf89782df773ddf"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_coretls.dylib",
+      "uuid": "13E07809-77F4-3052-BF66-C1BBDA913587",
+      "sha256": "b192e826f394258597cd82528771012b2434318b3cda2f314ce2f7ba650e9a1a"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_malloc.dylib",
+      "uuid": "BB24749C-EBC1-3808-9403-FAA8673FCAE9",
+      "sha256": "0f3ccf4736437612484095a6aef8d0f5e6891951319070c26ac8c74232792a42"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_c.dylib",
+      "uuid": "9EEE58B9-2551-3676-84B7-4BD934E928B6",
+      "sha256": "9d9d0d366be5744ec1c94e044f35ed62a4fcc679bfbda90fb75940e59afcaec9"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_kernel.dylib",
+      "uuid": "AE72613C-48E0-33C8-9503-237A65B4FCEB",
+      "sha256": "a97b930e7853d0b114bf33ecaadd9b7ceb09dcde9b3513dc303b40e169873b88"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_trace.dylib",
+      "uuid": "37CF0824-AC26-3227-9EA6-1B6C9B9886AB",
+      "sha256": "d2ea9df4325148cd27dd39acce2e9515d91936326965308edd5070e452d312db"
+    },
+    {
+      "image": "/usr/lib/system/libkeymgr.dylib",
+      "uuid": "BC06DDDA-B237-3878-8892-7C7DD5565FF5",
+      "sha256": "b269448a2122682b9d06b47ce355f5ec0c226b82d33858bbc80a29b6d9a3d102"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_m.dylib",
+      "uuid": "EA640F5B-34C3-386F-86A5-9B1DE8BDF690",
+      "sha256": "e862023863089bc646fc2a3a14e760b6a859700e1c5a8e76775a65fa083a2b7b"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_info.dylib",
+      "uuid": "6A6375AA-2C8A-31C6-9DCD-E3F5136BB3A7",
+      "sha256": "3cf656bff862dac3d003591a2c963163c4ee710624e8c138c4030ceb603fe947"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_notify.dylib",
+      "uuid": "CB0CBFC7-3CAD-3B92-8E19-6762321680AE",
+      "sha256": "6d25d52ac16ad5108fbca91a74bad37c1def7107e4f1b33e5ed496d4ac532aa8"
+    },
+    {
+      "image": "/usr/lib/system/libdispatch.dylib",
+      "uuid": "44D86CBB-2E78-36F7-A469-B3E2BF932BD3",
+      "sha256": "ff78527d76d7ad9217a69dd175c1985011c659430f07a28bfdc7ac025e11f61a"
+    },
+    {
+      "image": "/usr/lib/system/liblaunch.dylib",
+      "uuid": "03FBFD03-D77F-334C-9971-7A995849123A",
+      "sha256": "1a79433d76961ca121b03315d4d7ab425fcd8c3f43dcc4653ffe07b457fadbb8"
+    },
+    {
+      "image": "/usr/lib/system/libcompiler_rt.dylib",
+      "uuid": "2C443B01-CA95-377B-B337-1139ADB64645",
+      "sha256": "ae5f65f6605bb1aa0dbc03220773194599be81ee4ae697b49bf2fda2177279fa"
+    },
+    {
+      "image": "/usr/lib/system/libdyld.dylib",
+      "uuid": "8BB608A0-783E-3F94-B134-8DDF3A5D64A9",
+      "sha256": "4962ce130409df9a4f9e9d1812711b45201af2e937675247ce32516a5e9e0357"
+    },
+    {
+      "image": "/usr/lib/system/libmacho.dylib",
+      "uuid": "B0D2A04B-0BDB-3299-ACCD-FA0FD5B7B306",
+      "sha256": "df588ed0f5f06550138120ae707aba884bbc6b8c915000f04344613d2bf0e108"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_pthread.dylib",
+      "uuid": "C33044A9-244B-37E2-9401-18658F7852F6",
+      "sha256": "3b30e8715b0d8a623be1ba53c57bd4dbe9cd5d2c15563724f715f77958de1431"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_platform.dylib",
+      "uuid": "9DD16B75-2522-3F29-9461-8031212E6C48",
+      "sha256": "dbcab1a17aa695ff20ee2ddb93b86268b0e00739de01369a7719a0a03255e697"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_asl.dylib",
+      "uuid": "27550444-F512-33EC-965A-75390270CAC9",
+      "sha256": "1fdb6df0ee4ed53a1ebafcf80d56ce8f7861af36f3ec326b1df0224fe7c8a5c0"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_duct.dylib",
+      "uuid": "730645BA-361F-3322-B941-6A2FB04E550B",
+      "sha256": "b81b87fde94a44f7f7ce9460619253581927ae949164669023c6fbb89d11e3d3"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_blocks.dylib",
+      "uuid": "712FBC6C-F6D5-33B4-9B6D-8CBCEBAD4F03",
+      "sha256": "d6eab2a7279d3bf298e15d9ca88752b1192ebb378739855388485768cd5c6eac"
+    },
+    {
+      "image": "/usr/lib/system/libxpc.dylib",
+      "uuid": "1094C912-E661-3FCD-AFBF-F1D71E367887",
+      "sha256": "f53e2a392ea6afc0054c31f4e0080d4532d30352a4d8c1f9562aa39c27e588f2"
+    },
+    {
+      "image": "/usr/lib/system/libcorecrypto.dylib",
+      "uuid": "AA925430-5EEC-35FD-961E-ABC1EC3F5269",
+      "sha256": "20182719f7d5fda49652e8339f7cf9a3d85f993b9208540f6d99e22b20c9d9f2"
+    },
+    {
+      "image": "/usr/lib/system/libcommonCrypto.dylib",
+      "uuid": "13C7D299-3658-38A6-ABAA-9148C129EF57",
+      "sha256": "a35a7d034811c9be307fe604b58e0e0d6bc3ed338ff434a010de44c32d52729d"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_dnssd.dylib",
+      "uuid": "AAC8FF29-AD9A-395C-8781-2D1E6FED0B08",
+      "sha256": "ffaa00085d5449d7bf5c70861b1ed87be451385ed38237323f20ee143ac8db26"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_networkextension.dylib",
+      "uuid": "7D2FBE68-407B-3D86-AD7B-B7473C736BED",
+      "sha256": "da86b093c02fc0290814896a0b068751b2d657020300548e7dbfaee16580ddb6"
+    },
+    {
+      "image": "/usr/lib/system/libunwind.dylib",
+      "uuid": "B494FE41-F691-3320-9C65-378670896CA5",
+      "sha256": "642dc7d34b4eed4cf519378c46b8b915a76c9b75fe725ee96060613c02de9a0a"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_darwin.dylib",
+      "uuid": "5F3CF594-63DA-3CDF-B5C5-CA5BCAF54775",
+      "sha256": "492b070914973eacf4d3a0e262ff0afc88e89d80efeaf7f5ad2287d35b713e05"
+    },
+    {
+      "image": "/usr/lib/system/libcache.dylib",
+      "uuid": "B2A5F165-5F11-3366-AC33-DA824CC1230E",
+      "sha256": "00b5031c9f453e0c77096f292782cc49e1c030552ef925e3702cf2e1253d6258"
+    },
+    {
+      "image": "/usr/lib/system/libsystem_configuration.dylib",
+      "uuid": "B6BCCDE7-BDF6-339A-88ED-F2E0C90A123A",
+      "sha256": "92806b281bf9e30bac0344a1b0c5195443f3a796605132a514624c20bd4dbdf3"
+    },
+    {
+      "image": "/usr/lib/libobjc.A.dylib",
+      "uuid": "7473D41F-915A-3117-A427-CCDA4580C017",
+      "sha256": "80f59114372455bc2589f50f8ae688d1b86069cbd19aa2475533522e2c7bb397"
+    },
+    {
+      "image": "/usr/lib/libc++.1.dylib",
+      "uuid": "FE605492-9F3C-3520-9999-E479BCDBB2A2",
+      "sha256": "5ec46f6845beaa3e4559a59b9f68de5f42d7f5daed3650fd0554f328c6d00948"
+    },
+    {
+      "image": "/usr/lib/libc++abi.dylib",
+      "uuid": "117A2FEB-1CB6-3AE7-B87B-C1287417B748",
+      "sha256": "d3000d0a3d60dddf911e7f954519ab9f2c95f89b72e1c4160308fb15643e30c6"
+    },
+    {
+      "image": "/usr/lib/libresolv.9.dylib",
+      "uuid": "5CEA9B94-4E17-3588-8A2F-1AB418F5820A",
+      "sha256": "87c1a15a11ce4258b74394179a2a444637807aa5b803f249a6e30cac8cc144bd"
+    },
+    {
+      "image": "/System/Library/Frameworks/CoreFoundation.framework/Versions/A/CoreFoundation",
+      "uuid": "46E3A7D3-0288-3D58-B686-FAFB84F96AAE",
+      "sha256": "da3015c0347c9692c865ebf35c6670419ec318bb771a74ab921049a98a57d6fc"
+    },
+    {
+      "image": "/usr/lib/libicucore.A.dylib",
+      "uuid": "AE3D665A-C4B3-3DBA-9E38-A7CC6B27FD17",
+      "sha256": "fb35cddc4c205272e5610ffa470e3ef39981dddafeb39f2fbeb9ca3c96563208"
+    },
+    {
+      "image": "/System/Library/Frameworks/IOKit.framework/Versions/A/IOKit",
+      "uuid": "7A94D2F2-EB08-366B-A836-B14A01517240",
+      "sha256": "37be169ef0769c8093c2a68019138dd565b8aeb904d31274792ef9c8a97088f7"
+    },
+    {
+      "image": "/usr/lib/libenergytrace.dylib",
+      "uuid": "AB96566D-E635-388D-9FC9-871720705763",
+      "sha256": "70f38ab07bc16c22808569474443d1bf84b52d819bff4449ba80a23ef770708c"
+    },
+    {
+      "image": "/usr/lib/libz.1.dylib",
+      "uuid": "292F70CA-ECD1-3E8F-B86D-00B12A42F233",
+      "sha256": "3b2cb2faa9e29e0fdd7ba177acf931cb3f80a9ab3d81bc2a60bd034483f296fd"
+    },
+    {
+      "image": "/usr/lib/libDiagnosticMessagesClient.dylib",
+      "uuid": "11F87085-D4DD-32BE-9EB8-6E3027BAAD72",
+      "sha256": "e4976bc5e7f8fa36d7beb4b17318ad6580d7ea1c32f771d466291eda343662d7"
+    },
+    {
+      "image": "/usr/lib/system/libkxld.dylib",
+      "uuid": "F30E75D7-1D4C-3D0B-A641-06F86F1E0519",
+      "sha256": "530490c45e1bb8da97f62d28e34a9709d116d8148bd683ed34509faf8f4ace56"
+    },
+    {
+      "image": "/System/Library/Frameworks/Security.framework/Versions/A/Security",
+      "uuid": "24EC5952-1639-3F47-97ED-79438FB55277",
+      "sha256": "f2b2e87cbe7cca03e49e20184e6a54779a4b482aebf4b450a05d5d0821f3433b"
+    },
+    {
+      "image": "/System/Library/Frameworks/Foundation.framework/Versions/C/Foundation",
+      "uuid": "DC3115BF-93D4-37C1-A0C1-BE4FF0A568EE",
+      "sha256": "f5cd42423b941a290fdf86f20dc295838677764017f8e2d766cb931b611d7fed"
+    },
+    {
+      "image": "/usr/lib/libcoretls_cfhelpers.dylib",
+      "uuid": "276459A0-78BE-396D-9026-90E36542EA58",
+      "sha256": "4daffaae62c288c1838b16fed802e09a317ba714015ef61d0574dbae7196ad4c"
+    },
+    {
+      "image": "/usr/lib/libMobileGestalt.dylib",
+      "uuid": "2417F9C2-A0C2-36D3-B7B3-C6AD9B3AED41",
+      "sha256": "f8d9c1c0a767238262c1ce8bd6df73f3a707abd6a98c946f5264210c42c283d1"
+    },
+    {
+      "image": "/System/Library/PrivateFrameworks/AppleFSCompression.framework/Versions/A/AppleFSCompression",
+      "uuid": "D95B086E-F989-3F8A-A24D-5DEA6EE6085A",
+      "sha256": "f1abb03b1f22038afb07129bf57878badd161df1df7956fa1687b3dba89564cc"
+    },
+    {
+      "image": "/usr/lib/libbsm.0.dylib",
+      "uuid": "89CA0BC2-6835-3D51-8164-2C3B02E8681C",
+      "sha256": "507e0aca1aed6b487448a0aea392c69df975d8d54912225e26fbb75df477b1f2"
+    },
+    {
+      "image": "/System/Library/Frameworks/LocalAuthentication.framework/Versions/A/LocalAuthentication",
+      "uuid": "FF6B343E-CC0C-324A-920A-38293412A163",
+      "sha256": "4e2ecfff9354ca63116c67bfc7bf119f0f950daaabeb12c2f66c7ad3869dbc26"
+    },
+    {
+      "image": "/usr/lib/libcoretls.dylib",
+      "uuid": "BAE7C512-6223-3E2F-B904-50AFA6DAA8E3",
+      "sha256": "1025abf5448b7cb987e0e1467422b991dd74fd65b3b1c2334112584f8d68f644"
+    },
+    {
+      "image": "/System/Library/Frameworks/CryptoTokenKit.framework/Versions/A/CryptoTokenKit",
+      "uuid": "3706FE86-5C38-301A-8C98-6F0561B55688",
+      "sha256": "bddfe6de84e4c6e0d27dd50fb22f7f05b830492ca584137ae0a631f2d2ae1137"
+    },
+    {
+      "image": "/usr/lib/libpam.2.dylib",
+      "uuid": "269E2C07-415B-3EA2-9214-CC2DDEEEB68E",
+      "sha256": "123d7e0f9ffb8742330fe325e9dc25d7e500f9322feb56908234f7ab37dbe265"
+    },
+    {
+      "image": "/usr/lib/libsqlite3.0.dylib",
+      "uuid": "9EF1094F-871A-3831-822B-25C642CD1532",
+      "sha256": "9a09790553d62b3146659a8ea53c1b09e0a6a5314f5b010c76e96f671a403a19"
+    },
+    {
+      "image": "/usr/lib/libxar.1.dylib",
+      "uuid": "41FB2B12-A981-3E3B-92B8-CBFEFC94797A",
+      "sha256": "e548621ddf3c6fcb15f75ca94b9de7eb1ad3b1bce976b8d7b93a7d32e67977a4"
+    },
+    {
+      "image": "/usr/lib/libbz2.1.0.dylib",
+      "uuid": "81435C64-6116-34A7-80E8-2358DDD469EA",
+      "sha256": "433d0eb669b613c65786b0164bf04fbbfe037aa6947f1512be892b47261122dc"
+    },
+    {
+      "image": "/usr/lib/libxml2.2.dylib",
+      "uuid": "B20637CA-7FF9-3AB8-BB72-879CBDE6EF7E",
+      "sha256": "815385d6aee51bbf51dd55fad9ed0318b587ad076075f709f6663fccfee2aecd"
+    },
+    {
+      "image": "/System/Library/Frameworks/CFNetwork.framework/Versions/A/CFNetwork",
+      "uuid": "A255E19D-61FD-3DD2-8075-B1A159EE350F",
+      "sha256": "56e5857910a85a66bb08b62def0f0509cef413b225b1456eaf7016d751250414"
+    },
+    {
+      "image": "/System/Library/Frameworks/SystemConfiguration.framework/Versions/A/SystemConfiguration",
+      "uuid": "C9ECFB4B-7ECD-3CF7-8F4E-049E74264EC2",
+      "sha256": "d913bffd36677b3228f1f472ae4bc8cadad6bff40be09f7f270cbf120b548813"
+    },
+    {
+      "image": "/usr/lib/libstdc++.6.dylib",
+      "uuid": "5C6851CE-DB41-351E-9908-4770FFEF8DBC",
+      "sha256": "917db3c54535f0010c26740edf067deba2c300e29abf5b2d71e3c8b9581b2b62"
+    },
+    {
+      "image": "/usr/lib/libgcc_s.1.dylib",
+      "uuid": "F2E26390-9AF8-3C73-A210-EFCDA7DED2BE",
+      "sha256": "5dcf7ceeade37aa3bc82f96ce327e0d813c06d5538d6a3046222c3224b28d392"
+    }
+  ]
+}

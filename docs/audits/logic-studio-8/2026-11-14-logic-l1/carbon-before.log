@@ -1,0 +1,2 @@
+LOGIC_L1_PROBE pointer_size=4
+DEPENDENCY_LOAD_FAIL dlopen(/System/Library/Frameworks/Carbon.framework/Versions/A/Carbon, 6): image not found
