@@ -28,6 +28,43 @@ static void* compatible_mmap(void *addr, size_t length, int prot, int flags, int
 #define PAGE_ALIGN(x) (x & ~(PAGE_SIZE-1))
 #define PAGE_ROUNDUP(x) (((((x)-1) / PAGE_SIZE)+1) * PAGE_SIZE)
 
+#ifndef MLDR_MMAP_MIN_ADDR_HINT_DEFINED
+#define MLDR_MMAP_MIN_ADDR_HINT_DEFINED
+
+/*
+ * A mapping at a fixed address fails with EPERM when the address is below the
+ * kernel's vm.mmap_min_addr. Executables that are not position independent,
+ * common among old i386 applications, are linked to load at 0x1000. Say what
+ * is wrong and how to allow it, instead of only reporting EPERM.
+ */
+static void mldr_explain_mmap_failure(int err, uintptr_t addr)
+{
+	unsigned long min_addr;
+	FILE* f;
+
+	if (err != EPERM)
+		return;
+
+	f = fopen("/proc/sys/vm/mmap_min_addr", "r");
+	if (f == NULL)
+		return;
+	if (fscanf(f, "%lu", &min_addr) != 1)
+		min_addr = 0;
+	fclose(f);
+
+	if (addr >= min_addr)
+		return;
+
+	fprintf(stderr,
+		"This executable is not position independent and must be loaded at %#lx,\n"
+		"below the lowest address Linux allows to be mapped (vm.mmap_min_addr = %lu).\n"
+		"To allow it, run: sudo sysctl -w vm.mmap_min_addr=%lu\n"
+		"See https://docs.darlinghq.org/common-issues.html#cannot-mmap-segment-__text-at-0x1000-operation-not-permitted\n",
+		(unsigned long) addr, min_addr, (unsigned long) addr);
+}
+
+#endif /* MLDR_MMAP_MIN_ADDR_HINT_DEFINED */
+
 // Definitions:
 // FUNCTION_NAME (load32/load64)
 // SEGMENT_STRUCT (segment_command/SEGMENT_STRUCT)
@@ -181,8 +218,10 @@ no_slide:
 								// if we can't map it, assume everything is fine and the system has already made that area inaccessible
 								rv = 0;
 							} else {
+								int mldr_saved_errno = errno;
 								MLDR_MMAP_DIAG("anonymous-slide", seg, addr, seg->vmsize, slide, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED_NOREPLACE);
-								fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(errno));
+								fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(mldr_saved_errno));
+								mldr_explain_mmap_failure(mldr_saved_errno, (uintptr_t)addr);
 								exit(1);
 							}
 						}
@@ -199,8 +238,10 @@ no_slide:
 								// if we can't map it, assume everything is fine and the system has already made that area inaccessible
 								rv = 0;
 							} else {
+								int mldr_saved_errno = errno;
 								MLDR_MMAP_DIAG("anonymous-tail", seg, PAGE_ALIGN(seg->vmaddr + seg->vmsize - size), PAGE_ROUNDUP(size), slide, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED_NOREPLACE);
-								fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(errno));
+								fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(mldr_saved_errno));
+								mldr_explain_mmap_failure(mldr_saved_errno, (uintptr_t)PAGE_ALIGN(seg->vmaddr + seg->vmsize - size));
 								exit(1);
 							}
 						}
@@ -223,8 +264,10 @@ no_slide:
 							// if we can't map it, assume everything is fine and the system has already made that area inaccessible
 							rv = 0;
 						} else {
+							int mldr_saved_errno = errno;
 							MLDR_MMAP_DIAG("file-backed", seg, addr, seg->filesize, slide, flag | MAP_PRIVATE);
-								fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(errno));
+								fprintf(stderr, "Cannot mmap segment %s at %p: %s\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(mldr_saved_errno));
+							mldr_explain_mmap_failure(mldr_saved_errno, (uintptr_t)addr);
 							exit(1);
 						}
 					}
