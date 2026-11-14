@@ -84,6 +84,9 @@ UInt32 GetCurrentKeyModifiers(void);
 EventTime GetEventTime(EventRef inEvent);
 EventTime GetCurrentEventTime(void);
 
+// SPI: checks whether a key event is a system symbolic hot key.
+Boolean _IsSymbolicHotKeyEvent(EventRef inEvent, UInt32* outHotKeyCode, Boolean* outEnabled);
+
 #ifdef __cplusplus
 }
 #endif

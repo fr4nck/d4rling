@@ -5,13 +5,23 @@
 #include <tgmath.h>
 #include <string.h>
 #include <stdlib.h>
-#include <cpuid.h>
+#if defined(__i386__) || defined(__x86_64__)
+#include "cpu_caps_x86.h"
+#endif
 #include <unistd.h>
 #include <sys/sysinfo.h>
+#if defined(__aarch64__)
+#include <sys/auxv.h>
+#include <asm/hwcap.h>
+#endif
 
 // Include commpage definitions
 #define PRIVATE
+#if defined(__aarch64__)
+#include <arm/cpu_capabilities.h>
+#else
 #include <i386/cpu_capabilities.h>
+#endif
 
 static const char* SIGNATURE32 = "commpage 32-bit";
 static const char* SIGNATURE64 = "commpage 64-bit";
@@ -32,9 +42,17 @@ void commpage_setup(bool _64bit)
 	uint8_t *physcpus, *logcpus;
 	uint8_t *user_page_shift, *kernel_page_shift;
 	struct sysinfo si;
+	void* base = (void*)(_64bit ? _COMM_PAGE64_BASE_ADDRESS : _COMM_PAGE32_BASE_ADDRESS);
+	size_t length = _64bit ? _COMM_PAGE64_AREA_LENGTH : _COMM_PAGE32_AREA_LENGTH;
 
-	commpage = (uint8_t*) mmap((void*)(_64bit ? _COMM_PAGE64_BASE_ADDRESS : _COMM_PAGE32_BASE_ADDRESS),
-			_64bit ? _COMM_PAGE64_AREA_LENGTH : _COMM_PAGE32_AREA_LENGTH, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+	commpage = (uint8_t*) mmap(base, length, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS|MAP_FIXED_NOREPLACE, -1, 0);
+	// Kernels before 4.17 ignore MAP_FIXED_NOREPLACE and treat the address as a hint.
+	if (commpage != MAP_FAILED && commpage != base)
+	{
+		munmap(commpage, length);
+		commpage = MAP_FAILED;
+		errno = EEXIST;
+	}
 	if (commpage == MAP_FAILED)
 	{
 		fprintf(stderr, "Cannot mmap commpage: %s\n", strerror(errno));
@@ -80,76 +98,62 @@ void commpage_setup(bool _64bit)
 		uint64_t* memsize = (uint64_t*)CGET(_COMM_PAGE_MEMORY_SIZE);
 		*memsize = si.totalram * si.mem_unit;
 	}
+
+	// The commpage is only written here; guest code only reads it. Darling
+	// puts no routines in the text part of the area, so none of it is
+	// executable.
+	if (mprotect(commpage, length, PROT_READ) != 0)
+	{
+		fprintf(stderr, "Cannot protect commpage: %s\n", strerror(errno));
+		exit(1);
+	}
 }
 
 uint64_t get_cpu_caps(void)
 {
 	uint64_t caps = 0;
 
+#if defined(__aarch64__)
+	unsigned long hwcap = getauxval(AT_HWCAP);
+
+	// NEON/Advanced SIMD is always present on ARM64
+	caps |= kHasNeon;
+	caps |= kHasVfp;
+	caps |= kHasFMA;
+
+	if (hwcap & HWCAP_FP)
+		caps |= kHasVfp;
+	if (hwcap & HWCAP_FPHP)
+		caps |= kHasNeonFP16;
+	if (hwcap & HWCAP_ASIMDHP)
+		caps |= kHasNeonHPFP;
+	if (hwcap & HWCAP_ATOMICS)
+		caps |= kHasARMv81Atomics;
+	if (hwcap & HWCAP_CRC32)
+		caps |= kHasARMv8Crc32;
+	if (hwcap & HWCAP_AES)
+		caps |= kHasARMv8Crypto;
+	if (hwcap & HWCAP_SHA2)
+		caps |= kHasARMv8Crypto;
+#ifdef HWCAP_SHA512
+	if (hwcap & HWCAP_SHA512)
+		caps |= kHasARMv82SHA512;
+#endif
+#ifdef HWCAP_SHA3
+	if (hwcap & HWCAP_SHA3)
+		caps |= kHasARMv82SHA3;
+#endif
+	if (hwcap & HWCAP_EVTSTRM)
+		caps |= kHasEvent;
+
+#else /* x86 */
 	{
-		union cpu_flags1 eax;
-		union cpu_flags2 ecx;
-		union cpu_flags3 edx;
-		uint32_t ebx;
+		struct x86_cpu_features features;
 
-		eax.reg = ecx.reg = edx.reg = 0;
-		__cpuid(1, eax.reg, ebx, ecx.reg, edx.reg);
-
-		if (ecx.mmx)
-			caps |= kHasMMX;
-		if (ecx.sse)
-			caps |= kHasSSE;
-		if (ecx.sse2)
-			caps |= kHasSSE2;
-		if (edx.sse3)
-			caps |= kHasSSE3;
-		if (ecx.ia64)
-			caps |= k64Bit;
-		if (edx.ssse3)
-			caps |= kHasSupplementalSSE3;
-		if (edx.sse41)
-			caps |= kHasSSE4_1;
-		if (edx.sse42)
-			caps |= kHasSSE4_2;
-		if (edx.aes)
-			caps |= kHasAES;
-		if (edx.avx)
-			caps |= kHasAVX1_0;
-		if (edx.rdrnd)
-			caps |= kHasRDRAND;
-		if (edx.fma)
-			caps |= kHasFMA;
-		if (edx.f16c)
-			caps |= kHasF16C;
+		x86_cpu_features_read(&features);
+		caps = x86_cpu_caps_decode(&features);
 	}
-	{
-		union cpu_flags4 ebx;
-		union cpu_flags5 ecx;
-		uint32_t edx = 0, eax = 7;
-
-		__cpuid(7, eax, ebx.reg, ecx.reg, edx);
-
-		if (ebx.erms)
-			caps |= kHasENFSTRG;
-		if (ebx.avx2)
-			caps |= kHasAVX2_0;
-		if (ebx.bmi1)
-			caps |= kHasBMI1;
-		if (ebx.bmi2)
-			caps |= kHasBMI2;
-		if (ebx.rtm)
-			caps |= kHasRTM;
-		if (ebx.hle)
-			caps |= kHasHLE;
-		if (ebx.rdseed)
-			caps |= kHasRDSEED;
-		if (ebx.adx)
-			caps |= kHasADX;
-		if (ebx.mpx)
-			caps |= kHasMPX;
-		if (ebx.sgx)
-			caps |= kHasSGX;
-	}
+#endif /* __aarch64__ */
 
 	return caps;
 }

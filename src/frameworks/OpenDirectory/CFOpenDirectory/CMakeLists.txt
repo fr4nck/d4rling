@@ -25,6 +25,8 @@ add_framework(CFOpenDirectory
 
 	SOURCES
 		src/CFOpenDirectory.c
+		src/CFOpenDirectoryLocal.c
+		src/od_passwd_file.c
 		src/constants.c
 
 	DEPENDENCIES

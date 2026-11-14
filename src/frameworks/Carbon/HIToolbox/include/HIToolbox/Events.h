@@ -18,6 +18,7 @@ OSStatus SetEventMask(EventMask a);
 
 
 extern UInt8 LMGetKbdType(void);
+extern UInt8 LMGetKbdLast(void);
 
 enum {
   kVK_ANSI_A                    = 0x00,
@@ -140,6 +141,9 @@ enum {
 
 typedef UInt16 EventModifiers;
 
+// Apple's Events.h lays this out with 2-byte packing (message at 2, modifiers at 18, size 20);
+// apps pass EventRecords built with that layout.
+#pragma pack(push, 2)
 typedef struct EventRecord {
   EventKind what;
   unsigned long message;
@@ -147,6 +151,47 @@ typedef struct EventRecord {
   Point where;
   EventModifiers modifiers;
 } EventRecord;
+#pragma pack(pop)
+
+enum {
+  nullEvent = 0,
+  mouseDown = 1,
+  mouseUp = 2,
+  keyDown = 3,
+  keyUp = 4,
+  autoKey = 5,
+  updateEvt = 6,
+  diskEvt = 7,
+  activateEvt = 8,
+  osEvt = 15,
+  kHighLevelEvent = 23,
+};
+
+enum {
+  activeFlag = 1 << 0,
+  btnState = 1 << 7,
+  cmdKey = 1 << 8,
+  shiftKey = 1 << 9,
+  alphaLock = 1 << 10,
+  optionKey = 1 << 11,
+  controlKey = 1 << 12,
+  rightShiftKey = 1 << 13,
+  rightOptionKey = 1 << 14,
+  rightControlKey = 1 << 15,
+};
+
+enum {
+  charCodeMask = 0x000000FF,
+  keyCodeMask = 0x0000FF00,
+};
+
+// Deprecated. Returns true if the key code of `event` (bits 8-15 of the message) belongs to a
+// key that produces the character in the low byte of `test`, as the current layout (US here)
+// maps it with the event's Option/Control state. The event kind, Command, Shift and Caps Lock
+// do not matter, and neither does the character in the message. Not a Carbon event-queue call.
+Boolean IsCmdChar(const EventRecord* event, short test);
+// Returns true if a Command-period or Escape is pending in the event queue.
+Boolean CheckEventQueueForUserCancel(void);
 
 #ifdef __cplusplus
 }

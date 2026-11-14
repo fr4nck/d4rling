@@ -52,6 +52,9 @@
 [submodule "src/external/darling-dmg"]
 	path = src/external/darling-dmg
 	url = https://github.com/darlinghq/darling-dmg.git
+[submodule "src/external/bomutils"]
+	path = src/external/bomutils
+	url = https://github.com/darlinghq/bomutils.git
 [submodule "src/external/installer"]
 	path = src/external/installer
 	url = https://github.com/darlinghq/darling-installer.git
@@ -454,3 +457,6 @@
 [submodule "src/external/xnu"]
 	path = src/external/xnu
 	url = https://github.com/darlinghq/darling-xnu.git
+[submodule "src/external/libpcap"]
+	path = src/external/libpcap
+	url = https://github.com/darlinghq/darling-libpcap.git

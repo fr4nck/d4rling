@@ -597,3 +597,13 @@ OSStatus SendEventToEventTarget(EventRef event, EventTargetRef target)
     CFRelease(allocator);
     return result;
 }
+
+// Darling has no system symbolic hot keys, so no event ever matches one.
+Boolean _IsSymbolicHotKeyEvent(EventRef inEvent, UInt32* outHotKeyCode, Boolean* outEnabled)
+{
+    if (outHotKeyCode)
+        *outHotKeyCode = 0;
+    if (outEnabled)
+        *outEnabled = false;
+    return false;
+}

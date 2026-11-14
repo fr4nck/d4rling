@@ -34,21 +34,81 @@ along with Darling.  If not, see <http://www.gnu.org/licenses/>.
 #include <endian.h>
 #include "commpage.h"
 #include "loader.h"
+#include "socket_bitmap.h"
+#include "image_protection.h"
+#include "interpreter_path.h"
 #include <sys/resource.h>
 #include <sys/prctl.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <darlingserver/rpc.h>
+#include <darlingserver/rpc-supplement.h>
 #include <sys/ptrace.h>
 #include <pthread.h>
 #include <sys/utsname.h>
+#include <signal.h>
+#include <kern/cs_blobs.h>
 
 #ifndef PAGE_SIZE
-#	define PAGE_SIZE	4096
+	// Use the host's page size rather than assuming 4K: on 16K-page kernels (e.g. some
+	// aarch64 distros) MAP_FIXED mappings at 4K-rounded addresses fail with EINVAL.
+#	define PAGE_SIZE	((size_t) sysconf(_SC_PAGESIZE))
 #endif
 #define PAGE_ALIGN(x) (x & ~(PAGE_SIZE-1))
 
-static const char* dyld_path = INSTALL_PREFIX "/libexec/usr/lib/dyld";
+#if defined(__aarch64__)
+// Older libc <sys/prctl.h> may not define these; they are stable in the Linux uapi.
+#	ifndef PR_PAC_SET_ENABLED_KEYS
+#		define PR_PAC_SET_ENABLED_KEYS	60
+#	endif
+#	ifndef PR_PAC_APIAKEY
+#		define PR_PAC_APIAKEY	(1UL << 0)
+#		define PR_PAC_APIBKEY	(1UL << 1)
+#		define PR_PAC_APDAKEY	(1UL << 2)
+#		define PR_PAC_APDBKEY	(1UL << 3)
+#	endif
+
+// Opt-in: with DisablePointerAuthentication set in the org.darlinghq.security
+// domain (darling-prefsd hands it to darlingserver), turn off arm64 pointer
+// authentication for every Darwin process started afterwards.
+//
+// Why: Darling runs arm64e macOS binaries, which sign and authenticate pointers (return
+// addresses, C++ vtable and Objective-C method-list pointers, block invoke pointers, Swift
+// function pointers) against Apple's arm64e ABI. Darling's own libraries are plain arm64 and
+// do not participate, so a pointer signed by an arm64e binary reaches arm64 code still signed,
+// or an arm64e authenticate runs on a value the arm64 side never signed, and the process
+// crashes (e.g. _dispatch_client_callout jumping to a signed block invoke, swift_task_create).
+// Disabling the keys makes every PAC sign/authenticate instruction behave as a no-op for this
+// process and its threads, so arm64 and arm64e code agree on plain pointers.
+//
+// Security tradeoff: the Darwin processes in this container lose PAC hardening against
+// memory-corruption exploits (forged return addresses and code pointers). This affects only
+// Darling's Darwin processes; the host's Linux processes and any non-Darling process are
+// unaffected. That is why it is opt-in and off by default.
+//
+// Disabling a key while a still-live function has signed its return address with it would
+// make that function's return fail. This is called directly from main(), which never returns
+// (it ends in start_thread()), and the helper is compiled with branch protection off, so no
+// live frame holds a signed return address. Keys reset on execve, so every exec'd mldr
+// applies this again; threads inherit the setting.
+__attribute__((target("branch-protection=none")))
+static void maybe_disable_ptrauth(void)
+{
+	dserver_system_config_t config;
+
+	if (dserver_rpc_get_system_config(&config, sizeof(config)) != 0 || !config.disable_pointer_authentication)
+		return;
+
+	// enabled_keys = 0 -> all four keys disabled for this process and its future threads.
+	prctl(PR_PAC_SET_ENABLED_KEYS,
+	      PR_PAC_APIAKEY | PR_PAC_APIBKEY | PR_PAC_APDAKEY | PR_PAC_APDBKEY,
+	      0, 0, 0);
+}
+#else
+static void maybe_disable_ptrauth(void) {}
+#endif
+
+static const char* dyld_path = INSTALL_PREFIX "/libexec/darling/usr/lib/dyld";
 
 struct sockaddr_un __dserver_socket_address_data = {
 	.sun_family = AF_UNIX,
@@ -64,8 +124,10 @@ int __dserver_process_lifetime_pipe_fd = -1;
 //
 // Additionally, mldr providers access to native platforms libdl.so APIs (ELF loader).
 
-#ifdef __x86_64__
+#if defined(__x86_64__) || defined(__aarch64__)
 static void load64(int fd, bool expect_dylinker, struct load_results* lr);
+#endif
+#ifdef __x86_64__
 static void reexec32(char** argv);
 #endif
 static void load32(int fd, bool expect_dylinker, struct load_results* lr);
@@ -73,17 +135,16 @@ static void load_fat(int fd, cpu_type_t cpu, bool expect_dylinker, char** argv, 
 static void load(const char* path, cpu_type_t cpu, bool expect_dylinker, char** argv, struct load_results* lr);
 static int native_prot(int prot);
 static void setup_space(struct load_results* lr, bool is_64_bit);
+static int code_signing_gate(int fd, uint64_t image_offset, struct load_results* lr);
+static void seal_segment(const char* name, uintptr_t address, uint64_t file_size, int prot);
 static void process_special_env(struct load_results* lr);
 static void start_thread(struct load_results* lr);
 static bool is_kernel_at_least(int major, int minor);
 static void* compatible_mmap(void *addr, size_t length, int prot, int flags, int fd, off_t offset);
-#ifdef __x86_64__
+#if defined(__x86_64__) || defined(__aarch64__)
 static void setup_stack64(const char* filepath, struct load_results* lr);
 #endif
 static void setup_stack32(const char* filepath, struct load_results* lr);
-
-// this is called when argv[0] specifies an interpreter and we need to "unexpand" it (i.e. convert it from a Linux path to a vchrooted path)
-static void vchroot_unexpand_interpreter(struct load_results* lr);
 
 // UUID of the main executable
 uint8_t exe_uuid[16];
@@ -95,7 +156,11 @@ struct load_results mldr_load_results = {0};
 
 static uint32_t stack_size = 0;
 
+// the path of the executable being started, for messages
+static const char* exec_path = NULL;
+
 #ifdef __i386__
+// how many times mldr32 executed itself again to place the top of the address space
 #define LAYOUT_RETRY_ENV "__mldr_layout_retry"
 #define LAYOUT_RETRY_MAX 8
 #endif
@@ -104,12 +169,16 @@ static const char* const skip_env_vars[] = {
 	"__mldr_bprefs=",
 	"__mldr_sockpath=",
 	"__mldr_lifetime_pipe",
+	"__mldr_nofile=",
 };
 
 void* __mldr_main_stack_top = NULL;
 
 static int kernel_major = -1;
 static int kernel_minor = -1;
+
+static unsigned int inherited_nofile[2];
+static bool have_inherited_nofile = false;
 
 int main(int argc, char** argv, char** envp)
 {
@@ -159,9 +228,11 @@ int main(int argc, char** argv, char** envp)
 	// allow any process to ptrace us
 	// the only process we really care about being able to do this is the server,
 	// but we can't just use the server's PID, since it lies outside our PID namespace.
-	ptrace(PR_SET_PTRACER, PR_SET_PTRACER_ANY, 0, 0, 0);
+	prctl(PR_SET_PTRACER, PR_SET_PTRACER_ANY, 0, 0, 0);
 
 	process_special_env(&mldr_load_results);
+
+	exec_path = filename;
 
 #ifdef __i386__
 	load(filename, CPU_TYPE_X86, false, argv, &mldr_load_results); // accept i386 only
@@ -227,6 +298,7 @@ int main(int argc, char** argv, char** envp)
 		if (
 			ENV_VAR_MATCHES("__mldr_bprefs=")   ||
 			ENV_VAR_MATCHES("__mldr_sockpath=") ||
+			ENV_VAR_MATCHES("__mldr_nofile=")   ||
 			ENV_VAR_MATCHES("__mldr_layout_retry=")
 		) {
 			size_t len_after = 0;
@@ -260,10 +332,8 @@ int main(int argc, char** argv, char** envp)
 	if (mldr_load_results._32on64)
 		setup_stack32(filename, &mldr_load_results);
 	else
-#ifdef __x86_64__
+#if defined(__x86_64__) || defined(__aarch64__)
 		setup_stack64(filename, &mldr_load_results);
-#elif __aarch64__
-	#error TODO: aarch64
 #else
 		abort();
 #endif
@@ -280,6 +350,10 @@ int main(int argc, char** argv, char** envp)
 	}
 
 	__mldr_main_stack_top = (void*)mldr_load_results.stack_top;
+
+	// Before any of the program's code runs; it needs the darlingserver connection,
+	// and it must be called from main() (see the helper).
+	maybe_disable_ptrauth();
 
 	start_thread(&mldr_load_results);
 
@@ -312,7 +386,7 @@ void load(const char* path, cpu_type_t forced_arch, bool expect_dylinker, char**
 
 	if (magic == MH_MAGIC_64 || magic == MH_CIGAM_64)
 	{
-#ifdef __x86_64__
+#if defined(__x86_64__) || defined(__aarch64__)
 		lseek(fd, 0, SEEK_SET);
 		load64(fd, expect_dylinker, lr);
 #else
@@ -409,8 +483,11 @@ static void load_fat(int fd, cpu_type_t forced_arch, bool expect_dylinker, char*
 #elif defined(__i386__)
 				if (arch.cputype == CPU_TYPE_X86)
 					best_arch = arch;
-#elif defined (__aarch64__)
-	#error TODO: arm
+#elif defined(__aarch64__)
+				if (arch.cputype == CPU_TYPE_ARM64)
+					best_arch = arch;
+				else if (best_arch.cputype == CPU_TYPE_ANY && arch.cputype == CPU_TYPE_ARM)
+					best_arch = arch;
 #else
 	#error Unsupported CPU architecture
 #endif
@@ -436,10 +513,8 @@ static void load_fat(int fd, cpu_type_t forced_arch, bool expect_dylinker, char*
 	}
 
 	if (best_arch.cputype & CPU_ARCH_ABI64) {
-#ifdef __x86_64__
+#if defined(__x86_64__) || defined(__aarch64__)
 		load64(fd, expect_dylinker, lr);
-#elif __aarch64__
-	#error TODO: aarch64
 #else
 		abort();
 #endif
@@ -453,7 +528,7 @@ static void load_fat(int fd, cpu_type_t forced_arch, bool expect_dylinker, char*
 	}
 };
 
-#ifdef __x86_64__
+#if defined(__x86_64__) || defined(__aarch64__)
 #define GEN_64BIT
 #include "loader.c"
 #include "stack.c"
@@ -513,24 +588,37 @@ static void process_special_env(struct load_results* lr) {
 		sscanf(str, "%x,%x,%x,%x", &lr->bprefs[0], &lr->bprefs[1], &lr->bprefs[2], &lr->bprefs[3]);
 	}
 
+	// Without a path the static address would name an abstract socket, which is not where
+	// darlingserver listens.
 	str = getenv("__mldr_sockpath");
 
-	if (str != NULL) {
-		if (strlen(str) > sizeof(__dserver_socket_address_data.sun_path) - 1) {
-			fprintf(stderr, "darlingserver socket path is too long\n");
-			exit(1);
-		}
-		strncpy(__dserver_socket_address_data.sun_path, str, sizeof(__dserver_socket_address_data.sun_path) - 1);
-		__dserver_socket_address_data.sun_path[sizeof(__dserver_socket_address_data.sun_path) - 1] = '\0';
-
-		lr->socket_path = __dserver_socket_address_data.sun_path;
+	if (str == NULL || str[0] == '\0' || strlen(str) > sizeof(__dserver_socket_address_data.sun_path) - 1) {
+		fprintf(stderr, "mldr: __mldr_sockpath is missing, empty or too long; start programs through darling\n");
+		exit(1);
 	}
+	strncpy(__dserver_socket_address_data.sun_path, str, sizeof(__dserver_socket_address_data.sun_path) - 1);
+	__dserver_socket_address_data.sun_path[sizeof(__dserver_socket_address_data.sun_path) - 1] = '\0';
+
+	lr->socket_path = __dserver_socket_address_data.sun_path;
 
 	lr->lifetime_pipe = -1;
 	str = getenv("__mldr_lifetime_pipe");
 
 	if (str != NULL) {
 		sscanf(str, "%i", &lr->lifetime_pipe);
+	}
+
+	// the Darwin RLIMIT_NOFILE of the process that exec'd us; libsystem_kernel
+	// keeps it apart from the Linux limit, which must stay above our RPC sockets
+	str = getenv("__mldr_nofile");
+
+	if (str != NULL) {
+		unsigned int cur, max;
+		if (sscanf(str, "%u,%u", &cur, &max) == 2 && cur <= max) {
+			inherited_nofile[0] = cur;
+			inherited_nofile[1] = max;
+			have_inherited_nofile = true;
+		}
 	}
 
 	str = getenv("__mldr_DYLD_ROOT_PATH");
@@ -547,22 +635,21 @@ static void unset_special_env() {
 	unsetenv("__mldr_bprefs");
 	unsetenv("__mldr_sockpath");
 	unsetenv("__mldr_lifetime_pipe");
+	unsetenv("__mldr_nofile");
 #ifdef __i386__
 	unsetenv(LAYOUT_RETRY_ENV);
 #endif
 };
 
-typedef struct socket_bitmap {
-	pthread_mutex_t mutex;
-	/**
-	 * This is always next lowest available index.
-	 * If this is equal to #bit_length, then the bitmap is full.
-	 */
-	size_t next_index;
-	uint8_t* bits;
-	size_t bit_length;
-	int highest;
-} socket_bitmap_t;
+int __mldr_inherited_nofile_limit(unsigned int limits[2]) {
+	if (!have_inherited_nofile) {
+		return -1;
+	}
+
+	limits[0] = inherited_nofile[0];
+	limits[1] = inherited_nofile[1];
+	return 0;
+};
 
 static socket_bitmap_t socket_bitmap = {
 	.mutex = PTHREAD_MUTEX_INITIALIZER,
@@ -572,140 +659,17 @@ static socket_bitmap_t socket_bitmap = {
 	.highest = -1,
 };
 
-static int socket_bitmap_get(socket_bitmap_t* bitmap) {
-	int fd = -1;
-	bool updated = false;
+void __mldr_socket_bitmap_prefork(void) {
+	socket_bitmap_fork_prepare(&socket_bitmap);
+}
 
-	pthread_mutex_lock(&bitmap->mutex);
+void __mldr_socket_bitmap_postfork_parent(void) {
+	socket_bitmap_fork_parent(&socket_bitmap);
+}
 
-	if (bitmap->highest == -1) {
-		// we need to initialize this bitmap
-		struct rlimit limit;
-
-		if (getrlimit(RLIMIT_NOFILE, &limit) < 0) {
-			goto out;
-		}
-
-		if (limit.rlim_cur == RLIM_INFINITY) {
-			// just default to 1024
-			limit.rlim_cur = 1024;
-		}
-
-		bitmap->highest = limit.rlim_cur - 1;
-	}
-
-	if (bitmap->next_index >= bitmap->bit_length) {
-		// we need to grow the bitmap
-
-		if ((bitmap->bit_length % 8) == 0) {
-			// we need to allocate an additional byte
-
-			void* ptr = realloc(bitmap->bits, (bitmap->bit_length / 8) + 1);
-			if (!ptr) {
-				goto out;
-			}
-
-			bitmap->bits = ptr;
-
-			bitmap->bits[bitmap->bit_length / 8] = 0;
-		} else {
-			// we just need to increment the bit length
-		}
-
-		++bitmap->bit_length;
-	}
-
-	fd = bitmap->highest - bitmap->next_index;
-
-	bitmap->bits[bitmap->next_index / 8] |= 1 << (bitmap->next_index % 8);
-
-	// update the next available index
-	for (size_t i = bitmap->next_index + 1; i < bitmap->bit_length; ++i) {
-		size_t byte = i / 8;
-		uint8_t bit = i % 8;
-
-		if (bit == 0) {
-			// check the entire byte at once so we can avoid unnecessary iteration
-			if (bitmap->bits[byte] == 0xff) {
-				// this byte is full, skip it
-				i += 7;
-				continue;
-			}
-		}
-
-		if ((bitmap->bits[byte] & (1 << bit)) == 0) {
-			// this index is unused
-			bitmap->next_index = i;
-			updated = true;
-			break;
-		}
-	}
-
-	if (!updated) {
-		// all of our entries are currently in-use
-		bitmap->next_index = bitmap->bit_length;
-	}
-
-out:
-	pthread_mutex_unlock(&bitmap->mutex);
-
-	return fd;
-};
-
-static void socket_bitmap_put(socket_bitmap_t* bitmap, int socket) {
-	size_t index;
-
-	pthread_mutex_lock(&bitmap->mutex);
-
-	index = bitmap->highest - socket;
-
-	bitmap->bits[index / 8] &= ~(1 << (index % 8));
-
-	if (index < bitmap->next_index) {
-		bitmap->next_index = index;
-	}
-
-	if (index == bitmap->bit_length - 1) {
-		// we can shrink the bitmap
-		size_t old_byte_size = (bitmap->bit_length + 7) / 8;
-		size_t new_byte_size = old_byte_size;
-
-		while (bitmap->bit_length > 0) {
-			size_t index = bitmap->bit_length - 1;
-
-			if ((bitmap->bit_length % 8) == 0) {
-				// check the entire byte at once to avoid unnecessary iteration
-				if (bitmap->bits[(bitmap->bit_length / 8) - 1] == 0) {
-					// remove this entire byte
-					bitmap->bit_length -= 8;
-					continue;
-				}
-			}
-
-			if ((bitmap->bits[index / 8] & (1 << (index % 8))) == 0) {
-				// this bit is in-use, so we can't shrink any further
-				break;
-			}
-
-			--bitmap->bit_length;
-		}
-
-		new_byte_size = (bitmap->bit_length + 7) / 8;
-
-		if (old_byte_size != new_byte_size) {
-			// we can free one or more bytes from the bitmap
-			void* ptr = realloc(bitmap->bits, new_byte_size);
-			if (!ptr) {
-				goto out;
-			}
-
-			bitmap->bits = ptr;
-		}
-	}
-
-out:
-	pthread_mutex_unlock(&bitmap->mutex);
-};
+void __mldr_socket_bitmap_postfork_child(void) {
+	socket_bitmap_fork_child(&socket_bitmap);
+}
 
 int __mldr_create_rpc_socket(void) {
 	int pre_fd = -1;
@@ -716,22 +680,15 @@ int __mldr_create_rpc_socket(void) {
 		goto err_out;
 	}
 
-	fd = socket_bitmap_get(&socket_bitmap);
+	fd = socket_bitmap_place(&socket_bitmap, pre_fd);
 	if (fd < 0) {
 		goto err_out;
 	}
 
-	if (dup2(pre_fd, fd) < 0) {
-		// we have to put it away ourselves here because `fd` is not yet valid, so we can't close() it in the error handler
-		socket_bitmap_put(&socket_bitmap, fd);
-		fd = -1;
-		goto err_out;
+	if (fd != pre_fd) {
+		close(pre_fd);
 	}
-
-	close(pre_fd);
 	pre_fd = -1;
-
-	// `fd` now contains the socket with the desired FD number returned by `socket_bitmap_get`
 
 	int fd_flags = fcntl(fd, F_GETFD);
 	if (fd_flags < 0) {
@@ -775,24 +732,21 @@ int __mldr_create_process_lifetime_pipe(int* fds) {
 		return 0;
 	}
 
-	int pre_fds[2];
+	int pre_fds[2] = { -1, -1 };
+	fds[0] = fds[1] = -1;
 	if (pipe(pre_fds) == -1) {
 		goto err_out;
 	}
 
 	for (int i = 0; i < 2; ++i) {
-		fds[i] = socket_bitmap_get(&socket_bitmap);
+		fds[i] = socket_bitmap_place(&socket_bitmap, pre_fds[i]);
 		if (fds[i] < 0) {
 			goto err_out;
 		}
 
-		if (dup2(pre_fds[i], fds[i]) < 0) {
-			socket_bitmap_put(&socket_bitmap, fds[i]);
-			fds[i] = -1;
-			goto err_out;
+		if (fds[i] != pre_fds[i]) {
+			close(pre_fds[i]);
 		}
-
-		close(pre_fds[i]);
 		pre_fds[i] = -1;
 	}
 
@@ -821,6 +775,10 @@ void __mldr_close_process_lifetime_pipe(int fd) {
 }
 
 #ifdef __i386__
+// A 32-bit process gets its Linux stack (and the mappings next to it) at a
+// random place just below the top of the address space, which is where the
+// Darwin commpage and the main thread stack below it have to go. If that range
+// is taken, execute ourselves again to get another placement.
 static void ensure_top_range_free(struct load_results* lr, unsigned long stack_size) {
 	unsigned long start = commpage_address(false) - stack_size;
 	unsigned long length = commpage_length(false) + stack_size;
@@ -831,9 +789,12 @@ static void ensure_top_range_free(struct load_results* lr, unsigned long stack_s
 		if (probe == (void*)start)
 			return;
 	} else if (errno != EEXIST) {
-		return;
+		return; // let the mappings below report the error
 	}
 
+	// D4rling hardening (559f99115): parse the inherited counter strictly and
+	// treat any malformed, negative or out-of-range value as exhausted, so a
+	// hostile or corrupted environment cannot cause unbounded re-execution.
 	const char* str = getenv(LAYOUT_RETRY_ENV);
 	int retries = 0;
 
@@ -853,7 +814,7 @@ static void ensure_top_range_free(struct load_results* lr, unsigned long stack_s
 	}
 
 	if (retries >= LAYOUT_RETRY_MAX)
-		return;
+		return; // the mappings below report the conflict
 
 	char selfpath[1024];
 	ssize_t len = readlink("/proc/self/exe", selfpath, sizeof(selfpath) - 1);
@@ -864,7 +825,7 @@ static void ensure_top_range_free(struct load_results* lr, unsigned long stack_s
 	char count[16];
 	snprintf(count, sizeof(count), "%d", retries + 1);
 	if (setenv(LAYOUT_RETRY_ENV, count, 1) != 0)
-		return;
+		return; // fail closed: never re-execute without a recorded counter
 
 	execv(selfpath, lr->argv);
 	unsetenv(LAYOUT_RETRY_ENV);
@@ -889,7 +850,7 @@ static void setup_space(struct load_results* lr, bool is_64_bit) {
 	// Using the default stack top would cause the stack to be placed just above the commpage
 	// and would collide with it eventually.
 	// Instead, we manually allocate a new stack below the commpage.
-#if __x86_64__
+#if __x86_64__ || __aarch64__
 	lr->stack_top = commpage_address(true);
 #elif __i386__
 	lr->stack_top = commpage_address(false);
@@ -918,16 +879,14 @@ static void setup_space(struct load_results* lr, bool is_64_bit) {
 	// darlingserver should already have the read pipe, so we don't need
 	// to check that in.
 	if (lr->lifetime_pipe != -1) {
-		lifetime_pipe[1] = socket_bitmap_get(&socket_bitmap);
-
-		if (lr->lifetime_pipe != lifetime_pipe[1]) {
-			// move the existing pipe to a higher fd number, and invalidate
-			// the old fd to prevent interfering with fds provided by
-			// socket_bitmap_get
-			if (dup2(lr->lifetime_pipe, lifetime_pipe[1]) == -1) {
-				fprintf(stderr, "Failed to dup process lifetime pipe: %d (%s)\n", errno, strerror(errno));
-				exit(1);
-			}
+		// move the existing pipe to a higher fd number, and invalidate
+		// the old fd to prevent interfering with fds provided by
+		// socket_bitmap_get
+		lifetime_pipe[1] = socket_bitmap_place(&socket_bitmap, lr->lifetime_pipe);
+		if (lifetime_pipe[1] < 0) {
+			// it could not be moved; keep it where it is
+			lifetime_pipe[1] = lr->lifetime_pipe;
+		} else if (lifetime_pipe[1] != lr->lifetime_pipe) {
 			close(lr->lifetime_pipe);
 		}
 
@@ -973,6 +932,143 @@ static void setup_space(struct load_results* lr, bool is_64_bit) {
 	}
 };
 
+// The code signing state darlingserver recorded for this process; false when
+// it cannot be read.
+static bool own_code_signing_state(dserver_cs_state_t* state) {
+	return dserver_rpc_cs_get_state(0, state, sizeof(*state)) == 0;
+}
+
+// What is wrong with the registered image's signature, or NULL if nothing is.
+static const char* code_signing_problem(void) {
+	dserver_cs_state_t state;
+
+	if (!own_code_signing_state(&state))
+		return "could not be checked";
+
+	switch (state.status) {
+		case dserver_cs_status_valid: return NULL;
+		case dserver_cs_status_unsigned: return "is missing";
+		case dserver_cs_status_invalid: return "is not valid";
+		default: return "could not be checked";
+	}
+}
+
+// Refuses to start the executable. On macOS, a program whose code signature
+// is rejected at launch does not make exec fail with an errno: the new process
+// is killed with SIGKILL (crash reports name the CODESIGNING termination
+// namespace, see Apple's "Understanding the exception types in a crash
+// report"). By the time mldr runs, the Linux exec has happened as well, so
+// mldr does the same, before anything of the image is mapped. The message is
+// Darling's addition; macOS logs the reason to the system log instead.
+static void __attribute__((noreturn)) refuse_executable(const char* problem) {
+	fprintf(stderr, "mldr: %s: refusing to run it: its code signature %s\n",
+		exec_path ? exec_path : "(unknown)", problem);
+	fflush(stderr);
+	kill(getpid(), SIGKILL);
+	_exit(1);
+}
+
+// Hands the executable about to be mapped (the slice at `image_offset`) to
+// darlingserver, which reads its code signature and records it as the
+// process's signing state, the state csops() reports. This runs on every exec,
+// after the check-in and before anything is mapped. What happens next depends
+// on the process's code signing policy (`CodeSigningPolicy` in the
+// org.darlinghq.security domain, as darlingserver recorded it when the
+// process started):
+//   - off (the default): nothing; the result is not looked at;
+//   - warn: an image that `enforce` would refuse is reported on stderr, and
+//     runs;
+//   - enforce: an image darlingserver does not report as validly signed is
+//     not started (refuse_executable()).
+// An unknown policy value is treated as `enforce`. If darlingserver cannot be
+// asked for the policy, it is taken to be `off`, as in dyld.
+//
+// Under `enforce`, the whole file is first copied into a sealed snapshot
+// (mldr_snapshot_image()); darlingserver checks the snapshot and the image is
+// mapped from it, so the file changing between the check and the mapping
+// does not matter. This costs a copy of the file in memory, which is why it is
+// done only under `enforce`. Without it, the file is checked and mapped as it
+// is.
+//
+// Whatever the policy, the read-only segments of the images mldr maps are
+// sealed (`lr->seal_images`, see seal_segment()) when `SealImages` is on and
+// the program uses the hardened runtime (CS_RUNTIME) without the
+// get-task-allow entitlement, i.e. when it is not meant to be debugged. dyld
+// applies the same rule to the images it loads. Not in 32-bit processes,
+// which Linux has no mseal() for.
+//
+// Returns the descriptor to map the image from, positioned at `image_offset`:
+// `fd` itself, or the snapshot, which the caller closes after mapping.
+static int code_signing_gate(int fd, uint64_t image_offset, struct load_results* lr) {
+	dserver_cs_state_t state;
+	uint32_t policy = dserver_code_signing_policy_off;
+	uint32_t flags = 0;
+	int code;
+
+	if (own_code_signing_state(&state))
+		policy = state.code_signing_policy;
+	if (policy > dserver_code_signing_policy_enforce)
+		policy = dserver_code_signing_policy_enforce;
+
+	if (policy == dserver_code_signing_policy_enforce) {
+		int snapshot = mldr_snapshot_image(fd);
+		if (snapshot < 0) {
+			char problem[128];
+			snprintf(problem, sizeof(problem), "could not be checked (the file cannot be copied: %s)", strerror(-snapshot));
+			refuse_executable(problem);
+		}
+		if (lseek(snapshot, (off_t)image_offset, SEEK_SET) != (off_t)image_offset)
+			refuse_executable("could not be checked (the image is outside the file)");
+		fd = snapshot;
+	}
+
+	code = dserver_rpc_cs_register_image(fd, image_offset, &flags);
+
+	if (policy == dserver_code_signing_policy_enforce) {
+		// under enforce, darlingserver reports CS_VALID only for a valid signature
+		if (code < 0)
+			refuse_executable("could not be checked");
+		if (!(flags & CS_VALID)) {
+			const char* problem = code_signing_problem();
+			refuse_executable(problem ? problem : "is not valid");
+		}
+	} else if (policy == dserver_code_signing_policy_warn) {
+		// without enforce, darlingserver reports CS_VALID for every image, so the status tells
+		const char* problem = (code < 0) ? "could not be checked" : code_signing_problem();
+		if (problem) {
+			fprintf(stderr, "mldr: warning: %s: its code signature %s; "
+				"code signing enforcement would refuse to run it\n",
+				exec_path ? exec_path : "(unknown)", problem);
+		}
+	}
+
+#ifndef __i386__
+	// the configuration is read only for a program the setting could apply to
+	if (code == 0 && (flags & (CS_VALID | CS_RUNTIME | CS_GET_TASK_ALLOW)) == (CS_VALID | CS_RUNTIME)) {
+		dserver_system_config_t config;
+		if (dserver_rpc_get_system_config(&config, sizeof(config)) == 0 && config.seal_images)
+			lr->seal_images = true;
+	}
+#else
+	(void) lr;
+#endif
+
+	return fd;
+}
+
+// Seals a read-only segment that was just mapped (see code_signing_gate()):
+// it can no longer be made writable, unmapped or replaced. Only the part that
+// is mapped from the file is sealed. A host kernel without mseal() (before
+// Linux 6.10) leaves the segment unsealed, without a message (dyld reports
+// that once per process); other failures are reported and the program runs.
+static void seal_segment(const char* name, uintptr_t address, uint64_t file_size, int prot) {
+	int ret = mldr_seal_range((void*)address, (size_t)file_size, prot);
+	if (ret < 0 && ret != -ENOSYS) {
+		fprintf(stderr, "mldr: warning: cannot seal %.16s of %s: %s\n", name,
+			exec_path ? exec_path : "(unknown)", strerror(-ret));
+	}
+}
+
 static void start_thread(struct load_results* lr) {
 #ifdef __x86_64__
 	__asm__ volatile(
@@ -989,6 +1085,15 @@ static void start_thread(struct load_results* lr) {
 		"jmp *%0"
 		::
 		"m"(lr->entry_point),
+		"r"(lr->stack_top)
+		:
+	);
+#elif defined(__aarch64__)
+	__asm__ volatile(
+		"mov sp, %1\n"
+		"br %0"
+		::
+		"r"(lr->entry_point),
 		"r"(lr->stack_top)
 		:
 	);
@@ -1054,22 +1159,3 @@ void* compatible_mmap(void *addr, size_t length, int prot, int flags, int fd, of
 	}
 	return result;
 }
-
-static void vchroot_unexpand_interpreter(struct load_results* lr) {
-	static char unexpanded[4096];
-	size_t length;
-
-	if (lr->root_path) {
-		length = strlen(lr->argv[0]);
-
-		if (strncmp(lr->argv[0], lr->root_path, lr->root_path_length) == 0) {
-			memmove(unexpanded, lr->argv[0] + lr->root_path_length, length - lr->root_path_length + 1);
-		} else {
-			// FIXME: potential buffer overflow
-			memmove(unexpanded + sizeof(SYSTEM_ROOT) - 1, lr->argv[0], length + 1);
-			memcpy(unexpanded, SYSTEM_ROOT, sizeof(SYSTEM_ROOT) - 1);
-		}
-
-		lr->argv[0] = unexpanded;
-	}
-};

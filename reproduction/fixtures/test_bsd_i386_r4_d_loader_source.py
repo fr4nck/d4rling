@@ -51,22 +51,31 @@ class MldrI386MmapDiagnostics(unittest.TestCase):
         )
 
     def test_each_failure_path_has_its_own_diagnostic(self):
+        # Upstream darlinghq/darling (November 2026) maps each segment as a
+        # file-backed part followed by an anonymous BSS part; the former
+        # anonymous-slide/anonymous-tail branches no longer exist.
         branches = {
-            "anonymous-slide": "addr, seg->vmsize, slide, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED_NOREPLACE",
-            "anonymous-tail": "PAGE_ALIGN(seg->vmaddr + seg->vmsize - size), PAGE_ROUNDUP(size), slide, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED_NOREPLACE",
-            "file-backed": "addr, seg->filesize, slide, flag | MAP_PRIVATE",
+            "file-backed": "seg_addr, seg->filesize, slide, MAP_FIXED_NOREPLACE | MAP_PRIVATE",
+            "anonymous-bss": "bss_addr, bss_size, slide, MAP_ANONYMOUS | MAP_PRIVATE | MAP_FIXED_NOREPLACE",
         }
         for name, args in branches.items():
             with self.subTest(branch=name):
                 call = 'MLDR_MMAP_DIAG("' + name + '", seg, ' + args + ');'
                 self.assertEqual(self.source.count(call), 1)
                 after = self.source.split(call, 1)[1]
-                self.assertRegex(after[:260], r'fprintf\(stderr, "Cannot mmap segment')
-        self.assertEqual(len(re.findall(r'MLDR_MMAP_DIAG\("', self.source)), 3)
+                self.assertRegex(after[:260], r'fprintf\(stderr, "Cannot mmap (bss for )?segment')
+        self.assertEqual(len(re.findall(r'MLDR_MMAP_DIAG\("', self.source)), 2)
 
-    def test_legacy_error_message_is_preserved(self):
-        legacy = 'fprintf(stderr, "Cannot mmap segment %s at %p: %s\\n", seg->segname, (void*)(uintptr_t)seg->vmaddr, strerror(errno));'
-        self.assertEqual(self.source.count(legacy), 3)
+    def test_upstream_error_messages_are_preserved(self):
+        # The diagnostic is additive: the upstream user-facing messages and
+        # the vm.mmap_min_addr explanation stay unchanged on both paths.
+        for message in (
+            'fprintf(stderr, "Cannot mmap segment %s at %p: %s\\n", seg->segname, (void*)seg_addr, strerror(err));',
+            'fprintf(stderr, "Cannot mmap bss for segment %s at %p: %s\\n", seg->segname, (void*)bss_addr, strerror(err));',
+        ):
+            with self.subTest(message=message):
+                self.assertEqual(self.source.count(message), 1)
+        self.assertEqual(self.source.count("mldr_explain_mmap_failure(err, "), 2)
 
     def test_diagnostic_format_is_newline_terminated(self):
         macro = self.source.split(
@@ -77,7 +86,7 @@ class MldrI386MmapDiagnostics(unittest.TestCase):
         self.assertNotIn('errno=%d' + chr(92) + escaped_newline + '",', macro)
 
     def test_diagnostic_is_only_on_failure_paths(self):
-        for branch in ("anonymous-slide", "anonymous-tail", "file-backed"):
+        for branch in ("file-backed", "anonymous-bss"):
             call = 'MLDR_MMAP_DIAG("' + branch + '"'
             before = self.source.split(call, 1)[0]
             self.assertIn("if (rv == (void*)MAP_FAILED)", before[-750:])

@@ -80,6 +80,17 @@ static bool encodeLegacySystemVersion(int major, int minor, int patch, int& valu
     // Gestalt's four BCD-like digits: 10.4.0 -> 0x1040 and 10.3.15 ->
     // 0x1039. Minor and bug-fix are saturated at 9 (Apple contract).
     // The legacy representation cannot encode a three-digit major version.
+    //
+    // QUIRK (from darlinghq/darling a4008ba7b/4bc556030): for macOS 11 and
+    // later the packed value keeps the same layout, with the major version
+    // as two BCD digits in the high byte; macOS 27.0.1 returns 0x2701 with
+    // noErr. Not documented. Evidence: black-box observation on macOS 27.0.1
+    // arm64, native, under Rosetta, with an SDK 10.15 binary and with
+    // SYSTEM_VERSION_COMPAT=1, all identical (tier 2). Saturating minor and
+    // bug-fix at 9 for these majors is carried over from the 10.x rule by
+    // inference. Tests: tests/gestalt-system-version.rb,
+    // tests/src/gestalt_version.c and
+    // reproduction/fixtures/carboncore/check_gestalt_selectors.py.
     if (major < 1 || major > 99)
         return false;
     const int minorDigit = minor > 9 ? 9 : minor;

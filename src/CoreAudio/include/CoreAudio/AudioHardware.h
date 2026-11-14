@@ -237,6 +237,11 @@ OSStatus AudioDeviceGetNearestStartTime(AudioObjectID inDevice,
 OSStatus AudioHardwareGetProperty(AudioHardwarePropertyID inPropId, UInt32* ioPropertyDataSize, void* outPropertyData);
 OSStatus AudioHardwareGetPropertyInfo(AudioHardwarePropertyID inPropertyID, UInt32* outSize, Boolean* outWritable);
 
+enum
+{
+    kAudioDeviceTransportTypeVirtual = 'virt'
+};
+
 #ifdef __cplusplus
 }
 #endif

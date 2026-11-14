@@ -1,7 +1,43 @@
 cmake_minimum_required(VERSION 3.13)
 
 SET(CMAKE_SYSTEM_NAME Linux)
-SET(CMAKE_SYSTEM_PROCESSOR "x86-64")
+
+# Detect host architecture before project() since CMAKE_HOST_SYSTEM_PROCESSOR
+# may not be available yet
+execute_process(COMMAND uname -m OUTPUT_VARIABLE _HOST_ARCH OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# The target defaults to the host. A toolchain file or -DCMAKE_SYSTEM_PROCESSOR
+# may choose another one, which makes this a cross build.
+if (NOT DEFINED CMAKE_SYSTEM_PROCESSOR)
+	if (_HOST_ARCH MATCHES "aarch64|arm64")
+		SET(CMAKE_SYSTEM_PROCESSOR "aarch64")
+	else()
+		SET(CMAKE_SYSTEM_PROCESSOR "x86-64")
+	endif()
+endif()
+
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64")
+	set(_TARGET_ARCH_ARM64 TRUE)
+else()
+	set(_TARGET_ARCH_ARM64 FALSE)
+endif()
+if (_HOST_ARCH MATCHES "aarch64|arm64")
+	set(_HOST_ARCH_ARM64 TRUE)
+else()
+	set(_HOST_ARCH_ARM64 FALSE)
+endif()
+
+# CMAKE_CROSSCOMPILING is always true here (CMAKE_SYSTEM_NAME is set above and
+# forced again after project()), so it cannot tell a cross build apart.
+# DARLING_CROSS_BUILD is set when the Linux side of Darling (mldr,
+# darlingserver, the launcher) is built for another architecture than the
+# build machine's, so tools that run during the build must be built separately.
+if (NOT _TARGET_ARCH_ARM64 STREQUAL _HOST_ARCH_ARM64)
+	set(_DARLING_CROSS_DEFAULT ON)
+else()
+	set(_DARLING_CROSS_DEFAULT OFF)
+endif()
+option(DARLING_CROSS_BUILD "Build the build-time tools for the build machine separately" ${_DARLING_CROSS_DEFAULT})
 
 # This allows setting the compiler with -DCMAKE_C_COMPILER when configuring.
 if (NOT DEFINED CMAKE_C_COMPILER)
@@ -67,7 +103,21 @@ set(CMAKE_OSX_DEPLOYMENT_TARGET 11.0 CACHE STRING "The version of macOS we're si
 
 project(darling)
 
+# Most of Darling is built for Darwin. Without this, a toolchain file that sets it to FALSE (as
+# distributions' build tools do) makes custom commands such as `true` resolve to the Darwin
+# executable targets of the same name, which cannot run on the host.
+set(CMAKE_CROSSCOMPILING TRUE)
+
 enable_language(ASM)
+
+# CMake's default ASM rule appends to an existing archive (unlike C/C++), which fails once ranlib has made it fat.
+# Use the same steps as the C/C++ rules instead: delete the archive, then create it anew with `ar qc`
+set(CMAKE_ASM_CREATE_STATIC_LIBRARY
+  "${CMAKE_COMMAND} -E rm -f <TARGET>"
+  # q - Append the object (faster alternative to '-r'. Doesn't check if object already exist).
+  # c - Don't print warning message if archive does not already exist
+  "<CMAKE_AR> qc <TARGET> <LINK_FLAGS> <OBJECTS>"
+  "<CMAKE_RANLIB> <TARGET>")
 
 set(CMAKE_INSTALL_DEFAULT_COMPONENT_NAME "core")
 
@@ -79,6 +129,7 @@ include(dsym)
 include(xcproj)
 include(architecture)
 include(create_symlink)
+include(darling_open_source_sdk)
 
 set(CLANG_RECOMMENDED_MINIMUM_VERSION 11)
 clang_version_check(${CMAKE_C_COMPILER} c ${CLANG_RECOMMENDED_MINIMUM_VERSION})
@@ -92,7 +143,7 @@ set(CMAKE_C_IMPLICIT_LINK_LIBRARIES "")
 set(CMAKE_CXX_IMPLICIT_LINK_LIBRARIES "")
 
 if (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "i686|i386")
-	message(FATAL_ERROR "This software can only be built on x86-64 systems")
+	message(FATAL_ERROR "This software can only be built on x86-64 or aarch64 systems")
 endif (${CMAKE_HOST_SYSTEM_PROCESSOR} MATCHES "i686|i386")
 
 SET(IGNORED_WARNINGS "-Wno-nullability-completeness -Wno-deprecated-declarations -Wno-availability")
@@ -112,11 +163,45 @@ if(${CMAKE_C_COMPILER_ID} STREQUAL "Clang" AND ${CMAKE_C_COMPILER_VERSION} VERSI
 	set(ASM_IGNORED_WARNINGS "${ASM_IGNORED_WARNINGS} -Wno-undef-prefix")
 endif()
 
+# DARLING: clang 16+ promoted several long-standing warnings to errors by default
+# (implicit-function-declaration, implicit-int, etc.). Lots of Darling's vendored
+# C code predates C99 strictness; reverting these to warnings keeps the build
+# moving without auditing every legacy source file.
+if(${CMAKE_C_COMPILER_ID} STREQUAL "Clang" AND ${CMAKE_C_COMPILER_VERSION} VERSION_GREATER_EQUAL "16")
+	set(IGNORED_WARNINGS "${IGNORED_WARNINGS} -Wno-error=implicit-function-declaration -Wno-error=implicit-int -Wno-error=int-conversion -Wno-error=incompatible-function-pointer-types")
+endif()
+
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${IGNORED_WARNINGS}")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${IGNORED_WARNINGS}")
+
+# newer Clang emits ObjC literals as constant objects (NSConstantArray, etc.) that our Foundation does not provide
+include(CheckCCompilerFlag)
+check_c_compiler_flag(-fno-objc-constant-literals HAS_NO_OBJC_CONSTANT_LITERALS)
+if(HAS_NO_OBJC_CONSTANT_LITERALS)
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fno-objc-constant-literals")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-objc-constant-literals")
+endif()
+
 set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} ${ASM_IGNORED_WARNINGS}")
 SET(CMAKE_C_FLAGS_DEBUG "-O0 -ggdb")
 SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -ggdb")
+
+# Without a build type, CMake adds no optimisation or debug info flags at all.
+# Build optimised with debug info unless a build type is chosen explicitly.
+if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
+	set(CMAKE_BUILD_TYPE RelWithDebInfo CACHE STRING
+		"Choose the type of build: Debug, Release, RelWithDebInfo or MinSizeRel." FORCE)
+endif()
+
+# Darling has always been built with assertions enabled, and the pre-generated
+# JavaScriptCore LLInt headers (LLIntOffsets/*/debug) only match a build where
+# ASSERT_ENABLED is set. Keep the optimisation and debug info flags, but drop
+# the -DNDEBUG that CMake adds to the non-debug build types.
+foreach (lang C CXX ASM)
+	foreach (config RELEASE RELWITHDEBINFO MINSIZEREL)
+		string(REPLACE "-DNDEBUG" "" CMAKE_${lang}_FLAGS_${config} "${CMAKE_${lang}_FLAGS_${config}}")
+	endforeach()
+endforeach()
 
 # prevent object filename conflicts for two source files that differ only in extension (e.g. `object.c` and `object.m`)
 set(CMAKE_C_OUTPUT_EXTENSION ".c.o")
@@ -131,11 +216,33 @@ endif(CMAKE_POSITION_INDEPENDENT_CODE)
 
 enable_language(ASM-ATT)
 
-option(TARGET_i386 "Enable i386 slices" ON)
-option(TARGET_x86_64 "Enable x86_64 slices" ON)
+if (_TARGET_ARCH_ARM64)
+	option(TARGET_i386 "Enable i386 slices" OFF)
+	option(TARGET_x86_64 "Enable x86_64 slices" OFF)
+	option(TARGET_ARM64 "Enable arm64 slices" ON)
+else()
+	option(TARGET_i386 "Enable i386 slices" ON)
+	option(TARGET_x86_64 "Enable x86_64 slices" ON)
+	option(TARGET_ARM64 "Enable arm64 slices" OFF)
+endif()
 option(DEBIAN_PACKAGING "Packaging for Debian" OFF)
 option(ENABLE_TESTS "Install in-prefix unit tests" OFF)
 option(REGENERATE_SDK "Regenerate Header Files For Open Source SDK" OFF)
+option(ADHOC_CODESIGN "Ad-hoc sign every Mach-O image Darling builds" ON)
+
+# Host-side unit tests, run with ctest from the build directory
+enable_testing()
+
+# Tests of the install and packaging scripts; they need no Darling build
+find_package(Python3 QUIET COMPONENTS Interpreter)
+if (Python3_Interpreter_FOUND)
+	add_test(NAME install_symlink
+		COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/install-symlink.py)
+	add_test(NAME debian_packaging
+		COMMAND ${Python3_EXECUTABLE} ${CMAKE_SOURCE_DIR}/tests/debian-packaging.py)
+	# debian-packaging.py exits with 77 when debhelper is not installed
+	set_tests_properties(debian_packaging PROPERTIES SKIP_RETURN_CODE 77)
+endif()
 
 if (DEBIAN_PACKAGING)
 	set(COMPONENTS_DEFAULT "all")
@@ -195,7 +302,13 @@ cmake_policy(SET CMP0014 NEW)
 
 generate_architecture()
 
+# Optional: builds the Swift SDK overlays in src/external/swift when a Swift toolchain is available
+include(swift_toolchain)
+include(darling_swift)
+
 add_subdirectory(src)
+
+verify_sdk_header_include()
 
 install(DIRECTORY DESTINATION libexec/darling/private)
 install(DIRECTORY DESTINATION libexec/darling/private/etc)
@@ -204,10 +317,16 @@ install(DIRECTORY DESTINATION libexec/darling/private/tmp)
 InstallSymlink(private/etc ${CMAKE_INSTALL_PREFIX}/libexec/darling/etc)
 InstallSymlink(private/var ${CMAKE_INSTALL_PREFIX}/libexec/darling/var)
 
-install(FILES etc/resolv.conf
-	DESTINATION libexec/darling/private/etc)
+# Follow the host's resolver configuration, so that local DNS stubs and
+# network changes apply in the guest. A copy edited inside a prefix stays
+# in the prefix's own layer and takes precedence over this link.
+InstallSymlink(/Volumes/SystemRoot/etc/resolv.conf ${CMAKE_INSTALL_PREFIX}/libexec/darling/private/etc/resolv.conf)
 InstallSymlink(/Volumes/SystemRoot/etc/machine-id ${CMAKE_INSTALL_PREFIX}/libexec/darling/private/etc/machine-id)
 InstallSymlink(/Volumes/SystemRoot/etc/nsswitch.conf ${CMAKE_INSTALL_PREFIX}/libexec/darling/private/etc/nsswitch.conf)
+
+# The data volume of a macOS system holds the user's files. Here it is the same
+# tree as the root, so paths under /System/Volumes/Data resolve as expected.
+InstallSymlink(../.. ${CMAKE_INSTALL_PREFIX}/libexec/darling/System/Volumes/Data)
 
 install(DIRECTORY DESTINATION libexec/darling/Volumes)
 install(DIRECTORY DESTINATION libexec/darling/Volumes/SystemRoot)
@@ -236,7 +355,15 @@ InstallSymlink(/Volumes/SystemRoot/usr/share/zoneinfo ${CMAKE_INSTALL_PREFIX}/li
 install(DIRECTORY DESTINATION libexec/darling/Library/Preferences)
 
 if(NOT DEBIAN_PACKAGING)
-	install(CODE "execute_process(COMMAND bash ${DARLING_TOP_DIRECTORY}/tools/shutdown-user.sh)")
+	# only for direct installs; staged (DESTDIR) installs are packaging and must not touch running instances
+	# a container left running would keep using the files being replaced
+	install(CODE "if (\"\$ENV{DESTDIR}\" STREQUAL \"\")
+		execute_process(COMMAND bash \"${DARLING_TOP_DIRECTORY}/tools/shutdown-user.sh\"
+			RESULT_VARIABLE DARLING_SHUTDOWN_RESULT)
+		if (NOT DARLING_SHUTDOWN_RESULT STREQUAL \"0\")
+			message(FATAL_ERROR \"Running Darling containers could not be shut down; installation stopped\")
+		endif()
+	endif()")
 endif(NOT DEBIAN_PACKAGING)
 
 add_custom_target(uninstall

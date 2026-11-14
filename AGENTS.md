@@ -144,6 +144,16 @@ ne pas exécuter une commande Bash comme une commande PowerShell.
   automatique selon l'outil, ou utiliser l'API GitHub pour les lectures
   distantes annoncées par la mission. Signaler un objet absent.
 
+## Règles de l'amont Darling (synchronisation du 14 novembre 2026)
+
+L'amont `darlinghq/darling` publie son propre `AGENTS.md`, conservé sans
+modification dans [docs/upstream/darlinghq-AGENTS.md](docs/upstream/darlinghq-AGENTS.md).
+Il ne remplace pas ce guide pour le travail dans D4rling, mais s'applique
+intégralement à toute proposition destinée à l'amont (contrat public,
+couches macOS, preuves admissibles, balises `QUIRK:`, aucune information
+issue du désassemblage de binaires Apple), en complément de la
+[stratégie amont](docs/decisions/strategie-contributions-amont.md).
+
 ## Coordination inter-conversations — journal Git partagé (10 novembre 2026)
 
 Le dépôt GitHub `fr4nck/d4rling`, branche `master`, est le **point de
