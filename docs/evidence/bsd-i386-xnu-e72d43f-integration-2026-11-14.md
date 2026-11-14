@@ -6,6 +6,12 @@ i386 décrits ici. Le gitlink `src/external/xnu` passe de `fb8f932` à
 `e72d43f0`, sans patch local. Aucune conclusion Logic Studio 8, audio,
 QuickTime Player ou x86_64.
 
+> **Addendum (lot X2, même jour) :** le dispatcher intégré à `dyld`, non
+> exercé ici, est qualifié séparément dans
+> [bsd-i386-dyld-dispatcher-x2-2026-11-14.md](bsd-i386-dyld-dispatcher-x2-2026-11-14.md)
+> (98/98 ; contre-épreuve `fb8f932` en défaut). L'absence de borne x86_64
+> n'y est pas atteignable : aucun signalement amont de défaut.
+
 ## Révisions
 
 | Élément | Référence |

@@ -130,7 +130,7 @@ et l'observation humaine restent distingués des preuves reproductibles Git.
 
 | Axe | Acquis ou constat récent | Limite toujours ouverte |
 | --- | --- | --- |
-| **R — Mach-O i386 / BSD** | Témoin Carbon i386 normal/bypass et négatif validés sur le canon `c17bd4f7` ; `mldr32` intégré au fork (`559f9911`) ; sur darling-xnu `fb8f932`, B15 rendu inutile par l'amont (BM4 32/32) et correctif `syscall()`/dispatcher/LDT qualifié en exécution i386 réelle, 46/46 ([rapport](docs/evidence/bsd-i386-xnu-fb8f932-syscall-2026-11-14.md)), fusionné en amont ([darling-xnu#102](https://github.com/darlinghq/darling-xnu/pull/102)) ; gitlink XNU avancé sur `e72d43f0` après requalification 46/46, BM4 32/32, Carbon, QA3v2 62/0 ([rapport](docs/evidence/bsd-i386-xnu-e72d43f-integration-2026-11-14.md)) | Qualifier séparément le dispatcher intégré à `dyld` (dernier critère de #11) ; signaler à l'amont l'absence de borne x86_64 |
+| **R — Mach-O i386 / BSD** | Témoin Carbon i386 normal/bypass et négatif validés sur le canon `c17bd4f7` ; `mldr32` intégré au fork (`559f9911`) ; sur darling-xnu `fb8f932`, B15 rendu inutile par l'amont (BM4 32/32) et correctif `syscall()`/dispatcher/LDT qualifié en exécution i386 réelle, 46/46 ([rapport](docs/evidence/bsd-i386-xnu-fb8f932-syscall-2026-11-14.md)), fusionné en amont ([darling-xnu#102](https://github.com/darlinghq/darling-xnu/pull/102)) ; gitlink XNU avancé sur `e72d43f0` après requalification 46/46, BM4 32/32, Carbon, QA3v2 62/0 ([rapport](docs/evidence/bsd-i386-xnu-e72d43f-integration-2026-11-14.md)) ; dispatcher intégré à `dyld` qualifié séparément en exécution i386, 98/98, contre-épreuve `fb8f932` en défaut ([rapport X2](docs/evidence/bsd-i386-dyld-dispatcher-x2-2026-11-14.md)) ; issue #11 close | Autres appels BSD et `tramp_cerror`/TLS non qualifiés ; borne x86_64 : non atteignable (`sys_syscall` borne en C), simple durcissement optionnel |
 | **U — Carbon** | PR internes [#2](https://github.com/fr4nck/d4rling/pull/2) et [#3](https://github.com/fr4nck/d4rling/pull/3) fusionnées ; 246 contrôles hôte sur fixtures ; doublon `SetEventParameter` supprimé dans `6659e6b9` | CI packaging sur le correctif, CoreFoundation réelle et couverture globale de l'interface à qualifier |
 | **A/P — audio et Petite Victoire** | **OBS humaine du 8 novembre :** fenêtre du témoin Mach-O i386 jugée correcte, sans scintillement perceptible en Play/Stop, et musique entendue intégralement ; C11-G1-L rapportait `LIVE_TECHNICAL=PASS` | Résultat limité au démonstrateur et aux conditions d'écoute ; pas de mesure acoustique de latence, de test 10 minutes ni de preuve du moteur audio Logic |
 | **Q — QuickTime** | Au-delà des 7 fonctions Q-A2 : `NewMovieFromDataRef` et `GetMovieDuration`, parseur MOV borné, extraction de PCM pris en charge et conservation mémoire (`02418473`, `d2318ea3`) ; 4 600 exports préservés | `QuickTime` complet non construit via CMake/Ninja (`gui_stubs` bloqué) ; aucune lecture audio/vidéo, aucun Player qualifié |
@@ -265,6 +265,11 @@ le [candidat source](docs/research/bsd-i386-v3-source-2026-11-08.md) est qualifi
 avec deux séries de 82 659 contrôles et un rejeu de la recette publique.
 L'intégration système et le dyld restent À FAIRE ; aucun statut global
 R1/R2/R3 n'est clos par ces seuls résultats. L'issue #11 reste ouverte.
+
+**Actualisation BSD i386 — 14 novembre :** correctif fusionné en amont
+(darling-xnu#102) et intégré par le gitlink `e72d43f0` ; `libsystem_kernel`
+(X1) et dispatcher intégré à `dyld` (X2) qualifiés en exécution i386 réelle.
+L'issue #11 est close ; R1/R2/R3 restent ouverts au-delà de ce périmètre.
 
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
