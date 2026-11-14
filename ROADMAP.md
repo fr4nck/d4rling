@@ -17,6 +17,10 @@ le plafond de trois morceaux par artiste. Ce repère éditorial ne vaut pas
 validation technique : les critères R/U/A/M/QT/L/P et leurs statuts restent
 indépendants.
 
+## S4 — référence Security officielle qualifiée (14 novembre 2026)
+
+**TEST / PASS borné :** gitlink Security `84c0a3e1` (#16 officielle), après comparaison des cinq fichiers supplémentaires par rapport à `a536cfff`, recompilation de 44 objets FAT et reliaison des deux architectures. Chargement standard sans `-dead_strip_dylibs`, HomeResFile **88/88 normal + 88/88 bypass**, témoins SSL bornés et Carbon Events passent. Exports inchangés ; test du trousseau compilé mais non exécuté (banc UID Darwin 0). TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction S4](docs/evidence/security-s4-official-reference-2026-11-14.md).
+
 ## QuickTime B11E — `GetMediaSample` i386 en production (14 novembre 2026)
 
 **TEST / PASS borné.**

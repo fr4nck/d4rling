@@ -1,0 +1,9 @@
+SECURITY_SMOKE_BEGIN pointer_size=4
+SECURITY_REQUIRED_SYMBOLS_PASS count=28
+SSLNewContext status=0 context_nonnull=1
+SSLGetSessionState status=0 state=0
+SSLSetIOFuncs status=0
+SSLHandshake closed_transport status=-9806
+SSLGetSessionState after_failure status=0 state=1
+SSLDisposeContext status=0
+SECURITY_SMOKE_PASS failures=0

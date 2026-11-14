@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## S4 — référence Security officielle qualifiée (14 novembre 2026)
+
+**TEST / PASS borné :** gitlink Security `84c0a3e1` (#16 officielle), après comparaison des cinq fichiers supplémentaires par rapport à `a536cfff`, recompilation de 44 objets FAT et reliaison des deux architectures. Chargement standard sans `-dead_strip_dylibs`, HomeResFile **88/88 normal + 88/88 bypass**, témoins SSL bornés et Carbon Events passent. Exports inchangés ; test du trousseau compilé mais non exécuté (banc UID Darwin 0). TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction S4](docs/evidence/security-s4-official-reference-2026-11-14.md).
+
 ## Security i386 — chargement standard (14 novembre 2026)
 
 **TEST / PASS borné :** Security final i386/x86_64 lié, signé et chargé dans le banc privé à mappings délégués. CarbonCore exact de #2089 se charge sans `-dead_strip_dylibs` ; HomeResFile **88/88 normal + 88/88 bypass**, Carbon Events et témoin SSL borné passent. Le défaut de commande longue Clang est corrigé dans le sous-module Security ; aucune API cryptographique n’est modifiée. TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction](docs/evidence/security-i386-loading-2026-11-14.md).

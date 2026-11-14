@@ -1,0 +1,6 @@
+{
+  "uid_output": "DARWIN_UID=0 EUID=0 GID=0\n",
+  "uid_run": "1794684475543155991-uid",
+  "upstream_test_built": true,
+  "requires_nonroot": true
+}

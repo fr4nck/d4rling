@@ -1,0 +1,42 @@
+[
+  {
+    "label": "1794684131067580624-s4-home-normal",
+    "program": "witness",
+    "mode": "normal",
+    "rc": 0,
+    "marker": "HOME_RES_I386_PASS checks=88 failures=0",
+    "marker_present": true
+  },
+  {
+    "label": "1794684131067580624-s4-home-bypass",
+    "program": "witness",
+    "mode": "bypass",
+    "rc": 0,
+    "marker": "HOME_RES_I386_PASS checks=88 failures=0",
+    "marker_present": true
+  },
+  {
+    "label": "1794684131067580624-s4-api-i386",
+    "program": "security-smoke-i386",
+    "mode": "normal",
+    "rc": 0,
+    "marker": "SECURITY_SMOKE_PASS failures=0",
+    "marker_present": true
+  },
+  {
+    "label": "1794684131067580624-s4-api-x64",
+    "program": "security-smoke-x86_64",
+    "mode": "normal",
+    "rc": 0,
+    "marker": "SECURITY_SMOKE_PASS failures=0",
+    "marker_present": true
+  },
+  {
+    "label": "1794684131067580624-s4-carbon",
+    "program": "carbon",
+    "mode": "normal",
+    "rc": 0,
+    "marker": "D4RLING-CARBON-EVENT-I386-OK",
+    "marker_present": true
+  }
+]

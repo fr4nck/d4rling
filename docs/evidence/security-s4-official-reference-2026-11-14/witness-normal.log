@@ -1,0 +1,27 @@
+HOME_RES_I386_BEGIN pointer_size=4
+IMAGE symbol=HomeResFile path=/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore uuid=a41df141bde23855a76e61d2cfce5982
+IMAGE symbol=GetHandleSize path=/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore uuid=a41df141bde23855a76e61d2cfce5982
+IMAGE symbol=FSPathMakeRef path=/System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore uuid=a41df141bde23855a76e61d2cfce5982
+CASE null-no-open-file home=-1 expected=-1 error=-192 current=-1/-1
+FIXTURE path=/tmp/home-res-a.rsrc FSPathMakeRef=0
+FIXTURE path=/tmp/home-res-b.rsrc FSPathMakeRef=0
+OPEN error=0 ref=1
+OPEN error=0 ref=2
+CASE other-open-file-a home=1 expected=1 error=0 current=2/2
+CASE current-file-b home=2 expected=2 error=0 current=2/2
+CASE other-open-file-b home=2 expected=2 error=0 current=1/1
+CASE clear-prior-error home=1 expected=1 error=0 current=1/1
+CASE ordinary-memory-handle home=-1 expected=-1 error=-192 current=1/1
+CASE unknown-master home=-1 expected=-1 error=-192 current=1/1
+CASE invalid-address home=-1 expected=-1 error=-192 current=1/1
+CASE null-with-open-files home=-1 expected=-1 error=-192 current=1/1
+CASE success-after-error home=2 expected=2 error=0 current=1/1
+CASE released-resource home=-1 expected=-1 error=-192 current=1/1
+CASE other-owner-still-open home=2 expected=2 error=0 current=1/1
+CASE reloaded-resource home=1 expected=1 error=0 current=1/1
+CASE detached-resource home=-1 expected=-1 error=-192 current=1/1
+CASE closed-other-file home=-1 expected=-1 error=-192 current=1/1
+CASE remaining-open-file home=1 expected=1 error=0 current=1/1
+CASE closed-current-file home=-1 expected=-1 error=-192 current=-1/-1
+CASE null-after-close home=-1 expected=-1 error=-192 current=-1/-1
+HOME_RES_I386_PASS checks=88 failures=0

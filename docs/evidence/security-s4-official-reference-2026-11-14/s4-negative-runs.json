@@ -1,0 +1,14 @@
+[
+  {
+    "variant": "candidate-no-security",
+    "label": "1794685593740719187-s4-no-security",
+    "expected_rc": 2,
+    "actual_rc": 2
+  },
+  {
+    "variant": "candidate-no-helper",
+    "label": "1794685595249218701-s4-no-helper",
+    "expected_rc": 2,
+    "actual_rc": 2
+  }
+]

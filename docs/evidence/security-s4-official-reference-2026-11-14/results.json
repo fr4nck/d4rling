@@ -1,0 +1,35 @@
+{
+  "lot": "S4",
+  "base_d4rling": "0374b5537d6e88dde07e206f4e92a67d511d350c",
+  "security_before": "a536cfff5b857b214d939415cf6040e347fcf785",
+  "security_official": "84c0a3e1d25caa4cd370e850813aa527c31a2d12",
+  "official_darling_integration": "ca69bf50469abaf0d8746d1a6063bd137b919f7e",
+  "candidate_tree": "da4a69973ca410b49b375f529ee635922ef408f3",
+  "official_tree": "6ceb9dc6d80bf9e2f5a277dc6d3478d4670258c1",
+  "recompiled_fat_objects": 44,
+  "architecture_compilations": 88,
+  "security_fat_sha256": "f2b2e87cbe7cca03e49e20184e6a54779a4b482aebf4b450a05d5d0821f3433b",
+  "helper_sha256": "4daffaae62c288c1838b16fed802e09a317ba714015ef61d0574dbae7196ad4c",
+  "home_res_normal": {
+    "status": "PASS",
+    "assertions": 88
+  },
+  "home_res_bypass": {
+    "status": "PASS",
+    "assertions": 88
+  },
+  "security_context_i386": "PASS",
+  "security_context_x86_64": "PASS",
+  "carbon_event": "PASS",
+  "public_export_sets": "UNCHANGED_4080_i386_4148_x86_64",
+  "export_graph": "PASS_9_INPUTS_4_LINK_TARGETS_NEGATIVE_RC6",
+  "filelist_regression": "PASS_4_CASES",
+  "missing_image_controls": "PASS_EXPECTED_RC2",
+  "standard_i386_loading": "PASS",
+  "keychain_upstream_test": "BUILT_RUNTIME_BLOCKED_DARWIN_UID0",
+  "full_tls_certificates_keychain": "NOT_QUALIFIED",
+  "full_master_rebuild": "NOT_RUN",
+  "qualified_runtime_base": "4be2603c62a6b0ec0148e60c7dff2e4f8b61c931",
+  "carboncore_exact_code": "b52a309cfb2f4b020aa8e356df107ad92d6a76f3",
+  "integration_base": "700d4dd0e7e94f1ae89efec661257aafd9b337e3"
+}

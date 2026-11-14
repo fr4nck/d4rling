@@ -1,0 +1,20 @@
+{
+  "a536cfff5b857b214d939415cf6040e347fcf785": {
+    "tree": "da4a69973ca410b49b375f529ee635922ef408f3",
+    "parents": "75effd7ee2e75217b8de030f92443cb3cfba0298"
+  },
+  "84c0a3e1d25caa4cd370e850813aa527c31a2d12": {
+    "tree": "6ceb9dc6d80bf9e2f5a277dc6d3478d4670258c1",
+    "parents": "9cb1c774a5ddd1e91c9092666f6801166da123bc a536cfff5b857b214d939415cf6040e347fcf785"
+  },
+  "diff_stat": " OSX/CMakeLists.txt                              |  33 ++-\n OSX/libsecurity_keychain/lib/StorageManager.cpp | 168 ++++++++++++\n OSX/libsecurity_keychain/lib/StorageManager.h   |   7 +\n tests/exp-depends.sh                            |  29 ++\n tests/login-keychain-first-use.c                | 342 ++++++++++++++++++++++++\n 5 files changed, 573 insertions(+), 6 deletions(-)\n",
+  "commits_since_candidate": [
+    "84c0a3e1d25caa4cd370e850813aa527c31a2d12 Merge pull request #16 from fr4nck/contrib/security-upward-filelist-20261114",
+    "9cb1c774a5ddd1e91c9092666f6801166da123bc Merge pull request #15 from darlinghq/login-keychain-first-use",
+    "25f2e7803378171f785725b25c4d36b6b6a19a7b Merge pull request #14 from darlinghq/security-exp-relink",
+    "c2711a89fd952825c5a7fbabc26941868fcb0f45 Test the login keychain set up on first use",
+    "1c025fe218f67f6d658381732aabe08ab1ffe896 tests: every file the export list preprocessor reads is a prerequisite of the generated list",
+    "f4475ebe8c37890cd3e0dc73468815bc85e40c35 Security: regenerate and relink the export list when an included list changes",
+    "3f863c0b47bc2e489d357fa8b37ff92724b76adf Set up the user's login keychain on first use"
+  ]
+}

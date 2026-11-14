@@ -1,0 +1,58 @@
+[
+  {
+    "label": "official-exp-i386-0",
+    "rc": 0
+  },
+  {
+    "label": "official-exp-x86_64-0",
+    "rc": 0
+  },
+  {
+    "label": "official-firstpass-i386-0",
+    "rc": 0
+  },
+  {
+    "label": "official-firstpass-i386-1",
+    "rc": 0
+  },
+  {
+    "label": "official-firstpass-x86_64-0",
+    "rc": 0
+  },
+  {
+    "label": "official-firstpass-x86_64-1",
+    "rc": 0
+  },
+  {
+    "label": "official-firstpass-x86_64-2",
+    "rc": 0
+  },
+  {
+    "label": "official-coretls-final-0",
+    "rc": 0
+  },
+  {
+    "label": "official-coretls-final-1",
+    "rc": 0
+  },
+  {
+    "label": "official-final-i386-0",
+    "rc": 0
+  },
+  {
+    "label": "official-final-i386-1",
+    "rc": 0
+  },
+  {
+    "label": "official-final-x86_64-0",
+    "rc": 0
+  },
+  {
+    "label": "official-final-x86_64-1",
+    "rc": 0
+  },
+  {
+    "label": "official-final-x86_64-2",
+    "rc": 0
+  }
+]

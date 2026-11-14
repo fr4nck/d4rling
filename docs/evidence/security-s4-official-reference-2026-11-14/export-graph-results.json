@@ -1,0 +1,46 @@
+[
+  {
+    "variant": "official",
+    "upstream_test_rc": 0,
+    "link_edges": [
+      {
+        "target": "Security_i386",
+        "export_dependency": true
+      },
+      {
+        "target": "Security_i386_firstpass",
+        "export_dependency": true
+      },
+      {
+        "target": "Security_x86_64",
+        "export_dependency": true
+      },
+      {
+        "target": "Security_x86_64_firstpass",
+        "export_dependency": true
+      }
+    ]
+  },
+  {
+    "variant": "before-exp-fix",
+    "upstream_test_rc": 6,
+    "link_edges": [
+      {
+        "target": "Security_i386",
+        "export_dependency": false
+      },
+      {
+        "target": "Security_i386_firstpass",
+        "export_dependency": false
+      },
+      {
+        "target": "Security_x86_64",
+        "export_dependency": false
+      },
+      {
+        "target": "Security_x86_64_firstpass",
+        "export_dependency": false
+      }
+    ]
+  }
+]
