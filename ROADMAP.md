@@ -25,6 +25,18 @@ indépendants.
 
 **TEST / PASS borné :** gitlink Security `84c0a3e1` (#16 officielle), après comparaison des cinq fichiers supplémentaires par rapport à `a536cfff`, recompilation de 44 objets FAT et reliaison des deux architectures. Chargement standard sans `-dead_strip_dylibs`, HomeResFile **88/88 normal + 88/88 bypass**, témoins SSL bornés et Carbon Events passent. Exports inchangés ; test du trousseau compilé mais non exécuté (banc UID Darwin 0). TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction S4](docs/evidence/security-s4-official-reference-2026-11-14.md).
 
+## QuickTime B12 — premier MOV rendu par PulseAudio (14 novembre 2026)
+
+**TEST / PASS x86_64, BLOCKED i386.**
+- MOV synthétique original (arpège 2 s, S16BE stéréo 44,1 kHz) → `GetMediaSample` du vrai QuickTime → HAL CoreAudio de production (backend PulseAudio) → serveur WSLg.
+- La capture du moniteur du puits est **identique au PCM du MOV sur 88 200/88 200 trames**.
+- Fin naturelle, Stop puis second Play (4/4) et échecs de connexion propres ; 0 flux ou processus résiduel.
+- **Écoute humaine non attestée** (`B12_AUDIBLE=NOT_CONFIRMED`).
+- En i386, la partie QuickTime passe ; CoreAudio s'arrête au chargement faute de libpulse ELF 32 bits sur l'hôte. Il faut décider de l'installation de `libpulse0:i386`.
+- Aucun code de production modifié.
+
+[Preuves](docs/evidence/quicktime-b12-2026-11-14.md).
+
 ## QuickTime B11E — `GetMediaSample` i386 en production (14 novembre 2026)
 
 **TEST / PASS borné.**
@@ -394,6 +406,10 @@ CMake/Ninja ; `GetMediaSample` (PCM 16 bits) en production, qualifié en
 Mach-O i386 sous réserve de la correction TLS de `libdyld`
 ([rapport](docs/evidence/quicktime-b11e-2026-11-14.md)). QT3 reste ouvert :
 aucun son restitué.
+**B12 :** premier MOV rendu par PulseAudio en x86_64, avec capture serveur
+identique au bit près ; i386 bloqué par l'absence de libpulse 32 bits sur
+l'hôte ; écoute humaine à confirmer
+([rapport](docs/evidence/quicktime-b12-2026-11-14.md)).
 
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |
