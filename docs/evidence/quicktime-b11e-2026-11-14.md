@@ -148,3 +148,30 @@ L'issue #9 (C11, reprise PulseAudio après Stop) reste ouverte et possède le tr
 - Les chemins d'erreur i386 restent faux sur `master` tant que la `libdyld` corrigée n'y est pas intégrée. Le défaut touche tout utilisateur de `thread_local` dans une dylib i386 (ici `MemError`), pas seulement QuickTime.
 - La chaîne FIFO utilise des binaires audio privés B14 construits dans un autre arbre ; la conversion 8 kHz → 44,1 kHz reste expérimentale.
 - Logic Studio 8 et QuickTime Player ne sont pas testés.
+
+## Complément B11E-R2 — identité inter-campagnes 6/6 (14 novembre 2026)
+
+**Preuve supplémentaire transmise directement par l'opérateur 5700X**, obtenue par un script en lecture seule. Le témoin n'a lancé **aucun invité i386**, aucune nouvelle compilation, aucun composant CoreAudio ou PulseAudio, et aucune écriture dans Git. Il compare **octet par octet** les six MOV du lot natif initial B11E-R1 à ceux du témoin B11E-R2 publié, et authentifie chaque référence par son Git blob SHA-1.
+
+- Campagne initiale : `/home/Deniel/d4wrling-work/validation/5700x-10400-convergence/quicktime-c3-m3/g2.0Tfg9onI/qt-b11e-r1.qcgac2s4` ; `result.json` annonce `B11E_R1_NATIVE_MOV_PASS`, `protected_inputs=UNCHANGED`.
+- Référence déjà exécutée en i386 : `/home/Deniel/d4wrling-work/validation/quicktime-b11e-20261114/src/tests/regressions/quicktime-getmediasample-b11e/mov/mov-{0..5}.mov` ; blobs conformes à ceux suivis dans Git.
+- `master` relu avant ce complément : `69bde0a6192247e2e4624761e1d09e86c7dd9576`. Les nouveaux résultats B12 sont déjà publiés dans `docs/evidence/quicktime-b12-2026-11-14.md` ; **ce complément ne modifie ni ne rejoue B12**.
+
+| Vecteur | SHA-256 du MOV complet (761 octets) | Identique |
+| --- | --- | --- |
+| 0 | `1be58061e45e6216a8568e3f37bc6108b34156cd5886a482d1ea23b35313b0a7` | PASS |
+| 1 | `501ee23e7725ca6fb824ea0856204f7fdd0c5a6ba3253195005eb066097088d8` | PASS |
+| 2 | `da679f1175e42c8aa67141ee7b192e21443f94030aac4884040ad658eecde71c` | PASS |
+| 3 | `18bf796608a3467b20a21dddc59f5aca330a10c02b07bb7f3c0cb7659df928a8` | PASS |
+| 4 | `60d69f5236b7e500d58c821c0efec9372429481e9af7c18cb580b8c998cd5e66` | PASS |
+| 5 | `ac3037ea604be8a5554a5725b6ad07d1b950763e4df644ad95f38b460403d45a` | PASS |
+
+```text
+INPUT_EQUIVALENCE=PASS_6_OF_6
+I386_RUNTIME=NOT_RERUN
+HISTORICAL_INPUTS=READ_ONLY
+```
+
+**Portée :** les MOV initialement qualifiés par `qt_mov_pcm.c` sont **les mêmes octets** que ceux déjà couverts par le témoin `b11e-r2-getmediasample.c` en invité i386, y compris le SHA-256 des 200 octets PCM par MOV, la lecture de l'échantillon final (`time=99`), le bloc final partiel (15 appels de 7 échantillons : dernier bloc de 2) et le rejet à `time=100` (`-2032`, sorties et Handle préservés). Les **139/139 contrôles invités** de B11E-R2 restent des observations **historiques** sous `libdyld` corrigée en overlay privé ; les tests de cette note n'ont **pas été relancés**. Le code de `QuickTime.c` sur `master` couvre par la condition `time >= frame_count` les positions supérieures, mais `time=101` n'a pas de preuve d'exécution distincte dans cette campagne.
+
+**Décision :** B11E-R2 est suffisamment couvert pour l'objet demandé, **pas de modification de code QuickTime** ; conserver l'environnement B12 et son résultat `B12_MOV_PCM=PASS` i386 sans toucher au blocage libpulse ELF32 relevant d'un autre chantier. Les futures évolutions nécessitant un véritable défaut reproduit seront qualifiées séparément.
