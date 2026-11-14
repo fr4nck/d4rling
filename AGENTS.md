@@ -338,6 +338,39 @@ protocole de capture mesuré ; ne jamais l'inférer d'un compteur.
 Une modification purement documentaire exige revue des faits, liens,
 références et diff ; ne pas lancer un build intégral pour cette seule raison.
 
+### Qualification GUI, frontière hôte/invité et triage applicatif
+
+Ces compléments s'appliquent **lorsque le lot les exige** ; ils ne créent
+aucun chantier, outil ou prérequis obligatoire supplémentaire.
+
+- **GUI X11/Wayland :** utiliser un serveur d'affichage et un gestionnaire
+  de fenêtres **isolés du bureau et des autres bancs** (Xvfb pour X11,
+  compositeur headless pour Wayland, seulement s'ils sont déjà disponibles).
+  Vérifier le backend effectivement sélectionné : un repli Wayland vers X11
+  ne vaut jamais PASS Wayland. Contrôler fenêtres, focus, dimensions,
+  rendu et événements par des observations/API vérifiables ; toute injection
+  clavier/souris exige son oracle côté application. Rejouer les régressions
+  X11 après une modification d'une couche graphique partagée.
+- **Frontière hôte/invité :** distinguer chemins Mach-O vus via
+  `/Volumes/SystemRoot`, chemins natifs Linux utilisés par les bibliothèques
+  ELF chargées par `wrap_elf`, sockets et variables effectivement transmises
+  au processus invité. Une écriture de l'hôte dans un préfixe overlay actif
+  n'est pas présumée visible dans l'invité. Rediriger les journaux du shell
+  invité vers un fichier, fermer son entrée standard, borner les attentes
+  et ne terminer que les processus/namespaces appartenant au lot.
+- **Triage d'une application :** partir de l'architecture réellement visée
+  (i386 pour Logic 8), distinguer imports forts/faibles, réexports,
+  bibliothèques chargées dès le démarrage ou seulement par des plugins,
+  symboles absents et comportements d'API défaillants. Classer le **premier
+  obstacle exécuté** avant les lacunes secondaires ; les tables Mach-O
+  seules ne démontrent ni chargement, ni fonctionnement. Réutiliser l'audit
+  existant avant tout nouveau scan et ne jamais désassembler de code Apple.
+
+Référence comparative : [méthodes Darling de test invité et de diagnostic
+applicatif](https://github.com/darlinghq/darling-skills) (14 novembre 2026).
+Aucun script, installation partagée, relance globale ni dépendance de ce dépôt
+n'est adopté par la présente règle.
+
 ## 7. Preuves, statuts et arrêt
 
 Une preuve livrable contient :
