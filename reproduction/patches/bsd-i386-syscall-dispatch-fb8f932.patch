@@ -1,0 +1,174 @@
+diff --git a/darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h b/darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h
+index a52497e..78516fd 100644
+--- a/darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h
++++ b/darling/src/libsystem_kernel/emulation/include/xnu_syscall/bsd/bsd_syscall_table.h
+@@ -1,6 +1,11 @@
+ #ifndef LINUX_SYSCALLS_H
+ #define LINUX_SYSCALLS_H
+ 
+-extern void* __bsd_syscall_table[600];
++// Shared with the i386 dispatcher, which bounds the syscall number with it.
++#define BSD_SYSCALL_TABLE_SIZE 600
++
++#ifndef __ASSEMBLER__
++extern void* __bsd_syscall_table[BSD_SYSCALL_TABLE_SIZE];
++#endif
+ 
+ #endif // LINUX_SYSCALLS_H
+diff --git a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S
+index af938b5..7737958 100644
+--- a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S
++++ b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall.S
+@@ -51,6 +51,8 @@ __darling_bsd_syscall_exit:
+ 
+ #elif defined(__i386__)
+ 
++#include <darling/emulation/xnu_syscall/bsd/bsd_syscall_table.h>
++
+ // Darwin's i386 syscall entries preserve every register except %eax and %edx
+ // (the result) - libplatform's setjmp relies on %ecx surviving ___sigaltstack -
+ // so the table lookup and the argument copy use %edx as scratch, and %ecx is
+@@ -68,9 +70,14 @@ Lentry_hook:
+ 2:
+ 	movl	L___bsd_syscall_table$non_lazy_ptr-1b(%edx), %edx
+ 	andl	$0xffff, %eax // Because there is some extra stuff in upper bytes we don't need
+-	movl	(%edx,%eax,4), %eax
+-	test	%eax, %eax
++	// The masked number can be up to 65535: check it against the table size
++	// before the lookup, and keep it in %eax for .no_sys.
++	cmpl	$BSD_SYSCALL_TABLE_SIZE, %eax
++	jae		.no_sys
++	movl	(%edx,%eax,4), %edx
++	test	%edx, %edx
+ 	jz		.no_sys
++	movl	%edx, %eax
+ 	// Copy arguments
+ 	copy_arg(0)
+ 	copy_arg(4)
+@@ -96,7 +103,7 @@ Lexit_hook:
+ 	.space 7, 0x90
+ 	ret
+ .no_sys:
+-	pushl	%edx
++	pushl	%eax // the syscall number
+ 	call	___unknown_syscall
+ 	addl	$4, %esp
+ 	jmp .std_ret
+diff --git a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c
+index 75f17be..828ea2a 100644
+--- a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c
++++ b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/bsd/bsd_syscall_table.c
+@@ -230,7 +230,7 @@
+ #include <darling/emulation/xnu_syscall/bsd/impl/xattr/setattrlistat.h>
+ #include <darling/emulation/xnu_syscall/bsd/impl/xattr/setxattr.h>
+ 
+-void* __bsd_syscall_table[600] = {
++void* __bsd_syscall_table[BSD_SYSCALL_TABLE_SIZE] = {
+ 	[0] = sys_syscall,
+ 	[1] = sys_exit,
+ 	[2] = sys_fork,
+diff --git a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/machdep/machdep_syscall.S b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/machdep/machdep_syscall.S
+index 6cf2c60..8e88a20 100644
+--- a/darling/src/libsystem_kernel/emulation/src/xnu_syscall/machdep/machdep_syscall.S
++++ b/darling/src/libsystem_kernel/emulation/src/xnu_syscall/machdep/machdep_syscall.S
+@@ -36,9 +36,10 @@ __darling_machdep_syscall:
+ 2:
+ 	movl	L___machdep_syscall_table$non_lazy_ptr-1b(%ecx), %ecx
+ 	andl	$0xffff, %eax // Because there is some extra stuff in upper bytes we don't need
+-	movl	(%ecx,%eax,4), %eax
+-	test	%eax, %eax
+-	jz		.no_sys
++	movl	(%ecx,%eax,4), %ecx
++	test	%ecx, %ecx
++	jz		.no_sys // with the trap number still in %eax
++	movl	%ecx, %eax
+ 	// Copy arguments
+ 	copy_arg(0)
+ 	copy_arg(4)
+@@ -51,7 +52,7 @@ __darling_machdep_syscall:
+ 	addl	$24, %esp
+ 	ret
+ .no_sys:
+-	pushl	%ecx
++	pushl	%eax // the trap number
+ 	call	___unknown_syscall_machdep
+ 	addl	$4, %esp
+ 	ret
+diff --git a/gen/bsdsyscalls/___syscall.S b/gen/bsdsyscalls/___syscall.S
+index 969b584..88e4b9f 100644
+--- a/gen/bsdsyscalls/___syscall.S
++++ b/gen/bsdsyscalls/___syscall.S
+@@ -36,6 +36,10 @@ LEAF(___syscall, 0)
+ 	popl	%eax		// syscall number
+ 	pushl	%ecx
+ 	UNIX_SYSCALL_TRAP
++#ifdef DARLING
++	// Darling dispatcher returns raw -errno, not a reliable CF.
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	movl	(%esp),%edx	// add one element to stack so
+ #ifdef DARLING
+ 	// Pushing ecx will cause a i386 process
+diff --git a/gen/bsdsyscalls/custom.S b/gen/bsdsyscalls/custom.S
+index 3f72013..0cc9b00 100644
+--- a/gen/bsdsyscalls/custom.S
++++ b/gen/bsdsyscalls/custom.S
+@@ -67,6 +67,9 @@ LABEL(__sysenter_trap)
+ _i386_get_ldt:
+ 	movl    $6,%eax
+ 	MACHDEP_SYSCALL_TRAP
++#ifdef DARLING
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	jnb		2f
+ 	jmp		tramp_cerror
+ 2:	ret
+@@ -77,6 +80,9 @@ _i386_get_ldt:
+ _i386_set_ldt:
+ 	movl    $5,%eax
+ 	MACHDEP_SYSCALL_TRAP
++#ifdef DARLING
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	jnb		2f
+ 	jmp		tramp_cerror
+ 2:	ret
+diff --git a/libsyscall/custom/__syscall.S b/libsyscall/custom/__syscall.S
+index 8d0c718..1f82a52 100644
+--- a/libsyscall/custom/__syscall.S
++++ b/libsyscall/custom/__syscall.S
+@@ -36,6 +36,10 @@ LEAF(___syscall, 0)
+ 	popl	%eax		// syscall number
+ 	pushl	%ecx
+ 	UNIX_SYSCALL_TRAP
++#ifdef DARLING
++	// Darling dispatcher returns raw -errno, not a reliable CF.
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	movl	(%esp),%edx	// add one element to stack so
+ #ifdef DARLING
+ 	// Pushing ecx will cause a i386 process
+diff --git a/libsyscall/custom/custom.S b/libsyscall/custom/custom.S
+index 3f72013..0cc9b00 100644
+--- a/libsyscall/custom/custom.S
++++ b/libsyscall/custom/custom.S
+@@ -67,6 +67,9 @@ LABEL(__sysenter_trap)
+ _i386_get_ldt:
+ 	movl    $6,%eax
+ 	MACHDEP_SYSCALL_TRAP
++#ifdef DARLING
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	jnb		2f
+ 	jmp		tramp_cerror
+ 2:	ret
+@@ -77,6 +80,9 @@ _i386_get_ldt:
+ _i386_set_ldt:
+ 	movl    $5,%eax
+ 	MACHDEP_SYSCALL_TRAP
++#ifdef DARLING
++	DARLING_SYSCALL_RESULT_TO_CF
++#endif
+ 	jnb		2f
+ 	jmp		tramp_cerror
+ 2:	ret
