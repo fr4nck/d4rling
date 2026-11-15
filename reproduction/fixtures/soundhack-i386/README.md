@@ -493,3 +493,18 @@ filesystem, extracting SoundHack.app and running any application are still
 reader confined to the existing validation directory (no system install).
 
 [SH18 acquisition evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH18-10400-official-dmg-acquisition.md).
+
+### SH18 — HFS+ DMG reader and legacy installer package (operator update)
+
+7-Zip 26.06, installed **only as a portable private tool** after exact
+SHA-256 verification, successfully listed the genuine SoundHack DMG
+(`2.hfs`, HFS+, 8,265,728 bytes). The disk contains a legacy
+`SoundHack 0.896 - Universal Binary.pkg`, rather than a directly
+visible `.app` bundle. Global extraction was **BLOCKED by two safe-by-default
+7-Zip link checks** for `Contents/Resources` links to
+`../Archive.bom` and `../Archive.pax.gz`. Its partial output is retained.
+
+**No application binary, guest launch or audio output is qualified by this
+step.** Next: inspect and extract the `Contents/Archive.pax.gz` payload
+as CPIO or TAR with path and size guards, without overriding link safety or
+replaying the entire DMG extraction.

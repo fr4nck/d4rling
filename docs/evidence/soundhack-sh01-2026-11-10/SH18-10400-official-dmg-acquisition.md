@@ -37,3 +37,38 @@ Lire le DMG avec l'outil Linux **portable officiel 7-Zip 26.06** (pas d'installa
 Le Shell proposé conserve le nouvel exécutable portable et les fichiers extraits **exclusivement** sous `validation/soundhack-sh18/`, inspecte `SoundHack.app/Contents/MacOS/*` sans exécuter les binaires, puis qualifie séparément l'extraction et les architectures. La capacité d'extraction de ce DMG exact et les éventuels fichiers `.app` **ne sont pas encore démontrés**.
 
 **Aucune modification de dépôt Git, build D4rling, installation historique, global Debian, source FFT ou système Windows.** Les sorties sont des observations du terminal de l'opérateur, pas une réexécution par GitHub/CI.
+
+## Complément HFS+ / paquet hérité (preuve opérateur, 15 novembre 2026)
+
+L'opérateur a téléchargé **7-Zip 26.06 Linux x64 portable**, à partir de
+`ip7z/7zip`, et vérifié l'archive avant usage : SHA-256
+`2b539cf067b2ad48e1baa5093dbaa8818b73542d1222a0ffde9dc5f2922ea62e`.
+Le logiciel `7zz-26.06` a reconnu et listé le DMG :
+`Type=Dmg`, flux `2.hfs` (8 265 728 octets),
+`Type=HFS`, `Method=HFS+`. La liste montre un dossier
+`SoundHack 0.896 - Universal Binary.pkg` sous le volume `SH896`.
+
+Une tentative d'extraction globale dans
+`validation/soundhack-sh18/SoundHack896-extracted/` a terminé avec
+`Sub items Errors: 2`, correspondant exclusivement **dans la sortie
+transmise** aux liens du paquet `Contents/Resources/` suivants :
+
+- `SoundHack 0.896 - Universal Binary.bom` → `../Archive.bom` ;
+- `SoundHack 0.896 - Universal Binary.pax.gz` → `../Archive.pax.gz`.
+
+7-Zip a refusé ces liens avec `Dangerous link path was ignored` ;
+cette défense n'a **pas été contournée**. Le script s'est arrêté sur
+`SH18_APP=BLOCKED: 7zz extraction failed; destination retained`.
+La destination et les fichiers présents sont préservés ; leur inventaire
+complet n'a pas encore été relevé. **Aucun SoundHack.app extrait n'est
+qualifié** et aucun lancement d'application ou test audio n'est revendiqué.
+
+Le prochain essai évite de répéter l'extraction globale du DMG. Il doit
+localiser le vrai `Contents/Archive.pax.gz` dans l'extraction partielle,
+vérifier son format `cpio`/tar après décompression gzip, puis extraire
+**uniquement** la famille `SoundHack*.app` dans un répertoire neuf avec
+gardes sur chemins, symlinks, doublons et taille. Le préfixe privé et les
+sources historiques de D4rling restent intacts.
+
+Source technique : [Documentation historique Apple sur PackageMaker](https://leopard-adc.pepas.com/documentation/Darwin/Conceptual/KEXTConcept/KEXTConceptPackaging/packaging_kext.html)
+(explique `Archive.pax.gz`, `Archive.bom` et `Contents/Resources`).
