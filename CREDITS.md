@@ -122,3 +122,10 @@ real V3 calls, synthetic-handler protocol tests and pending system integration.
 - Local port: the MLD-ASLR-01 commit containing this entry, nine added lines in `mldr.c`; original notices and GPL-3.0-or-later terms retained. `tests/spawn-i386-flags.c` is imported byte-for-byte.
 - Adaptation: keep D4rling's entire `559f9911` strict retry and setenv guards, placing the upstream personality block after its budget check. No FAT parser or other upstream change imported.
 - Additional regression fixtures are original GPL-3.0-or-later code. [Executed qualification and limits](docs/evidence/mld-aslr-01-2026-11-15.md).
+
+## LIBCXX-LEGACY-01 — legacy inline exports (2026-11-15)
+
+- Original libc++ fix: **Lubos Dolezel**, [darling-libcxx #8](https://github.com/darlinghq/darling-libcxx/pull/8), `c8cb41d8d64a8db10745e85042a879463711908a`, merged as `061279ebb3944b11bbbc76ae7fd77077841f8c74`. Only the libc++ gitlink advances from `caf34a8c`; the trees differ solely in `include/__config_site`. LLVM Apache-2.0 WITH LLVM-exception notices and upstream authors/history are preserved.
+- The unchanged guest test `tests/libcxx-legacy-exports.c` comes from **Lubos Dolezel**, [Darling #2112](https://github.com/darlinghq/darling/pull/2112), `6649be99dac6a54e29a09d661fa095bf8ac3c532`; original copyright/repository license retained. The ptrace test is not imported.
+- Seven upstream LLVM tests are reused unchanged by reference, with source blobs and Apache-2.0 WITH LLVM-exception recorded in the regression manifest. Additional drivers/address-only binding fixture are original GPL-3.0-or-later.
+- Local integration is the LIBCXX-LEGACY-01 commit containing this entry; [executed proof and scope](docs/evidence/libcxx-legacy-01-2026-11-15.md).

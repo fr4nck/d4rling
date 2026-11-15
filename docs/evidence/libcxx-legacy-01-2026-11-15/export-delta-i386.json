@@ -1,0 +1,17 @@
+{
+  "baseline_count": 1962,
+  "candidate_count": 1972,
+  "added": [
+    "__ZNSt3__114__shared_count12__add_sharedEv",
+    "__ZNSt3__114__shared_count16__release_sharedEv",
+    "__ZNSt3__114error_categoryC2Ev",
+    "__ZNSt3__119__shared_weak_count10__add_weakEv",
+    "__ZNSt3__119__shared_weak_count12__add_sharedEv",
+    "__ZNSt3__119__shared_weak_count16__release_sharedEv",
+    "__ZNSt3__18valarrayImEC1Em",
+    "__ZNSt3__18valarrayImEC2Em",
+    "__ZNSt3__18valarrayImED1Ev",
+    "__ZNSt3__18valarrayImED2Ev"
+  ],
+  "removed": []
+}

@@ -1,0 +1,12 @@
+diff --git a/include/__config_site b/include/__config_site
+index 188b6e4bc..edd05e68a 100644
+--- a/include/__config_site
++++ b/include/__config_site
+@@ -17 +17,6 @@
+-/* #undef _LIBCPP_ABI_VERSION */
++/* DARLING: ABI version 1, as in Apple's libc++.dylib. With the macro left
++ * undefined the legacy out-of-line copies of now-inline functions
++ * (e.g. __shared_weak_count::__add_shared, std::__1::error_category
++ * members) are not compiled into the dylib, and binaries built against
++ * older libc++ headers fail to bind. */
++#define _LIBCPP_ABI_VERSION 1

@@ -1,0 +1,42 @@
+{
+  "baseline": {
+    "i386": {
+      "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+      "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+      "identity": [
+        "name /usr/lib/libc++.1.dylib (offset 24)",
+        "current version 1.0.0",
+        "compatibility version 1.0.0"
+      ]
+    },
+    "x86_64": {
+      "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+      "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+      "identity": [
+        "name /usr/lib/libc++.1.dylib (offset 24)",
+        "current version 1.0.0",
+        "compatibility version 1.0.0"
+      ]
+    }
+  },
+  "candidate": {
+    "i386": {
+      "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+      "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+      "identity": [
+        "name /usr/lib/libc++.1.dylib (offset 24)",
+        "current version 1.0.0",
+        "compatibility version 1.0.0"
+      ]
+    },
+    "x86_64": {
+      "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+      "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+      "identity": [
+        "name /usr/lib/libc++.1.dylib (offset 24)",
+        "current version 1.0.0",
+        "compatibility version 1.0.0"
+      ]
+    }
+  }
+}

@@ -1,0 +1,44 @@
+[
+  {
+    "name": "shared-reset",
+    "path": "test/std/utilities/memory/util.smartptr/util.smartptr.shared/util.smartptr.shared.mod/reset.pass.cpp",
+    "git_blob": "0d175d40d7ff616eba318369675dc72aa4407ca7",
+    "license": "Apache-2.0 WITH LLVM-exception"
+  },
+  {
+    "name": "weak-lock",
+    "path": "test/std/utilities/memory/util.smartptr/util.smartptr.weak/util.smartptr.weak.obs/lock.pass.cpp",
+    "git_blob": "107a587c7de497d2d9e22ad04253dd92288557e5",
+    "license": "Apache-2.0 WITH LLVM-exception"
+  },
+  {
+    "name": "weak-expired",
+    "path": "test/std/utilities/memory/util.smartptr/util.smartptr.weak/util.smartptr.weak.obs/expired.pass.cpp",
+    "git_blob": "bc0eb6e1a481c6f5c32fe990ad1c3f193281a72f",
+    "license": "Apache-2.0 WITH LLVM-exception"
+  },
+  {
+    "name": "bad-weak-ptr",
+    "path": "test/std/utilities/memory/util.smartptr/util.smartptr.weakptr/bad_weak_ptr.pass.cpp",
+    "git_blob": "49a466b903bcb2ff8695837bac96ce800288e9bf",
+    "license": "Apache-2.0 WITH LLVM-exception"
+  },
+  {
+    "name": "function-copy-move",
+    "path": "test/std/utilities/function.objects/func.wrap/func.wrap.func/func.wrap.func.con/copy_move.pass.cpp",
+    "git_blob": "efd9ed64191598842f3dc8dcad1b309d7c65840e",
+    "license": "Apache-2.0 WITH LLVM-exception"
+  },
+  {
+    "name": "generic-category",
+    "path": "test/std/diagnostics/syserr/syserr.errcat/syserr.errcat.objects/generic_category.pass.cpp",
+    "git_blob": "d90834681bb8454ee67e9ca623b6f20ac1dc0744",
+    "license": "Apache-2.0 WITH LLVM-exception"
+  },
+  {
+    "name": "valarray-size",
+    "path": "test/std/numerics/numarray/template.valarray/valarray.cons/size.pass.cpp",
+    "git_blob": "4c87bd4e816ca5444b0e03975997c562301dc491",
+    "license": "Apache-2.0 WITH LLVM-exception"
+  }
+]

@@ -1,0 +1,12 @@
+{
+  "base": "290dae25cf39c6508422b6d94759f6cb1a6c3afe",
+  "libcxx_before": "caf34a8ca7837354e7bd49f9ae28018943bb7dd3",
+  "libcxx_after": "061279ebb3944b11bbbc76ae7fd77077841f8c74",
+  "libcxx_fix": "c8cb41d8d64a8db10745e85042a879463711908a",
+  "test_origin": {
+    "sha": "6f854e91cdc9160a8617c10c8ee860b1c7859303",
+    "html_url": "https://github.com/darlinghq/darling/blob/6649be99dac6a54e29a09d661fa095bf8ac3c532/tests/libcxx-legacy-exports.c",
+    "size": 1065
+  },
+  "qualified_core_source": "4be2603c62a6b0ec0148e60c7dff2e4f8b61c931"
+}

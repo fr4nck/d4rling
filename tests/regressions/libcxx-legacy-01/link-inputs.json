@@ -1,0 +1,5 @@
+{
+  "build-core-i386/src/external/libcxxabi/libc++abi.dylib": "d3000d0a3d60dddf911e7f954519ab9f2c95f89b72e1c4160308fb15643e30c6",
+  "build-core-i386/src/external/libsystem/libSystem.B.dylib": "87e428bd0b96b14e7af93924e3a8b90d7a3caca89395ac6bd872d0250ee1cae5",
+  "build-core-i386/src/buildtools/adhoc-sign": "afaceabf2c8e5988c3ef32922f8fce1937a529c26afdf5330723d554a57649aa"
+}

@@ -1,0 +1,809 @@
+{
+  "verdict": "LIBCXX_LEGACY_01_PASS",
+  "sources": {
+    "base": "290dae25cf39c6508422b6d94759f6cb1a6c3afe",
+    "libcxx_before": "caf34a8ca7837354e7bd49f9ae28018943bb7dd3",
+    "libcxx_after": "061279ebb3944b11bbbc76ae7fd77077841f8c74",
+    "libcxx_fix": "c8cb41d8d64a8db10745e85042a879463711908a",
+    "test_origin": {
+      "sha": "6f854e91cdc9160a8617c10c8ee860b1c7859303",
+      "html_url": "https://github.com/darlinghq/darling/blob/6649be99dac6a54e29a09d661fa095bf8ac3c532/tests/libcxx-legacy-exports.c",
+      "size": 1065
+    },
+    "qualified_core_source": "4be2603c62a6b0ec0148e60c7dff2e4f8b61c931"
+  },
+  "images": {
+    "baseline": {
+      "i386": {
+        "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "x86_64": {
+        "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      }
+    },
+    "candidate": {
+      "i386": {
+        "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "x86_64": {
+        "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      }
+    }
+  },
+  "exports": {
+    "i386": {
+      "added": [
+        "__ZNSt3__114__shared_count12__add_sharedEv",
+        "__ZNSt3__114__shared_count16__release_sharedEv",
+        "__ZNSt3__114error_categoryC2Ev",
+        "__ZNSt3__119__shared_weak_count10__add_weakEv",
+        "__ZNSt3__119__shared_weak_count12__add_sharedEv",
+        "__ZNSt3__119__shared_weak_count16__release_sharedEv",
+        "__ZNSt3__18valarrayImEC1Em",
+        "__ZNSt3__18valarrayImEC2Em",
+        "__ZNSt3__18valarrayImED1Ev",
+        "__ZNSt3__18valarrayImED2Ev"
+      ],
+      "removed": []
+    },
+    "x86_64": {
+      "added": [
+        "__ZNSt3__114__shared_count12__add_sharedEv",
+        "__ZNSt3__114__shared_count16__release_sharedEv",
+        "__ZNSt3__114error_categoryC2Ev",
+        "__ZNSt3__119__shared_weak_count10__add_weakEv",
+        "__ZNSt3__119__shared_weak_count12__add_sharedEv",
+        "__ZNSt3__119__shared_weak_count16__release_sharedEv",
+        "__ZNSt3__18valarrayImEC1Em",
+        "__ZNSt3__18valarrayImEC2Em",
+        "__ZNSt3__18valarrayImED1Ev",
+        "__ZNSt3__18valarrayImED2Ev"
+      ],
+      "removed": []
+    }
+  },
+  "runs": [
+    {
+      "name": "legacy",
+      "arch": "i386",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-legacy-i386",
+      "rc": 1,
+      "status": "EXPECTED_FAILURE",
+      "binary_sha256": "8915c5c85e35e05461aae2bd7ec470d244a553d26a8bc57a73e0d228f65de876",
+      "library": {
+        "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "legacy",
+      "arch": "i386",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-legacy-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "8915c5c85e35e05461aae2bd7ec470d244a553d26a8bc57a73e0d228f65de876",
+      "library": {
+        "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "bindings",
+      "arch": "i386",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-bindings-i386",
+      "rc": 134,
+      "status": "EXPECTED_FAILURE",
+      "binary_sha256": "320d6a4f9d8e5f03a0ef256c0f032f59a63a7e942cb6e6028bfaf56004d1a83e",
+      "library": {
+        "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "bindings",
+      "arch": "i386",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-bindings-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "320d6a4f9d8e5f03a0ef256c0f032f59a63a7e942cb6e6028bfaf56004d1a83e",
+      "library": {
+        "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "shared-reset",
+      "arch": "i386",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-shared-reset-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "e5d2ba481779264f40aaec7a4cb731675207836ea7f10d0569f81ed853d1fc90",
+      "library": {
+        "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "shared-reset",
+      "arch": "i386",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-shared-reset-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "e5d2ba481779264f40aaec7a4cb731675207836ea7f10d0569f81ed853d1fc90",
+      "library": {
+        "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "weak-lock",
+      "arch": "i386",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-weak-lock-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "149aeabb4b220114ae6ed71905b65e4f56aa4142f1d67b800b43343159428321",
+      "library": {
+        "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "weak-lock",
+      "arch": "i386",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-weak-lock-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "149aeabb4b220114ae6ed71905b65e4f56aa4142f1d67b800b43343159428321",
+      "library": {
+        "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "weak-expired",
+      "arch": "i386",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-weak-expired-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "36608ea1b543951db53bf72f998544b7f0bf2e0d22aba158b25cfe39969f8bfd",
+      "library": {
+        "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "weak-expired",
+      "arch": "i386",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-weak-expired-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "36608ea1b543951db53bf72f998544b7f0bf2e0d22aba158b25cfe39969f8bfd",
+      "library": {
+        "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "bad-weak-ptr",
+      "arch": "i386",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-bad-weak-ptr-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "56beb5a963505c0b4f17e67970bac7530b53f8483ff067475e83c8ea7f86edce",
+      "library": {
+        "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "bad-weak-ptr",
+      "arch": "i386",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-bad-weak-ptr-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "56beb5a963505c0b4f17e67970bac7530b53f8483ff067475e83c8ea7f86edce",
+      "library": {
+        "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "function-copy-move",
+      "arch": "i386",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-function-copy-move-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "abc9d27157d2e221412b149b296d25dc0a2f8ed96fe6cbdb7d791fa1cce1c5dd",
+      "library": {
+        "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "function-copy-move",
+      "arch": "i386",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-function-copy-move-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "abc9d27157d2e221412b149b296d25dc0a2f8ed96fe6cbdb7d791fa1cce1c5dd",
+      "library": {
+        "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "generic-category",
+      "arch": "i386",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-generic-category-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "ed7911b0f86f3ba4584775a2c6639963a3676fc42ba21104f10dfd04846f982c",
+      "library": {
+        "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "generic-category",
+      "arch": "i386",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-generic-category-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "ed7911b0f86f3ba4584775a2c6639963a3676fc42ba21104f10dfd04846f982c",
+      "library": {
+        "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "valarray-size",
+      "arch": "i386",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-valarray-size-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "07e6d45c5762c97aa8fac3ee1f1a4b7965dfa0e6212d14a2abffe381115d70a1",
+      "library": {
+        "uuid": "B1CC6827-9F6E-3A1B-B773-CB43CC473DF0",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "valarray-size",
+      "arch": "i386",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-valarray-size-i386",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "07e6d45c5762c97aa8fac3ee1f1a4b7965dfa0e6212d14a2abffe381115d70a1",
+      "library": {
+        "uuid": "D82760E9-E055-32C2-BF85-1A1FE39F40AC",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "legacy",
+      "arch": "x86_64",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-legacy-x86-64",
+      "rc": 1,
+      "status": "EXPECTED_FAILURE",
+      "binary_sha256": "a36b1384abda4cde82185e5183dcaba08a810dad1184c62aea379f823651dc67",
+      "library": {
+        "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "legacy",
+      "arch": "x86_64",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-legacy-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "a36b1384abda4cde82185e5183dcaba08a810dad1184c62aea379f823651dc67",
+      "library": {
+        "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "bindings",
+      "arch": "x86_64",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-bindings-x86-64",
+      "rc": 134,
+      "status": "EXPECTED_FAILURE",
+      "binary_sha256": "d048989e2dea2ede37740ad1c7b346f39839c776e70b9ff5f717951324681623",
+      "library": {
+        "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "bindings",
+      "arch": "x86_64",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-bindings-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "d048989e2dea2ede37740ad1c7b346f39839c776e70b9ff5f717951324681623",
+      "library": {
+        "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "shared-reset",
+      "arch": "x86_64",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-shared-reset-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "a646aa2c017e24e91827f41a9d48f0ce7c430b5bede4fc4db8179d6ebf6f9ef4",
+      "library": {
+        "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "shared-reset",
+      "arch": "x86_64",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-shared-reset-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "a646aa2c017e24e91827f41a9d48f0ce7c430b5bede4fc4db8179d6ebf6f9ef4",
+      "library": {
+        "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "weak-lock",
+      "arch": "x86_64",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-weak-lock-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "03f3c7ab718a58f7c61e62a71c2179f1f1888a4c387bc5accfe18f4675e9a411",
+      "library": {
+        "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "weak-lock",
+      "arch": "x86_64",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-weak-lock-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "03f3c7ab718a58f7c61e62a71c2179f1f1888a4c387bc5accfe18f4675e9a411",
+      "library": {
+        "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "weak-expired",
+      "arch": "x86_64",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-weak-expired-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "23573e026bcd9ef3f52ae771a3de97be985bc7473a20290bb5b487e5f5267ff7",
+      "library": {
+        "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "weak-expired",
+      "arch": "x86_64",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-weak-expired-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "23573e026bcd9ef3f52ae771a3de97be985bc7473a20290bb5b487e5f5267ff7",
+      "library": {
+        "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "bad-weak-ptr",
+      "arch": "x86_64",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-bad-weak-ptr-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "9ab29fbad97022a6471d190cd0532d04e9b4ad069ed85b235d1be448c19ea06e",
+      "library": {
+        "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "bad-weak-ptr",
+      "arch": "x86_64",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-bad-weak-ptr-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "9ab29fbad97022a6471d190cd0532d04e9b4ad069ed85b235d1be448c19ea06e",
+      "library": {
+        "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "function-copy-move",
+      "arch": "x86_64",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-function-copy-move-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "708feaffde9d88700fc3b09c017ca85fe0b7e8caebd5fef727dc908cb2811b03",
+      "library": {
+        "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "function-copy-move",
+      "arch": "x86_64",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-function-copy-move-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "708feaffde9d88700fc3b09c017ca85fe0b7e8caebd5fef727dc908cb2811b03",
+      "library": {
+        "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "generic-category",
+      "arch": "x86_64",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-generic-category-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "3f33dce288a77a1fe96b101dc57cc0acec2b4d94d9a96bc427f39c5f75ffb990",
+      "library": {
+        "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "generic-category",
+      "arch": "x86_64",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-generic-category-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "3f33dce288a77a1fe96b101dc57cc0acec2b4d94d9a96bc427f39c5f75ffb990",
+      "library": {
+        "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "valarray-size",
+      "arch": "x86_64",
+      "variant": "baseline",
+      "label": "cxx-replay-1794707243805001072-baseline-valarray-size-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "306f981e5b1e388e9b21c84b0de0acdfecaaa41a3c0ec160e2b63208ff351530",
+      "library": {
+        "uuid": "B7BE086D-897A-3D8D-B02F-652ADD4B0919",
+        "sha256": "ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee",
+        "export_count": 1962
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    },
+    {
+      "name": "valarray-size",
+      "arch": "x86_64",
+      "variant": "candidate",
+      "label": "cxx-replay-1794707243805001072-candidate-valarray-size-x86-64",
+      "rc": 0,
+      "status": "PASS",
+      "binary_sha256": "306f981e5b1e388e9b21c84b0de0acdfecaaa41a3c0ec160e2b63208ff351530",
+      "library": {
+        "uuid": "6DFD9168-6340-34DE-921E-431EFE4D1C48",
+        "sha256": "a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f",
+        "export_count": 1972
+      },
+      "host_mounts": [
+        "41",
+        "41"
+      ],
+      "remaining_pids": []
+    }
+  ],
+  "regressions": [
+    {
+      "name": "shared-reset",
+      "path": "test/std/utilities/memory/util.smartptr/util.smartptr.shared/util.smartptr.shared.mod/reset.pass.cpp",
+      "git_blob": "0d175d40d7ff616eba318369675dc72aa4407ca7",
+      "license": "Apache-2.0 WITH LLVM-exception"
+    },
+    {
+      "name": "weak-lock",
+      "path": "test/std/utilities/memory/util.smartptr/util.smartptr.weak/util.smartptr.weak.obs/lock.pass.cpp",
+      "git_blob": "107a587c7de497d2d9e22ad04253dd92288557e5",
+      "license": "Apache-2.0 WITH LLVM-exception"
+    },
+    {
+      "name": "weak-expired",
+      "path": "test/std/utilities/memory/util.smartptr/util.smartptr.weak/util.smartptr.weak.obs/expired.pass.cpp",
+      "git_blob": "bc0eb6e1a481c6f5c32fe990ad1c3f193281a72f",
+      "license": "Apache-2.0 WITH LLVM-exception"
+    },
+    {
+      "name": "bad-weak-ptr",
+      "path": "test/std/utilities/memory/util.smartptr/util.smartptr.weakptr/bad_weak_ptr.pass.cpp",
+      "git_blob": "49a466b903bcb2ff8695837bac96ce800288e9bf",
+      "license": "Apache-2.0 WITH LLVM-exception"
+    },
+    {
+      "name": "function-copy-move",
+      "path": "test/std/utilities/function.objects/func.wrap/func.wrap.func/func.wrap.func.con/copy_move.pass.cpp",
+      "git_blob": "efd9ed64191598842f3dc8dcad1b309d7c65840e",
+      "license": "Apache-2.0 WITH LLVM-exception"
+    },
+    {
+      "name": "generic-category",
+      "path": "test/std/diagnostics/syserr/syserr.errcat/syserr.errcat.objects/generic_category.pass.cpp",
+      "git_blob": "d90834681bb8454ee67e9ca623b6f20ac1dc0744",
+      "license": "Apache-2.0 WITH LLVM-exception"
+    },
+    {
+      "name": "valarray-size",
+      "path": "test/std/numerics/numarray/template.valarray/valarray.cons/size.pass.cpp",
+      "git_blob": "4c87bd4e816ca5444b0e03975997c562301dc491",
+      "license": "Apache-2.0 WITH LLVM-exception"
+    }
+  ],
+  "protected_host_files_unchanged": {
+    "/etc/ld.so.cache": "3ffa6037471f2ec983ca2a4e9cf29a171b956676e6ccd53012881aaf62ae0996",
+    "/var/lib/dpkg/status": "2a4ff8dd15a5a02fa74408e2d3ec9b2ad5ae6b3aed8d1f1989cdc9dc7ec74a8e",
+    "/proc/sys/vm/mmap_min_addr": "0f3633c0ecb81f7639c3fe70873b438e74fb8960c68f7c39e6a8eac795e70a32",
+    "/proc/sys/kernel/randomize_va_space": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
+  }
+}

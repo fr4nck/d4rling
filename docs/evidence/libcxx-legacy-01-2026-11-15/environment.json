@@ -1,0 +1,9 @@
+{
+  "kernel": "6.18.33.2-microsoft-standard-WSL2",
+  "clang": "Debian clang version 19.1.7 (3+b1)",
+  "glibc": "ldd (Debian GLIBC 2.41-12+deb13u4) 2.41",
+  "libcxxabi_source": "f49cc5d15c1be9f2c185bc9ec82d4c03d31d183f",
+  "qualified_build_source": "4be2603c62a6b0ec0148e60c7dff2e4f8b61c931",
+  "build_fat_units_per_variant": 46,
+  "maximum_build_jobs": 2
+}

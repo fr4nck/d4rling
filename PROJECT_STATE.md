@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## LIBCXX-LEGACY-01 — exports historiques Darwin (15 novembre 2026)
+
+**TEST / LIBCXX_LEGACY_01_PASS.** Gitlink libc++ `caf34a8c` → fusion officielle `061279eb` (#8), seul `__config_site` modifié dans le module. Référence/candidat : 46 unités FAT reconstruites chacune ; cinq exports absents puis résolus en **i386 et x86_64**, liaison forte négative/positive ; sept tests LLVM passent sur les deux variantes et architectures (28 exécutions). Dix exports ajoutés, aucun retiré ; UUID réels vérifiés. Canon et autres bancs intacts. [Preuves et reproduction](docs/evidence/libcxx-legacy-01-2026-11-15.md). Le témoin ptrace-wait4 de #2112 reste à expertiser, hors de ce lot.
+
 ## MLD-ASLR-01 — relance i386 / ADDR_NO_RANDOMIZE (15 novembre 2026)
 
 **TEST / MLD_ASLR_01_PASS.** Port ciblé de Darling #2111 : neuf lignes dans mldr.c, garde strict `559f9911` intégralement préservé. Test officiel 64→i386 : référence 8/9 (échec no-ASLR), candidat 9/9 ; compteurs réels 12/12, gardes GCC/Clang ELF32/ELF64 31 cas chacun, six refus natifs attendus. HomeResFile **88/88 normal + 88/88 bypass**, Carbon Events normal/bypass PASS ; code machine ELF64 inchangé. Qualification privée, installation canonique conservée. [Preuves, commandes et limites](docs/evidence/mld-aslr-01-2026-11-15.md).

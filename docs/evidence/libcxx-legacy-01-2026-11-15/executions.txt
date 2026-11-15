@@ -1,0 +1,1128 @@
+
+=== legacy i386 baseline EXPECTED_FAILURE RC=1 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-legacy-i386 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=8915c5c85e35e05461aae2bd7ec470d244a553d26a8bc57a73e0d228f65de876
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:24+01:00
+rc=1
+end=2026-11-15T02:47:26+01:00
+host_mounts_after=41
+darlingserver_after=0
+FAIL: export _ZNSt3__119__shared_weak_count12__add_sharedEv
+FAIL: export _ZNSt3__119__shared_weak_count10__add_weakEv
+FAIL: export _ZNSt3__119__shared_weak_count16__release_sharedEv
+FAIL: export _ZNSt3__114__shared_count12__add_sharedEv
+FAIL: export _ZNSt3__114__shared_count16__release_sharedEv
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-legacy-i386
+dyld: loaded: <B1CC6827-9F6E-3A1B-B773-CB43CC473DF0> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532412]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== legacy i386 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-legacy-i386 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=8915c5c85e35e05461aae2bd7ec470d244a553d26a8bc57a73e0d228f65de876
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:26+01:00
+rc=0
+end=2026-11-15T02:47:27+01:00
+host_mounts_after=41
+darlingserver_after=0
+PASS: export _ZNSt3__119__shared_weak_count12__add_sharedEv
+PASS: export _ZNSt3__119__shared_weak_count10__add_weakEv
+PASS: export _ZNSt3__119__shared_weak_count16__release_sharedEv
+PASS: export _ZNSt3__114__shared_count12__add_sharedEv
+PASS: export _ZNSt3__114__shared_count16__release_sharedEv
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-legacy-i386
+dyld: loaded: <D82760E9-E055-32C2-BF85-1A1FE39F40AC> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532433]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== bindings i386 baseline EXPECTED_FAILURE RC=134 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-bindings-i386 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=320d6a4f9d8e5f03a0ef256c0f032f59a63a7e942cb6e6028bfaf56004d1a83e
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:27+01:00
+rc=134
+end=2026-11-15T02:47:29+01:00
+host_mounts_after=41
+darlingserver_after=0
+abort_with_payload: reason: Symbol not found: __ZNSt3__114__shared_count12__add_sharedEv
+  Referenced from: /Volumes/SystemRoot<STAGE>/bin/bindings-i386
+  Expected in: /usr/lib/libc++.1.dylib
+ in /Volumes/SystemRoot<STAGE>/bin/bindings-i386; code: 4
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-bindings-i386
+dyld: loaded: <B1CC6827-9F6E-3A1B-B773-CB43CC473DF0> /usr/lib/libc++.1.dylib
+dyld: Symbol not found: __ZNSt3__114__shared_count12__add_sharedEv
+  Referenced from: /Volumes/SystemRoot<STAGE>/bin/bindings-i386
+  Expected in: /usr/lib/libc++.1.dylib
+ in /Volumes/SystemRoot<STAGE>/bin/bindings-i386
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== bindings i386 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-bindings-i386 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=320d6a4f9d8e5f03a0ef256c0f032f59a63a7e942cb6e6028bfaf56004d1a83e
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:29+01:00
+rc=0
+end=2026-11-15T02:47:30+01:00
+host_mounts_after=41
+darlingserver_after=0
+BOUND 0 image=/usr/lib/libc++.1.dylib
+BOUND 1 image=/usr/lib/libc++.1.dylib
+BOUND 2 image=/usr/lib/libc++.1.dylib
+BOUND 3 image=/usr/lib/libc++.1.dylib
+BOUND 4 image=/usr/lib/libc++.1.dylib
+LEGACY_STRONG_BIND_PASS count=5 pointer=4
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-bindings-i386
+dyld: loaded: <D82760E9-E055-32C2-BF85-1A1FE39F40AC> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532415]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== shared-reset i386 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-shared-reset-i386 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=e5d2ba481779264f40aaec7a4cb731675207836ea7f10d0569f81ed853d1fc90
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:30+01:00
+rc=0
+end=2026-11-15T02:47:32+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-shared-reset-i386
+dyld: loaded: <B1CC6827-9F6E-3A1B-B773-CB43CC473DF0> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== shared-reset i386 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-shared-reset-i386 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=e5d2ba481779264f40aaec7a4cb731675207836ea7f10d0569f81ed853d1fc90
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:32+01:00
+rc=0
+end=2026-11-15T02:47:33+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-shared-reset-i386
+dyld: loaded: <D82760E9-E055-32C2-BF85-1A1FE39F40AC> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== weak-lock i386 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-weak-lock-i386 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=149aeabb4b220114ae6ed71905b65e4f56aa4142f1d67b800b43343159428321
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:33+01:00
+rc=0
+end=2026-11-15T02:47:35+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-weak-lock-i386
+dyld: loaded: <B1CC6827-9F6E-3A1B-B773-CB43CC473DF0> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== weak-lock i386 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-weak-lock-i386 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=149aeabb4b220114ae6ed71905b65e4f56aa4142f1d67b800b43343159428321
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:35+01:00
+rc=0
+end=2026-11-15T02:47:36+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-weak-lock-i386
+dyld: loaded: <D82760E9-E055-32C2-BF85-1A1FE39F40AC> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== weak-expired i386 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-weak-expired-i386 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=36608ea1b543951db53bf72f998544b7f0bf2e0d22aba158b25cfe39969f8bfd
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:36+01:00
+rc=0
+end=2026-11-15T02:47:38+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-weak-expired-i386
+dyld: loaded: <B1CC6827-9F6E-3A1B-B773-CB43CC473DF0> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== weak-expired i386 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-weak-expired-i386 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=36608ea1b543951db53bf72f998544b7f0bf2e0d22aba158b25cfe39969f8bfd
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:38+01:00
+rc=0
+end=2026-11-15T02:47:39+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-weak-expired-i386
+dyld: loaded: <D82760E9-E055-32C2-BF85-1A1FE39F40AC> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== bad-weak-ptr i386 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-bad-weak-ptr-i386 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=56beb5a963505c0b4f17e67970bac7530b53f8483ff067475e83c8ea7f86edce
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:39+01:00
+rc=0
+end=2026-11-15T02:47:41+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-bad-weak-ptr-i386
+dyld: loaded: <B1CC6827-9F6E-3A1B-B773-CB43CC473DF0> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== bad-weak-ptr i386 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-bad-weak-ptr-i386 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=56beb5a963505c0b4f17e67970bac7530b53f8483ff067475e83c8ea7f86edce
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:41+01:00
+rc=0
+end=2026-11-15T02:47:42+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-bad-weak-ptr-i386
+dyld: loaded: <D82760E9-E055-32C2-BF85-1A1FE39F40AC> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== function-copy-move i386 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-function-copy-move-i386 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=abc9d27157d2e221412b149b296d25dc0a2f8ed96fe6cbdb7d791fa1cce1c5dd
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:43+01:00
+rc=0
+end=2026-11-15T02:47:44+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-function-copy-move-i386
+dyld: loaded: <B1CC6827-9F6E-3A1B-B773-CB43CC473DF0> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== function-copy-move i386 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-function-copy-move-i386 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=abc9d27157d2e221412b149b296d25dc0a2f8ed96fe6cbdb7d791fa1cce1c5dd
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:44+01:00
+rc=0
+end=2026-11-15T02:47:46+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-function-copy-move-i386
+dyld: loaded: <D82760E9-E055-32C2-BF85-1A1FE39F40AC> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== generic-category i386 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-generic-category-i386 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=ed7911b0f86f3ba4584775a2c6639963a3676fc42ba21104f10dfd04846f982c
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:46+01:00
+rc=0
+end=2026-11-15T02:47:47+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-generic-category-i386
+dyld: loaded: <B1CC6827-9F6E-3A1B-B773-CB43CC473DF0> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== generic-category i386 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-generic-category-i386 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=ed7911b0f86f3ba4584775a2c6639963a3676fc42ba21104f10dfd04846f982c
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:47+01:00
+rc=0
+end=2026-11-15T02:47:49+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-generic-category-i386
+dyld: loaded: <D82760E9-E055-32C2-BF85-1A1FE39F40AC> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== valarray-size i386 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-valarray-size-i386 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=07e6d45c5762c97aa8fac3ee1f1a4b7965dfa0e6212d14a2abffe381115d70a1
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:49+01:00
+rc=0
+end=2026-11-15T02:47:50+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-valarray-size-i386
+dyld: loaded: <B1CC6827-9F6E-3A1B-B773-CB43CC473DF0> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== valarray-size i386 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-valarray-size-i386 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=07e6d45c5762c97aa8fac3ee1f1a4b7965dfa0e6212d14a2abffe381115d70a1
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:50+01:00
+rc=0
+end=2026-11-15T02:47:52+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-valarray-size-i386
+dyld: loaded: <D82760E9-E055-32C2-BF85-1A1FE39F40AC> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== legacy x86_64 baseline EXPECTED_FAILURE RC=1 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-legacy-x86-64 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=a36b1384abda4cde82185e5183dcaba08a810dad1184c62aea379f823651dc67
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:52+01:00
+rc=1
+end=2026-11-15T02:47:53+01:00
+host_mounts_after=41
+darlingserver_after=0
+FAIL: export _ZNSt3__119__shared_weak_count12__add_sharedEv
+FAIL: export _ZNSt3__119__shared_weak_count10__add_weakEv
+FAIL: export _ZNSt3__119__shared_weak_count16__release_sharedEv
+FAIL: export _ZNSt3__114__shared_count12__add_sharedEv
+FAIL: export _ZNSt3__114__shared_count16__release_sharedEv
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-legacy-x86-64
+dyld: loaded: <B7BE086D-897A-3D8D-B02F-652ADD4B0919> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== legacy x86_64 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-legacy-x86-64 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=a36b1384abda4cde82185e5183dcaba08a810dad1184c62aea379f823651dc67
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:53+01:00
+rc=0
+end=2026-11-15T02:47:55+01:00
+host_mounts_after=41
+darlingserver_after=0
+PASS: export _ZNSt3__119__shared_weak_count12__add_sharedEv
+PASS: export _ZNSt3__119__shared_weak_count10__add_weakEv
+PASS: export _ZNSt3__119__shared_weak_count16__release_sharedEv
+PASS: export _ZNSt3__114__shared_count12__add_sharedEv
+PASS: export _ZNSt3__114__shared_count16__release_sharedEv
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-legacy-x86-64
+dyld: loaded: <6DFD9168-6340-34DE-921E-431EFE4D1C48> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== bindings x86_64 baseline EXPECTED_FAILURE RC=134 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-bindings-x86-64 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=d048989e2dea2ede37740ad1c7b346f39839c776e70b9ff5f717951324681623
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:55+01:00
+rc=134
+end=2026-11-15T02:47:56+01:00
+host_mounts_after=41
+darlingserver_after=0
+abort_with_payload: reason: Symbol not found: __ZNSt3__114__shared_count12__add_sharedEv
+  Referenced from: /Volumes/SystemRoot<STAGE>/bin/bindings-x86_64
+  Expected in: /usr/lib/libc++.1.dylib
+ in /Volumes/SystemRoot<STAGE>/bin/bindings-x86_64; code: 4
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-bindings-x86-64
+dyld: loaded: <B7BE086D-897A-3D8D-B02F-652ADD4B0919> /usr/lib/libc++.1.dylib
+dyld: Symbol not found: __ZNSt3__114__shared_count12__add_sharedEv
+  Referenced from: /Volumes/SystemRoot<STAGE>/bin/bindings-x86_64
+  Expected in: /usr/lib/libc++.1.dylib
+ in /Volumes/SystemRoot<STAGE>/bin/bindings-x86_64
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== bindings x86_64 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-bindings-x86-64 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=d048989e2dea2ede37740ad1c7b346f39839c776e70b9ff5f717951324681623
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:56+01:00
+rc=0
+end=2026-11-15T02:47:58+01:00
+host_mounts_after=41
+darlingserver_after=0
+BOUND 0 image=/usr/lib/libc++.1.dylib
+BOUND 1 image=/usr/lib/libc++.1.dylib
+BOUND 2 image=/usr/lib/libc++.1.dylib
+BOUND 3 image=/usr/lib/libc++.1.dylib
+BOUND 4 image=/usr/lib/libc++.1.dylib
+LEGACY_STRONG_BIND_PASS count=5 pointer=8
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-bindings-x86-64
+dyld: loaded: <6DFD9168-6340-34DE-921E-431EFE4D1C48> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== shared-reset x86_64 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-shared-reset-x86-64 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=a646aa2c017e24e91827f41a9d48f0ce7c430b5bede4fc4db8179d6ebf6f9ef4
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:58+01:00
+rc=0
+end=2026-11-15T02:47:59+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-shared-reset-x86-64
+dyld: loaded: <B7BE086D-897A-3D8D-B02F-652ADD4B0919> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== shared-reset x86_64 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-shared-reset-x86-64 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=a646aa2c017e24e91827f41a9d48f0ce7c430b5bede4fc4db8179d6ebf6f9ef4
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:47:59+01:00
+rc=0
+end=2026-11-15T02:48:01+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-shared-reset-x86-64
+dyld: loaded: <6DFD9168-6340-34DE-921E-431EFE4D1C48> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== weak-lock x86_64 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-weak-lock-x86-64 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=03f3c7ab718a58f7c61e62a71c2179f1f1888a4c387bc5accfe18f4675e9a411
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:01+01:00
+rc=0
+end=2026-11-15T02:48:02+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-weak-lock-x86-64
+dyld: loaded: <B7BE086D-897A-3D8D-B02F-652ADD4B0919> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== weak-lock x86_64 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-weak-lock-x86-64 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=03f3c7ab718a58f7c61e62a71c2179f1f1888a4c387bc5accfe18f4675e9a411
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:02+01:00
+rc=0
+end=2026-11-15T02:48:04+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-weak-lock-x86-64
+dyld: loaded: <6DFD9168-6340-34DE-921E-431EFE4D1C48> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== weak-expired x86_64 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-weak-expired-x86-64 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=23573e026bcd9ef3f52ae771a3de97be985bc7473a20290bb5b487e5f5267ff7
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:04+01:00
+rc=0
+end=2026-11-15T02:48:05+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-weak-expired-x86-64
+dyld: loaded: <B7BE086D-897A-3D8D-B02F-652ADD4B0919> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== weak-expired x86_64 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-weak-expired-x86-64 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=23573e026bcd9ef3f52ae771a3de97be985bc7473a20290bb5b487e5f5267ff7
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:05+01:00
+rc=0
+end=2026-11-15T02:48:07+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-weak-expired-x86-64
+dyld: loaded: <6DFD9168-6340-34DE-921E-431EFE4D1C48> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== bad-weak-ptr x86_64 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-bad-weak-ptr-x86-64 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=9ab29fbad97022a6471d190cd0532d04e9b4ad069ed85b235d1be448c19ea06e
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:07+01:00
+rc=0
+end=2026-11-15T02:48:08+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-bad-weak-ptr-x86-64
+dyld: loaded: <B7BE086D-897A-3D8D-B02F-652ADD4B0919> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== bad-weak-ptr x86_64 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-bad-weak-ptr-x86-64 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=9ab29fbad97022a6471d190cd0532d04e9b4ad069ed85b235d1be448c19ea06e
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:08+01:00
+rc=0
+end=2026-11-15T02:48:10+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-bad-weak-ptr-x86-64
+dyld: loaded: <6DFD9168-6340-34DE-921E-431EFE4D1C48> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== function-copy-move x86_64 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-function-copy-move-x86-64 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=708feaffde9d88700fc3b09c017ca85fe0b7e8caebd5fef727dc908cb2811b03
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:10+01:00
+rc=0
+end=2026-11-15T02:48:11+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-function-copy-move-x86-64
+dyld: loaded: <B7BE086D-897A-3D8D-B02F-652ADD4B0919> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== function-copy-move x86_64 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-function-copy-move-x86-64 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=708feaffde9d88700fc3b09c017ca85fe0b7e8caebd5fef727dc908cb2811b03
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:11+01:00
+rc=0
+end=2026-11-15T02:48:13+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-function-copy-move-x86-64
+dyld: loaded: <6DFD9168-6340-34DE-921E-431EFE4D1C48> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== generic-category x86_64 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-generic-category-x86-64 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=3f33dce288a77a1fe96b101dc57cc0acec2b4d94d9a96bc427f39c5f75ffb990
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:13+01:00
+rc=0
+end=2026-11-15T02:48:14+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-generic-category-x86-64
+dyld: loaded: <B7BE086D-897A-3D8D-B02F-652ADD4B0919> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== generic-category x86_64 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-generic-category-x86-64 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=3f33dce288a77a1fe96b101dc57cc0acec2b4d94d9a96bc427f39c5f75ffb990
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:14+01:00
+rc=0
+end=2026-11-15T02:48:16+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-generic-category-x86-64
+dyld: loaded: <6DFD9168-6340-34DE-921E-431EFE4D1C48> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== valarray-size x86_64 baseline PASS RC=0 ===
+variant=baseline label=cxx-replay-1794707243805001072-baseline-valarray-size-x86-64 mode=normal
+library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+program_sha256=306f981e5b1e388e9b21c84b0de0acdfecaaa41a3c0ec160e2b63208ff351530
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:16+01:00
+rc=0
+end=2026-11-15T02:48:17+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=ab895b490b01e2058c596949d68f8677a82a8cce3a015b794d010334775ad1ee
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-baseline-valarray-size-x86-64
+dyld: loaded: <B7BE086D-897A-3D8D-B02F-652ADD4B0919> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
+
+=== valarray-size x86_64 candidate PASS RC=0 ===
+variant=candidate label=cxx-replay-1794707243805001072-candidate-valarray-size-x86-64 mode=normal
+library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+program_sha256=306f981e5b1e388e9b21c84b0de0acdfecaaa41a3c0ec160e2b63208ff351530
+host_mounts_before=41
+darlingserver_before=0
+start=2026-11-15T02:48:17+01:00
+rc=0
+end=2026-11-15T02:48:19+01:00
+host_mounts_after=41
+darlingserver_after=0
+PREFLIGHT setgroups=allow
+         0       1000          1
+         1     100000      65536
+         0       1000          1
+         1     100000      65536
+uid=0/0/0 ngroups=7: 65534 65534 65534 65534 65534 65534 0
+setgroups(current)=0 OK
+setgroups({0})=0 OK
+after ngroups=1 first=0
+PREFLIGHT mounted_library_sha256=a8ccb2e73854dba9b889c211e1ec0c6bc60b4381db547d6286abc932f2dbc39f
+PREFLIGHT groups_darling=0
+Setting up a new Darling prefix at /tmp/p/cxx-replay-1794707243805001072-candidate-valarray-size-x86-64
+dyld: loaded: <6DFD9168-6340-34DE-921E-431EFE4D1C48> /usr/lib/libc++.1.dylib
+{
+  "namespace": "pid:[4026532413]",
+  "remaining": [],
+  "polls": 1
+}
