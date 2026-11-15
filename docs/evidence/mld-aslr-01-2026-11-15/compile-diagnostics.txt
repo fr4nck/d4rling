@@ -1,0 +1,70 @@
+=== baseline mldr32 ===
+=== baseline mldr ===
+In file included from <STAGE>/private/baseline-mldr.c:540:
+<STAGE>/src/src/startup/mldr/stack.c:133:10: warning: 'POINTER_FORMAT' macro redefined [-Wmacro-redefined]
+  133 |         #define POINTER_FORMAT "%x"
+      |                 ^
+<STAGE>/src/src/startup/mldr/stack.c:131:10: note: previous definition is here
+  131 |         #define POINTER_FORMAT "%lx"
+      |                 ^
+In file included from <STAGE>/private/baseline-mldr.c:540:
+<STAGE>/src/src/startup/mldr/stack.c:167:18: warning: cast to smaller integer type 'unsigned int' from 'char *' [-Wpointer-to-int-cast]
+  167 |                 if (__put_user((user_long_t) lr->argv[i], argv++))
+      |                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<STAGE>/src/src/startup/mldr/stack.c:47:14: note: expanded from macro '__put_user'
+   47 |                 __typeof__(value) _tmpval = (value); \
+      |                            ^~~~~
+<STAGE>/src/src/startup/mldr/stack.c:167:18: warning: cast to smaller integer type 'unsigned int' from 'char *' [-Wpointer-to-int-cast]
+  167 |                 if (__put_user((user_long_t) lr->argv[i], argv++))
+      |                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<STAGE>/src/src/startup/mldr/stack.c:47:32: note: expanded from macro '__put_user'
+   47 |                 __typeof__(value) _tmpval = (value); \
+      |                                              ^~~~~
+<STAGE>/src/src/startup/mldr/stack.c:188:18: warning: cast to smaller integer type 'unsigned int' from 'char *' [-Wpointer-to-int-cast]
+  188 |                 if (__put_user((user_long_t) lr->envp[i], envp++))
+      |                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<STAGE>/src/src/startup/mldr/stack.c:47:14: note: expanded from macro '__put_user'
+   47 |                 __typeof__(value) _tmpval = (value); \
+      |                            ^~~~~
+<STAGE>/src/src/startup/mldr/stack.c:188:18: warning: cast to smaller integer type 'unsigned int' from 'char *' [-Wpointer-to-int-cast]
+  188 |                 if (__put_user((user_long_t) lr->envp[i], envp++))
+      |                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<STAGE>/src/src/startup/mldr/stack.c:47:32: note: expanded from macro '__put_user'
+   47 |                 __typeof__(value) _tmpval = (value); \
+      |                                              ^~~~~
+5 warnings generated.
+=== candidate mldr32 ===
+=== candidate mldr ===
+In file included from <STAGE>/src/src/startup/mldr/mldr.c:541:
+<STAGE>/src/src/startup/mldr/stack.c:133:10: warning: 'POINTER_FORMAT' macro redefined [-Wmacro-redefined]
+  133 |         #define POINTER_FORMAT "%x"
+      |                 ^
+<STAGE>/src/src/startup/mldr/stack.c:131:10: note: previous definition is here
+  131 |         #define POINTER_FORMAT "%lx"
+      |                 ^
+In file included from <STAGE>/src/src/startup/mldr/mldr.c:541:
+<STAGE>/src/src/startup/mldr/stack.c:167:18: warning: cast to smaller integer type 'unsigned int' from 'char *' [-Wpointer-to-int-cast]
+  167 |                 if (__put_user((user_long_t) lr->argv[i], argv++))
+      |                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<STAGE>/src/src/startup/mldr/stack.c:47:14: note: expanded from macro '__put_user'
+   47 |                 __typeof__(value) _tmpval = (value); \
+      |                            ^~~~~
+<STAGE>/src/src/startup/mldr/stack.c:167:18: warning: cast to smaller integer type 'unsigned int' from 'char *' [-Wpointer-to-int-cast]
+  167 |                 if (__put_user((user_long_t) lr->argv[i], argv++))
+      |                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<STAGE>/src/src/startup/mldr/stack.c:47:32: note: expanded from macro '__put_user'
+   47 |                 __typeof__(value) _tmpval = (value); \
+      |                                              ^~~~~
+<STAGE>/src/src/startup/mldr/stack.c:188:18: warning: cast to smaller integer type 'unsigned int' from 'char *' [-Wpointer-to-int-cast]
+  188 |                 if (__put_user((user_long_t) lr->envp[i], envp++))
+      |                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<STAGE>/src/src/startup/mldr/stack.c:47:14: note: expanded from macro '__put_user'
+   47 |                 __typeof__(value) _tmpval = (value); \
+      |                            ^~~~~
+<STAGE>/src/src/startup/mldr/stack.c:188:18: warning: cast to smaller integer type 'unsigned int' from 'char *' [-Wpointer-to-int-cast]
+  188 |                 if (__put_user((user_long_t) lr->envp[i], envp++))
+      |                     ~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+<STAGE>/src/src/startup/mldr/stack.c:47:32: note: expanded from macro '__put_user'
+   47 |                 __typeof__(value) _tmpval = (value); \
+      |                                              ^~~~~
+5 warnings generated.

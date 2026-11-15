@@ -1,0 +1,9 @@
+{
+  "kernel": "6.18.33.2-microsoft-standard-WSL2",
+  "clang": "Debian clang version 19.1.7 (3+b1)",
+  "gcc": "gcc (Debian 14.2.0-19) 14.2.0",
+  "glibc": "ldd (Debian GLIBC 2.41-12+deb13u4) 2.41",
+  "mmap_min_addr": "65536",
+  "randomize_va_space": "2",
+  "s4_runtime_verified_files": 6013
+}

@@ -1,0 +1,178 @@
+--- D4rling-base
++++ upstream-ef987227
+@@ -39,0 +40 @@
++#include "fat_slice.h"
+@@ -41,0 +43 @@
++#include <sys/personality.h>
+@@ -406 +408 @@
+-	else if (magic == FAT_MAGIC || magic == FAT_CIGAM)
++	else if (mldr_fat_is_magic((const uint8_t*) &magic))
+@@ -421,7 +423,26 @@
+-	struct fat_header fhdr;
+-	struct fat_arch best_arch = {0};
+-	int bpref_index = -1;
+-
+-	best_arch.cputype = CPU_TYPE_ANY;
+-
+-	if (read(fd, &fhdr, sizeof(fhdr)) != sizeof(fhdr))
++	uint8_t header[MLDR_FAT_MAX_HEADER];
++	struct mldr_fat_slice slice;
++	struct stat st;
++	uint32_t native, fallback;
++
++#if defined(__x86_64__)
++	native = CPU_TYPE_X86_64;
++	fallback = CPU_TYPE_X86;
++#elif defined(__i386__)
++	native = CPU_TYPE_X86;
++	fallback = 0;
++#elif defined(__aarch64__)
++	native = CPU_TYPE_ARM64;
++	fallback = CPU_TYPE_ARM;
++#else
++	#error Unsupported CPU architecture
++#endif
++
++	if (fstat(fd, &st) != 0 || st.st_size < 0)
++	{
++		fprintf(stderr, "Cannot determine the size of the fat file.\n");
++		exit(1);
++	}
++
++	ssize_t got = pread(fd, header, sizeof(header), 0);
++	if (got < 0)
+@@ -433,15 +454,7 @@
+-	const bool swap = fhdr.magic == FAT_CIGAM;
+-
+-#define SWAP32(x) x = __bswap_32(x)
+-
+-	if (swap)
+-		SWAP32(fhdr.nfat_arch);
+-
+-	uint32_t i;
+-	for (i = 0; i < fhdr.nfat_arch; i++)
+-	{
+-		struct fat_arch arch;
+-
+-		if (read(fd, &arch, sizeof(arch)) != sizeof(arch))
+-		{
+-			fprintf(stderr, "Cannot read fat_arch header.\n");
++	switch (mldr_fat_select(header, (size_t) got, (uint64_t) st.st_size, lr->bprefs, (uint32_t) forced_arch,
++			native, fallback, &slice))
++	{
++		case MLDR_FAT_OK:
++			break;
++		case MLDR_FAT_NO_MATCH:
++			fprintf(stderr, "No supported architecture found in fat binary.\n");
+@@ -449,61 +462,10 @@
+-		}
+-
+-		if (swap)
+-		{
+-			SWAP32(arch.cputype);
+-			SWAP32(arch.cpusubtype);
+-			SWAP32(arch.offset);
+-			SWAP32(arch.size);
+-			SWAP32(arch.align);
+-		}
+-
+-		if (!forced_arch)
+-		{
+-			int j;
+-			for (j = 0; j < 4; j++)
+-			{
+-				if (lr->bprefs[j] && arch.cputype == lr->bprefs[j])
+-				{
+-					if (bpref_index == -1 || bpref_index > j)
+-					{
+-						best_arch = arch;
+-						bpref_index = j;
+-						break;
+-					}
+-				}
+-			}
+-
+-			if (bpref_index == -1)
+-			{
+-#if defined(__x86_64__)
+-				if (arch.cputype == CPU_TYPE_X86_64)
+-					best_arch = arch;
+-				else if (best_arch.cputype == CPU_TYPE_ANY && arch.cputype == CPU_TYPE_X86)
+-					best_arch = arch;
+-#elif defined(__i386__)
+-				if (arch.cputype == CPU_TYPE_X86)
+-					best_arch = arch;
+-#elif defined(__aarch64__)
+-				if (arch.cputype == CPU_TYPE_ARM64)
+-					best_arch = arch;
+-				else if (best_arch.cputype == CPU_TYPE_ANY && arch.cputype == CPU_TYPE_ARM)
+-					best_arch = arch;
+-#else
+-	#error Unsupported CPU architecture
+-#endif
+-			}
+-		}
+-		else
+-		{
+-			if (arch.cputype == forced_arch)
+-				best_arch = arch;
+-		}
+-	}
+-
+-	if (best_arch.cputype == CPU_TYPE_ANY)
+-	{
+-		fprintf(stderr, "No supported architecture found in fat binary.\n");
+-		exit(1);
+-	}
+-
+-	if (lseek(fd, best_arch.offset, SEEK_SET) == -1)
++		default:
++			fprintf(stderr, "Malformed fat file header.\n");
++			exit(1);
++	}
++
++	// the slice offset has to be representable as a file offset (32-bit builds
++	// without large file support cannot address more)
++	off_t slice_offset = (off_t) slice.offset;
++	if (slice_offset < 0 || (uint64_t) slice_offset != slice.offset ||
++			lseek(fd, slice_offset, SEEK_SET) == -1)
+@@ -515 +477 @@
+-	if (best_arch.cputype & CPU_ARCH_ABI64) {
++	if (slice.cputype & CPU_ARCH_ABI64) {
+@@ -795,3 +756,0 @@
+-	// D4rling hardening (559f99115): parse the inherited counter strictly and
+-	// treat any malformed, negative or out-of-range value as exhausted, so a
+-	// hostile or corrupted environment cannot cause unbounded re-execution.
+@@ -800 +758,0 @@
+-
+@@ -805,13 +763,14 @@
+-
+-		if (str[0] < '0' || str[0] > '9' ||
+-		    end == str || *end != '\0' ||
+-		    errno == ERANGE || value < 0) {
+-			retries = LAYOUT_RETRY_MAX;
+-		} else {
+-			retries = value >= LAYOUT_RETRY_MAX
+-			    ? LAYOUT_RETRY_MAX : (int)value;
+-		}
+-	}
+-
+-	if (retries >= LAYOUT_RETRY_MAX)
+-		return; // the mappings below report the conflict
++		if (str[0] < '0' || str[0] > '9' || end == str ||
++		    *end != '\0' || errno == ERANGE ||
++		    value < 0 || value >= LAYOUT_RETRY_MAX)
++			return; // invalid or exhausted retry budget
++		retries = (int)value;
++	}
++
++	// Without address space randomization the Linux stack always sits at the
++	// very top of a 32-bit address space, so another try would find the same
++	// layout. The Darwin stack and commpage are placed by us regardless, so
++	// randomization is only given up for the Linux-side placement.
++	int persona = personality(0xffffffff);
++	if (persona != -1 && (persona & ADDR_NO_RANDOMIZE))
++		personality(persona & ~ADDR_NO_RANDOMIZE);
+@@ -828 +787 @@
+-		return; // fail closed: never re-execute without a recorded counter
++		return;

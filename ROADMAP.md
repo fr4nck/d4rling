@@ -17,6 +17,10 @@ le plafond de trois morceaux par artiste. Ce repère éditorial ne vaut pas
 validation technique : les critères R/U/A/M/QT/L/P et leurs statuts restent
 indépendants.
 
+## MLD-ASLR-01 — relance i386 / ADDR_NO_RANDOMIZE (15 novembre 2026)
+
+**TEST / MLD_ASLR_01_PASS.** Port ciblé de Darling #2111 : neuf lignes dans mldr.c, garde strict `559f9911` intégralement préservé. Test officiel 64→i386 : référence 8/9 (échec no-ASLR), candidat 9/9 ; compteurs réels 12/12, gardes GCC/Clang ELF32/ELF64 31 cas chacun, six refus natifs attendus. HomeResFile **88/88 normal + 88/88 bypass**, Carbon Events normal/bypass PASS ; code machine ELF64 inchangé. Qualification privée, installation canonique conservée. [Preuves, commandes et limites](docs/evidence/mld-aslr-01-2026-11-15.md).
+
 ## LOGIC-L1 — FreeType ELF32 privé qualifié (14 novembre 2026)
 
 **FreeType PASS borné, Carbon/L2 BLOCKED.** Cinq paquets Debian i386 authentifiés et extraits en privé ; init/version/erreur de police absente/destruction passent via le vrai pont Darling i386 et en contrôle x86_64. Le chargement Carbon sans suppression de dépendances franchit FreeType puis échoue sur **libfontconfig.so.1 ELF32 absente**. HomeResFile **88/88 normal + 88/88 bypass** ; artefacts S4 gelés inchangés, aucun résidu dans les namespaces du lot. Aucune installation globale ni exécution de Logic. [Preuves et reproduction](docs/audits/logic-studio-8/2026-11-14-logic-l1-elf32.md).

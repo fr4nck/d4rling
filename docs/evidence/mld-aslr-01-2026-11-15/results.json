@@ -1,0 +1,267 @@
+{
+  "verdict": "MLD_ASLR_01_PASS",
+  "sources": {
+    "base": "e61f908897a3d1f7f20b2ec034ccdc55a412bf3c",
+    "candidate_sha256": "123c67f7d8a734199e519ced5f3dfb2ab79b7dbf41bb207f7fcab3cb3ab90989",
+    "baseline_sha256": "35e94e748e2e792bee569150a50cd6db20b956e399ad501712b54f940a1c3d83",
+    "baseline_git_blob": "ee8e6128391f12b0e5161deb76fc864806c19f3e",
+    "upstream_mldr": {
+      "sha": "ec4fe9b0dcd8fc917e4472dd76f1518df9732b68",
+      "size": 34707,
+      "html_url": "https://github.com/darlinghq/darling/blob/ef987227dd40e47081115818ac5ac03dce8c1bef/src/startup/mldr/mldr.c"
+    },
+    "upstream_test": {
+      "sha": "84397560d73c9e7fdc5aafb221099dac0487fd9c",
+      "size": 2655,
+      "html_url": "https://github.com/darlinghq/darling/blob/ef987227dd40e47081115818ac5ac03dce8c1bef/tests/spawn-i386-flags.c"
+    },
+    "qualified_build_source": "4be2603c62a6b0ec0148e60c7dff2e4f8b61c931"
+  },
+  "runs": [
+    {
+      "name": "official-before",
+      "variant": "baseline",
+      "mode": "normal",
+      "rc": 1,
+      "expected_rc": 1,
+      "label": "mld-replay-1794704921838597776-official-before",
+      "binary_sha256": "7915a5bc9d82e0d79c6ddb7b74e5eea8302ee9a064f8bb06c0dcfaa8f3ef2ac4",
+      "native_images": [
+        [
+          "464568e90cca18831e74531466373a2a06bf0e043e9f28b6c9ef99049dc67c33",
+          32
+        ],
+        [
+          "7d61af981e3fde6608a4ba17cfae64a81436c21bc2e74f2e9ccfc25927267554",
+          64
+        ]
+      ],
+      "personality_values_observed": [
+        "00000000"
+      ],
+      "namespace_remaining": [],
+      "host_mounts": [
+        "41",
+        "41"
+      ]
+    },
+    {
+      "name": "official-after",
+      "variant": "candidate",
+      "mode": "normal",
+      "rc": 0,
+      "expected_rc": 0,
+      "label": "mld-replay-1794704921838597776-official-after",
+      "binary_sha256": "7915a5bc9d82e0d79c6ddb7b74e5eea8302ee9a064f8bb06c0dcfaa8f3ef2ac4",
+      "native_images": [
+        [
+          "9f0b09ebc9e1291564981e559e8b20b38a95fc52c6acbb069929078ab5f55bd0",
+          64
+        ],
+        [
+          "fce0fc5a78e9d577ad778214e6974b072e36cf0feb6e87b19902b1efac2b7eff",
+          32
+        ]
+      ],
+      "personality_values_observed": [
+        "00000000"
+      ],
+      "namespace_remaining": [],
+      "host_mounts": [
+        "41",
+        "41"
+      ]
+    },
+    {
+      "name": "counter-real",
+      "variant": "candidate",
+      "mode": "normal",
+      "rc": 0,
+      "expected_rc": 0,
+      "label": "mld-replay-1794704921838597776-counter-real",
+      "binary_sha256": "695670e942ca66c2c23ec04828969de29be91b42214c7cc55240d2784a64571c",
+      "native_images": [
+        [
+          "9f0b09ebc9e1291564981e559e8b20b38a95fc52c6acbb069929078ab5f55bd0",
+          64
+        ],
+        [
+          "fce0fc5a78e9d577ad778214e6974b072e36cf0feb6e87b19902b1efac2b7eff",
+          32
+        ]
+      ],
+      "personality_values_observed": [
+        "00000000"
+      ],
+      "namespace_remaining": [],
+      "host_mounts": [
+        "41",
+        "41"
+      ]
+    },
+    {
+      "name": "home-normal",
+      "variant": "candidate",
+      "mode": "normal",
+      "rc": 0,
+      "expected_rc": 0,
+      "label": "mld-replay-1794704921838597776-home-normal",
+      "binary_sha256": "ebd1c391a422b23fcc8b60e5f1a9c3bee470b6f7f50c87610deeab87aa384e00",
+      "native_images": [
+        [
+          "9f0b09ebc9e1291564981e559e8b20b38a95fc52c6acbb069929078ab5f55bd0",
+          64
+        ],
+        [
+          "fce0fc5a78e9d577ad778214e6974b072e36cf0feb6e87b19902b1efac2b7eff",
+          32
+        ]
+      ],
+      "personality_values_observed": [
+        "00000000"
+      ],
+      "namespace_remaining": [],
+      "host_mounts": [
+        "41",
+        "41"
+      ]
+    },
+    {
+      "name": "home-bypass",
+      "variant": "candidate",
+      "mode": "bypass",
+      "rc": 0,
+      "expected_rc": 0,
+      "label": "mld-replay-1794704921838597776-home-bypass",
+      "binary_sha256": "ebd1c391a422b23fcc8b60e5f1a9c3bee470b6f7f50c87610deeab87aa384e00",
+      "native_images": [
+        [
+          "9f0b09ebc9e1291564981e559e8b20b38a95fc52c6acbb069929078ab5f55bd0",
+          64
+        ]
+      ],
+      "personality_values_observed": [
+        "00000000"
+      ],
+      "namespace_remaining": [],
+      "host_mounts": [
+        "41",
+        "41"
+      ]
+    },
+    {
+      "name": "carbon-normal",
+      "variant": "candidate",
+      "mode": "normal",
+      "rc": 0,
+      "expected_rc": 0,
+      "label": "mld-replay-1794704921838597776-carbon-normal",
+      "binary_sha256": "acad1eaf3a942cb67e2ec58cd8b41c00d4edde0efef4a13cf31e794e37bf741e",
+      "native_images": [
+        [
+          "9f0b09ebc9e1291564981e559e8b20b38a95fc52c6acbb069929078ab5f55bd0",
+          64
+        ],
+        [
+          "fce0fc5a78e9d577ad778214e6974b072e36cf0feb6e87b19902b1efac2b7eff",
+          32
+        ]
+      ],
+      "personality_values_observed": [
+        "00000000"
+      ],
+      "namespace_remaining": [],
+      "host_mounts": [
+        "41",
+        "41"
+      ]
+    },
+    {
+      "name": "carbon-bypass",
+      "variant": "candidate",
+      "mode": "bypass",
+      "rc": 0,
+      "expected_rc": 0,
+      "label": "mld-replay-1794704921838597776-carbon-bypass",
+      "binary_sha256": "acad1eaf3a942cb67e2ec58cd8b41c00d4edde0efef4a13cf31e794e37bf741e",
+      "native_images": [
+        [
+          "9f0b09ebc9e1291564981e559e8b20b38a95fc52c6acbb069929078ab5f55bd0",
+          64
+        ]
+      ],
+      "personality_values_observed": [
+        "00000000"
+      ],
+      "namespace_remaining": [],
+      "host_mounts": [
+        "41",
+        "41"
+      ]
+    }
+  ],
+  "host_negatives": [
+    {
+      "program": "mldr32",
+      "state": "missing",
+      "rc": 1,
+      "stderr": "mldr: __mldr_sockpath is missing, empty or too long; start programs through darling\n"
+    },
+    {
+      "program": "mldr32",
+      "state": "empty",
+      "rc": 1,
+      "stderr": "mldr: __mldr_sockpath is missing, empty or too long; start programs through darling\n"
+    },
+    {
+      "program": "mldr32",
+      "state": "set",
+      "rc": 1,
+      "stderr": "Cannot open /nonexistent: No such file or directory\n"
+    },
+    {
+      "program": "mldr",
+      "state": "missing",
+      "rc": 1,
+      "stderr": "mldr: __mldr_sockpath is missing, empty or too long; start programs through darling\n"
+    },
+    {
+      "program": "mldr",
+      "state": "empty",
+      "rc": 1,
+      "stderr": "mldr: __mldr_sockpath is missing, empty or too long; start programs through darling\n"
+    },
+    {
+      "program": "mldr",
+      "state": "set",
+      "rc": 1,
+      "stderr": "Cannot open /nonexistent: No such file or directory\n"
+    }
+  ],
+  "elf_text_sha256": {
+    "mldr": {
+      "baseline": "a34c64fd51fa87a40352d9897f696c469b56c476b294e54f332c52932d31bf51",
+      "candidate": "a34c64fd51fa87a40352d9897f696c469b56c476b294e54f332c52932d31bf51"
+    },
+    "mldr32": {
+      "baseline": "37de8d1d1c9619e5de202cf4772aa2eb157a3d171c29e1569a14e832d4861e33",
+      "candidate": "1ce8542114995bd0d4446ed94894bca4ba5d05100bd8576d248a55c00a1f6fe3"
+    }
+  },
+  "protected_host_files_unchanged": {
+    "/etc/ld.so.cache": "3ffa6037471f2ec983ca2a4e9cf29a171b956676e6ccd53012881aaf62ae0996",
+    "/var/lib/dpkg/status": "2a4ff8dd15a5a02fa74408e2d3ec9b2ad5ae6b3aed8d1f1989cdc9dc7ec74a8e",
+    "/proc/sys/vm/mmap_min_addr": "0f3633c0ecb81f7639c3fe70873b438e74fb8960c68f7c39e6a8eac795e70a32",
+    "/proc/sys/kernel/randomize_va_space": "53c234e5e8472b6ac51c1ae1cab3fe06fad053beb8ebfd8977b010655bfdd3c3"
+  },
+  "binaries": {
+    "baseline": {
+      "mldr32": "464568e90cca18831e74531466373a2a06bf0e043e9f28b6c9ef99049dc67c33",
+      "mldr": "7d61af981e3fde6608a4ba17cfae64a81436c21bc2e74f2e9ccfc25927267554"
+    },
+    "candidate": {
+      "mldr32": "fce0fc5a78e9d577ad778214e6974b072e36cf0feb6e87b19902b1efac2b7eff",
+      "mldr": "9f0b09ebc9e1291564981e559e8b20b38a95fc52c6acbb069929078ab5f55bd0"
+    }
+  }
+}

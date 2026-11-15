@@ -1,0 +1,86 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later */
+#define _GNU_SOURCE
+#include <assert.h>
+#include <errno.h>
+#include <setjmp.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/mman.h>
+#include <sys/personality.h>
+#include <unistd.h>
+#define LAYOUT_RETRY_ENV "__mldr_layout_retry"
+#define LAYOUT_RETRY_MAX 8
+struct load_results { char **argv; };
+static char value[256];
+static bool present, set_failure, read_failure, get_failure, change_failure, exec_returns;
+static int maps, unmaps, gets, changes, sets, execs, unsets, mapping;
+static unsigned long persona, requested;
+static jmp_buf jump;
+static unsigned long commpage_address(bool is64) { (void)is64; return 0xffff0000UL; }
+static unsigned long commpage_length(bool is64) { (void)is64; return 0x1000UL; }
+static void *compatible_mmap(void *p,size_t n,int prot,int flags,int fd,off_t off) {
+ (void)n;(void)prot;(void)flags;(void)fd;(void)off;maps++;
+ if (mapping==1) return p;
+ errno=mapping==2?ENOMEM:EEXIST;return MAP_FAILED;
+}
+static int test_munmap(void *p,size_t n) {(void)p;(void)n;unmaps++;return 0;}
+static char *test_getenv(const char *key) {assert(!strcmp(key,LAYOUT_RETRY_ENV));return present?value:NULL;}
+static int test_personality(unsigned long p) {
+ if(p==0xffffffffUL) {gets++;if(get_failure){errno=EPERM;return -1;}return (int)persona;}
+ changes++;requested=p;if(change_failure){errno=EPERM;return -1;}unsigned long old=persona;persona=p;return (int)old;
+}
+static ssize_t test_readlink(const char *p,char *out,size_t n) {
+ assert(!strcmp(p,"/proc/self/exe"));if(read_failure){errno=ENOENT;return -1;}
+ const char *name="/test/mldr32";assert(n>=strlen(name));memcpy(out,name,strlen(name));return (ssize_t)strlen(name);
+}
+static int test_setenv(const char *key,const char *v,int overwrite) {
+ assert(!strcmp(key,LAYOUT_RETRY_ENV)&&overwrite==1);sets++;
+ if(set_failure){errno=ENOMEM;return -1;}assert(strlen(v)<sizeof(value));strcpy(value,v);present=true;return 0;
+}
+static int test_execv(const char *p,char *const argv[]) {
+ assert(!strcmp(p,"/test/mldr32")&&!strcmp(argv[0],"original-argv"));execs++;
+ if(exec_returns){errno=ENOEXEC;return -1;}longjmp(jump,1);
+}
+static int test_unsetenv(const char *key) {assert(!strcmp(key,LAYOUT_RETRY_ENV));unsets++;present=false;return 0;}
+#define personality test_personality
+#define munmap test_munmap
+#define getenv test_getenv
+#define readlink test_readlink
+#define setenv test_setenv
+#define execv test_execv
+#define unsetenv test_unsetenv
+/* MLDR_FUNCTION */
+static void reset(const char *s) {
+ present=s!=NULL;if(s){assert(strlen(s)<sizeof(value));strcpy(value,s);}
+ maps=unmaps=gets=changes=sets=execs=unsets=mapping=0;
+ set_failure=read_failure=get_failure=change_failure=exec_returns=false;
+ persona=PER_LINUX32|ADDR_COMPAT_LAYOUT|ADDR_NO_RANDOMIZE;requested=0;
+}
+static void invoke(void) {char *argv[]={"original-argv",NULL};struct load_results lr={argv};if(setjmp(jump)==0)ensure_top_range_free(&lr,65536);}
+int main(void) {
+ int checks=0;
+ const struct {const char *input;const char *next;} valid[]={{NULL,"1"},{"0","1"},{"1","2"},{"7","8"},{"0007","8"}};
+ for(size_t i=0;i<sizeof(valid)/sizeof(*valid);i++) {
+  reset(valid[i].input);invoke();assert(execs==1&&sets==1&&present&&!strcmp(value,valid[i].next));
+  assert(gets==1&&changes==1&&requested==(PER_LINUX32|ADDR_COMPAT_LAYOUT));checks++;
+ }
+ const char *invalid[]={"8","9","2147483648","-1","-99999999999999999999999999999","abc","1x","1.0"," 1","1 ","\t1","1\n","+1","","99999999999999999999999999999"};
+ for(size_t i=0;i<sizeof(invalid)/sizeof(*invalid);i++) {reset(invalid[i]);invoke();assert(execs==0&&sets==0&&gets==0&&changes==0);checks++;}
+ reset("0");set_failure=true;invoke();assert(sets==1&&execs==0&&present&&!strcmp(value,"0"));checks++;
+ reset("0");read_failure=true;invoke();assert(sets==0&&execs==0);checks++;
+ reset("0");exec_returns=true;invoke();assert(execs==1&&unsets==1&&!present);checks++;
+ reset("0");mapping=1;invoke();assert(maps==1&&unmaps==1&&gets==0&&execs==0);checks++;
+ reset("0");mapping=2;invoke();assert(maps==1&&gets==0&&execs==0);checks++;
+ reset("0");persona=PER_LINUX32|ADDR_COMPAT_LAYOUT;invoke();assert(gets==1&&changes==0&&execs==1);checks++;
+ reset("0");get_failure=true;invoke();assert(gets==1&&changes==0&&execs==1);checks++;
+ reset("0");change_failure=true;invoke();assert(gets==1&&changes==1&&execs==1&&(persona&ADDR_NO_RANDOMIZE));checks++;
+ for(int failure=0;failure<3;failure++) {
+  reset("0");get_failure=failure==1;change_failure=failure==2;
+  for(int i=0;i<9;i++) { invoke(); }
+  assert(execs==8&&sets==8&&!strcmp(value,"8")&&maps==9);checks++;
+ }
+ printf("MLD_ASLR_GUARD_PASS pointer=%zu cases=%d\n",sizeof(void *),checks);
+ return 0;
+}

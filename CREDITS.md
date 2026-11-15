@@ -115,3 +115,10 @@ real V3 calls, synthetic-handler protocol tests and pending system integration.
 - D4RLING port on `master` `c17bd4f`: `mldr.c`, `commpage.c`, `commpage.h`; preserves original copyright notices and GPL-3.0-or-later terms. No wholesale upstream merge.
 - Local modifications: stricter retry-counter parsing and `setenv()` error guard; this port includes verification scripts. `O_CLOEXEC` remains outside this change.
 - Differential real-i386 qualification and limits: [qualification evidence](docs/evidence/mldr32-stack-commpage-bm3-2026-11-08.md). Local raw logs and artifacts remain private.
+
+## MLD-ASLR-01 — i386 layout retry personality (2026-11-15)
+
+- Original change and test: **Lubos Dolezel** (`LubosD`), [Darling PR #2111](https://github.com/darlinghq/darling/pull/2111), source commits `c821620ed022551a9746a19e530e3a8b20c74b92` and `adb1ec26aecee9e68f57ac1623a514858515eb23`, upstream merge `ef987227dd40e47081115818ac5ac03dce8c1bef`.
+- Local port: the MLD-ASLR-01 commit containing this entry, nine added lines in `mldr.c`; original notices and GPL-3.0-or-later terms retained. `tests/spawn-i386-flags.c` is imported byte-for-byte.
+- Adaptation: keep D4rling's entire `559f9911` strict retry and setenv guards, placing the upstream personality block after its budget check. No FAT parser or other upstream change imported.
+- Additional regression fixtures are original GPL-3.0-or-later code. [Executed qualification and limits](docs/evidence/mld-aslr-01-2026-11-15.md).

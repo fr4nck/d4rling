@@ -1,0 +1,17 @@
+{
+  "base": "e61f908897a3d1f7f20b2ec034ccdc55a412bf3c",
+  "candidate_sha256": "123c67f7d8a734199e519ced5f3dfb2ab79b7dbf41bb207f7fcab3cb3ab90989",
+  "baseline_sha256": "35e94e748e2e792bee569150a50cd6db20b956e399ad501712b54f940a1c3d83",
+  "baseline_git_blob": "ee8e6128391f12b0e5161deb76fc864806c19f3e",
+  "upstream_mldr": {
+    "sha": "ec4fe9b0dcd8fc917e4472dd76f1518df9732b68",
+    "size": 34707,
+    "html_url": "https://github.com/darlinghq/darling/blob/ef987227dd40e47081115818ac5ac03dce8c1bef/src/startup/mldr/mldr.c"
+  },
+  "upstream_test": {
+    "sha": "84397560d73c9e7fdc5aafb221099dac0487fd9c",
+    "size": 2655,
+    "html_url": "https://github.com/darlinghq/darling/blob/ef987227dd40e47081115818ac5ac03dce8c1bef/tests/spawn-i386-flags.c"
+  },
+  "qualified_build_source": "4be2603c62a6b0ec0148e60c7dff2e4f8b61c931"
+}
