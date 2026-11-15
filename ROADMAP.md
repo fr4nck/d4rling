@@ -37,6 +37,16 @@ indépendants.
 
 **TEST / PASS borné :** gitlink Security `84c0a3e1` (#16 officielle), après comparaison des cinq fichiers supplémentaires par rapport à `a536cfff`, recompilation de 44 objets FAT et reliaison des deux architectures. Chargement standard sans `-dead_strip_dylibs`, HomeResFile **88/88 normal + 88/88 bypass**, témoins SSL bornés et Carbon Events passent. Exports inchangés ; test du trousseau compilé mais non exécuté (banc UID Darwin 0). TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction S4](docs/evidence/security-s4-official-reference-2026-11-14.md).
 
+## B13 i386 — AudioToolbox en Darwin i386 (15 novembre 2026)
+
+**TEST / PASS i386 : chargement, décodage PCM, sortie audio.**
+- 111 paquets FFmpeg i386 extraits en privé (48,2 Mo) ; 142 images ELF32 mappées, aucune x86_64.
+- AudioFile, ExtAudioFile et AudioConverter i386 : 25/26 critères, sorties identiques à x86_64 octet pour octet.
+- AIFF → AudioToolbox → CoreAudio i386 → PulseAudio : 5/5 identiques au bit près, Stop/Play compris.
+- Correctifs candidats ATB-FIX1 (μ-law, décodeur FFmpeg) et ATB-FIX2 (`ConvertBuffer`, SIGSEGV) qualifiés en privé dans les deux architectures, B12 non régressé ; non intégrés.
+
+[Preuves](docs/evidence/audiotoolbox-b13-i386-2026-11-15.md).
+
 ## B13 — AudioToolbox (15 novembre 2026)
 
 **i386 BLOCKED (FFmpeg ELF32), référence x86_64 qualifiée.**

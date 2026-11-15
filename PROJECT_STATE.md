@@ -11,6 +11,10 @@ proposer une suite de développement, y compris depuis mobile.
 
 **TEST / MLD_ASLR_01_PASS.** Port ciblé de Darling #2111 : neuf lignes dans mldr.c, garde strict `559f9911` intégralement préservé. Test officiel 64→i386 : référence 8/9 (échec no-ASLR), candidat 9/9 ; compteurs réels 12/12, gardes GCC/Clang ELF32/ELF64 31 cas chacun, six refus natifs attendus. HomeResFile **88/88 normal + 88/88 bypass**, Carbon Events normal/bypass PASS ; code machine ELF64 inchangé. Qualification privée, installation canonique conservée. [Preuves, commandes et limites](docs/evidence/mld-aslr-01-2026-11-15.md).
 
+## B13 i386 — AudioToolbox en Darwin i386 (15 novembre 2026)
+
+**`B13_ATB_I386_LOAD_PASS`, `B13_ATB_I386_DECODE_PASS` (PCM), `B13_ATB_I386_AUDIO_PASS` ; `B13_AUDIBLE` NOT_CONFIRMED.** FFmpeg ELF32 extrait en privé (111 paquets authentifiés) et cache `ld.so.cache` propre au banc ; AudioToolbox i386 lit WAV, AIFF, CAF et μ-law, convertit et rééchantillonne comme en x86_64, et sort par CoreAudio i386 vers PulseAudio au bit près. Correctifs candidats ATB-FIX1 et ATB-FIX2 qualifiés en builds privés (i386, x86_64, B12 non régressé), à requalifier sur un build de `master` avant intégration. Hôte inchangé. [Rapport](docs/evidence/audiotoolbox-b13-i386-2026-11-15.md).
+
 ## B13 — AudioToolbox (15 novembre 2026)
 
 **`B13_ATB_I386_LOAD` BLOCKED ; référence x86_64 PASS sauf deux défauts.** AudioToolbox i386 s'arrête avant `main` faute de `libavformat.so.61` ELF32. Fermeture FFmpeg i386 authentifiée : 128 paquets, dont 111 à extraire en privé (48 205 200 octets), en attente d'accord. En x86_64, AudioFile, ExtAudioFile et AudioConverter (FFmpeg) décodent et convertissent conformément à un oracle indépendant, et la sortie par CoreAudio est identique au bit près. Défauts reproduits : μ-law/compressés (`AudioConverter::create`) et `AudioConverterConvertBuffer` (SIGSEGV). Aucun code de production modifié. [Rapport](docs/evidence/audiotoolbox-b13-2026-11-15.md).

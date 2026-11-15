@@ -2,6 +2,8 @@
 
 ## Verdicts
 
+**Note du 15 novembre 2026 (suite) :** après extraction privée de FFmpeg ELF32, `B13_ATB_I386_LOAD`, `B13_ATB_I386_DECODE` (PCM) et `B13_ATB_I386_AUDIO` passent. Les deux défauts ont des correctifs candidats qualifiés en privé. Le tableau ci-dessous est conservé tel qu'établi. [Rapport i386 et correctifs](audiotoolbox-b13-i386-2026-11-15.md).
+
 | Critère | Statut |
 | --- | --- |
 | `B13_ATB_I386_LOAD` | **BLOCKED** (TEST) : arrêt avant `main`, code 134, `Cannot load libavformat.so.61 (ELF)` ; besoin chiffré ci-dessous |
