@@ -1,0 +1,916 @@
+{
+  "private_cache": {
+    "ld_so_conf": [
+      "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu",
+      "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/pulseaudio",
+      "include /etc/ld.so.conf"
+    ],
+    "ld_so_cache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d"
+  },
+  "elf32": [
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libFLAC.so.14.0.0",
+      "sha256": "240321f750854025b4714f6d78529965074e65e7a4c7b74d0d4b536a132435df",
+      "needed": [
+        "libogg.so.0",
+        "libm.so.6",
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libogg.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libogg.so.0",
+        "libm.so.6": "/lib32/libm.so.6",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libX11-xcb.so.1.0.0",
+      "sha256": "c3f1c52194698ad2f253e952f4d733f54b30011880861bc103bd68983938aaf6",
+      "needed": [],
+      "runpath": [],
+      "resolved": {},
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libX11.so.6.4.0",
+      "sha256": "dbd0437061af9899d4b93ee7621c0b8549125f907b98a2c48b4afd438b715221",
+      "needed": [
+        "libxcb.so.1",
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libxcb.so.1": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libxcb.so.1",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libXau.so.6.0.0",
+      "sha256": "b2f4f87cc402421bf34f140a4ed028a8c0894acd44916a87da955dcbc25c54dc",
+      "needed": [
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libXdmcp.so.6.0.0",
+      "sha256": "6f66e9a180f9fd8433ebbdf35ffc7b43a66190880e2e6fa20e5fa9ced0cb62f4",
+      "needed": [
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libasyncns.so.0.3.1",
+      "sha256": "dcd00e8273e821602f2acdb3bfd1710113dce770a323f2be8cae6d0a494d3c81",
+      "needed": [
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libcap.so.2.75",
+      "sha256": "1f8802b453948d1342c019b5e455acef3d1ee80e966b445919754cf9e479218a",
+      "needed": [
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libdbus-1.so.3.38.3",
+      "sha256": "d64f342fbe3e4328cb5c3a09a9a3ec161ebb7da55ed305aa32f751c76a17a765",
+      "needed": [
+        "libsystemd.so.0",
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libsystemd.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libsystemd.so.0",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libmp3lame.so.0.0.0",
+      "sha256": "1f52cea3c8dd943570301196da4ce2449280b8721ec4dbdc11cb71b2d94009c6",
+      "needed": [
+        "libm.so.6",
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libm.so.6": "/lib32/libm.so.6",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libmpg123.so.0.48.3",
+      "sha256": "b721abd017355310df694b2fab4c0c5fb78adc1a4efb63945869255faf3ad941",
+      "needed": [
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libogg.so.0.8.5",
+      "sha256": "54e126f60a055717bbfe8b45f8de2b0bce1531b1eebecfe4882252cd45f001f1",
+      "needed": [
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libopus.so.0.10.1",
+      "sha256": "3d69ad59cb00c8c30d8461cc96e6f73c699c3a415915dcf2d12853dac303a67d",
+      "needed": [
+        "libm.so.6",
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libm.so.6": "/lib32/libm.so.6",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libpsx.so.2.75",
+      "sha256": "d2801fcf3b392568724ec180b8e5494849d91f8aaaab7b88cb782ebe4cee32e0",
+      "needed": [
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libpulse-simple.so.0.1.1",
+      "sha256": "fa95775c018fe8333e1a6cd06cde7cef7b60b767e6bed3f9ff3b5fdf169b0878",
+      "needed": [
+        "libpulse.so.0",
+        "libpulsecommon-17.0.so",
+        "libc.so.6"
+      ],
+      "runpath": [
+        "/usr/lib/i386-linux-gnu/pulseaudio"
+      ],
+      "resolved": {
+        "libpulse.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libpulse.so.0",
+        "libpulsecommon-17.0.so": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/pulseaudio/libpulsecommon-17.0.so",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libpulse.so.0.24.3",
+      "sha256": "0bf63e5c7d5f5d8a0d452046e601641c607b436b028cd5e3e282cd7cca350ea8",
+      "needed": [
+        "libpulsecommon-17.0.so",
+        "libm.so.6",
+        "libdbus-1.so.3",
+        "libc.so.6"
+      ],
+      "runpath": [
+        "/usr/lib/i386-linux-gnu/pulseaudio"
+      ],
+      "resolved": {
+        "libpulsecommon-17.0.so": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/pulseaudio/libpulsecommon-17.0.so",
+        "libm.so.6": "/lib32/libm.so.6",
+        "libdbus-1.so.3": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libdbus-1.so.3",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libsndfile.so.1.0.37",
+      "sha256": "6057380c8593537add1f4bdfc1eb85eb83ce94365c410876950de73986086176",
+      "needed": [
+        "libFLAC.so.14",
+        "libvorbis.so.0",
+        "libvorbisenc.so.2",
+        "libopus.so.0",
+        "libogg.so.0",
+        "libmpg123.so.0",
+        "libmp3lame.so.0",
+        "libm.so.6",
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libFLAC.so.14": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libFLAC.so.14",
+        "libvorbis.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libvorbis.so.0",
+        "libvorbisenc.so.2": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libvorbisenc.so.2",
+        "libopus.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libopus.so.0",
+        "libogg.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libogg.so.0",
+        "libmpg123.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libmpg123.so.0",
+        "libmp3lame.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libmp3lame.so.0",
+        "libm.so.6": "/lib32/libm.so.6",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libsystemd.so.0.40.0",
+      "sha256": "07a20a86e91713db96e81f66b2ce013f95230fe14f549377d74a58f8a06a86d8",
+      "needed": [
+        "libcap.so.2",
+        "libm.so.6",
+        "libc.so.6",
+        "ld-linux.so.2"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libcap.so.2": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libcap.so.2",
+        "libm.so.6": "/lib32/libm.so.6",
+        "libc.so.6": "/lib32/libc.so.6",
+        "ld-linux.so.2": "/lib32/ld-linux.so.2"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libvorbis.so.0.4.9",
+      "sha256": "ed09d2c16e1c7c79194734941845bb70bf1c0414318b46a26b468e390499490d",
+      "needed": [
+        "libm.so.6",
+        "libogg.so.0",
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libm.so.6": "/lib32/libm.so.6",
+        "libogg.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libogg.so.0",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libvorbisenc.so.2.0.12",
+      "sha256": "91ba928298d78d7b9a3e9898e6956fbf3ec91bc962f77d643a5bec0db41f9f3a",
+      "needed": [
+        "libvorbis.so.0",
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libvorbis.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libvorbis.so.0",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/libxcb.so.1.1.0",
+      "sha256": "395cffd588f36632fdd89a617adb6d4d08216557057e3632e00a107fbb5a3963",
+      "needed": [
+        "libXau.so.6",
+        "libXdmcp.so.6",
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libXau.so.6": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libXau.so.6",
+        "libXdmcp.so.6": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libXdmcp.so.6",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    },
+    {
+      "file": "sysroot/usr/lib/i386-linux-gnu/pulseaudio/libpulsecommon-17.0.so",
+      "sha256": "6512313b9d34cc81fbb0419a90f8126e9d05ff60627624f7e2cbe10baea532c4",
+      "needed": [
+        "libm.so.6",
+        "libsndfile.so.1",
+        "libdbus-1.so.3",
+        "libX11-xcb.so.1",
+        "libX11.so.6",
+        "libxcb.so.1",
+        "libsystemd.so.0",
+        "libasyncns.so.0",
+        "libc.so.6"
+      ],
+      "runpath": [],
+      "resolved": {
+        "libm.so.6": "/lib32/libm.so.6",
+        "libsndfile.so.1": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libsndfile.so.1",
+        "libdbus-1.so.3": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libdbus-1.so.3",
+        "libX11-xcb.so.1": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libX11-xcb.so.1",
+        "libX11.so.6": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libX11.so.6",
+        "libxcb.so.1": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libxcb.so.1",
+        "libsystemd.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libsystemd.so.0",
+        "libasyncns.so.0": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libasyncns.so.0",
+        "libc.so.6": "/lib32/libc.so.6"
+      },
+      "unresolved": []
+    }
+  ],
+  "native_probe": {
+    "without_private_cache": [
+      "PA32_DLOPEN_FAIL libpulse.so.0: cannot open shared object file: No such file or directory",
+      "rc=3"
+    ],
+    "with_private_cache": [
+      "ns_ldcache=2b46350d35dc9f53",
+      "PA32_ABI pointer_bits=32",
+      "PA32_LIB version=17.0.0 file=<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libpulse.so.0",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libcap.so.2.75",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libXdmcp.so.6.0.0",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libXau.so.6.0.0",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libmp3lame.so.0.0.0",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libmpg123.so.0.48.3",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libogg.so.0.8.5",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libopus.so.0.10.1",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libvorbisenc.so.2.0.12",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libvorbis.so.0.4.9",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libFLAC.so.14.0.0",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libasyncns.so.0.3.1",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libsystemd.so.0.40.0",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libxcb.so.1.1.0",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libX11.so.6.4.0",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libX11-xcb.so.1.0.0",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libsndfile.so.1.0.37",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libdbus-1.so.3.38.3",
+      "PA32_MAP /usr/lib32/libm.so.6",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/pulseaudio/libpulsecommon-17.0.so",
+      "PA32_MAP <PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libpulse.so.0.24.3",
+      "PA32_MAP /usr/lib32/libc.so.6",
+      "PA32_MAP /usr/lib32/ld-linux.so.2",
+      "PA32_SERVER name=pulseaudio version=17.0-25-gc3305 default_sink=RDPSink rate=44100 channels=2",
+      "PA32_RESULT CONNECTED state=4",
+      "rc=0"
+    ]
+  },
+  "guest_maps_p32b": [
+    {
+      "process": "mldr32",
+      "sha256": "dcd00e8273e821602f2acdb3bfd1710113dce770a323f2be8cae6d0a494d3c81",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libasyncns.so.0.3.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "1f8802b453948d1342c019b5e455acef3d1ee80e966b445919754cf9e479218a",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libcap.so.2.75"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "d64f342fbe3e4328cb5c3a09a9a3ec161ebb7da55ed305aa32f751c76a17a765",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libdbus-1.so.3.38.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "240321f750854025b4714f6d78529965074e65e7a4c7b74d0d4b536a132435df",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libFLAC.so.14.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "1f52cea3c8dd943570301196da4ce2449280b8721ec4dbdc11cb71b2d94009c6",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libmp3lame.so.0.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "b721abd017355310df694b2fab4c0c5fb78adc1a4efb63945869255faf3ad941",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libmpg123.so.0.48.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "54e126f60a055717bbfe8b45f8de2b0bce1531b1eebecfe4882252cd45f001f1",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libogg.so.0.8.5"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "3d69ad59cb00c8c30d8461cc96e6f73c699c3a415915dcf2d12853dac303a67d",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libopus.so.0.10.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "0bf63e5c7d5f5d8a0d452046e601641c607b436b028cd5e3e282cd7cca350ea8",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libpulse.so.0.24.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6057380c8593537add1f4bdfc1eb85eb83ce94365c410876950de73986086176",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libsndfile.so.1.0.37"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "07a20a86e91713db96e81f66b2ce013f95230fe14f549377d74a58f8a06a86d8",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libsystemd.so.0.40.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "91ba928298d78d7b9a3e9898e6956fbf3ec91bc962f77d643a5bec0db41f9f3a",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libvorbisenc.so.2.0.12"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "ed09d2c16e1c7c79194734941845bb70bf1c0414318b46a26b468e390499490d",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libvorbis.so.0.4.9"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "dbd0437061af9899d4b93ee7621c0b8549125f907b98a2c48b4afd438b715221",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libX11.so.6.4.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "c3f1c52194698ad2f253e952f4d733f54b30011880861bc103bd68983938aaf6",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libX11-xcb.so.1.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "b2f4f87cc402421bf34f140a4ed028a8c0894acd44916a87da955dcbc25c54dc",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libXau.so.6.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "395cffd588f36632fdd89a617adb6d4d08216557057e3632e00a107fbb5a3963",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libxcb.so.1.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6f66e9a180f9fd8433ebbdf35ffc7b43a66190880e2e6fa20e5fa9ced0cb62f4",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/libXdmcp.so.6.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6512313b9d34cc81fbb0419a90f8126e9d05ff60627624f7e2cbe10baea532c4",
+      "file": "<PRIVATE>/sysroot/usr/lib/i386-linux-gnu/pulseaudio/libpulsecommon-17.0.so"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "73e22dd41a5404b75db70b4c51be08075ddec01261eeed91546655def92b284c",
+      "file": "/usr/lib32/ld-linux.so.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "f2ed349542c0be517ea7e66381f342eda08857e01772d6aa33916ca41702f61c",
+      "file": "/usr/lib32/libc.so.6"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "e578f5c12edbad0dcbf5a53dd04834dac70897890ce905978d2e5fc39c1aa858",
+      "file": "/usr/lib32/libm.so.6"
+    }
+  ],
+  "coreaudio_probe": [
+    {
+      "label": "ca32o",
+      "libdyld": "official",
+      "args": "",
+      "rc": 0,
+      "ns_ldcache": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "markers": [
+        "CA_ABI pointer_bits=32",
+        "CA_DEVICE_NAME status=0 name=PulseAudio",
+        "CA_FORMAT status=0 rate=44100.0 flags=0x1 bits=32 channels=2 bytes_per_frame=8"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ]
+    },
+    {
+      "label": "ca32os",
+      "libdyld": "official",
+      "args": "2500",
+      "rc": 0,
+      "ns_ldcache": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "markers": [
+        "CA_ABI pointer_bits=32",
+        "CA_DEVICE_NAME status=0 name=PulseAudio",
+        "CA_FORMAT status=0 rate=44100.0 flags=0x1 bits=32 channels=2 bytes_per_frame=8",
+        "CA_START status=0",
+        "CA_STOP status=0 callbacks=110 last_bytes=8192 buffers=1",
+        "CA_RESULT CALLBACKS"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ]
+    },
+    {
+      "label": "ca32t",
+      "libdyld": "tlv-overlay",
+      "args": "",
+      "rc": 0,
+      "ns_ldcache": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "markers": [
+        "CA_ABI pointer_bits=32",
+        "CA_DEVICE_NAME status=0 name=PulseAudio",
+        "CA_FORMAT status=0 rate=44100.0 flags=0x1 bits=32 channels=2 bytes_per_frame=8"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ]
+    },
+    {
+      "label": "ca32ts",
+      "libdyld": "tlv-overlay",
+      "args": "2500",
+      "rc": 0,
+      "ns_ldcache": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "markers": [
+        "CA_ABI pointer_bits=32",
+        "CA_DEVICE_NAME status=0 name=PulseAudio",
+        "CA_FORMAT status=0 rate=44100.0 flags=0x1 bits=32 channels=2 bytes_per_frame=8",
+        "CA_START status=0",
+        "CA_STOP status=0 callbacks=110 last_bytes=8192 buffers=1",
+        "CA_RESULT CALLBACKS"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ]
+    }
+  ],
+  "b12": [
+    {
+      "label": "p32a",
+      "mode": "play",
+      "libdyld": "tlv-overlay",
+      "ldcache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "program_sha256": "88d9bf9fcaf45172b0c6e30893add788f1a67338fddce56da53cd12db4d9d973",
+      "guest": "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+      "checks": [
+        "B12_IMAGE GetMediaSample /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime",
+        "B12_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B12_IMAGE GetHandleSize /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+        "B12 getmediasample_all PASS status=0 calls=6 bytes=352800 frames=88200 rate=44100 frame_bytes=4 last_call_bytes=25120 max_call_bytes=65536",
+        "B12 device_format_is_media_format PASS set=0 get=0 rate=44100 flags=0xe channels=2 bits=16 bytes_per_frame=4",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=1.980 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "server_during": "PA_INPUT index=76 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1",
+      "server_after": "PA_INPUTS count=0",
+      "verify": [
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "sounding_duration_s=1.997 expected_s=2.000",
+        "after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL",
+      "end": [
+        "seconds=4.316244488",
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0",
+        "seconds=8.00"
+      ]
+    },
+    {
+      "label": "p32b",
+      "mode": "play",
+      "libdyld": "tlv-overlay",
+      "ldcache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "program_sha256": "88d9bf9fcaf45172b0c6e30893add788f1a67338fddce56da53cd12db4d9d973",
+      "guest": "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+      "checks": [
+        "B12_IMAGE GetMediaSample /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime",
+        "B12_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B12_IMAGE GetHandleSize /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+        "B12 getmediasample_all PASS status=0 calls=6 bytes=352800 frames=88200 rate=44100 frame_bytes=4 last_call_bytes=25120 max_call_bytes=65536",
+        "B12 device_format_is_media_format PASS set=0 get=0 rate=44100 flags=0xe channels=2 bits=16 bytes_per_frame=4",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=1.986 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "server_during": "PA_INPUT index=77 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1",
+      "server_after": "PA_INPUTS count=0",
+      "verify": [
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "sounding_duration_s=1.997 expected_s=2.000",
+        "after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL",
+      "end": [
+        "seconds=4.412817153",
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0",
+        "seconds=8.00"
+      ]
+    },
+    {
+      "label": "p32c",
+      "mode": "play",
+      "libdyld": "tlv-overlay",
+      "ldcache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "program_sha256": "88d9bf9fcaf45172b0c6e30893add788f1a67338fddce56da53cd12db4d9d973",
+      "guest": "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+      "checks": [
+        "B12_IMAGE GetMediaSample /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime",
+        "B12_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B12_IMAGE GetHandleSize /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+        "B12 getmediasample_all PASS status=0 calls=6 bytes=352800 frames=88200 rate=44100 frame_bytes=4 last_call_bytes=25120 max_call_bytes=65536",
+        "B12 device_format_is_media_format PASS set=0 get=0 rate=44100 flags=0xe channels=2 bits=16 bytes_per_frame=4",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=1.991 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "server_during": "PA_INPUT index=78 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1",
+      "server_after": "PA_INPUTS count=0",
+      "verify": [
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "sounding_duration_s=1.997 expected_s=2.000",
+        "after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL",
+      "end": [
+        "seconds=4.379245980",
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0",
+        "seconds=8.00"
+      ]
+    },
+    {
+      "label": "p32d",
+      "mode": "play",
+      "libdyld": "tlv-overlay",
+      "ldcache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "program_sha256": "88d9bf9fcaf45172b0c6e30893add788f1a67338fddce56da53cd12db4d9d973",
+      "guest": "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+      "checks": [
+        "B12_IMAGE GetMediaSample /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime",
+        "B12_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B12_IMAGE GetHandleSize /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+        "B12 getmediasample_all PASS status=0 calls=6 bytes=352800 frames=88200 rate=44100 frame_bytes=4 last_call_bytes=25120 max_call_bytes=65536",
+        "B12 device_format_is_media_format PASS set=0 get=0 rate=44100 flags=0xe channels=2 bits=16 bytes_per_frame=4",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=1.981 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "server_during": "PA_INPUT index=79 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1",
+      "server_after": "PA_INPUTS count=0",
+      "verify": [
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "sounding_duration_s=1.997 expected_s=2.000",
+        "after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL",
+      "end": [
+        "seconds=4.343416716",
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0",
+        "seconds=8.00"
+      ]
+    },
+    {
+      "label": "s32a",
+      "mode": "stoprestart",
+      "libdyld": "tlv-overlay",
+      "ldcache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "program_sha256": "88d9bf9fcaf45172b0c6e30893add788f1a67338fddce56da53cd12db4d9d973",
+      "guest": "guest_rc=0 B12_SUMMARY checks=14 failures=0",
+      "checks": [
+        "B12_IMAGE GetMediaSample /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime",
+        "B12_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B12_IMAGE GetHandleSize /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+        "B12 getmediasample_all PASS status=0 calls=6 bytes=352800 frames=88200 rate=44100 frame_bytes=4 last_call_bytes=25120 max_call_bytes=65536",
+        "B12 device_format_is_media_format PASS set=0 get=0 rate=44100 flags=0xe channels=2 bits=16 bytes_per_frame=4",
+        "B12 stop_silences_ioproc PASS stop_status=0 pos_at_stop=131072 callbacks_at_stop=16 callbacks_after_stop=0 pos_after=131072",
+        "B12 second_play PASS status=0",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=2.063 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "server_during": "PA_INPUTS count=0",
+      "server_after": "PA_INPUTS count=0",
+      "verify": [
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "first_play_audible_s=0.649 silent_gap_after_stop_s=0.744",
+        "sounding_duration_s=1.997 expected_s=2.000",
+        "after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=28687/88200 DIFFERENT",
+      "end": [
+        "seconds=5.763326761",
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0",
+        "seconds=9.00"
+      ],
+      "bitexact_second_pass": "BITEXACT alignment_frame=159744 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "s32b",
+      "mode": "stoprestart",
+      "libdyld": "tlv-overlay",
+      "ldcache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "program_sha256": "88d9bf9fcaf45172b0c6e30893add788f1a67338fddce56da53cd12db4d9d973",
+      "guest": "guest_rc=0 B12_SUMMARY checks=14 failures=0",
+      "checks": [
+        "B12_IMAGE GetMediaSample /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime",
+        "B12_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B12_IMAGE GetHandleSize /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+        "B12 getmediasample_all PASS status=0 calls=6 bytes=352800 frames=88200 rate=44100 frame_bytes=4 last_call_bytes=25120 max_call_bytes=65536",
+        "B12 device_format_is_media_format PASS set=0 get=0 rate=44100 flags=0xe channels=2 bits=16 bytes_per_frame=4",
+        "B12 stop_silences_ioproc PASS stop_status=0 pos_at_stop=131072 callbacks_at_stop=16 callbacks_after_stop=0 pos_after=131072",
+        "B12 second_play PASS status=0",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=2.062 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "server_during": "PA_INPUTS count=0",
+      "server_after": "PA_INPUTS count=0",
+      "verify": [
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "first_play_audible_s=0.649 silent_gap_after_stop_s=0.744",
+        "sounding_duration_s=1.997 expected_s=2.000",
+        "after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=28687/88200 DIFFERENT",
+      "end": [
+        "seconds=5.783797428",
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0",
+        "seconds=9.00"
+      ],
+      "bitexact_second_pass": "BITEXACT alignment_frame=159744 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "s32c",
+      "mode": "stoprestart",
+      "libdyld": "tlv-overlay",
+      "ldcache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "program_sha256": "88d9bf9fcaf45172b0c6e30893add788f1a67338fddce56da53cd12db4d9d973",
+      "guest": "guest_rc=0 B12_SUMMARY checks=14 failures=0",
+      "checks": [
+        "B12_IMAGE GetMediaSample /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime",
+        "B12_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B12_IMAGE GetHandleSize /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+        "B12 getmediasample_all PASS status=0 calls=6 bytes=352800 frames=88200 rate=44100 frame_bytes=4 last_call_bytes=25120 max_call_bytes=65536",
+        "B12 device_format_is_media_format PASS set=0 get=0 rate=44100 flags=0xe channels=2 bits=16 bytes_per_frame=4",
+        "B12 stop_silences_ioproc PASS stop_status=0 pos_at_stop=131072 callbacks_at_stop=16 callbacks_after_stop=0 pos_after=131072",
+        "B12 second_play PASS status=0",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=2.062 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "server_during": "PA_INPUTS count=0",
+      "server_after": "PA_INPUTS count=0",
+      "verify": [
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "first_play_audible_s=0.649 silent_gap_after_stop_s=0.744",
+        "sounding_duration_s=1.997 expected_s=2.000",
+        "after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=28687/88200 DIFFERENT",
+      "end": [
+        "seconds=5.770733382",
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0",
+        "seconds=9.00"
+      ],
+      "bitexact_second_pass": "BITEXACT alignment_frame=159744 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "s32d",
+      "mode": "stoprestart",
+      "libdyld": "tlv-overlay",
+      "ldcache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "program_sha256": "88d9bf9fcaf45172b0c6e30893add788f1a67338fddce56da53cd12db4d9d973",
+      "guest": "guest_rc=0 B12_SUMMARY checks=14 failures=0",
+      "checks": [
+        "B12_IMAGE GetMediaSample /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime",
+        "B12_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B12_IMAGE GetHandleSize /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+        "B12 getmediasample_all PASS status=0 calls=6 bytes=352800 frames=88200 rate=44100 frame_bytes=4 last_call_bytes=25120 max_call_bytes=65536",
+        "B12 device_format_is_media_format PASS set=0 get=0 rate=44100 flags=0xe channels=2 bits=16 bytes_per_frame=4",
+        "B12 stop_silences_ioproc PASS stop_status=0 pos_at_stop=131072 callbacks_at_stop=16 callbacks_after_stop=0 pos_after=131072",
+        "B12 second_play PASS status=0",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=2.073 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "server_during": "PA_INPUTS count=0",
+      "server_after": "PA_INPUTS count=0",
+      "verify": [
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "first_play_audible_s=0.649 silent_gap_after_stop_s=0.744",
+        "sounding_duration_s=1.997 expected_s=2.000",
+        "after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=28687/88200 DIFFERENT",
+      "end": [
+        "seconds=5.785183786",
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0",
+        "seconds=9.00"
+      ],
+      "bitexact_second_pass": "BITEXACT alignment_frame=159744 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "o32p",
+      "mode": "play",
+      "libdyld": "official",
+      "ldcache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "program_sha256": "88d9bf9fcaf45172b0c6e30893add788f1a67338fddce56da53cd12db4d9d973",
+      "guest": "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+      "checks": [
+        "B12_IMAGE GetMediaSample /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime",
+        "B12_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B12_IMAGE GetHandleSize /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+        "B12 getmediasample_all PASS status=0 calls=6 bytes=352800 frames=88200 rate=44100 frame_bytes=4 last_call_bytes=25120 max_call_bytes=65536",
+        "B12 device_format_is_media_format PASS set=0 get=0 rate=44100 flags=0xe channels=2 bits=16 bytes_per_frame=4",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=2.033 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "server_during": "PA_INPUT index=90 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1",
+      "server_after": "PA_INPUTS count=0",
+      "verify": [
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "sounding_duration_s=1.997 expected_s=2.000",
+        "after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL",
+      "end": [
+        "seconds=4.328319249",
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0",
+        "seconds=8.00"
+      ]
+    },
+    {
+      "label": "s32o",
+      "mode": "stoprestart",
+      "libdyld": "official",
+      "ldcache_sha256": "2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d",
+      "program_sha256": "88d9bf9fcaf45172b0c6e30893add788f1a67338fddce56da53cd12db4d9d973",
+      "guest": "guest_rc=0 B12_SUMMARY checks=14 failures=0",
+      "checks": [
+        "B12_IMAGE GetMediaSample /System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime",
+        "B12_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B12_IMAGE GetHandleSize /System/Library/Frameworks/CoreServices.framework/Versions/A/Frameworks/CarbonCore.framework/Versions/A/CarbonCore",
+        "B12 getmediasample_all PASS status=0 calls=6 bytes=352800 frames=88200 rate=44100 frame_bytes=4 last_call_bytes=25120 max_call_bytes=65536",
+        "B12 device_format_is_media_format PASS set=0 get=0 rate=44100 flags=0xe channels=2 bits=16 bytes_per_frame=4",
+        "B12 stop_silences_ioproc PASS stop_status=0 pos_at_stop=122880 callbacks_at_stop=15 callbacks_after_stop=0 pos_after=122880",
+        "B12 second_play PASS status=0",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=2.093 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "server_during": "PA_INPUTS count=0",
+      "server_after": "PA_INPUTS count=0",
+      "verify": [
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "first_play_audible_s=0.602 silent_gap_after_stop_s=0.744",
+        "sounding_duration_s=1.997 expected_s=2.000",
+        "after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=26638/88200 DIFFERENT",
+      "end": [
+        "seconds=5.715308910",
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0",
+        "seconds=9.00"
+      ],
+      "bitexact_second_pass": "BITEXACT alignment_frame=157696 identical_frames=88200/88200 IDENTICAL"
+    }
+  ],
+  "attempts_not_executed": [
+    {
+      "label": "p32o",
+      "reason": "label collides with an existing QT-B12 prefix of 14 November; run-guest-ldc.sh refused it (test ! -e prefix) before starting Darling; nothing overwritten; rerun as o32p"
+    }
+  ]
+}
