@@ -426,6 +426,66 @@ static int fix2(const char *media, const char *out)
             AudioConverterDispose(c);
     }
 
+    /* 7a. formats with padding (8 bytes per 16-bit stereo frame): the converter core handles packed
+     * samples only. Either the call is refused before writing (data untouched; the size argument is
+     * reset to 0 only for kAudioConverterErr_InvalidOutputSize), or an error during the conversion
+     * reports no output (size 0); never noErr with misread or partial data. After an error during
+     * the conversion the buffer contents are not promised intact, only the bytes beyond its capacity. */
+    enter("padded_destination");
+    {
+        AudioStreamBasicDescription pad = le;
+        pad.mBytesPerFrame = pad.mBytesPerPacket = 8;
+        pad.mFormatFlags &= ~kAudioFormatFlagIsPacked;
+        c = NULL;
+        OSStatus nw = AudioConverterNew(&le, &pad, &c);
+        fill_canary(o, O);
+        osz = 1000 * 8;
+        OSStatus a = c ? AudioConverterConvertBuffer(c, 1000 * 4, s16, &osz, o) : nw;
+        bool before = canary_from(o, 0, O), beyond = canary_from(o, 1000 * 8, O);
+        snprintf(d, sizeof d, "new=%d status=%d out_bytes=%u untouched=%d beyond_capacity_intact=%d", (int)nw, (int)a, (unsigned)osz, before, beyond);
+        /* refused before writing (data untouched), or failed during the conversion (size 0, nothing beyond) */
+        check(a != noErr && (before || (osz == 0 && beyond)), "padded_destination", d);
+        if (c)
+            AudioConverterDispose(c);
+    }
+    enter("padded_source");
+    {
+        AudioStreamBasicDescription pad = le;
+        pad.mBytesPerFrame = pad.mBytesPerPacket = 8;
+        pad.mFormatFlags &= ~kAudioFormatFlagIsPacked;
+        c = NULL;
+        OSStatus nw = AudioConverterNew(&pad, &be, &c);
+        fill_canary(o, O);
+        osz = 1000 * 4;
+        OSStatus a = c ? AudioConverterConvertBuffer(c, 1000 * 8, s16, &osz, o) : nw;
+        bool before = canary_from(o, 0, O), beyond = canary_from(o, 1000 * 4, O);
+        snprintf(d, sizeof d, "new=%d status=%d out_bytes=%u untouched=%d beyond_capacity_intact=%d", (int)nw, (int)a, (unsigned)osz, before, beyond);
+        check(a != noErr && (before || (osz == 0 && beyond)), "padded_source", d);
+        if (c)
+            AudioConverterDispose(c);
+    }
+
+    /* 7b. packed 24-bit destination: exact (S16 v -> S24LE bytes 00 lo hi) or an error with no output */
+    enter("s24_destination");
+    {
+        AudioStreamBasicDescription s24 = le;
+        s24.mBitsPerChannel = 24;
+        s24.mBytesPerFrame = s24.mBytesPerPacket = 6;
+        c = NULL;
+        OSStatus nw = AudioConverterNew(&le, &s24, &c);
+        fill_canary(o, O);
+        osz = 1000 * 6;
+        OSStatus a = c ? AudioConverterConvertBuffer(c, 1000 * 4, s16, &osz, o) : nw;
+        bool exact = osz == 1000 * 6;
+        for (UInt32 i = 0; exact && i < 1000 * 2; ++i)
+            exact = o[3 * i] == 0 && o[3 * i + 1] == s16[2 * i] && o[3 * i + 2] == s16[2 * i + 1];
+        bool beyond = canary_from(o, 1000 * 6, O);
+        snprintf(d, sizeof d, "new=%d status=%d out_bytes=%u exact=%d beyond_capacity_intact=%d", (int)nw, (int)a, (unsigned)osz, exact, beyond);
+        check(beyond && ((a == noErr && exact) || (a != noErr && osz == 0)), "s24_destination", d);
+        if (c)
+            AudioConverterDispose(c);
+    }
+
     /* 7. S16LE -> Float32 through ConvertBuffer (exact: s/32768), 4 096 frames then varying sizes */
     enter("convertbuffer_f32_whole_file");
     c = NULL;

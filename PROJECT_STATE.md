@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## ATB-FIX2-R2b — `AudioConverterConvertBuffer` corrigé sur `master` (15 novembre 2026)
+
+**ATB-FIX2-R2b intégré ; R2 remplacé.** La revue de R2 a trouvé une erreur silencieuse : une entrée PCM à trous rendait `noErr` avec des données mal lues. R2b refuse le PCM non tassé avant toute écriture (`fmt?`) et annonce une taille 0 pour toute erreur en cours de conversion ; une taille 0 ne garantit pas un tampon intact, seuls les refus avant conversion le garantissent. Binaire du commit de production, i386 et x86_64 : `fix2` 27/27, B13 26/26, FIX1 6/6, limites 8/8, B13-D et B12 identiques au bit près, exports inchangés. `AudioConverterConvertBuffer` ne plante plus sur `master`. `FillComplexBuffer` lit toujours mal le PCM non tassé (hors de ce correctif). Hôte inchangé. [Rapport](docs/evidence/audiotoolbox-b13-fix2-r2b-2026-11-15.md).
+
 ## B13-INT — AudioToolbox corrigé sur `master` (15 novembre 2026)
 
 **ATB-FIX1 intégré ; ATB-FIX2 non intégré ; défaut 3 reproduit.** Requalification sur un build privé de `master` `397e94d4` (libc++ `061279eb`), avec la libdyld officielle. Le binaire de production FIX1 donne 26/26 et 6/6 en i386 et x86_64 ; le μ-law suit tout le chemin jusqu'à PulseAudio, identique au bit près ; B12 i386 est inchangé. ATB-FIX2 d'origine est rejeté : il rend `noErr` en tronquant les sorties trop petites et le rééchantillonnage. ATB-FIX2-R2 (tout ou rien) passe 24/24 dans les deux architectures, mais reste privé jusqu'à décision. `AudioConverterConvertBuffer` plante donc toujours sur `master`. Défaut 3 : les tables d'extensions, d'UTI et de types MIME sont vides en x86_64, à cause d'une taille de 4 octets pour un `CFArrayRef` ; 27/27, non corrigé. Hôte inchangé. [Rapport](docs/evidence/audiotoolbox-b13-integration-2026-11-15.md).

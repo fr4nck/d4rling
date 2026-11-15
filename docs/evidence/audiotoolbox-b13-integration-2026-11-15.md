@@ -202,6 +202,8 @@ Aucun échec intermittent. Les SIGSEGV sont tous attendus et reproductibles.
 - Codecs compressés : un oracle par codec.
 - Darling amont : contribution seulement sur décision distincte.
 
+**Note du 15 novembre 2026 (ATB-FIX2-R2b).** La décision attendue ci-dessus a été prise : R2 n'est pas intégré. La revue finale y a trouvé une erreur silencieuse sur le PCM à trous. C'est l'amendement R2b qui devient le commit `fix(audiotoolbox): repair AudioConverterConvertBuffer callback`, requalifié sur le binaire de ce commit. Ce rapport reste inchangé pour le reste. Voir le [rapport R2b](audiotoolbox-b13-fix2-r2b-2026-11-15.md).
+
 [Résultats structurés](../../tests/regressions/audiotoolbox-b13/results-b13-integration.json) · [reproduction](../../tests/regressions/audiotoolbox-b13/README.md).
 
 Correctifs, témoins et outils écrits avec assistance IA, à partir des en-têtes publics AudioToolbox, de l'API publique FFmpeg et du code de Darling. Aucun binaire Apple, paquet ou chemin personnel publié. Builds, candidats binaires, captures et journaux bruts restent dans l'espace privé B13.

@@ -23,17 +23,21 @@ comparées hors de l'invité à un oracle indépendant de FFmpeg.
 | `tools/private_ffmpeg.py` | `plan` : épinglage des paquets FFmpeg i386 à extraire en privé, sans téléchargement ; `prepare … --allow-download` : extraction privée et cache commun FFmpeg + PulseAudio |
 | `closure-ffmpeg-i386.json`, `packages-private-ffmpeg.json`, `elf-ffmpeg-amd64.json` | Fermetures et plan |
 | `results-b13.json` | Résultats exécutés le 15 novembre (référence x86_64 et premier obstacle i386), sans chemins personnels |
-| `b13-fix.c` | Tests avant/après des correctifs : `fix1` (μ-law → S16 par AudioConverter, sans puis avec cookie magique) ; `fix2` **v2** (B13-INT, 24 contrôles, contrat « tout ou rien » : arguments, listes à deux tampons de capacités différentes, sortie trop petite refusée sans écriture, conversions successives de tailles variables sur un même convertisseur, rééchantillonnage refusé). La v1 (13 contrôles, conversion partielle) reste à `0764f093` |
+| `b13-fix.c` | Tests avant/après des correctifs : `fix1` (μ-law → S16 par AudioConverter, sans puis avec cookie magique) ; `fix2` **v2** (B13-INT, 24 contrôles, contrat « tout ou rien » : arguments, listes à deux tampons de capacités différentes, sortie trop petite refusée sans écriture, conversions successives de tailles variables sur un même convertisseur, rééchantillonnage refusé), **étendue à 27 contrôles** par la revue R2b (PCM à trous en sortie et en entrée, 24 bits tassés à l'octet près). Version figée : SHA-256 `e97b354f…`. La v1 (13 contrôles, conversion partielle) reste à `0764f093` |
+| `b13-limits.c` | Revue R2b, hors des 27 contrôles : limites de taille avant conversion (débordement 32 bits du contrôle de format avec un nombre de canaux aberrant, tailles d'octets au-delà de 32 bits) ; 8 contrôles |
 | `verify_b13_fix.py` | Comparaison des sorties de `b13-fix` à `b13-oracle.json` (v2 : quatre fichiers pour `fix2`) |
 | `b13-afm.c`, `verify_b13_afm.py` | Défaut 3 (test seul) : propriétés `CFArrayRef` des composants AudioFile lues avec une taille de 4 octets ; composant WAVE interrogé directement (taille 4 / `sizeof(CFArrayRef)`), tables globales, recherche par extension, ouverture avec et sans indice ; 27 attendus fixés avant les essais |
 | `fixes/ATB-FIX1.patch` | Correctif ATB-FIX1, **intégré** à `master` le 15 novembre (commit `fix(audiotoolbox): initialize FFmpeg decoders from source ASBD`) |
 | `fixes/ATB-FIX2.patch` | Candidat ATB-FIX2 d'origine, **rejeté** par la revue B13-INT (conversion partielle et rééchantillonnage rendus `noErr` en tronquant, listes à plusieurs tampons mal traitées) |
-| `fixes/ATB-FIX2-R2.patch` | Candidat ATB-FIX2-R2 (tout ou rien, refus explicites), qualifié en privé, **non appliqué** : intégration soumise à décision |
+| `fixes/ATB-FIX2-R2.patch` | Candidat ATB-FIX2-R2, **remplacé par R2b** : une entrée PCM à trous y rend `noErr` avec des données mal lues, et une erreur en cours de conversion y annonce une taille partielle |
+| `fixes/ATB-FIX2-R2b.patch` | Correctif ATB-FIX2-R2b, **intégré** à `master` le 15 novembre (commit `fix(audiotoolbox): repair AudioConverterConvertBuffer callback`) |
 | `tools/build_candidate.py` | Candidat AudioToolbox privé : recompile seulement les sources substituées avec la commande exacte du build B11E, relie, signe, prépare une couche overlay ; vérifie que le build B11E est inchangé ; sans substitution, reproduit la référence |
 | `tools/run-guest-ldc.sh` | Banc AUDIO-I386 + empreinte d'AudioToolbox vue dans l'espace de noms (`PREFLIGHT ns_audiotoolbox`) |
 | `tools/observe-maps.sh` | Observateur hôte des ELF mappés (motif paramétrable) |
 | `tools/collect_fix_results.py` | Collecte de `results-b13-i386-fixes.json` |
 | `results-b13-i386-fixes.json` | Résultats de la phase i386 et des correctifs |
+| `results-b13-fix2-r2b.json` | ATB-FIX2-R2b : candidats R2, R2 « taille 0 seule » et R2b, binaire du commit de production, limites, B13-D, B12, images ELF, état de l'hôte |
+| `tools/collect_r2b_results.py` | Collecte de `results-b13-fix2-r2b.json` |
 | `results-b13-integration.json` | B13-INT : build privé de `master`, exports, matrice de 70 essais, B13-D, B12, images ELF chargées, défaut 3, état de l'hôte |
 | `tools/materialize-master.sh`, `tools/materialize-master-nested.sh` | Sous-modules de la worktree `master`, hors ligne, depuis les magasins locaux (libc++ `061279eb` depuis l'espace LIBCXX-LEGACY-01) |
 | `tools/build-master.sh` | Build privé `gui_stubs` de `master`, mêmes options que le build B11E |
@@ -114,3 +118,24 @@ python3 -I verify_b13_afm.py "$T/runs/afm/i386" "$T/runs/afm/x86_64"   # journau
 B13-D et B12 se rejouent avec `WIT=$T/mwit INST=$T/mbuild/private-install`
 et `LAYER` pointant sur la couche du candidat (`b13-play-run.sh`, puis
 `b12-run-ldc.sh` de l'espace AUDIO-I386).
+
+## ATB-FIX2-R2b (15 novembre 2026)
+
+Rapport : [docs/evidence/audiotoolbox-b13-fix2-r2b-2026-11-15.md](../../../docs/evidence/audiotoolbox-b13-fix2-r2b-2026-11-15.md).
+Même disposition privée ; `mwit3` contient le témoin `b13-fix` à 27 contrôles, `mwit-lim` le témoin de limites.
+
+```sh
+T=$HOME/d4wrling-work/validation/audiotoolbox-b13-20261115
+(cd "$T/probe" && for a in i386 x86_64; do for w in mwit3:b13-fix.c mwit-lim:b13-limits.c; do
+  B13_BUILD=$T/mbuild B13_SRC=$T/src CXX=1 MACOSX_SDK=… bash "$T/tools/build.sh" $a "$T/${w%%:*}" ${w#*:} AudioToolbox CoreAudio CoreFoundation; done; done)
+# binaire du commit de production, recompilé dans le build master, en couche overlay :
+(cd "$T/mbuild" && ninja src/CoreAudio/AudioToolbox/AudioToolbox)
+P=$T/mfix/cand-prod2/layer/System/Library/Frameworks/AudioToolbox.framework/Versions/A
+mkdir -p "$P" && cp "$T/mbuild/src/CoreAudio/AudioToolbox/AudioToolbox" "$P/"
+export INST=$T/mbuild/private-install LDCACHE=$T/private-ffmpeg-20261115/ld.so.cache
+LAYER=$T/mfix/cand-prod2/layer bash tools/run-b13.sh zbi "$T/mwit3/b13-fix-i386" normal 120 fix2 "/Volumes/SystemRoot$T/media" "/Volumes/SystemRoot$T/runs/out/zbi"
+python3 -I verify_b13_fix.py "$T/media" "$T/runs/out/zbi" fix2
+LAYER=$T/mfix/cand-prod2/layer bash tools/run-b13.sh zli "$T/mwit-lim/b13-limits-i386" normal 60
+```
+
+B13-D, Stop/Play et B12 se rejouent comme pour B13-INT, avec `LAYER=$T/mfix/cand-prod2/layer`.

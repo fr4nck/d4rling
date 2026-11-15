@@ -1,0 +1,2205 @@
+{
+  "lot": "B13 / ATB-FIX2-R2b",
+  "date": "2026-11-15",
+  "production_commit": "10d8a58ae0818e0813f619e3f647d884fa20a430",
+  "parent": "7b79f17cd38f274e0c89ab29b328ac25272e2d47",
+  "files": [
+    " src/CoreAudio/AudioToolbox/AudioConverter.cpp   | 160 +++++++++++++++++++-----",
+    " src/CoreAudio/AudioToolbox/AudioConverterImpl.h |   2 +",
+    " 2 files changed, 131 insertions(+), 31 deletions(-)"
+  ],
+  "patch_sha256": "3d040549be21386f932dfab4bc6247b732fbe4830a2ce6e374fe7457dfe1fe0b",
+  "rebuild": {
+    "command": "ninja -j 14 src/CoreAudio/AudioToolbox/AudioToolbox (master build, FIX1 included)",
+    "log_tail": [
+      "[3/4] Linking CXX shared library src/CoreAudio/AudioToolbox/AudioToolbox",
+      "rc=0"
+    ]
+  },
+  "reference_installation_audiotoolbox": "c86bde57c0ad5c956d70908a0b4080730fc6806efd09732721707ed0ed8c177b",
+  "binaries": {
+    "prod2": {
+      "role": "production commit rebuilt in the master build",
+      "sha256": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "i386": {
+        "__text": "c469122196171d143ed405e437b896df381671c30bcf49c39dab9ca299803eb0",
+        "__const": "06a571b477657ef3c02639743883d4eee35035cbeedd1b4e9f60287649acd2ab",
+        "__cstring": "b892e421512bdaa5b51c68356e48b493fac6202ab585ddedc1c5e2c021803322",
+        "exports": 655,
+        "exports_equal_master_reference": true
+      },
+      "x86_64": {
+        "__text": "71053dc3556eb54e7b10808cff332414b5d6cddd340ed263b5706fdec5b3fba8",
+        "__const": "54a4ef9db9c16d2246b7a59e62d69781e90a113c363d85954bc696b0080ab32d",
+        "__cstring": "8f684ca671e28530e7782a39f83c241a5e15af89d7dd1d466b9046e723af13ae",
+        "exports": 672,
+        "exports_equal_master_reference": true
+      }
+    },
+    "r2b1": {
+      "role": "private candidate R2b (qualified before the GO)",
+      "sha256": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "i386": {
+        "__text": "c469122196171d143ed405e437b896df381671c30bcf49c39dab9ca299803eb0",
+        "__const": "06a571b477657ef3c02639743883d4eee35035cbeedd1b4e9f60287649acd2ab",
+        "__cstring": "b892e421512bdaa5b51c68356e48b493fac6202ab585ddedc1c5e2c021803322",
+        "exports": 655,
+        "exports_equal_master_reference": true
+      },
+      "x86_64": {
+        "__text": "71053dc3556eb54e7b10808cff332414b5d6cddd340ed263b5706fdec5b3fba8",
+        "__const": "54a4ef9db9c16d2246b7a59e62d69781e90a113c363d85954bc696b0080ab32d",
+        "__cstring": "8f684ca671e28530e7782a39f83c241a5e15af89d7dd1d466b9046e723af13ae",
+        "exports": 672,
+        "exports_equal_master_reference": true
+      },
+      "build_tree_unchanged": true,
+      "reference_build_sha256": "0418b788fd1cf00b22572442561660ccd0e36c40bec741d62abbb62388173ebf"
+    },
+    "r2a1": {
+      "role": "R2 as published (anomalies reproduced)",
+      "sha256": "4fac63017c43110d0b57291fa7b23db8afbeee175e8afb75710565aa83f26385",
+      "i386": {
+        "__text": "52dec55778213085068715adae624f7763e1e0625bd00de5a10589f9f69cb7d2",
+        "__const": "06a571b477657ef3c02639743883d4eee35035cbeedd1b4e9f60287649acd2ab",
+        "__cstring": "b892e421512bdaa5b51c68356e48b493fac6202ab585ddedc1c5e2c021803322",
+        "exports": 655,
+        "exports_equal_master_reference": true
+      },
+      "x86_64": {
+        "__text": "012391e343dfc979aefa604dc90ab586fc6f11f2e0bc85475e3eb04179d8f542",
+        "__const": "54a4ef9db9c16d2246b7a59e62d69781e90a113c363d85954bc696b0080ab32d",
+        "__cstring": "8f684ca671e28530e7782a39f83c241a5e15af89d7dd1d466b9046e723af13ae",
+        "exports": 672,
+        "exports_equal_master_reference": true
+      },
+      "build_tree_unchanged": true,
+      "reference_build_sha256": "0418b788fd1cf00b22572442561660ccd0e36c40bec741d62abbb62388173ebf"
+    },
+    "r2s1": {
+      "role": "test only: R2 + output size 0 on error",
+      "sha256": "7cb9f5f8aa1ebbbdde6fe4db8399bc81b239898b7935ba9ca861d8a47d6f8479",
+      "i386": {
+        "__text": "35dd88ba2bfb2f37cd9946d5cf040f52e1300c79110558d7bf2f0dc650dd0399",
+        "__const": "06a571b477657ef3c02639743883d4eee35035cbeedd1b4e9f60287649acd2ab",
+        "__cstring": "b892e421512bdaa5b51c68356e48b493fac6202ab585ddedc1c5e2c021803322",
+        "exports": 655,
+        "exports_equal_master_reference": true
+      },
+      "x86_64": {
+        "__text": "717934cbf58eea41f8bd334ea278755d60332a3d0c20016bbdc771a81b269b84",
+        "__const": "54a4ef9db9c16d2246b7a59e62d69781e90a113c363d85954bc696b0080ab32d",
+        "__cstring": "8f684ca671e28530e7782a39f83c241a5e15af89d7dd1d466b9046e723af13ae",
+        "exports": 672,
+        "exports_equal_master_reference": true
+      },
+      "build_tree_unchanged": true,
+      "reference_build_sha256": "0418b788fd1cf00b22572442561660ccd0e36c40bec741d62abbb62388173ebf"
+    },
+    "prodref": {
+      "role": "FIX1 production (method control)",
+      "sha256": "0418b788fd1cf00b22572442561660ccd0e36c40bec741d62abbb62388173ebf",
+      "i386": {
+        "__text": "966270c6c8d109841e7f483a950a338d4d179d21416cdb985ce938f94c2a8e40",
+        "__const": "c82409682b9205542c3c607e78f56cca2fb8bc21fcbb1a492dd604dcbfea59be",
+        "__cstring": "99e852fcc2753c0e8aab04c833ce64e6a5f5c537e8a980c04c36df3174593ac9",
+        "exports": 655,
+        "exports_equal_master_reference": true
+      },
+      "x86_64": {
+        "__text": "22f24064f52829ae00ebd18cea1c6e6714996c36dd5ce28e0097c0572293661d",
+        "__const": "54a4ef9db9c16d2246b7a59e62d69781e90a113c363d85954bc696b0080ab32d",
+        "__cstring": "13e9411357eda9d437f0819dcbd7a29f4e8e78676935877cbc4ec1cb45daa5b5",
+        "exports": 672,
+        "exports_equal_master_reference": true
+      },
+      "build_tree_unchanged": true,
+      "reference_build_sha256": "0418b788fd1cf00b22572442561660ccd0e36c40bec741d62abbb62388173ebf"
+    }
+  },
+  "witnesses": {
+    "b13-fix.c (27 controls, frozen)": "e97b354fbd8d074a63d62eabcee04186514f6f5af017842d69d06e3bb6d5cfd3",
+    "b13-limits.c": "6882aa5d4e44bafd23ed6ffab95d1d269f24191e31fb0e20408819cc06a662a4",
+    "mwit3/b13-fix-i386": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+    "mwit3/b13-fix-x86_64": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+    "mwit-lim/b13-limits-i386": "2e4887c9b442ab92de5f8ae74d58aad19cd56975d1c0f83fa97e4cb4a3b600fa",
+    "mwit-lim/b13-limits-x86_64": "e9e637c1550d4a913074bf0724a9fbb4b27d10387779ba46c8e6569ebb2007df",
+    "mwit/b13-atb-i386": "3951c28a59503db01fa2473bec9b14eab2baa84624f3d3401dd1c3340dbb28d7",
+    "mwit/b13-atb-x86_64": "906ca418dbceab4c842097c3377f76c5ec8b2739fb30415a3ad9f8caa52a2e0c",
+    "mwit/b13-fix-v1-i386": "9f2a3b470be62f59bdd9b6f0439b91bb45cbf8a9f96529c3d39426d2c2018977",
+    "mwit/b13-fix-v1-x86_64": "98a1ed36778b13f15a165ab3448c6dd88d4442e366d0bf3f46be97ebaf20ee24"
+  },
+  "production": [
+    {
+      "label": "zpi",
+      "rc": 0,
+      "program_sha256": "3951c28a59503db01fa2473bec9b14eab2baa84624f3d3401dd1c3340dbb28d7",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/zpi",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13_SUMMARY checks=40 failures=0"
+      ],
+      "checks": [],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2",
+      "verify": [
+        "VERIFY_SUMMARY pass=26 fail=0"
+      ],
+      "outputs_sha256": {
+        "bad-trunc.wav.packets": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423",
+        "conv-s16le-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "demo-s16.aiff.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.aiff.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.caf.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.caf.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.wav.packets": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "demo-s16.wav.pd1000": "71866c6e01a1d8e1984c0d2dac4544147c1b355dfab4f3f3cf20c2ec1aae5afc",
+        "demo-ulaw.wav.packets": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+        "demo-ulaw.wav.pd1000": "b0108ca1bbbcc6334a4e995b53c3820466bc71dc60e4e236f53c0135768b4976",
+        "ext-aiff-s16le.raw": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "ext-ulaw-s16.raw": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "ext-wav-f32-48k.raw": "9693e8ca9b50f3dc1522219fadea2fa58efe812a88860ff6c97930dacdf39dd1",
+        "ext-wav-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0"
+      }
+    },
+    {
+      "label": "zci",
+      "rc": 0,
+      "program_sha256": "3951c28a59503db01fa2473bec9b14eab2baa84624f3d3401dd1c3340dbb28d7",
+      "args": "convertbuffer /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/zci",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [],
+      "checks": [],
+      "failures": [],
+      "observation": [
+        "B13_OBS convertbuffer_enter new_status=0",
+        "B13_OBS converter_convertbuffer[s16le->s16be] new_status=0 convert_status=0 out_bytes=16384"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2"
+    },
+    {
+      "label": "zai",
+      "rc": 0,
+      "program_sha256": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+      "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/zai",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=6 failures=0"
+      ],
+      "checks": [
+        "B13FIX read_ulaw_packets PASS bytes=176400 format=756c6177 channels=2 rate=44100",
+        "B13FIX converter_new[ulaw_s16] PASS status=0",
+        "B13FIX convert[ulaw_s16] PASS status=0 frames=88200",
+        "B13FIX converter_new[ulaw_s16_after_cookie] PASS status=0",
+        "B13FIX set_cookie[ulaw_s16_after_cookie] PASS status=0",
+        "B13FIX convert[ulaw_s16_after_cookie] PASS status=0 frames=88200"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2",
+      "verify": [
+        "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY_SUMMARY PASS"
+      ],
+      "outputs_sha256": {
+        "fix1-ulaw_s16.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "fix1-ulaw_s16_after_cookie.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb"
+      }
+    },
+    {
+      "label": "zbi",
+      "rc": 0,
+      "program_sha256": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/zbi",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=27 failures=0"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX null_input_nonzero_size PASS status=-50",
+        "B13FIX null_output_nonzero_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+        "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+        "B13FIX complex_input_short PASS status=1768846202",
+        "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+        "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+        "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+        "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+        "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+        "B13FIX padded_destination PASS new=0 status=1718449215 out_bytes=8000 untouched=1 beyond_capacity_intact=1",
+        "B13FIX padded_source PASS new=0 status=1718449215 out_bytes=4000 untouched=1 beyond_capacity_intact=1",
+        "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+        "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ],
+      "outputs_sha256": {
+        "fix2-complexbuffer-s16be-varchunks.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "fix2-convertbuffer-f32-varchunks.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-s16be.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+      }
+    },
+    {
+      "label": "zvi",
+      "rc": 1,
+      "program_sha256": "9f2a3b470be62f59bdd9b6f0439b91bb45cbf8a9f96529c3d39426d2c2018977",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/zvi",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=13 failures=3"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX complex_input_size_mismatch FAIL status=0",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 swapped=1 canary=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX after_partial_next_call_clean PASS status=0 out_bytes=16384 matches_frames_4096_8191=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800"
+      ],
+      "failures": [
+        "B13FIX complex_input_size_mismatch FAIL status=0",
+        "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1"
+      ],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "zli",
+      "rc": 0,
+      "program_sha256": "2e4887c9b442ab92de5f8ae74d58aad19cd56975d1c0f83fa97e4cb4a3b600fa",
+      "args": "",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13LIM_SUMMARY checks=8 failures=0"
+      ],
+      "checks": [
+        "B13LIM dst_s32_ch0x40000001_bpf4 PASS new=0 convert=-36 size=0 untouched=1",
+        "B13LIM dst_s16_ch0x80000001_bpf2 PASS new=0 convert=-36 size=0 untouched=1",
+        "B13LIM dst_s64_ch0x20000001_bpf8 PASS new=-50 (refused at creation)",
+        "B13LIM src_s32_ch0x40000001_bpf4 PASS new=-50 (refused at creation)",
+        "B13LIM src_s16_ch0x80000001_bpf2 PASS new=-50 (refused at creation)",
+        "B13LIM complex_input_bytes_over_32_bits PASS status=1768846202 size=256 untouched=1",
+        "B13LIM complex_output_bytes_over_32_bits PASS status=1869902714 size=0 untouched=1",
+        "B13LIM convertbuffer_max_input PASS status=1869902714 size=0 untouched=1"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2"
+    },
+    {
+      "label": "zpx",
+      "rc": 0,
+      "program_sha256": "906ca418dbceab4c842097c3377f76c5ec8b2739fb30415a3ad9f8caa52a2e0c",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/zpx",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13_SUMMARY checks=40 failures=0"
+      ],
+      "checks": [],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2",
+      "verify": [
+        "VERIFY_SUMMARY pass=26 fail=0"
+      ],
+      "outputs_sha256": {
+        "bad-trunc.wav.packets": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423",
+        "conv-s16le-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "demo-s16.aiff.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.aiff.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.caf.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.caf.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.wav.packets": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "demo-s16.wav.pd1000": "71866c6e01a1d8e1984c0d2dac4544147c1b355dfab4f3f3cf20c2ec1aae5afc",
+        "demo-ulaw.wav.packets": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+        "demo-ulaw.wav.pd1000": "b0108ca1bbbcc6334a4e995b53c3820466bc71dc60e4e236f53c0135768b4976",
+        "ext-aiff-s16le.raw": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "ext-ulaw-s16.raw": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "ext-wav-f32-48k.raw": "9693e8ca9b50f3dc1522219fadea2fa58efe812a88860ff6c97930dacdf39dd1",
+        "ext-wav-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0"
+      }
+    },
+    {
+      "label": "zcx",
+      "rc": 0,
+      "program_sha256": "906ca418dbceab4c842097c3377f76c5ec8b2739fb30415a3ad9f8caa52a2e0c",
+      "args": "convertbuffer /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/zcx",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [],
+      "checks": [],
+      "failures": [],
+      "observation": [
+        "B13_OBS convertbuffer_enter new_status=0",
+        "B13_OBS converter_convertbuffer[s16le->s16be] new_status=0 convert_status=0 out_bytes=16384"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2"
+    },
+    {
+      "label": "zax",
+      "rc": 0,
+      "program_sha256": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+      "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/zax",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=6 failures=0"
+      ],
+      "checks": [
+        "B13FIX read_ulaw_packets PASS bytes=176400 format=756c6177 channels=2 rate=44100",
+        "B13FIX converter_new[ulaw_s16] PASS status=0",
+        "B13FIX convert[ulaw_s16] PASS status=0 frames=88200",
+        "B13FIX converter_new[ulaw_s16_after_cookie] PASS status=0",
+        "B13FIX set_cookie[ulaw_s16_after_cookie] PASS status=0",
+        "B13FIX convert[ulaw_s16_after_cookie] PASS status=0 frames=88200"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2",
+      "verify": [
+        "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY_SUMMARY PASS"
+      ],
+      "outputs_sha256": {
+        "fix1-ulaw_s16.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "fix1-ulaw_s16_after_cookie.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb"
+      }
+    },
+    {
+      "label": "zbx",
+      "rc": 0,
+      "program_sha256": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/zbx",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=27 failures=0"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX null_input_nonzero_size PASS status=-50",
+        "B13FIX null_output_nonzero_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+        "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+        "B13FIX complex_input_short PASS status=1768846202",
+        "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+        "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+        "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+        "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+        "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+        "B13FIX padded_destination PASS new=0 status=1718449215 out_bytes=8000 untouched=1 beyond_capacity_intact=1",
+        "B13FIX padded_source PASS new=0 status=1718449215 out_bytes=4000 untouched=1 beyond_capacity_intact=1",
+        "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+        "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ],
+      "outputs_sha256": {
+        "fix2-complexbuffer-s16be-varchunks.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "fix2-convertbuffer-f32-varchunks.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-s16be.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+      }
+    },
+    {
+      "label": "zvx",
+      "rc": 1,
+      "program_sha256": "98a1ed36778b13f15a165ab3448c6dd88d4442e366d0bf3f46be97ebaf20ee24",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/zvx",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=13 failures=3"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX complex_input_size_mismatch FAIL status=0",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 swapped=1 canary=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX after_partial_next_call_clean PASS status=0 out_bytes=16384 matches_frames_4096_8191=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800"
+      ],
+      "failures": [
+        "B13FIX complex_input_size_mismatch FAIL status=0",
+        "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1"
+      ],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "zlx",
+      "rc": 0,
+      "program_sha256": "e9e637c1550d4a913074bf0724a9fbb4b27d10387779ba46c8e6569ebb2007df",
+      "args": "",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13LIM_SUMMARY checks=8 failures=0"
+      ],
+      "checks": [
+        "B13LIM dst_s32_ch0x40000001_bpf4 PASS new=0 convert=-36 size=0 untouched=1",
+        "B13LIM dst_s16_ch0x80000001_bpf2 PASS new=0 convert=-36 size=0 untouched=1",
+        "B13LIM dst_s64_ch0x20000001_bpf8 PASS new=-50 (refused at creation)",
+        "B13LIM src_s32_ch0x40000001_bpf4 PASS new=-50 (refused at creation)",
+        "B13LIM src_s16_ch0x80000001_bpf2 PASS new=-50 (refused at creation)",
+        "B13LIM complex_input_bytes_over_32_bits PASS status=1768846202 size=256 untouched=1",
+        "B13LIM complex_output_bytes_over_32_bits PASS status=1869902714 size=0 untouched=1",
+        "B13LIM convertbuffer_max_input PASS status=1869902714 size=0 untouched=1"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "prod2"
+    }
+  ],
+  "candidate_r2b": [
+    {
+      "label": "qpi",
+      "rc": 0,
+      "program_sha256": "3951c28a59503db01fa2473bec9b14eab2baa84624f3d3401dd1c3340dbb28d7",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qpi",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13_SUMMARY checks=40 failures=0"
+      ],
+      "checks": [],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2b1",
+      "verify": [
+        "VERIFY_SUMMARY pass=26 fail=0"
+      ],
+      "outputs_sha256": {
+        "bad-trunc.wav.packets": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423",
+        "conv-s16le-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "demo-s16.aiff.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.aiff.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.caf.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.caf.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.wav.packets": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "demo-s16.wav.pd1000": "71866c6e01a1d8e1984c0d2dac4544147c1b355dfab4f3f3cf20c2ec1aae5afc",
+        "demo-ulaw.wav.packets": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+        "demo-ulaw.wav.pd1000": "b0108ca1bbbcc6334a4e995b53c3820466bc71dc60e4e236f53c0135768b4976",
+        "ext-aiff-s16le.raw": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "ext-ulaw-s16.raw": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "ext-wav-f32-48k.raw": "9693e8ca9b50f3dc1522219fadea2fa58efe812a88860ff6c97930dacdf39dd1",
+        "ext-wav-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0"
+      }
+    },
+    {
+      "label": "qci",
+      "rc": 0,
+      "program_sha256": "3951c28a59503db01fa2473bec9b14eab2baa84624f3d3401dd1c3340dbb28d7",
+      "args": "convertbuffer /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qci",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [],
+      "checks": [],
+      "failures": [],
+      "observation": [
+        "B13_OBS convertbuffer_enter new_status=0",
+        "B13_OBS converter_convertbuffer[s16le->s16be] new_status=0 convert_status=0 out_bytes=16384"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2b1"
+    },
+    {
+      "label": "qai",
+      "rc": 0,
+      "program_sha256": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+      "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qai",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=6 failures=0"
+      ],
+      "checks": [
+        "B13FIX read_ulaw_packets PASS bytes=176400 format=756c6177 channels=2 rate=44100",
+        "B13FIX converter_new[ulaw_s16] PASS status=0",
+        "B13FIX convert[ulaw_s16] PASS status=0 frames=88200",
+        "B13FIX converter_new[ulaw_s16_after_cookie] PASS status=0",
+        "B13FIX set_cookie[ulaw_s16_after_cookie] PASS status=0",
+        "B13FIX convert[ulaw_s16_after_cookie] PASS status=0 frames=88200"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2b1",
+      "verify": [
+        "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY_SUMMARY PASS"
+      ],
+      "outputs_sha256": {
+        "fix1-ulaw_s16.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "fix1-ulaw_s16_after_cookie.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb"
+      }
+    },
+    {
+      "label": "qbi",
+      "rc": 0,
+      "program_sha256": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qbi",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=27 failures=0"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX null_input_nonzero_size PASS status=-50",
+        "B13FIX null_output_nonzero_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+        "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+        "B13FIX complex_input_short PASS status=1768846202",
+        "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+        "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+        "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+        "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+        "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+        "B13FIX padded_destination PASS new=0 status=1718449215 out_bytes=8000 untouched=1 beyond_capacity_intact=1",
+        "B13FIX padded_source PASS new=0 status=1718449215 out_bytes=4000 untouched=1 beyond_capacity_intact=1",
+        "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+        "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2b1",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ],
+      "outputs_sha256": {
+        "fix2-complexbuffer-s16be-varchunks.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "fix2-convertbuffer-f32-varchunks.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-s16be.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+      }
+    },
+    {
+      "label": "qvi",
+      "rc": 1,
+      "program_sha256": "9f2a3b470be62f59bdd9b6f0439b91bb45cbf8a9f96529c3d39426d2c2018977",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qvi",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=13 failures=3"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX complex_input_size_mismatch FAIL status=0",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 swapped=1 canary=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX after_partial_next_call_clean PASS status=0 out_bytes=16384 matches_frames_4096_8191=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800"
+      ],
+      "failures": [
+        "B13FIX complex_input_size_mismatch FAIL status=0",
+        "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1"
+      ],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2b1",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "qpx",
+      "rc": 0,
+      "program_sha256": "906ca418dbceab4c842097c3377f76c5ec8b2739fb30415a3ad9f8caa52a2e0c",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qpx",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13_SUMMARY checks=40 failures=0"
+      ],
+      "checks": [],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2b1",
+      "verify": [
+        "VERIFY_SUMMARY pass=26 fail=0"
+      ],
+      "outputs_sha256": {
+        "bad-trunc.wav.packets": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423",
+        "conv-s16le-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "demo-s16.aiff.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.aiff.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.caf.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.caf.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.wav.packets": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "demo-s16.wav.pd1000": "71866c6e01a1d8e1984c0d2dac4544147c1b355dfab4f3f3cf20c2ec1aae5afc",
+        "demo-ulaw.wav.packets": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+        "demo-ulaw.wav.pd1000": "b0108ca1bbbcc6334a4e995b53c3820466bc71dc60e4e236f53c0135768b4976",
+        "ext-aiff-s16le.raw": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "ext-ulaw-s16.raw": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "ext-wav-f32-48k.raw": "9693e8ca9b50f3dc1522219fadea2fa58efe812a88860ff6c97930dacdf39dd1",
+        "ext-wav-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0"
+      }
+    },
+    {
+      "label": "qcx",
+      "rc": 0,
+      "program_sha256": "906ca418dbceab4c842097c3377f76c5ec8b2739fb30415a3ad9f8caa52a2e0c",
+      "args": "convertbuffer /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qcx",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [],
+      "checks": [],
+      "failures": [],
+      "observation": [
+        "B13_OBS convertbuffer_enter new_status=0",
+        "B13_OBS converter_convertbuffer[s16le->s16be] new_status=0 convert_status=0 out_bytes=16384"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2b1"
+    },
+    {
+      "label": "qax",
+      "rc": 0,
+      "program_sha256": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+      "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qax",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=6 failures=0"
+      ],
+      "checks": [
+        "B13FIX read_ulaw_packets PASS bytes=176400 format=756c6177 channels=2 rate=44100",
+        "B13FIX converter_new[ulaw_s16] PASS status=0",
+        "B13FIX convert[ulaw_s16] PASS status=0 frames=88200",
+        "B13FIX converter_new[ulaw_s16_after_cookie] PASS status=0",
+        "B13FIX set_cookie[ulaw_s16_after_cookie] PASS status=0",
+        "B13FIX convert[ulaw_s16_after_cookie] PASS status=0 frames=88200"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2b1",
+      "verify": [
+        "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY_SUMMARY PASS"
+      ],
+      "outputs_sha256": {
+        "fix1-ulaw_s16.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "fix1-ulaw_s16_after_cookie.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb"
+      }
+    },
+    {
+      "label": "qbx",
+      "rc": 0,
+      "program_sha256": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qbx",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=27 failures=0"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX null_input_nonzero_size PASS status=-50",
+        "B13FIX null_output_nonzero_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+        "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+        "B13FIX complex_input_short PASS status=1768846202",
+        "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+        "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+        "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+        "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+        "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+        "B13FIX padded_destination PASS new=0 status=1718449215 out_bytes=8000 untouched=1 beyond_capacity_intact=1",
+        "B13FIX padded_source PASS new=0 status=1718449215 out_bytes=4000 untouched=1 beyond_capacity_intact=1",
+        "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+        "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2b1",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ],
+      "outputs_sha256": {
+        "fix2-complexbuffer-s16be-varchunks.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "fix2-convertbuffer-f32-varchunks.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-s16be.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+      }
+    },
+    {
+      "label": "qvx",
+      "rc": 1,
+      "program_sha256": "98a1ed36778b13f15a165ab3448c6dd88d4442e366d0bf3f46be97ebaf20ee24",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qvx",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=13 failures=3"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX complex_input_size_mismatch FAIL status=0",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 swapped=1 canary=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX after_partial_next_call_clean PASS status=0 out_bytes=16384 matches_frames_4096_8191=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800"
+      ],
+      "failures": [
+        "B13FIX complex_input_size_mismatch FAIL status=0",
+        "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+        "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1"
+      ],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2b1",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ]
+    }
+  ],
+  "candidate_r2_as_published": [
+    {
+      "label": "qrai",
+      "rc": 1,
+      "program_sha256": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qrai",
+      "layer_files": [
+        "4fac63017c43110d0b57291fa7b23db8afbeee175e8afb75710565aa83f26385"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "4fac63017c43110d0b57291fa7b23db8afbeee175e8afb75710565aa83f26385",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=27 failures=2"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX null_input_nonzero_size PASS status=-50",
+        "B13FIX null_output_nonzero_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+        "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+        "B13FIX complex_input_short PASS status=1768846202",
+        "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+        "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+        "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+        "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+        "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+        "B13FIX padded_destination FAIL new=0 status=2003329396 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+        "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+        "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+        "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+      ],
+      "failures": [
+        "B13FIX padded_destination FAIL new=0 status=2003329396 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+        "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1"
+      ],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2a1",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ],
+      "outputs_sha256": {
+        "fix2-complexbuffer-s16be-varchunks.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "fix2-convertbuffer-f32-varchunks.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-s16be.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+      }
+    },
+    {
+      "label": "qrax",
+      "rc": 1,
+      "program_sha256": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qrax",
+      "layer_files": [
+        "4fac63017c43110d0b57291fa7b23db8afbeee175e8afb75710565aa83f26385"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "4fac63017c43110d0b57291fa7b23db8afbeee175e8afb75710565aa83f26385",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=27 failures=2"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX null_input_nonzero_size PASS status=-50",
+        "B13FIX null_output_nonzero_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+        "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+        "B13FIX complex_input_short PASS status=1768846202",
+        "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+        "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+        "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+        "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+        "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+        "B13FIX padded_destination FAIL new=0 status=2003329396 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+        "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+        "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+        "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+      ],
+      "failures": [
+        "B13FIX padded_destination FAIL new=0 status=2003329396 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+        "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1"
+      ],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2a1",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ],
+      "outputs_sha256": {
+        "fix2-complexbuffer-s16be-varchunks.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "fix2-convertbuffer-f32-varchunks.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "fix2-convertbuffer-s16be.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+      }
+    }
+  ],
+  "candidate_size_zero_only": [
+    {
+      "label": "qrsi",
+      "rc": 1,
+      "program_sha256": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qrsi",
+      "layer_files": [
+        "7cb9f5f8aa1ebbbdde6fe4db8399bc81b239898b7935ba9ca861d8a47d6f8479"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "7cb9f5f8aa1ebbbdde6fe4db8399bc81b239898b7935ba9ca861d8a47d6f8479",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=27 failures=1"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX null_input_nonzero_size PASS status=-50",
+        "B13FIX null_output_nonzero_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+        "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+        "B13FIX complex_input_short PASS status=1768846202",
+        "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+        "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+        "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+        "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+        "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+        "B13FIX padded_destination PASS new=0 status=2003329396 out_bytes=0 untouched=0 beyond_capacity_intact=1",
+        "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+        "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+        "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+      ],
+      "failures": [
+        "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1"
+      ],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2s1",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "qrsx",
+      "rc": 1,
+      "program_sha256": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/qrsx",
+      "layer_files": [
+        "7cb9f5f8aa1ebbbdde6fe4db8399bc81b239898b7935ba9ca861d8a47d6f8479"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "7cb9f5f8aa1ebbbdde6fe4db8399bc81b239898b7935ba9ca861d8a47d6f8479",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13FIX_SUMMARY checks=27 failures=1"
+      ],
+      "checks": [
+        "B13FIX read_s16le_packets PASS ",
+        "B13FIX converter_new[s16le->s16be] PASS ",
+        "B13FIX null_converter PASS status=-50",
+        "B13FIX null_output_size PASS status=-50",
+        "B13FIX null_input_nonzero_size PASS status=-50",
+        "B13FIX null_output_nonzero_size PASS status=-50",
+        "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+        "B13FIX zero_input PASS status=0 out_bytes=0",
+        "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+        "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+        "B13FIX complex_input_short PASS status=1768846202",
+        "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+        "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+        "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+        "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+        "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+        "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+        "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+        "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+        "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+        "B13FIX padded_destination PASS new=0 status=2003329396 out_bytes=0 untouched=0 beyond_capacity_intact=1",
+        "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+        "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+        "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+        "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+      ],
+      "failures": [
+        "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1"
+      ],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "candidate": "r2s1",
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ]
+    }
+  ],
+  "limits_probe": [
+    {
+      "label": "limr2bi",
+      "rc": 0,
+      "program_sha256": "2e4887c9b442ab92de5f8ae74d58aad19cd56975d1c0f83fa97e4cb4a3b600fa",
+      "args": "",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13LIM_SUMMARY checks=8 failures=0"
+      ],
+      "checks": [
+        "B13LIM dst_s32_ch0x40000001_bpf4 PASS new=0 convert=-36 size=0 untouched=1",
+        "B13LIM dst_s16_ch0x80000001_bpf2 PASS new=0 convert=-36 size=0 untouched=1",
+        "B13LIM dst_s64_ch0x20000001_bpf8 PASS new=-50 (refused at creation)",
+        "B13LIM src_s32_ch0x40000001_bpf4 PASS new=-50 (refused at creation)",
+        "B13LIM src_s16_ch0x80000001_bpf2 PASS new=-50 (refused at creation)",
+        "B13LIM complex_input_bytes_over_32_bits PASS status=1768846202 size=256 untouched=1",
+        "B13LIM complex_output_bytes_over_32_bits PASS status=1869902714 size=0 untouched=1",
+        "B13LIM convertbuffer_max_input PASS status=1869902714 size=0 untouched=1"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ]
+    },
+    {
+      "label": "limr2bx",
+      "rc": 0,
+      "program_sha256": "e9e637c1550d4a913074bf0724a9fbb4b27d10387779ba46c8e6569ebb2007df",
+      "args": "",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [
+        "B13LIM_SUMMARY checks=8 failures=0"
+      ],
+      "checks": [
+        "B13LIM dst_s32_ch0x40000001_bpf4 PASS new=0 convert=-36 size=0 untouched=1",
+        "B13LIM dst_s16_ch0x80000001_bpf2 PASS new=0 convert=-36 size=0 untouched=1",
+        "B13LIM dst_s64_ch0x20000001_bpf8 PASS new=-50 (refused at creation)",
+        "B13LIM src_s32_ch0x40000001_bpf4 PASS new=-50 (refused at creation)",
+        "B13LIM src_s16_ch0x80000001_bpf2 PASS new=-50 (refused at creation)",
+        "B13LIM complex_input_bytes_over_32_bits PASS status=1768846202 size=256 untouched=1",
+        "B13LIM complex_output_bytes_over_32_bits PASS status=1869902714 size=0 untouched=1",
+        "B13LIM convertbuffer_max_input PASS status=1869902714 size=0 untouched=1"
+      ],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ]
+    },
+    {
+      "label": "limproi",
+      "rc": 139,
+      "program_sha256": "2e4887c9b442ab92de5f8ae74d58aad19cd56975d1c0f83fa97e4cb4a3b600fa",
+      "args": "",
+      "layer_files": [
+        "0418b788fd1cf00b22572442561660ccd0e36c40bec741d62abbb62388173ebf"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "0418b788fd1cf00b22572442561660ccd0e36c40bec741d62abbb62388173ebf",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [],
+      "checks": [],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ]
+    },
+    {
+      "label": "limprox",
+      "rc": 139,
+      "program_sha256": "e9e637c1550d4a913074bf0724a9fbb4b27d10387779ba46c8e6569ebb2007df",
+      "args": "",
+      "layer_files": [
+        "0418b788fd1cf00b22572442561660ccd0e36c40bec741d62abbb62388173ebf"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "0418b788fd1cf00b22572442561660ccd0e36c40bec741d62abbb62388173ebf",
+      "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+      "summary": [],
+      "checks": [],
+      "failures": [],
+      "observation": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ]
+    }
+  ],
+  "earlier_extended_witness_mwit2": {
+    "note": "first extended witness (mwit2), criterion corrected afterwards (see report)",
+    "runs": [
+      {
+        "label": "xr2a1i",
+        "rc": 1,
+        "program_sha256": "b7ab77702b79610b1fb8d4104f22b66f2d38d770591c1f90ada568c4265c1149",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/xr2a1i",
+        "layer_files": [
+          "4fac63017c43110d0b57291fa7b23db8afbeee175e8afb75710565aa83f26385"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "4fac63017c43110d0b57291fa7b23db8afbeee175e8afb75710565aa83f26385",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=27 failures=2"
+        ],
+        "checks": [
+          "B13FIX read_s16le_packets PASS ",
+          "B13FIX converter_new[s16le->s16be] PASS ",
+          "B13FIX null_converter PASS status=-50",
+          "B13FIX null_output_size PASS status=-50",
+          "B13FIX null_input_nonzero_size PASS status=-50",
+          "B13FIX null_output_nonzero_size PASS status=-50",
+          "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+          "B13FIX zero_input PASS status=0 out_bytes=0",
+          "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+          "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+          "B13FIX complex_input_short PASS status=1768846202",
+          "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+          "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+          "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+          "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+          "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+          "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+          "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+          "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+          "B13FIX padded_destination FAIL new=0 status=2003329396 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+          "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+          "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+          "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+          "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+        ],
+        "failures": [
+          "B13FIX padded_destination FAIL new=0 status=2003329396 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+          "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1"
+        ],
+        "observation": [],
+        "end": [
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "xr2a1x",
+        "rc": 1,
+        "program_sha256": "cfd1bc4a9f099c50eb4ff6abc900db3e65a65a0b35d193e2b79868c90864b3e5",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/xr2a1x",
+        "layer_files": [
+          "4fac63017c43110d0b57291fa7b23db8afbeee175e8afb75710565aa83f26385"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "4fac63017c43110d0b57291fa7b23db8afbeee175e8afb75710565aa83f26385",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=27 failures=2"
+        ],
+        "checks": [
+          "B13FIX read_s16le_packets PASS ",
+          "B13FIX converter_new[s16le->s16be] PASS ",
+          "B13FIX null_converter PASS status=-50",
+          "B13FIX null_output_size PASS status=-50",
+          "B13FIX null_input_nonzero_size PASS status=-50",
+          "B13FIX null_output_nonzero_size PASS status=-50",
+          "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+          "B13FIX zero_input PASS status=0 out_bytes=0",
+          "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+          "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+          "B13FIX complex_input_short PASS status=1768846202",
+          "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+          "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+          "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+          "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+          "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+          "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+          "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+          "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+          "B13FIX padded_destination FAIL new=0 status=2003329396 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+          "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+          "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+          "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+          "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+        ],
+        "failures": [
+          "B13FIX padded_destination FAIL new=0 status=2003329396 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+          "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1"
+        ],
+        "observation": [],
+        "end": [
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "xr2s1i",
+        "rc": 1,
+        "program_sha256": "b7ab77702b79610b1fb8d4104f22b66f2d38d770591c1f90ada568c4265c1149",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/xr2s1i",
+        "layer_files": [
+          "7cb9f5f8aa1ebbbdde6fe4db8399bc81b239898b7935ba9ca861d8a47d6f8479"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7cb9f5f8aa1ebbbdde6fe4db8399bc81b239898b7935ba9ca861d8a47d6f8479",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=27 failures=1"
+        ],
+        "checks": [
+          "B13FIX read_s16le_packets PASS ",
+          "B13FIX converter_new[s16le->s16be] PASS ",
+          "B13FIX null_converter PASS status=-50",
+          "B13FIX null_output_size PASS status=-50",
+          "B13FIX null_input_nonzero_size PASS status=-50",
+          "B13FIX null_output_nonzero_size PASS status=-50",
+          "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+          "B13FIX zero_input PASS status=0 out_bytes=0",
+          "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+          "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+          "B13FIX complex_input_short PASS status=1768846202",
+          "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+          "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+          "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+          "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+          "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+          "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+          "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+          "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+          "B13FIX padded_destination PASS new=0 status=2003329396 out_bytes=0 untouched=0 beyond_capacity_intact=1",
+          "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+          "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+          "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+          "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+        ],
+        "failures": [
+          "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1"
+        ],
+        "observation": [],
+        "end": [
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "xr2s1x",
+        "rc": 1,
+        "program_sha256": "cfd1bc4a9f099c50eb4ff6abc900db3e65a65a0b35d193e2b79868c90864b3e5",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/xr2s1x",
+        "layer_files": [
+          "7cb9f5f8aa1ebbbdde6fe4db8399bc81b239898b7935ba9ca861d8a47d6f8479"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7cb9f5f8aa1ebbbdde6fe4db8399bc81b239898b7935ba9ca861d8a47d6f8479",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=27 failures=1"
+        ],
+        "checks": [
+          "B13FIX read_s16le_packets PASS ",
+          "B13FIX converter_new[s16le->s16be] PASS ",
+          "B13FIX null_converter PASS status=-50",
+          "B13FIX null_output_size PASS status=-50",
+          "B13FIX null_input_nonzero_size PASS status=-50",
+          "B13FIX null_output_nonzero_size PASS status=-50",
+          "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+          "B13FIX zero_input PASS status=0 out_bytes=0",
+          "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+          "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+          "B13FIX complex_input_short PASS status=1768846202",
+          "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+          "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+          "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+          "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+          "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+          "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+          "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+          "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+          "B13FIX padded_destination PASS new=0 status=2003329396 out_bytes=0 untouched=0 beyond_capacity_intact=1",
+          "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1",
+          "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+          "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+          "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+        ],
+        "failures": [
+          "B13FIX padded_source FAIL new=0 status=0 out_bytes=4000 untouched=0 beyond_capacity_intact=1"
+        ],
+        "observation": [],
+        "end": [
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "xr2b1i",
+        "rc": 1,
+        "program_sha256": "b7ab77702b79610b1fb8d4104f22b66f2d38d770591c1f90ada568c4265c1149",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/xr2b1i",
+        "layer_files": [
+          "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=27 failures=2"
+        ],
+        "checks": [
+          "B13FIX read_s16le_packets PASS ",
+          "B13FIX converter_new[s16le->s16be] PASS ",
+          "B13FIX null_converter PASS status=-50",
+          "B13FIX null_output_size PASS status=-50",
+          "B13FIX null_input_nonzero_size PASS status=-50",
+          "B13FIX null_output_nonzero_size PASS status=-50",
+          "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+          "B13FIX zero_input PASS status=0 out_bytes=0",
+          "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+          "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+          "B13FIX complex_input_short PASS status=1768846202",
+          "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+          "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+          "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+          "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+          "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+          "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+          "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+          "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+          "B13FIX padded_destination FAIL new=0 status=1718449215 out_bytes=8000 untouched=1 beyond_capacity_intact=1",
+          "B13FIX padded_source FAIL new=0 status=1718449215 out_bytes=4000 untouched=1 beyond_capacity_intact=1",
+          "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+          "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+          "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+        ],
+        "failures": [
+          "B13FIX padded_destination FAIL new=0 status=1718449215 out_bytes=8000 untouched=1 beyond_capacity_intact=1",
+          "B13FIX padded_source FAIL new=0 status=1718449215 out_bytes=4000 untouched=1 beyond_capacity_intact=1"
+        ],
+        "observation": [],
+        "end": [
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "xr2b1x",
+        "rc": 1,
+        "program_sha256": "cfd1bc4a9f099c50eb4ff6abc900db3e65a65a0b35d193e2b79868c90864b3e5",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/xr2b1x",
+        "layer_files": [
+          "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=27 failures=2"
+        ],
+        "checks": [
+          "B13FIX read_s16le_packets PASS ",
+          "B13FIX converter_new[s16le->s16be] PASS ",
+          "B13FIX null_converter PASS status=-50",
+          "B13FIX null_output_size PASS status=-50",
+          "B13FIX null_input_nonzero_size PASS status=-50",
+          "B13FIX null_output_nonzero_size PASS status=-50",
+          "B13FIX input_not_whole_frames PASS status=1768846202 out_untouched=1",
+          "B13FIX zero_input PASS status=0 out_bytes=0",
+          "B13FIX zero_input_null_pointers PASS status=0 out_bytes=0",
+          "B13FIX complex_null_lists PASS status_in=-50 status_out=-50",
+          "B13FIX complex_input_short PASS status=1768846202",
+          "B13FIX complex_two_output_buffers_unequal PASS status=-50 untouched=1",
+          "B13FIX complex_two_input_buffers PASS status=-50 untouched=1",
+          "B13FIX convertbuffer_s16be_4096 PASS status=0 out_bytes=16384 exact_and_canary=1",
+          "B13FIX complex_input_larger_than_frames PASS status=0 out_bytes=4000 exact_and_canary=1",
+          "B13FIX capacity_half PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX capacity_one_byte_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX complex_output_short PASS status=1869902714 out_bytes=0 untouched=1",
+          "B13FIX after_rejections_next_call_clean PASS status=0 out_bytes=16384 frames_4096_8191_exact=1",
+          "B13FIX convertbuffer_whole_file_reuse PASS status=0 calls=22 bytes=352800",
+          "B13FIX complexbuffer_varchunks_whole_file PASS status=0 calls=76 bytes=352800 sizes_and_canaries=1",
+          "B13FIX sample_rate_conversion_refused PASS new=0 convertbuffer=1718449215 complex=1718449215 out_bytes=32768 untouched=1",
+          "B13FIX padded_destination FAIL new=0 status=1718449215 out_bytes=8000 untouched=1 beyond_capacity_intact=1",
+          "B13FIX padded_source FAIL new=0 status=1718449215 out_bytes=4000 untouched=1 beyond_capacity_intact=1",
+          "B13FIX s24_destination PASS new=0 status=0 out_bytes=6000 exact=1 beyond_capacity_intact=1",
+          "B13FIX convertbuffer_f32_whole_file PASS new=0 status=0 bytes_in=352800",
+          "B13FIX convertbuffer_f32_varchunks PASS status=0 calls=87 bytes_in=352800"
+        ],
+        "failures": [
+          "B13FIX padded_destination FAIL new=0 status=1718449215 out_bytes=8000 untouched=1 beyond_capacity_intact=1",
+          "B13FIX padded_source FAIL new=0 status=1718449215 out_bytes=4000 untouched=1 beyond_capacity_intact=1"
+        ],
+        "observation": [],
+        "end": [
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      }
+    ]
+  },
+  "b13d": [
+    {
+      "label": "zdui",
+      "summary": [
+        "label=zdui arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-prod2/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=145 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.549867424 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+    },
+    {
+      "label": "zdai",
+      "summary": [
+        "label=zdai arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-prod2/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=146 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.558794183 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+    },
+    {
+      "label": "zdsi",
+      "summary": [
+        "label=zdsi arch=i386 mode=stoprestart layer=<B13_STAGE>/mfix/cand-prod2/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=10 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.934327366 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  first_play_audible_s=0.649 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=28687/88200 DIFFERENT"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=28687/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=167936 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+    },
+    {
+      "label": "zdux",
+      "summary": [
+        "label=zdux arch=x86_64 mode=play layer=<B13_STAGE>/mfix/cand-prod2/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=149 client=b13-atb-x86_64 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.555695675 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+    },
+    {
+      "label": "zdax",
+      "summary": [
+        "label=zdax arch=x86_64 mode=play layer=<B13_STAGE>/mfix/cand-prod2/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=150 client=b13-atb-x86_64 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.541851703 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+    },
+    {
+      "label": "qdui",
+      "summary": [
+        "label=qdui arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-r2b1/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=136 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.551276043 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+    },
+    {
+      "label": "qdai",
+      "summary": [
+        "label=qdai arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-r2b1/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=137 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.562463090 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+    },
+    {
+      "label": "qdsi",
+      "summary": [
+        "label=qdsi arch=i386 mode=stoprestart layer=<B13_STAGE>/mfix/cand-r2b1/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=10 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.927863947 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  first_play_audible_s=0.649 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=28687/88200 DIFFERENT"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=28687/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=167936 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+    },
+    {
+      "label": "qdux",
+      "summary": [
+        "label=qdux arch=x86_64 mode=play layer=<B13_STAGE>/mfix/cand-r2b1/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=140 client=b13-atb-x86_64 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.506132687 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+    },
+    {
+      "label": "qdax",
+      "summary": [
+        "label=qdax arch=x86_64 mode=play layer=<B13_STAGE>/mfix/cand-r2b1/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=141 client=b13-atb-x86_64 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.507892452 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+    }
+  ],
+  "b12_non_regression": [
+    {
+      "label": "zn1p",
+      "summary": [
+        "label=zn1p arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-prod2/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=151 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.370148452 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": null
+    },
+    {
+      "label": "zn1s",
+      "summary": [
+        "label=zn1s arch=i386 mode=stoprestart layer=<B13_STAGE>/mfix/cand-prod2/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=14 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.674968707 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  first_play_audible_s=0.695 silent_gap_after_stop_s=0.605",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=30733/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=155648 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": null
+    },
+    {
+      "label": "qn1p",
+      "summary": [
+        "label=qn1p arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-r2b1/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=142 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.350136681 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": null
+    },
+    {
+      "label": "qn1s",
+      "summary": [
+        "label=qn1s arch=i386 mode=stoprestart layer=<B13_STAGE>/mfix/cand-r2b1/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=14 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.778470349 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  first_play_audible_s=0.695 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=30737/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=161792 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "59ad9f83c4f879ccc1471d68fe01af6d44b25fa4ddb8bc18805c3aab5296bcbb"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": null
+    }
+  ],
+  "mapped_elf_i386": {
+    "mmaps-zdui": {
+      "count": 142,
+      "private_ffmpeg": 115,
+      "private_pulse": 19,
+      "usr_lib32": 8,
+      "x86_64": 0
+    },
+    "mmaps-qdui": {
+      "count": 142,
+      "private_ffmpeg": 115,
+      "private_pulse": 19,
+      "usr_lib32": 8,
+      "x86_64": 0
+    }
+  },
+  "host": {
+    "i386_packages": 0,
+    "foreign_architectures": [],
+    "ld_so_cache_sha256": "3ffa6037471f2ec983ca2a4e9cf29a171b956676e6ccd53012881aaf62ae0996",
+    "dpkg_status_sha256": "2a4ff8dd15a5a02fa74408e2d3ec9b2ad5ae6b3aed8d1f1989cdc9dc7ec74a8e",
+    "usr_lib_i386_linux_gnu": false,
+    "mounts": 41
+  }
+}

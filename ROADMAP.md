@@ -37,6 +37,16 @@ indépendants.
 
 **TEST / PASS borné :** gitlink Security `84c0a3e1` (#16 officielle), après comparaison des cinq fichiers supplémentaires par rapport à `a536cfff`, recompilation de 44 objets FAT et reliaison des deux architectures. Chargement standard sans `-dead_strip_dylibs`, HomeResFile **88/88 normal + 88/88 bypass**, témoins SSL bornés et Carbon Events passent. Exports inchangés ; test du trousseau compilé mais non exécuté (banc UID Darwin 0). TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction S4](docs/evidence/security-s4-official-reference-2026-11-14.md).
 
+## ATB-FIX2-R2b — intégration (15 novembre 2026)
+
+**TEST / PASS : ATB-FIX2-R2b intégré à `master`, R2 remplacé.**
+- Revue de R2 : entrée PCM à trous rendue `noErr` avec données mal lues ; taille partielle annoncée sur erreur.
+- R2b : PCM non tassé refusé avant écriture ; taille 0 sur toute erreur en cours de conversion (contenu alors non garanti).
+- Binaire du commit de production : `fix2` 27/27, B13 26/26, FIX1 6/6, limites 8/8 en i386 et x86_64 ; B13-D et B12 identiques au bit près.
+- Suite : ATB-FIX3 (défaut 3), chantier distinct.
+
+[Preuves](docs/evidence/audiotoolbox-b13-fix2-r2b-2026-11-15.md).
+
 ## B13-INT — intégration AudioToolbox (15 novembre 2026)
 
 **TEST / PASS : ATB-FIX1 intégré à `master`.**
