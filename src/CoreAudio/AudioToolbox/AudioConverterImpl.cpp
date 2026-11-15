@@ -81,6 +81,24 @@ void AudioConverter::flush()
 	m_encoderDraining = false;
 }
 
+// Gives a decoder what the source description says about its stream. FFmpeg needs the
+// channel layout (and often the sample rate) to open decoders whose bitstream does not
+// carry them, such as G.711 or headerless ADPCM, whatever the format ID is.
+static void configureDecoder(AVCodecContext* decoder, const AudioStreamBasicDescription* format)
+{
+	if (format->mChannelsPerFrame > 0)
+	{
+#if LIBAVCODEC_VERSION_MAJOR >= 61
+		av_channel_layout_uninit(&decoder->ch_layout);
+		av_channel_layout_default(&decoder->ch_layout, format->mChannelsPerFrame);
+#else
+		decoder->channels = format->mChannelsPerFrame;
+#endif
+	}
+	if (format->mSampleRate > 0)
+		decoder->sample_rate = format->mSampleRate;
+}
+
 OSStatus AudioConverter::create(const AudioStreamBasicDescription* inSourceFormat, const AudioStreamBasicDescription* inDestinationFormat, AudioConverter** out)
 {
 	TRACE2(inSourceFormat, inDestinationFormat);
@@ -119,17 +137,7 @@ OSStatus AudioConverter::create(const AudioStreamBasicDescription* inSourceForma
 	*out = new AudioConverter(inSourceFormat, inDestinationFormat);
 
 	(*out)->m_decoder = cIn = avcodec_alloc_context3(codecIn);
-	
-	if (inSourceFormat->mFormatID == kAudioFormatLinearPCM)
-	{
-#warning "TODO: Remove deprecated 'channels' once we no longer support older distros" 
-#if LIBAVCODEC_VERSION_MAJOR >= 61
-		av_channel_layout_default(&cIn->ch_layout, inSourceFormat->mChannelsPerFrame);
-#else
-		cIn->channels = inSourceFormat->mChannelsPerFrame;
-#endif
-		cIn->sample_rate = inSourceFormat->mSampleRate;
-	}
+	configureDecoder(cIn, inSourceFormat);
 	
 	if (avcodec_open2((*out)->m_decoder, codecIn, nullptr) < 0)
 	{
@@ -265,6 +273,7 @@ OSStatus AudioConverter::setProperty(AudioConverterPropertyID inPropertyID, UInt
 			if (!decoder)
 				return kAudioConverterErr_UnspecifiedError;
 
+			configureDecoder(decoder, &m_sourceFormat);
 			decoder->extradata = static_cast<uint8_t*>(av_mallocz(inPropertyDataSize + AV_INPUT_BUFFER_PADDING_SIZE));
 			decoder->extradata_size = inPropertyDataSize;
 			memcpy(decoder->extradata, inPropertyData, inPropertyDataSize);
