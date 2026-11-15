@@ -175,3 +175,32 @@ HISTORICAL_INPUTS=READ_ONLY
 **Portée :** les MOV initialement qualifiés par `qt_mov_pcm.c` sont **les mêmes octets** que ceux déjà couverts par le témoin `b11e-r2-getmediasample.c` en invité i386, y compris le SHA-256 des 200 octets PCM par MOV, la lecture de l'échantillon final (`time=99`), le bloc final partiel (15 appels de 7 échantillons : dernier bloc de 2) et le rejet à `time=100` (`-2032`, sorties et Handle préservés). Les **139/139 contrôles invités** de B11E-R2 restent des observations **historiques** sous `libdyld` corrigée en overlay privé ; les tests de cette note n'ont **pas été relancés**. Le code de `QuickTime.c` sur `master` couvre par la condition `time >= frame_count` les positions supérieures, mais `time=101` n'a pas de preuve d'exécution distincte dans cette campagne.
 
 **Décision :** B11E-R2 est suffisamment couvert pour l'objet demandé, **pas de modification de code QuickTime** ; conserver l'environnement B12 et son résultat `B12_MOV_PCM=PASS` i386 sans toucher au blocage libpulse ELF32 relevant d'un autre chantier. Les futures évolutions nécessitant un véritable défaut reproduit seront qualifiées séparément.
+
+## Complément B11E-R2B — lecture i386 au-delà de la piste (15 novembre 2026)
+
+**Résultat transmis depuis le terminal WSL2 du 5700X, non rejoué par l'agent GitHub.** Test isolé dans `/home/Deniel/d4wrling-work/validation/qbe.AYrQPT0c`. Le témoin Mach-O `build/boundary-i386` a été compilé dans le dossier privé et lié au vrai QuickTime.framework ; aucune modification de code produit, de sous-module, de préfixe historique ni du chantier B12.
+
+**Chaîne testée :** les six MOV 761 octets déjà prouvés `INPUT_EQUIVALENCE=PASS_6_OF_6` → `NewMovieFromDataRef` / `GetMediaSample` dans l'invité Darling **i386** → Handle CarbonCore → comparaison des 200 octets PCM calculés indépendamment. Le programme interroge le dernier échantillon (`time=99`, 2 octets), puis les positions hors piste `time=100`, `time=101` et `time=INT32_MAX` (`2147483647`), avec vérification du code `-2032`, de la conservation du contenu du Handle, des sorties préservées et de `GetMoviesError()`.
+
+**Exécution B11E-R2B :** le premier lancement `b1` a échoué *avant* le code invité, faute de dossier parent du préfixe privé : `Cannot create .../qbe.AYrQPT0c/p/b1: No such file or directory`. Le lanceur a été corrigé localement pour créer ce seul parent, et le binaire de test a été **réutilisé sans recompilation**. Le lancement suivant `b2` a produit :
+
+```text
+PREFLIGHT=PASS LOCAL_HEAD=e61f908897a3d1f7f20b2ec034ccdc55a412bf3c
+TLV_OVERLAY=VERIFIED SHA256=b203485f63edd9ee5425c795684a3aaadd041e9c60dc33c23c0e705bcd4f0f90
+RUN_LABEL=b2
+RUNNER_RC=0 GUEST_RC=0
+B11E_R2B_PROVIDER=/System/Library/Frameworks/QuickTime.framework/Versions/A/QuickTime
+B11E_R2B_MOV_0=PASS FULL=200 LAST=99 OUT_OF_RANGE=100,101,INT32_MAX
+B11E_R2B_MOV_1=PASS FULL=200 LAST=99 OUT_OF_RANGE=100,101,INT32_MAX
+B11E_R2B_MOV_2=PASS FULL=200 LAST=99 OUT_OF_RANGE=100,101,INT32_MAX
+B11E_R2B_MOV_3=PASS FULL=200 LAST=99 OUT_OF_RANGE=100,101,INT32_MAX
+B11E_R2B_MOV_4=PASS FULL=200 LAST=99 OUT_OF_RANGE=100,101,INT32_MAX
+B11E_R2B_MOV_5=PASS FULL=200 LAST=99 OUT_OF_RANGE=100,101,INT32_MAX
+B11E_R2B_I386_BOUNDARY_PASS
+STATUS=B11E_R2B_I386_BOUNDARY_PASS
+INTEGRITY=UNCHANGED
+```
+
+**Pièces locales** (non intégrées au dépôt) : `/home/Deniel/d4wrling-work/validation/qbe.AYrQPT0c/result-b2.json` et `runs/b2/{stdout.log,stderr.log,meta.txt,rc}`. Test avec l'overlay `libdyld` TLV corrigé, en **lecture seule** dans le namespace ; l'essai utilise le build privé historique de `validation/quicktime-b11e-20261114`, pas un nouveau build du HEAD distant. Le source `QuickTime.c` sur `master@8b47e446` est resté au blob `08c696fadf05190252bd19486253a0ced28efb98` au prévol de publication.
+
+**Portée et décision :** les six MOV et les nouvelles frontières `time=101` et `INT32_MAX` sont désormais **prouvés à l'exécution i386** en plus de `time=100` et de l'échantillon final. Pas de régression observée, pas de correction QuickTime justifiée. `B12_MOV_PCM=PASS` i386 reste la preuve indépendante publiée par B12 ; cette campagne ne relance ni B12, ni CoreAudio, ni PulseAudio, et ne résout pas la dépendance ELF32 du chantier audio. L'objectif B11E-R2/R2B est clos dans son périmètre spécifié.
