@@ -172,6 +172,8 @@ Points ouverts (OPEN) :
 - effet du défaut TLS i386 de `libdyld` sur CoreAudio ;
 - éventuels autres `wrap_elf` chargés par le programme i386 complet, avant ou après libpulse.
 
+**Suite exécutée le même jour :** extraction privée et rejeu B12 i386 réussis, voir [AUDIO-I386 / B12](audio-i386-b12-pulse-2026-11-15.md). Le besoin ELF des 18 paquets est confirmé sur les fichiers extraits.
+
 ## Limites
 
 - La fermeture vaut pour les index datés ci-dessus ; trixie-updates et la sécurité expirent le 21 novembre 2026.

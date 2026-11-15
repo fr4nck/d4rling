@@ -29,6 +29,16 @@ indépendants.
 
 **TEST / PASS borné :** gitlink Security `84c0a3e1` (#16 officielle), après comparaison des cinq fichiers supplémentaires par rapport à `a536cfff`, recompilation de 44 objets FAT et reliaison des deux architectures. Chargement standard sans `-dead_strip_dylibs`, HomeResFile **88/88 normal + 88/88 bypass**, témoins SSL bornés et Carbon Events passent. Exports inchangés ; test du trousseau compilé mais non exécuté (banc UID Darwin 0). TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction S4](docs/evidence/security-s4-official-reference-2026-11-14.md).
 
+## AUDIO-I386 / B12 — MOV rendu par PulseAudio en i386 (15 novembre 2026)
+
+**TEST / PASS i386 (`B12_I386_PULSE_PASS`), sans installation.**
+- 18 paquets Debian i386 authentifiés et extraits en privé ; cache `ld.so.cache` propre au banc ; glibc et chargeur de `/usr/lib32` inchangés.
+- CoreAudio i386 démarre (110 callbacks) avec la `libdyld` officielle comme avec l'overlay TLV.
+- MOV → `GetMediaSample` → CoreAudio → libpulse ELF32 privée → WSLg : 5/5 captures identiques au PCM sur 88 200/88 200 trames ; Stop puis Play 5/5 ; nettoyage complet.
+- `B12_AUDIBLE` reste NOT_CONFIRMED. Sortie i386 limitée aux bancs lancés avec le cache privé.
+
+[Preuves](docs/evidence/audio-i386-b12-pulse-2026-11-15.md).
+
 ## QuickTime B12 — premier MOV rendu par PulseAudio (14 novembre 2026)
 
 **TEST / PASS x86_64, BLOCKED i386.**
@@ -415,6 +425,9 @@ aucun son restitué.
 identique au bit près ; i386 bloqué par l'absence de libpulse 32 bits sur
 l'hôte ; écoute humaine à confirmer
 ([rapport](docs/evidence/quicktime-b12-2026-11-14.md)).
+**AUDIO-I386 (15 novembre) :** même chaîne en i386 avec une libpulse ELF32
+privée, capture identique au bit près 5/5
+([rapport](docs/evidence/audio-i386-b12-pulse-2026-11-15.md)).
 
 | Jalon | Critère mesurable de PASS et preuves attendues | Dépendance / BLOCKED |
 | --- | --- | --- |

@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## AUDIO-I386 / B12 — sortie PulseAudio i386 sans installation (15 novembre 2026)
+
+**`B12_I386_PULSE_PASS`, `B12_AUDIBLE` NOT_CONFIRMED.** Fermeture exacte de `libpulse0:i386` (21 paquets, aucune mise à jour amd64 imposée) ; 18 paquets authentifiés extraits en privé et exposés par un `ld.so.cache` monté dans le seul banc du cas. Le MOV B12 passe par le vrai QuickTime, le HAL CoreAudio i386 et la libpulse ELF32 privée jusqu'au serveur WSLg : 5/5 captures identiques au bit près, Stop/Play 5/5, avec la `libdyld` officielle comme avec l'overlay TLV. Hôte inchangé ; aucun code de production modifié. [Inventaire](docs/evidence/audio-i386-pulse-inventory-2026-11-15.md), [rejeu](docs/evidence/audio-i386-b12-pulse-2026-11-15.md).
+
 ## LOGIC-L1 — FreeType ELF32 privé qualifié (14 novembre 2026)
 
 **FreeType PASS borné, Carbon/L2 BLOCKED.** Cinq paquets Debian i386 authentifiés et extraits en privé ; init/version/erreur de police absente/destruction passent via le vrai pont Darling i386 et en contrôle x86_64. Le chargement Carbon sans suppression de dépendances franchit FreeType puis échoue sur **libfontconfig.so.1 ELF32 absente**. HomeResFile **88/88 normal + 88/88 bypass** ; artefacts S4 gelés inchangés, aucun résidu dans les namespaces du lot. Aucune installation globale ni exécution de Logic. [Preuves et reproduction](docs/audits/logic-studio-8/2026-11-14-logic-l1-elf32.md).
