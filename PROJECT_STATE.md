@@ -7,6 +7,10 @@ proposer une suite de développement, y compris depuis mobile.
 
 **TEST / MLD_ASLR_01_PASS.** Port ciblé de Darling #2111 : neuf lignes dans mldr.c, garde strict `559f9911` intégralement préservé. Test officiel 64→i386 : référence 8/9 (échec no-ASLR), candidat 9/9 ; compteurs réels 12/12, gardes GCC/Clang ELF32/ELF64 31 cas chacun, six refus natifs attendus. HomeResFile **88/88 normal + 88/88 bypass**, Carbon Events normal/bypass PASS ; code machine ELF64 inchangé. Qualification privée, installation canonique conservée. [Preuves, commandes et limites](docs/evidence/mld-aslr-01-2026-11-15.md).
 
+## B13 — AudioToolbox (15 novembre 2026)
+
+**`B13_ATB_I386_LOAD` BLOCKED ; référence x86_64 PASS sauf deux défauts.** AudioToolbox i386 s'arrête avant `main` faute de `libavformat.so.61` ELF32. Fermeture FFmpeg i386 authentifiée : 128 paquets, dont 111 à extraire en privé (48 205 200 octets), en attente d'accord. En x86_64, AudioFile, ExtAudioFile et AudioConverter (FFmpeg) décodent et convertissent conformément à un oracle indépendant, et la sortie par CoreAudio est identique au bit près. Défauts reproduits : μ-law/compressés (`AudioConverter::create`) et `AudioConverterConvertBuffer` (SIGSEGV). Aucun code de production modifié. [Rapport](docs/evidence/audiotoolbox-b13-2026-11-15.md).
+
 ## AUDIO-I386 / B12 — sortie PulseAudio i386 sans installation (15 novembre 2026)
 
 **`B12_I386_PULSE_PASS`, `B12_AUDIBLE` NOT_CONFIRMED.** Fermeture exacte de `libpulse0:i386` (21 paquets, aucune mise à jour amd64 imposée) ; 18 paquets authentifiés extraits en privé et exposés par un `ld.so.cache` monté dans le seul banc du cas. Le MOV B12 passe par le vrai QuickTime, le HAL CoreAudio i386 et la libpulse ELF32 privée jusqu'au serveur WSLg : 5/5 captures identiques au bit près, Stop/Play 5/5, avec la `libdyld` officielle comme avec l'overlay TLV. Hôte inchangé ; aucun code de production modifié. [Inventaire](docs/evidence/audio-i386-pulse-inventory-2026-11-15.md), [rejeu](docs/evidence/audio-i386-b12-pulse-2026-11-15.md).

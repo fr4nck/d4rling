@@ -33,6 +33,17 @@ indépendants.
 
 **TEST / PASS borné :** gitlink Security `84c0a3e1` (#16 officielle), après comparaison des cinq fichiers supplémentaires par rapport à `a536cfff`, recompilation de 44 objets FAT et reliaison des deux architectures. Chargement standard sans `-dead_strip_dylibs`, HomeResFile **88/88 normal + 88/88 bypass**, témoins SSL bornés et Carbon Events passent. Exports inchangés ; test du trousseau compilé mais non exécuté (banc UID Darwin 0). TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction S4](docs/evidence/security-s4-official-reference-2026-11-14.md).
 
+## B13 — AudioToolbox (15 novembre 2026)
+
+**i386 BLOCKED (FFmpeg ELF32), référence x86_64 qualifiée.**
+- AudioFile : WAV, AIFF, CAF et μ-law lus avec propriétés et paquets identiques à un oracle indépendant ; erreurs explicites pour fichier absent, aléatoire ou vide ; fichier tronqué compté exactement.
+- ExtAudioFile et AudioConverter : S16 → Float32 et AIFF → S16LE exacts, 44,1 → 48 kHz à 86 dB de SNR.
+- Sortie AIFF → AudioConverter → CoreAudio → PulseAudio identique au bit près (3/3).
+- Deux défauts reproduits : décodeur μ-law/compressé sans canaux, et plantage de `AudioConverterConvertBuffer`.
+- i386 : arrêt avant `main` sur `libavformat.so.61` ELF32 ; besoin privé de 111 paquets (48,2 Mo), non téléchargés.
+
+[Preuves](docs/evidence/audiotoolbox-b13-2026-11-15.md).
+
 ## AUDIO-I386 / B12 — MOV rendu par PulseAudio en i386 (15 novembre 2026)
 
 **TEST / PASS i386 (`B12_I386_PULSE_PASS`), sans installation.**
