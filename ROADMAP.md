@@ -37,6 +37,16 @@ indépendants.
 
 **TEST / PASS borné :** gitlink Security `84c0a3e1` (#16 officielle), après comparaison des cinq fichiers supplémentaires par rapport à `a536cfff`, recompilation de 44 objets FAT et reliaison des deux architectures. Chargement standard sans `-dead_strip_dylibs`, HomeResFile **88/88 normal + 88/88 bypass**, témoins SSL bornés et Carbon Events passent. Exports inchangés ; test du trousseau compilé mais non exécuté (banc UID Darwin 0). TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction S4](docs/evidence/security-s4-official-reference-2026-11-14.md).
 
+## B13-INT — intégration AudioToolbox (15 novembre 2026)
+
+**TEST / PASS : ATB-FIX1 intégré à `master`.**
+- Build privé de `master` (libc++ ABI 1) : exports libc++ +10/−0, exports AudioToolbox inchangés.
+- Production FIX1 : 26/26 et 6/6 en i386 et x86_64 ; B13-D μ-law et AIFF identiques au bit près ; B12 i386 inchangé.
+- ATB-FIX2 d'origine rejeté : troncatures silencieuses. ATB-FIX2-R2 qualifié en privé (24/24), en attente de décision.
+- Défaut 3 (`CFArrayRef`, x86_64) reproduit par un témoin dédié, non corrigé.
+
+[Preuves](docs/evidence/audiotoolbox-b13-integration-2026-11-15.md).
+
 ## B13 i386 — AudioToolbox en Darwin i386 (15 novembre 2026)
 
 **TEST / PASS i386 : chargement, décodage PCM, sortie audio.**

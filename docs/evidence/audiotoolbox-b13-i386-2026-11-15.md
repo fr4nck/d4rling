@@ -7,6 +7,8 @@ privés.
 
 ## Verdicts
 
+**Note du 15 novembre 2026 (B13-INT) :** requalification sur un build privé de `master` (libc++ ABI 1). ATB-FIX1 est intégré à `master`. ATB-FIX2 d'origine est rejeté par la revue, car il tronque silencieusement les sorties trop petites et le rééchantillonnage. Son remplaçant ATB-FIX2-R2 est qualifié en privé, mais n'est pas intégré. Le défaut 3 est reproduit. Le contenu ci-dessous est conservé tel qu'établi. [Rapport d'intégration](audiotoolbox-b13-integration-2026-11-15.md).
+
 | Critère | Statut |
 | --- | --- |
 | `B13_ATB_I386_LOAD` | **PASS** : AudioToolbox i386 chargé ; 142 images ELF32 mappées, toutes privées ou de `/usr/lib32`, aucune x86_64 |

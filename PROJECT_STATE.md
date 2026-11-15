@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## B13-INT — AudioToolbox corrigé sur `master` (15 novembre 2026)
+
+**ATB-FIX1 intégré ; ATB-FIX2 non intégré ; défaut 3 reproduit.** Requalification sur un build privé de `master` `397e94d4` (libc++ `061279eb`), avec la libdyld officielle. Le binaire de production FIX1 donne 26/26 et 6/6 en i386 et x86_64 ; le μ-law suit tout le chemin jusqu'à PulseAudio, identique au bit près ; B12 i386 est inchangé. ATB-FIX2 d'origine est rejeté : il rend `noErr` en tronquant les sorties trop petites et le rééchantillonnage. ATB-FIX2-R2 (tout ou rien) passe 24/24 dans les deux architectures, mais reste privé jusqu'à décision. `AudioConverterConvertBuffer` plante donc toujours sur `master`. Défaut 3 : les tables d'extensions, d'UTI et de types MIME sont vides en x86_64, à cause d'une taille de 4 octets pour un `CFArrayRef` ; 27/27, non corrigé. Hôte inchangé. [Rapport](docs/evidence/audiotoolbox-b13-integration-2026-11-15.md).
+
 ## LIBCXX-LEGACY-01 — exports historiques Darwin (15 novembre 2026)
 
 **TEST / LIBCXX_LEGACY_01_PASS.** Gitlink libc++ `caf34a8c` → fusion officielle `061279eb` (#8), seul `__config_site` modifié dans le module. Référence/candidat : 46 unités FAT reconstruites chacune ; cinq exports absents puis résolus en **i386 et x86_64**, liaison forte négative/positive ; sept tests LLVM passent sur les deux variantes et architectures (28 exécutions). Dix exports ajoutés, aucun retiré ; UUID réels vérifiés. Canon et autres bancs intacts. [Preuves et reproduction](docs/evidence/libcxx-legacy-01-2026-11-15.md). Le témoin ptrace-wait4 de #2112 reste à expertiser, hors de ce lot.
