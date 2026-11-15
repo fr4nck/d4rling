@@ -19,6 +19,8 @@ public:
 
 	void flush();
 	UInt32 frameSize() const { return m_sourceFormat.mBytesPerFrame; }
+	const AudioStreamBasicDescription& sourceFormat() const { return m_sourceFormat; }
+	const AudioStreamBasicDescription& destinationFormat() const { return m_destinationFormat; }
 	
 	OSStatus fillComplex(AudioConverterComplexInputDataProc dataProc, void* opaque, UInt32* ioOutputDataPacketSize, AudioBufferList *outOutputData, AudioStreamPacketDescription* outPacketDescription);
 	
