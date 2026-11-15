@@ -1,0 +1,703 @@
+{
+  "root": "libpulse0",
+  "model": "trixie+trixie-updates+trixie-security, highest version, no backports, Depends+Pre-Depends",
+  "indexes": {
+    "trixie": {
+      "date": "Sat, 12 Sep 2026 07:55:41 UTC",
+      "inrelease_sha256": "0584fba32e13e0ab8285fb16c27adea1ec03a73669c18702821094fd6ca86675"
+    },
+    "trixie-updates": {
+      "date": "Sat, 14 Nov 2026 20:06:21 UTC",
+      "inrelease_sha256": "3a836f97448870be80ef0602e322f930d2ed80ac1d5c95be317df0d3c60ada2a"
+    },
+    "trixie-security": {
+      "date": "Sat, 14 Nov 2026 20:03:59 UTC",
+      "inrelease_sha256": "2cd3748b137484f546b252aff64d21b756cb7067460e3bb565766ad2a147cb17"
+    }
+  },
+  "packages": [
+    {
+      "package": "gcc-14-base",
+      "version": "14.2.0-19",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "gcc-14",
+      "depends": "",
+      "pre_depends": "",
+      "filename": "pool/main/g/gcc-14/gcc-14-base_14.2.0-19_i386.deb",
+      "size": 49376,
+      "sha256": "cab3cc6782d6cd3445d184ad317bbd8cc46395eb2675ccd75f4b57147469887a",
+      "installed_size_kib": 112,
+      "amd64_installed": "14.2.0-19",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libasyncns0",
+      "version": "0.8-6+b5",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libasyncns (0.8-6)",
+      "depends": "libc6 (>= 2.34)",
+      "pre_depends": "",
+      "filename": "pool/main/liba/libasyncns/libasyncns0_0.8-6+b5_i386.deb",
+      "size": 12540,
+      "sha256": "57528d6cb22dbc007ba432a8a3294144fc88144eb49c645cb3a8e671e357f412",
+      "installed_size_kib": 43,
+      "amd64_installed": "0.8-6+b5",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libc6",
+      "version": "2.41-12+deb13u4",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "glibc",
+      "depends": "libgcc-s1",
+      "pre_depends": "",
+      "filename": "pool/main/g/glibc/libc6_2.41-12+deb13u4_i386.deb",
+      "size": 2721896,
+      "sha256": "67bb4b54cf4bb6a380449dfa1852cd9135659f85360caa0e41d312f4b30e573a",
+      "installed_size_kib": 12425,
+      "amd64_installed": "2.41-12+deb13u4",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libcap2",
+      "version": "1:2.75-10+deb13u1+b3",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libcap2 (1:2.75-10+deb13u1)",
+      "depends": "libc6 (>= 2.38)",
+      "pre_depends": "",
+      "filename": "pool/main/libc/libcap2/libcap2_2.75-10+deb13u1+b3_i386.deb",
+      "size": 30108,
+      "sha256": "15cdfa6ca972c7c81e48e0c030a2b3ae16acb146cca45659bf72919f4af94aeb",
+      "installed_size_kib": 90,
+      "amd64_installed": "1:2.75-10+deb13u1+b3",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libdbus-1-3",
+      "version": "1.16.2-2",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "dbus",
+      "depends": "libc6 (>= 2.38), libsystemd0",
+      "pre_depends": "",
+      "filename": "pool/main/d/dbus/libdbus-1-3_1.16.2-2_i386.deb",
+      "size": 190764,
+      "sha256": "2a6491a71245ea6863b5873743ee3f57b89dc9b3698441a94704b9360050652e",
+      "installed_size_kib": 492,
+      "amd64_installed": "1.16.2-2",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libflac14",
+      "version": "1.5.0+ds-2",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "flac",
+      "depends": "libc6 (>= 2.34), libogg0 (>= 1.1.0)",
+      "pre_depends": "",
+      "filename": "pool/main/f/flac/libflac14_1.5.0+ds-2_i386.deb",
+      "size": 216392,
+      "sha256": "a83bfb785cf7dd1c99d22f3e1f62d6faba5a982bf13461bf31bced4c2305aba5",
+      "installed_size_kib": 527,
+      "amd64_installed": "1.5.0+ds-2",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libgcc-s1",
+      "version": "14.2.0-19",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "gcc-14",
+      "depends": "gcc-14-base (= 14.2.0-19), libc6 (>= 2.35)",
+      "pre_depends": "",
+      "filename": "pool/main/g/gcc-14/libgcc-s1_14.2.0-19_i386.deb",
+      "size": 88164,
+      "sha256": "a4c71fd856d2a48a7505a087b4186e3cca23f94603c05e3fb7c799b27e72f761",
+      "installed_size_kib": 235,
+      "amd64_installed": "14.2.0-19",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libmp3lame0",
+      "version": "3.100-6+b3",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "lame (3.100-6)",
+      "depends": "libc6 (>= 2.38)",
+      "pre_depends": "",
+      "filename": "pool/main/l/lame/libmp3lame0_3.100-6+b3_i386.deb",
+      "size": 362352,
+      "sha256": "df68cd18e2f747fe2d93f740b2d0df206da80adac9fff2a2346faa5690a66fc3",
+      "installed_size_kib": 555,
+      "amd64_installed": "3.100-6+b3",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libmpg123-0t64",
+      "version": "1.32.10-1+deb13u1",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "mpg123",
+      "depends": "libc6 (>= 2.33)",
+      "pre_depends": "",
+      "filename": "pool/main/m/mpg123/libmpg123-0t64_1.32.10-1+deb13u1_i386.deb",
+      "size": 152396,
+      "sha256": "4080376b9d3e730f5020552223507e1c93696ab1d7ba56da2afccf97978c7238",
+      "installed_size_kib": 437,
+      "amd64_installed": "1.32.10-1+deb13u1",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libogg0",
+      "version": "1.3.5-3+b2",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libogg (1.3.5-3)",
+      "depends": "libc6 (>= 2.4)",
+      "pre_depends": "",
+      "filename": "pool/main/libo/libogg/libogg0_1.3.5-3+b2_i386.deb",
+      "size": 24648,
+      "sha256": "4ee76bfbd7c9408571a0dbe2b21223d4bac7598e93c2d5082f2752a59332ebbc",
+      "installed_size_kib": 62,
+      "amd64_installed": "1.3.5-3+b2",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libopus0",
+      "version": "1.5.2-2",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "opus",
+      "depends": "libc6 (>= 2.29)",
+      "pre_depends": "",
+      "filename": "pool/main/o/opus/libopus0_1.5.2-2_i386.deb",
+      "size": 2842992,
+      "sha256": "eac2162ec314a46d5b93f1d7943368cc7704ec627629c342361fb8101cc67dbb",
+      "installed_size_kib": 3477,
+      "amd64_installed": "1.5.2-2",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libpulse0",
+      "version": "17.0+dfsg1-2+b1",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "pulseaudio (17.0+dfsg1-2)",
+      "depends": "libasyncns0 (>= 0.3), libc6 (>= 2.38), libdbus-1-3 (>= 1.10), libsndfile1 (>= 1.0.20), libsystemd0, libx11-6, libx11-xcb1, libxcb1",
+      "pre_depends": "",
+      "filename": "pool/main/p/pulseaudio/libpulse0_17.0+dfsg1-2+b1_i386.deb",
+      "size": 276164,
+      "sha256": "ec7887ebe910ea46f6c0fd9f813e1338608361ce6d50582d7e2474fd753d582e",
+      "installed_size_kib": 1050,
+      "amd64_installed": "17.0+dfsg1-2+b1",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libsndfile1",
+      "version": "1.2.2-2+deb13u1",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libsndfile",
+      "depends": "libc6 (>= 2.38), libflac14 (>= 1.5.0), libmp3lame0 (>= 3.100), libmpg123-0t64 (>= 1.28.0), libogg0 (>= 1.3.0), libopus0 (>= 1.1), libvorbis0a (>= 1.2.3), libvorbisenc2 (>= 1.1.2)",
+      "pre_depends": "",
+      "filename": "pool/main/libs/libsndfile/libsndfile1_1.2.2-2+deb13u1_i386.deb",
+      "size": 221828,
+      "sha256": "004654d5a78eb710586807322f41144e54c8c88ea3347f007c4b6b0d59b37d21",
+      "installed_size_kib": 673,
+      "amd64_installed": "1.2.2-2+deb13u1",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libsystemd0",
+      "version": "257.13-1~deb13u1",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "systemd",
+      "depends": "libc6 (>= 2.38), libcap2 (>= 1:2.10)",
+      "pre_depends": "",
+      "filename": "pool/main/s/systemd/libsystemd0_257.13-1~deb13u1_i386.deb",
+      "size": 486216,
+      "sha256": "e034259827e162c4c01ef4412bc6a2c4b4c3e2744767e5c08338132a0e2cf0ad",
+      "installed_size_kib": 1273,
+      "amd64_installed": "257.13-1~deb13u1",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libvorbis0a",
+      "version": "1.3.7-3",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libvorbis",
+      "depends": "libc6 (>= 2.29), libogg0 (>= 1.1.0)",
+      "pre_depends": "",
+      "filename": "pool/main/libv/libvorbis/libvorbis0a_1.3.7-3_i386.deb",
+      "size": 89548,
+      "sha256": "32b6df776b5504097392c04045728e8920f28fee73a0748845e89852c6d372c5",
+      "installed_size_kib": 200,
+      "amd64_installed": "1.3.7-3",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libvorbisenc2",
+      "version": "1.3.7-3",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libvorbis",
+      "depends": "libc6 (>= 2.4), libvorbis0a (= 1.3.7-3)",
+      "pre_depends": "",
+      "filename": "pool/main/libv/libvorbis/libvorbisenc2_1.3.7-3_i386.deb",
+      "size": 69204,
+      "sha256": "d15bd9a2f93f0742ddf53b2a7cf25038cc2a52ff532327af47eaa77a366010be",
+      "installed_size_kib": 578,
+      "amd64_installed": "1.3.7-3",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libx11-6",
+      "version": "2:1.8.12-1",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libx11",
+      "depends": "libc6 (>= 2.38), libxcb1 (>= 1.11.1), libx11-data",
+      "pre_depends": "",
+      "filename": "pool/main/libx/libx11/libx11-6_1.8.12-1_i386.deb",
+      "size": 838484,
+      "sha256": "0a4ee67fffb3299953a9bd298c33e4f66d1b7f2f112eb83eb32c8e4351927741",
+      "installed_size_kib": 1693,
+      "amd64_installed": "2:1.8.12-1",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libx11-xcb1",
+      "version": "2:1.8.12-1",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libx11",
+      "depends": "libx11-6 (= 2:1.8.12-1)",
+      "pre_depends": "",
+      "filename": "pool/main/libx/libx11/libx11-xcb1_1.8.12-1_i386.deb",
+      "size": 247136,
+      "sha256": "c17ba14a5a1c8b5733eef8eb54e640df27816d5fa6636c512d75374ca5305029",
+      "installed_size_kib": 306,
+      "amd64_installed": "2:1.8.12-1",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libxau6",
+      "version": "1:1.0.11-1",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libxau",
+      "depends": "libc6 (>= 2.33)",
+      "pre_depends": "",
+      "filename": "pool/main/libx/libxau/libxau6_1.0.11-1_i386.deb",
+      "size": 20744,
+      "sha256": "1645415b2ea8b64268f87944b733b9f9a2f243f89eb73555120eaf459fa06a57",
+      "installed_size_kib": 41,
+      "amd64_installed": "1:1.0.11-1",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libxcb1",
+      "version": "1.17.0-2+b1",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libxcb (1.17.0-2)",
+      "depends": "libc6 (>= 2.38), libxau6 (>= 1:1.0.9), libxdmcp6",
+      "pre_depends": "",
+      "filename": "pool/main/libx/libxcb/libxcb1_1.17.0-2+b1_i386.deb",
+      "size": 148068,
+      "sha256": "a4c421cf27ef4f66b32f650e3ac8bbd12bc8ec28b70a3be5dcc56dc3453e8d3e",
+      "installed_size_kib": 312,
+      "amd64_installed": "1.17.0-2+b1",
+      "all_installed": null,
+      "version_lock": "equal"
+    },
+    {
+      "package": "libxdmcp6",
+      "version": "1:1.1.5-1",
+      "architecture": "i386",
+      "suite": "trixie",
+      "multi_arch": "same",
+      "source": "libxdmcp",
+      "depends": "libc6 (>= 2.36)",
+      "pre_depends": "",
+      "filename": "pool/main/libx/libxdmcp/libxdmcp6_1.1.5-1_i386.deb",
+      "size": 28200,
+      "sha256": "06b3a5d82fd69b1ff66e4e68fd4cf55f616864a29f456609a1f92b275b6126f7",
+      "installed_size_kib": 54,
+      "amd64_installed": "1:1.1.5-1",
+      "all_installed": null,
+      "version_lock": "equal"
+    }
+  ],
+  "satisfied_outside_i386": [
+    {
+      "from": "libx11-6",
+      "dep": "libx11-data",
+      "satisfied_by": "libx11-data:all 2:1.8.12-1 (installed, all)"
+    }
+  ],
+  "edges": [
+    {
+      "from": "libpulse0",
+      "field": "Depends",
+      "dep": "libasyncns0 (>= 0.3)",
+      "to": "libasyncns0",
+      "via_provides": null
+    },
+    {
+      "from": "libpulse0",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.38)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libpulse0",
+      "field": "Depends",
+      "dep": "libdbus-1-3 (>= 1.10)",
+      "to": "libdbus-1-3",
+      "via_provides": null
+    },
+    {
+      "from": "libpulse0",
+      "field": "Depends",
+      "dep": "libsndfile1 (>= 1.0.20)",
+      "to": "libsndfile1",
+      "via_provides": null
+    },
+    {
+      "from": "libpulse0",
+      "field": "Depends",
+      "dep": "libsystemd0",
+      "to": "libsystemd0",
+      "via_provides": null
+    },
+    {
+      "from": "libpulse0",
+      "field": "Depends",
+      "dep": "libx11-6",
+      "to": "libx11-6",
+      "via_provides": null
+    },
+    {
+      "from": "libpulse0",
+      "field": "Depends",
+      "dep": "libx11-xcb1",
+      "to": "libx11-xcb1",
+      "via_provides": null
+    },
+    {
+      "from": "libpulse0",
+      "field": "Depends",
+      "dep": "libxcb1",
+      "to": "libxcb1",
+      "via_provides": null
+    },
+    {
+      "from": "libasyncns0",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.34)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libc6",
+      "field": "Depends",
+      "dep": "libgcc-s1",
+      "to": "libgcc-s1",
+      "via_provides": null
+    },
+    {
+      "from": "libdbus-1-3",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.38)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libdbus-1-3",
+      "field": "Depends",
+      "dep": "libsystemd0",
+      "to": "libsystemd0",
+      "via_provides": null
+    },
+    {
+      "from": "libsndfile1",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.38)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libsndfile1",
+      "field": "Depends",
+      "dep": "libflac14 (>= 1.5.0)",
+      "to": "libflac14",
+      "via_provides": null
+    },
+    {
+      "from": "libsndfile1",
+      "field": "Depends",
+      "dep": "libmp3lame0 (>= 3.100)",
+      "to": "libmp3lame0",
+      "via_provides": null
+    },
+    {
+      "from": "libsndfile1",
+      "field": "Depends",
+      "dep": "libmpg123-0t64 (>= 1.28.0)",
+      "to": "libmpg123-0t64",
+      "via_provides": null
+    },
+    {
+      "from": "libsndfile1",
+      "field": "Depends",
+      "dep": "libogg0 (>= 1.3.0)",
+      "to": "libogg0",
+      "via_provides": null
+    },
+    {
+      "from": "libsndfile1",
+      "field": "Depends",
+      "dep": "libopus0 (>= 1.1)",
+      "to": "libopus0",
+      "via_provides": null
+    },
+    {
+      "from": "libsndfile1",
+      "field": "Depends",
+      "dep": "libvorbis0a (>= 1.2.3)",
+      "to": "libvorbis0a",
+      "via_provides": null
+    },
+    {
+      "from": "libsndfile1",
+      "field": "Depends",
+      "dep": "libvorbisenc2 (>= 1.1.2)",
+      "to": "libvorbisenc2",
+      "via_provides": null
+    },
+    {
+      "from": "libsystemd0",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.38)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libsystemd0",
+      "field": "Depends",
+      "dep": "libcap2 (>= 1:2.10)",
+      "to": "libcap2",
+      "via_provides": null
+    },
+    {
+      "from": "libx11-6",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.38)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libx11-6",
+      "field": "Depends",
+      "dep": "libxcb1 (>= 1.11.1)",
+      "to": "libxcb1",
+      "via_provides": null
+    },
+    {
+      "from": "libx11-xcb1",
+      "field": "Depends",
+      "dep": "libx11-6 (= 2:1.8.12-1)",
+      "to": "libx11-6",
+      "via_provides": null
+    },
+    {
+      "from": "libxcb1",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.38)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libxcb1",
+      "field": "Depends",
+      "dep": "libxau6 (>= 1:1.0.9)",
+      "to": "libxau6",
+      "via_provides": null
+    },
+    {
+      "from": "libxcb1",
+      "field": "Depends",
+      "dep": "libxdmcp6",
+      "to": "libxdmcp6",
+      "via_provides": null
+    },
+    {
+      "from": "libgcc-s1",
+      "field": "Depends",
+      "dep": "gcc-14-base (= 14.2.0-19)",
+      "to": "gcc-14-base",
+      "via_provides": null
+    },
+    {
+      "from": "libgcc-s1",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.35)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libflac14",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.34)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libflac14",
+      "field": "Depends",
+      "dep": "libogg0 (>= 1.1.0)",
+      "to": "libogg0",
+      "via_provides": null
+    },
+    {
+      "from": "libmp3lame0",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.38)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libmpg123-0t64",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.33)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libogg0",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.4)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libopus0",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.29)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libvorbis0a",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.29)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libvorbis0a",
+      "field": "Depends",
+      "dep": "libogg0 (>= 1.1.0)",
+      "to": "libogg0",
+      "via_provides": null
+    },
+    {
+      "from": "libvorbisenc2",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.4)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libvorbisenc2",
+      "field": "Depends",
+      "dep": "libvorbis0a (= 1.3.7-3)",
+      "to": "libvorbis0a",
+      "via_provides": null
+    },
+    {
+      "from": "libcap2",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.38)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libxau6",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.33)",
+      "to": "libc6",
+      "via_provides": null
+    },
+    {
+      "from": "libxdmcp6",
+      "field": "Depends",
+      "dep": "libc6 (>= 2.36)",
+      "to": "libc6",
+      "via_provides": null
+    }
+  ],
+  "recommends": {
+    "libc6": [
+      "libidn2-0"
+    ],
+    "libdbus-1-3": [
+      "dbus"
+    ],
+    "libsystemd0": [
+      "libzstd1"
+    ]
+  },
+  "totals": {
+    "count": 21,
+    "download_bytes": 9117220,
+    "installed_kib": 24635
+  }
+}

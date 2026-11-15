@@ -1,0 +1,126 @@
+{
+  "mldr32": {
+    "sha256": "4f46a4583da81f958039b65e8543d01adddb0ed87dffd51763518efdf4dbe9b9",
+    "pt_interp": "/lib/ld-linux.so.2"
+  },
+  "paths": [
+    {
+      "path": "/lib",
+      "exists": true,
+      "symlink_target": "usr/lib",
+      "realpath": "/usr/lib",
+      "owner": "base-files: /lib"
+    },
+    {
+      "path": "/lib32",
+      "exists": true,
+      "symlink_target": "usr/lib32",
+      "realpath": "/usr/lib32",
+      "owner": "diversion by base-files from: /lib32"
+    },
+    {
+      "path": "/lib/ld-linux.so.2",
+      "exists": true,
+      "symlink_target": "../lib32/ld-linux.so.2",
+      "realpath": "/usr/lib32/ld-linux.so.2",
+      "owner": null,
+      "sha256": "73e22dd41a5404b75db70b4c51be08075ddec01261eeed91546655def92b284c"
+    },
+    {
+      "path": "/usr/lib/ld-linux.so.2",
+      "exists": true,
+      "symlink_target": "../lib32/ld-linux.so.2",
+      "realpath": "/usr/lib32/ld-linux.so.2",
+      "owner": null,
+      "sha256": "73e22dd41a5404b75db70b4c51be08075ddec01261eeed91546655def92b284c"
+    },
+    {
+      "path": "/usr/lib32/ld-linux.so.2",
+      "exists": true,
+      "symlink_target": null,
+      "realpath": "/usr/lib32/ld-linux.so.2",
+      "owner": "libc6-i386: /usr/lib32/ld-linux.so.2",
+      "sha256": "73e22dd41a5404b75db70b4c51be08075ddec01261eeed91546655def92b284c"
+    },
+    {
+      "path": "/usr/lib32/libc.so.6",
+      "exists": true,
+      "symlink_target": null,
+      "realpath": "/usr/lib32/libc.so.6",
+      "owner": "libc6-i386: /usr/lib32/libc.so.6",
+      "sha256": "f2ed349542c0be517ea7e66381f342eda08857e01772d6aa33916ca41702f61c"
+    },
+    {
+      "path": "/usr/lib32/libgcc_s.so.1",
+      "exists": true,
+      "symlink_target": null,
+      "realpath": "/usr/lib32/libgcc_s.so.1",
+      "owner": "lib32gcc-s1: /usr/lib32/libgcc_s.so.1",
+      "sha256": "c5876eb1fde3666dc9049888c572ddfed2ee341837547175aad3b55a4dbc6eb7"
+    },
+    {
+      "path": "/usr/lib/i386-linux-gnu",
+      "exists": false,
+      "symlink_target": null,
+      "realpath": "/usr/lib/i386-linux-gnu",
+      "owner": null
+    },
+    {
+      "path": "/etc/ld.so.cache",
+      "exists": true,
+      "symlink_target": null,
+      "realpath": "/etc/ld.so.cache",
+      "owner": null,
+      "sha256": "3ffa6037471f2ec983ca2a4e9cf29a171b956676e6ccd53012881aaf62ae0996"
+    }
+  ],
+  "lib32_loader_md5_matches_dpkg": true,
+  "ld_so_conf_d": {
+    "fakeroot-x86_64-linux-gnu.conf": {
+      "dirs": [
+        "/usr/lib/x86_64-linux-gnu/libfakeroot"
+      ],
+      "owner": "libfakeroot:amd64: /etc/ld.so.conf.d/fakeroot-x86_64-linux-gnu.conf"
+    },
+    "ld.wsl.conf": {
+      "dirs": [
+        "/usr/lib/wsl/lib"
+      ],
+      "owner": null
+    },
+    "libc.conf": {
+      "dirs": [
+        "/usr/local/lib"
+      ],
+      "owner": "libc-bin: /etc/ld.so.conf.d/libc.conf"
+    },
+    "x86_64-linux-gnu.conf": {
+      "dirs": [
+        "/usr/local/lib/x86_64-linux-gnu",
+        "/lib/x86_64-linux-gnu",
+        "/usr/lib/x86_64-linux-gnu"
+      ],
+      "owner": "libc6:amd64: /etc/ld.so.conf.d/x86_64-linux-gnu.conf"
+    },
+    "zz_i386-biarch-compat.conf": {
+      "dirs": [
+        "/lib32",
+        "/usr/lib32"
+      ],
+      "owner": "libc6-i386: /etc/ld.so.conf.d/zz_i386-biarch-compat.conf"
+    },
+    "zz_x32-biarch-compat.conf": {
+      "dirs": [
+        "/libx32",
+        "/usr/libx32"
+      ],
+      "owner": "libc6-x32: /etc/ld.so.conf.d/zz_x32-biarch-compat.conf"
+    }
+  },
+  "libc6_i386_contents": [
+    "etc/ld.so.conf.d/i386-linux-gnu.conf",
+    "usr/lib/i386-linux-gnu/ld-linux.so.2",
+    "usr/lib/ld-linux.so.2"
+  ],
+  "foreign_architectures": []
+}

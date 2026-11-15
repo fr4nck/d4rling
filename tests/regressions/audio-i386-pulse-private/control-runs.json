@@ -1,0 +1,79 @@
+[
+  {
+    "label": "ldci3k",
+    "program": "ca-probe-i386",
+    "program_sha256": "85c7ce877a597c910be9c44a9341eb3802c9330db0a362f3965dbbdf20a5df24",
+    "args": "",
+    "rc": 134,
+    "expected": "134 Cannot load libpulse.so.0 (ELF)",
+    "ldcache_sha256": "ce9b37bf3f52923d1d8fbacb226b8bdcb6546814e692bb242e1fe400e2e6ce64",
+    "host_ldcache_sha256": "3ffa6037471f2ec983ca2a4e9cf29a171b956676e6ccd53012881aaf62ae0996",
+    "ns_ldcache_sha256": "ce9b37bf3f52923d1d8fbacb226b8bdcb6546814e692bb242e1fe400e2e6ce64",
+    "markers": [
+      "Cannot load libpulse.so.0 (ELF): libpulse.so.0: cannot open shared object file: No such file or directory"
+    ],
+    "mounts": [
+      "41",
+      "41"
+    ],
+    "darlingserver": [
+      "0",
+      "0"
+    ],
+    "residual_prefix_processes": 0,
+    "seconds": "2.256752472"
+  },
+  {
+    "label": "ldcx8k",
+    "program": "ca-probe-x86_64",
+    "program_sha256": "50e6470bbcc13b75d0d25cd612cd9388cd0bc0a3e383df95d9818971d5f6ee7e",
+    "args": "",
+    "rc": 0,
+    "expected": "0 device PulseAudio",
+    "ldcache_sha256": "ce9b37bf3f52923d1d8fbacb226b8bdcb6546814e692bb242e1fe400e2e6ce64",
+    "host_ldcache_sha256": "3ffa6037471f2ec983ca2a4e9cf29a171b956676e6ccd53012881aaf62ae0996",
+    "ns_ldcache_sha256": "ce9b37bf3f52923d1d8fbacb226b8bdcb6546814e692bb242e1fe400e2e6ce64",
+    "markers": [
+      "CA_DEVICE_NAME status=0 name=PulseAudio",
+      "CA_FORMAT status=0 rate=44100.0 flags=0x1 bits=32 channels=2 bytes_per_frame=8"
+    ],
+    "mounts": [
+      "41",
+      "41"
+    ],
+    "darlingserver": [
+      "0",
+      "0"
+    ],
+    "residual_prefix_processes": 0,
+    "seconds": "1.855369371"
+  },
+  {
+    "label": "ldcx8s",
+    "program": "ca-probe-x86_64",
+    "program_sha256": "50e6470bbcc13b75d0d25cd612cd9388cd0bc0a3e383df95d9818971d5f6ee7e",
+    "args": "2500",
+    "rc": 0,
+    "expected": "0 silent IOProc callbacks",
+    "ldcache_sha256": "ce9b37bf3f52923d1d8fbacb226b8bdcb6546814e692bb242e1fe400e2e6ce64",
+    "host_ldcache_sha256": "3ffa6037471f2ec983ca2a4e9cf29a171b956676e6ccd53012881aaf62ae0996",
+    "ns_ldcache_sha256": "ce9b37bf3f52923d1d8fbacb226b8bdcb6546814e692bb242e1fe400e2e6ce64",
+    "markers": [
+      "CA_DEVICE_NAME status=0 name=PulseAudio",
+      "CA_FORMAT status=0 rate=44100.0 flags=0x1 bits=32 channels=2 bytes_per_frame=8",
+      "CA_START status=0",
+      "CA_STOP status=0 callbacks=106 last_bytes=8192 buffers=1",
+      "CA_RESULT CALLBACKS"
+    ],
+    "mounts": [
+      "41",
+      "41"
+    ],
+    "darlingserver": [
+      "0",
+      "0"
+    ],
+    "residual_prefix_processes": 0,
+    "seconds": "4.410140362"
+  }
+]

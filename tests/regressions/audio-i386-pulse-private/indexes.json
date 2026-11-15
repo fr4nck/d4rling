@@ -1,0 +1,59 @@
+{
+  "trixie": {
+    "inrelease_sha256": "0584fba32e13e0ab8285fb16c27adea1ec03a73669c18702821094fd6ca86675",
+    "signers": [
+      "04B54C3CDCA79751B16BC6B5225629DF75B188BD",
+      "41587F7DB8C774BCCF131416762F67A0B2C39DE4",
+      "B8B80B5B623EAB6AD8775C45B7C5D7D6350947F8"
+    ],
+    "date": "Sat, 12 Sep 2026 07:55:41 UTC",
+    "valid_until": null,
+    "version": "13.7",
+    "files": {
+      "main/binary-i386/Packages.xz": {
+        "local": "trixie-main-i386-Packages.xz",
+        "sha256": "1e864b05cc1acc937760ddcdfd8cf724347d71b9b99e9ffbca4768b392634f34",
+        "bytes": 9436656
+      },
+      "main/Contents-i386.gz": {
+        "local": "trixie-main-Contents-i386.gz",
+        "sha256": "4bdf044ff321764b30aaad2cdaf5d6af517b140b6f773aa149ac4758050ed892",
+        "bytes": 11094695
+      }
+    }
+  },
+  "trixie-updates": {
+    "inrelease_sha256": "3a836f97448870be80ef0602e322f930d2ed80ac1d5c95be317df0d3c60ada2a",
+    "signers": [
+      "04B54C3CDCA79751B16BC6B5225629DF75B188BD",
+      "B8B80B5B623EAB6AD8775C45B7C5D7D6350947F8"
+    ],
+    "date": "Sat, 14 Nov 2026 20:06:21 UTC",
+    "valid_until": "Sat, 21 Nov 2026 20:06:21 UTC",
+    "version": "13-updates",
+    "files": {
+      "main/binary-i386/Packages.xz": {
+        "local": "trixie-updates-main-i386-Packages.xz",
+        "sha256": "eea860c5dea11680e64299adb2736c2367c4235763a66f2b70ca61ce1b51978a",
+        "bytes": 1108
+      }
+    }
+  },
+  "trixie-security": {
+    "inrelease_sha256": "2cd3748b137484f546b252aff64d21b756cb7067460e3bb565766ad2a147cb17",
+    "signers": [
+      "05AB90340C0C5E797F44A8C8254CF3B5AEC0A8F0",
+      "5E04A1E3223A19A20706E20F9904613D4CCE68C6"
+    ],
+    "date": "Sat, 14 Nov 2026 20:03:59 UTC",
+    "valid_until": "Sat, 21 Nov 2026 20:03:59 UTC",
+    "version": "13",
+    "files": {
+      "main/binary-i386/Packages.xz": {
+        "local": "trixie-security-main-i386-Packages.xz",
+        "sha256": "bb980809549dfcac60051d2b8715a2be0df59c7aa7e071ff641e4b17e4b8d055",
+        "bytes": 252000
+      }
+    }
+  }
+}
