@@ -1,0 +1,136 @@
+{
+  "signal": {
+    "rate": 44100,
+    "channels": 2,
+    "frames": 88200,
+    "peak": 8192,
+    "notes": [
+      {
+        "hz": 440.0,
+        "left": 1,
+        "right": 1,
+        "start_frame": 0,
+        "frames": 22050
+      },
+      {
+        "hz": 554.365,
+        "left": 1,
+        "right": 0,
+        "start_frame": 22050,
+        "frames": 22050
+      },
+      {
+        "hz": 659.255,
+        "left": 0,
+        "right": 1,
+        "start_frame": 44100,
+        "frames": 22050
+      },
+      {
+        "hz": 880.0,
+        "left": 1,
+        "right": 1,
+        "start_frame": 66150,
+        "frames": 22050
+      }
+    ]
+  },
+  "files": {
+    "demo-s16.wav": {
+      "bytes": 352844,
+      "sha256": "a97ea1f017d800f0f3b25984d30a573db5cadc11b5d668b64175cc589655108b"
+    },
+    "demo-s16.aiff": {
+      "bytes": 352854,
+      "sha256": "06b728bd94d25a31fdf2bfacc1da368cab10d6911e1aa01fa303f423df1d3c30"
+    },
+    "demo-s16.caf": {
+      "bytes": 352868,
+      "sha256": "647a3412977fc0225e45d05afcde2a11760731a2fb935087f7303ad301a864f0"
+    },
+    "demo-ulaw.wav": {
+      "bytes": 176458,
+      "sha256": "98a509761994211739b2dd4584dffc45cca87770547e71d4bd9e3874e7ce305f"
+    },
+    "bad-garbage.wav": {
+      "bytes": 4096,
+      "sha256": "9a54a3002237623bd50e4d15cdaebbe324505c78975401ed944cbdfb79bfa9a7"
+    },
+    "bad-trunc.wav": {
+      "bytes": 141137,
+      "sha256": "931a99da45efb92d06178d1fbbbd36a315415ec5f5de98b1d09da508c036e2ee"
+    },
+    "bad-empty.wav": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  },
+  "expect": {
+    "demo-s16.wav": {
+      "file_type": "WAVE",
+      "format": "lpcm",
+      "flags_signed": true,
+      "big_endian": false,
+      "bits": 16,
+      "packets": 88200,
+      "data_bytes": 352800,
+      "packets_sha256": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a"
+    },
+    "demo-s16.aiff": {
+      "file_type": "AIFF",
+      "format": "lpcm",
+      "flags_signed": true,
+      "big_endian": true,
+      "bits": 16,
+      "packets": 88200,
+      "data_bytes": 352800,
+      "packets_sha256": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+    },
+    "demo-s16.caf": {
+      "file_type": "caff",
+      "format": "lpcm",
+      "flags_signed": true,
+      "big_endian": true,
+      "bits": 16,
+      "packets": 88200,
+      "data_bytes": 352800,
+      "packets_sha256": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+    },
+    "demo-ulaw.wav": {
+      "file_type": "WAVE",
+      "format": "ulaw",
+      "bits": 8,
+      "packets": 88200,
+      "data_bytes": 176400,
+      "packets_sha256": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+      "decoded_s16le_sha256": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb"
+    },
+    "bad-trunc.wav": {
+      "available_payload_bytes": 141093,
+      "available_frames": 35273,
+      "prefix_sha256": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423"
+    }
+  },
+  "views": {
+    "s16le_sha256": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+    "s16be_sha256": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+    "f32le_sha256": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+    "ulaw_decoded_s16le_sha256": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+    "ulaw_decoded_s16be_sha256": "84c991f31c8c95019fcceb586575c438e9d19ab667781e6868705c4992999676"
+  },
+  "tolerances": {
+    "s16_to_f32": "exact: every output sample equals s/32768 (binary32), 0 differences",
+    "ulaw_to_s16": "exact: every output sample equals the G.711 decoding, 0 differences",
+    "s16_byteswap": "exact: identical bytes after swapping",
+    "resample_44k1_to_48k_f32": {
+      "frames": 96000,
+      "frames_tolerance": 64,
+      "max_lag_search": 512,
+      "interior_skip_frames": 1024,
+      "min_snr_db_vs_analytic": 50.0,
+      "note_freq_rel_tolerance": 0.002,
+      "note_level_db_tolerance": 0.5
+    }
+  },
+  "ref_48k_f32le_sha256": "2998ccff9ec22b5f61d0b6c762fd094942fdeb59736212ba7acab79bd04d3478"
+}

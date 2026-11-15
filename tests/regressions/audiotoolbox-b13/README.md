@@ -1,0 +1,60 @@
+# B13 : AudioToolbox (AudioFile, ExtAudioFile, AudioConverter)
+
+Témoins du lot B13 (15 novembre 2026). Rapport :
+[docs/evidence/audiotoolbox-b13-2026-11-15.md](../../../docs/evidence/audiotoolbox-b13-2026-11-15.md).
+
+Le témoin Mach-O `b13-atb` appelle le vrai `AudioToolbox.framework` de
+production, et donc son composant de fichiers `AFAVFormat` et les ponts
+FFmpeg. Il appelle aussi le HAL `CoreAudio.framework`. Aucune
+implémentation de remplacement n'est utilisée. Les données décodées sont
+comparées hors de l'invité à un oracle indépendant de FFmpeg.
+
+| Fichier | Rôle |
+| --- | --- |
+| `make_b13_media.py` | Générateur original et déterministe : arpège de B12 en WAV PCM 16 bits LE, AIFF 16 bits BE, CAF `lpcm` 16 bits BE, WAV G.711 μ-law, et fichiers négatifs (aléatoire, vide, tronqué) ; écrit `b13-oracle.json` et la référence analytique à 48 kHz |
+| `b13-oracle.json` | Empreintes attendues et tolérances, fixées avant les essais |
+| `b13-atb.c` | `probe` : niveaux A à C ; `convertbuffer` : `AudioConverterConvertBuffer`, isolé dans son propre processus ; `play` : niveau D (fichier → ExtAudioFile/AudioConverter → S16LE → IOProc CoreAudio, schéma B12) |
+| `verify_b13.py` | Comparaison à l'oracle : 26 critères |
+| `tools/build.sh` | Compilation Mach-O i386/x86_64 contre l'installation privée (`B11E_STAGE`, `MACOSX_SDK`) |
+| `tools/run-b13.sh` | Banc invité AUDIO-I386 (`run-guest-ldc.sh`, cache `ld.so.cache` privé facultatif) |
+| `tools/b13-play-run.sh` | Niveau D avec observateur et capture du moniteur PulseAudio (outils de QT-B12) |
+| `tools/resolve_closure.py` | Fermeture `Depends` exacte, à racines multiples |
+| `tools/elf_closure_amd64.py` | Fermeture `DT_NEEDED` des mêmes bibliothèques amd64 de l'hôte (recoupement) |
+| `tools/private_ffmpeg.py` | `plan` : épinglage des paquets FFmpeg i386 à extraire en privé, sans téléchargement ; `prepare … --allow-download` : extraction privée et cache commun FFmpeg + PulseAudio |
+| `closure-ffmpeg-i386.json`, `packages-private-ffmpeg.json`, `elf-ffmpeg-amd64.json` | Fermetures et plan |
+| `results-b13.json` | Résultats exécutés, sans chemins personnels |
+
+## Reproduction (Bash, Debian 13 amd64, WSL2)
+
+Prérequis :
+- l'installation privée B11E/B12 ;
+- l'espace AUDIO-I386 (index Debian authentifiés, libpulse ELF32 privée) ;
+- les outils de [`audio-i386-pulse-private`](../audio-i386-pulse-private/) (`verify_indexes.py`, `run-guest-ldc.sh`), copiés dans `tools/` ;
+- `pa-tool`, `verify_audio.py` et `bitexact.py` de [QT-B12](../quicktime-audio-b12/).
+
+```sh
+T=$HOME/d4wrling-work/validation/audiotoolbox-b13-<date>; A=$HOME/d4wrling-work/validation/audio-i386-deps-20261114
+python3 -I make_b13_media.py "$T/media"
+python3 -I -c "import sys;d=open(sys.argv[1],'rb').read();open(sys.argv[2],'wb').write(d[54:])" "$T/media/demo-s16.aiff" "$T/media/ref-s16be.raw"
+for a in x86_64 i386; do CXX=1 MACOSX_SDK=… bash tools/build.sh $a "$T/build" b13-atb.c AudioToolbox CoreAudio CoreFoundation; done
+C=$A/private-pulse-20261115/ld.so.cache
+mkdir -p "$T/runs/out/x2"
+LDCACHE=$C bash tools/run-b13.sh x2 "$T/build/b13-atb-x86_64" normal 120 probe "/Volumes/SystemRoot$T/media" "/Volumes/SystemRoot$T/runs/out/x2"
+python3 -I verify_b13.py "$T/media" "$T/runs/out/x2" "$T/runs/guest/x2/stdout.log"
+LDCACHE=$C bash tools/run-b13.sh xcb "$T/build/b13-atb-x86_64" normal 60 convertbuffer "/Volumes/SystemRoot$T/media" "/Volumes/SystemRoot$T/runs/out/xcb"
+LDCACHE=$C PULSE_SERVER=unix:/mnt/wslg/PulseServer bash tools/b13-play-run.sh dx1 x86_64 play 8
+LDCACHE=$C bash tools/run-b13.sh i1 "$T/build/b13-atb-i386" normal 60 probe "/Volumes/SystemRoot$T/media" "/Volumes/SystemRoot$T/runs/out/i1"
+python3 -I tools/resolve_closure.py "$A/index-20261115" libavformat61,libavcodec61,libavutil59,libswresample5 "$T/closure-ffmpeg-i386.json"
+python3 -I tools/private_ffmpeg.py plan "$T" "$A/index-20261115" "$A/private-pulse-20261115"
+```
+
+Après accord explicite de l'opérateur pour le téléchargement :
+
+```sh
+python3 -I tools/private_ffmpeg.py prepare "$T" "$A/index-20261115" "$A/private-pulse-20261115" "$T/private-ffmpeg-<date>" --allow-download
+LDCACHE=$T/private-ffmpeg-<date>/ld.so.cache bash tools/run-b13.sh i2 "$T/build/b13-atb-i386" normal 120 probe …
+```
+
+Les index trixie-updates et trixie-security du 14 novembre expirent le
+21 novembre 2026. Au-delà, il faut les retélécharger, puis recalculer la
+fermeture et le plan.

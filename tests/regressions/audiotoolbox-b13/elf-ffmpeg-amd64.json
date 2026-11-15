@@ -1,0 +1,1397 @@
+{
+  "libswresample.so.5": {
+    "path": "/usr/lib/x86_64-linux-gnu/libswresample.so.5.3.100",
+    "package": "libswresample5",
+    "needed": [
+      "libavutil.so.59",
+      "libm.so.6",
+      "libsoxr.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libc.so.6": {
+    "path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+    "package": "libc6",
+    "needed": [
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "ld-linux-x86-64.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2",
+    "package": "libc6",
+    "needed": [],
+    "runpath": []
+  },
+  "libsoxr.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libsoxr.so.0.1.2",
+    "package": "libsoxr0",
+    "needed": [
+      "libm.so.6",
+      "libgomp.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libgomp.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0",
+    "package": "libgomp1",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libm.so.6": {
+    "path": "/usr/lib/x86_64-linux-gnu/libm.so.6",
+    "package": "libc6",
+    "needed": [
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libavutil.so.59": {
+    "path": "/usr/lib/x86_64-linux-gnu/libavutil.so.59.39.100",
+    "package": "libavutil59",
+    "needed": [
+      "libva-drm.so.2",
+      "libva.so.2",
+      "libva-x11.so.2",
+      "libvdpau.so.1",
+      "libX11.so.6",
+      "libm.so.6",
+      "libdrm.so.2",
+      "libvpl.so.2",
+      "libOpenCL.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libOpenCL.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libOpenCL.so.1.0.0",
+    "package": "ocl-icd-libopencl1",
+    "needed": [
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libvpl.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libvpl.so.2.14",
+    "package": "libvpl2",
+    "needed": [
+      "libstdc++.so.6",
+      "libgcc_s.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libgcc_s.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1",
+    "package": "libgcc-s1",
+    "needed": [
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libstdc++.so.6": {
+    "path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33",
+    "package": "libstdc++6",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6",
+      "ld-linux-x86-64.so.2",
+      "libgcc_s.so.1"
+    ],
+    "runpath": []
+  },
+  "libdrm.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libdrm.so.2.124.0",
+    "package": "libdrm2",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libX11.so.6": {
+    "path": "/usr/lib/x86_64-linux-gnu/libX11.so.6.4.0",
+    "package": "libx11-6",
+    "needed": [
+      "libxcb.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libxcb.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libxcb.so.1.1.0",
+    "package": "libxcb1",
+    "needed": [
+      "libXau.so.6",
+      "libXdmcp.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libXdmcp.so.6": {
+    "path": "/usr/lib/x86_64-linux-gnu/libXdmcp.so.6.0.0",
+    "package": "libxdmcp6",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libXau.so.6": {
+    "path": "/usr/lib/x86_64-linux-gnu/libXau.so.6.0.0",
+    "package": "libxau6",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libvdpau.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libvdpau.so.1.0.0",
+    "package": "libvdpau1",
+    "needed": [
+      "libX11.so.6",
+      "libXext.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libXext.so.6": {
+    "path": "/usr/lib/x86_64-linux-gnu/libXext.so.6.4.0",
+    "package": "libxext6",
+    "needed": [
+      "libX11.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libva-x11.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libva-x11.so.2.2200.0",
+    "package": "libva-x11-2",
+    "needed": [
+      "libva.so.2",
+      "libdrm.so.2",
+      "libX11.so.6",
+      "libXext.so.6",
+      "libXfixes.so.3",
+      "libX11-xcb.so.1",
+      "libxcb.so.1",
+      "libxcb-dri3.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libxcb-dri3.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libxcb-dri3.so.0.1.0",
+    "package": "libxcb-dri3-0",
+    "needed": [
+      "libxcb.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libX11-xcb.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libX11-xcb.so.1.0.0",
+    "package": "libx11-xcb1",
+    "needed": [],
+    "runpath": []
+  },
+  "libXfixes.so.3": {
+    "path": "/usr/lib/x86_64-linux-gnu/libXfixes.so.3.1.0",
+    "package": "libxfixes3",
+    "needed": [
+      "libX11.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libva.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libva.so.2.2200.0",
+    "package": "libva2",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libva-drm.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libva-drm.so.2.2200.0",
+    "package": "libva-drm2",
+    "needed": [
+      "libva.so.2",
+      "libdrm.so.2",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libavcodec.so.61": {
+    "path": "/usr/lib/x86_64-linux-gnu/libavcodec.so.61.19.101",
+    "package": "libavcodec61",
+    "needed": [
+      "libswresample.so.5",
+      "libavutil.so.59",
+      "libvpx.so.9",
+      "libm.so.6",
+      "libwebpmux.so.3",
+      "liblzma.so.5",
+      "libdav1d.so.7",
+      "librsvg-2.so.2",
+      "libgobject-2.0.so.0",
+      "libglib-2.0.so.0",
+      "libcairo.so.2",
+      "libzvbi.so.0",
+      "libz.so.1",
+      "libsnappy.so.1",
+      "libaom.so.3",
+      "libcodec2.so.1.2",
+      "libgsm.so.1",
+      "libjxl.so.0.11",
+      "libjxl_threads.so.0.11",
+      "libmp3lame.so.0",
+      "libopenjp2.so.7",
+      "libopus.so.0",
+      "librav1e.so.0.7",
+      "libshine.so.3",
+      "libspeex.so.1",
+      "libSvtAv1Enc.so.2",
+      "libtheoraenc.so.1",
+      "libtheoradec.so.1",
+      "libtwolame.so.0",
+      "libvorbis.so.0",
+      "libvorbisenc.so.2",
+      "libwebp.so.7",
+      "libx264.so.164",
+      "libx265.so.215",
+      "libxvidcore.so.4",
+      "libva.so.2",
+      "libvpl.so.2",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libxvidcore.so.4": {
+    "path": "/usr/lib/x86_64-linux-gnu/libxvidcore.so.4.3",
+    "package": "libxvidcore4",
+    "needed": [
+      "libc.so.6",
+      "libm.so.6"
+    ],
+    "runpath": []
+  },
+  "libx265.so.215": {
+    "path": "/usr/lib/x86_64-linux-gnu/libx265.so.215",
+    "package": "libx265-215",
+    "needed": [
+      "libnuma.so.1",
+      "libstdc++.so.6",
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libnuma.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libnuma.so.1.0.0",
+    "package": "libnuma1",
+    "needed": [
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libx264.so.164": {
+    "path": "/usr/lib/x86_64-linux-gnu/libx264.so.164",
+    "package": "libx264-164",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libwebp.so.7": {
+    "path": "/usr/lib/x86_64-linux-gnu/libwebp.so.7.1.10",
+    "package": "libwebp7",
+    "needed": [
+      "libsharpyuv.so.0",
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libsharpyuv.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libsharpyuv.so.0.1.1",
+    "package": "libsharpyuv0",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libvorbisenc.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libvorbisenc.so.2.0.12",
+    "package": "libvorbisenc2",
+    "needed": [
+      "libvorbis.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libvorbis.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libvorbis.so.0.4.9",
+    "package": "libvorbis0a",
+    "needed": [
+      "libm.so.6",
+      "libogg.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libogg.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libogg.so.0.8.5",
+    "package": "libogg0",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libtwolame.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libtwolame.so.0.0.0",
+    "package": "libtwolame0",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libtheoradec.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libtheoradec.so.1.1.5",
+    "package": "libtheoradec1",
+    "needed": [
+      "libcairo.so.2",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libcairo.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libcairo.so.2.11804.4",
+    "package": "libcairo2",
+    "needed": [
+      "libm.so.6",
+      "libz.so.1",
+      "libpng16.so.16",
+      "libfontconfig.so.1",
+      "libfreetype.so.6",
+      "libX11.so.6",
+      "libXext.so.6",
+      "libXrender.so.1",
+      "libxcb.so.1",
+      "libxcb-render.so.0",
+      "libxcb-shm.so.0",
+      "libpixman-1.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libpixman-1.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libpixman-1.so.0.44.0",
+    "package": "libpixman-1-0",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libxcb-shm.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libxcb-shm.so.0.0.0",
+    "package": "libxcb-shm0",
+    "needed": [
+      "libxcb.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libxcb-render.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libxcb-render.so.0.0.0",
+    "package": "libxcb-render0",
+    "needed": [
+      "libxcb.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libXrender.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libXrender.so.1.3.0",
+    "package": "libxrender1",
+    "needed": [
+      "libX11.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libfreetype.so.6": {
+    "path": "/usr/lib/x86_64-linux-gnu/libfreetype.so.6.20.2",
+    "package": "libfreetype6",
+    "needed": [
+      "libz.so.1",
+      "libbz2.so.1.0",
+      "libpng16.so.16",
+      "libbrotlidec.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libbrotlidec.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libbrotlidec.so.1.1.0",
+    "package": "libbrotli1",
+    "needed": [
+      "libbrotlicommon.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libbrotlicommon.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libbrotlicommon.so.1.1.0",
+    "package": "libbrotli1",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libpng16.so.16": {
+    "path": "/usr/lib/x86_64-linux-gnu/libpng16.so.16.48.0",
+    "package": "libpng16-16t64",
+    "needed": [
+      "libz.so.1",
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libz.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1",
+    "package": "zlib1g",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libbz2.so.1.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libbz2.so.1.0.4",
+    "package": "libbz2-1.0",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libfontconfig.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libfontconfig.so.1.12.1",
+    "package": "libfontconfig1",
+    "needed": [
+      "libfreetype.so.6",
+      "libexpat.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libexpat.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libexpat.so.1.13.0",
+    "package": "libexpat1",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libtheoraenc.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libtheoraenc.so.1.2.0",
+    "package": "libtheoraenc1",
+    "needed": [
+      "libogg.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libSvtAv1Enc.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libSvtAv1Enc.so.2.3.0",
+    "package": "libsvtav1enc2",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libspeex.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libspeex.so.1.5.2",
+    "package": "libspeex1",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libshine.so.3": {
+    "path": "/usr/lib/x86_64-linux-gnu/libshine.so.3.0.1",
+    "package": "libshine3",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "librav1e.so.0.7": {
+    "path": "/usr/lib/x86_64-linux-gnu/librav1e.so.0.7.2",
+    "package": "librav1e0.7",
+    "needed": [
+      "libgcc_s.so.1",
+      "libm.so.6",
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libopus.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libopus.so.0.10.1",
+    "package": "libopus0",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libopenjp2.so.7": {
+    "path": "/usr/lib/x86_64-linux-gnu/libopenjp2.so.2.5.3",
+    "package": "libopenjp2-7",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libmp3lame.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libmp3lame.so.0.0.0",
+    "package": "libmp3lame0",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libjxl_threads.so.0.11": {
+    "path": "/usr/lib/x86_64-linux-gnu/libjxl_threads.so.0.11.2",
+    "package": "libjxl0.11",
+    "needed": [
+      "libstdc++.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libjxl.so.0.11": {
+    "path": "/usr/lib/x86_64-linux-gnu/libjxl.so.0.11.2",
+    "package": "libjxl0.11",
+    "needed": [
+      "libjxl_cms.so.0.11",
+      "libhwy.so.1",
+      "libbrotlidec.so.1",
+      "libbrotlienc.so.1",
+      "libstdc++.so.6",
+      "libm.so.6",
+      "libgcc_s.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libbrotlienc.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libbrotlienc.so.1.1.0",
+    "package": "libbrotli1",
+    "needed": [
+      "libm.so.6",
+      "libbrotlicommon.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libhwy.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libhwy.so.1.2.0",
+    "package": "libhwy1t64",
+    "needed": [
+      "libstdc++.so.6",
+      "libgcc_s.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libjxl_cms.so.0.11": {
+    "path": "/usr/lib/x86_64-linux-gnu/libjxl_cms.so.0.11.2",
+    "package": "libjxl0.11",
+    "needed": [
+      "liblcms2.so.2",
+      "libhwy.so.1",
+      "libstdc++.so.6",
+      "libm.so.6",
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "liblcms2.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/liblcms2.so.2.0.16",
+    "package": "liblcms2-2",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libgsm.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgsm.so.1.0.19",
+    "package": "libgsm1",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libcodec2.so.1.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libcodec2.so.1.2",
+    "package": "libcodec2-1.2",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libaom.so.3": {
+    "path": "/usr/lib/x86_64-linux-gnu/libaom.so.3.12.1",
+    "package": "libaom3",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libsnappy.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libsnappy.so.1.2.2",
+    "package": "libsnappy1v5",
+    "needed": [
+      "libstdc++.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libzvbi.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libzvbi.so.0.13.2",
+    "package": "libzvbi0t64",
+    "needed": [
+      "libm.so.6",
+      "libpng16.so.16",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libglib-2.0.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libglib-2.0.so.0.8400.4",
+    "package": "libglib2.0-0t64",
+    "needed": [
+      "libatomic.so.1",
+      "libm.so.6",
+      "libpcre2-8.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libpcre2-8.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libpcre2-8.so.0.14.0",
+    "package": "libpcre2-8-0",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libatomic.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libatomic.so.1.2.0",
+    "package": "libatomic1",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libgobject-2.0.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgobject-2.0.so.0.8400.4",
+    "package": "libglib2.0-0t64",
+    "needed": [
+      "libglib-2.0.so.0",
+      "libffi.so.8",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libffi.so.8": {
+    "path": "/usr/lib/x86_64-linux-gnu/libffi.so.8.1.4",
+    "package": "libffi8",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "librsvg-2.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/librsvg-2.so.2.60.0",
+    "package": "librsvg2-2",
+    "needed": [
+      "libglib-2.0.so.0",
+      "libgio-2.0.so.0",
+      "libgobject-2.0.so.0",
+      "libgdk_pixbuf-2.0.so.0",
+      "libcairo.so.2",
+      "libc.so.6",
+      "ld-linux-x86-64.so.2",
+      "libm.so.6",
+      "libgcc_s.so.1",
+      "libcairo-gobject.so.2",
+      "libdav1d.so.7",
+      "libxml2.so.2",
+      "libpangocairo-1.0.so.0",
+      "libpango-1.0.so.0"
+    ],
+    "runpath": []
+  },
+  "libpango-1.0.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libpango-1.0.so.0.5600.3",
+    "package": "libpango-1.0-0",
+    "needed": [
+      "libm.so.6",
+      "libglib-2.0.so.0",
+      "libgobject-2.0.so.0",
+      "libgio-2.0.so.0",
+      "libfribidi.so.0",
+      "libthai.so.0",
+      "libharfbuzz.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libharfbuzz.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libharfbuzz.so.0.61020.0",
+    "package": "libharfbuzz0b",
+    "needed": [
+      "libm.so.6",
+      "libfreetype.so.6",
+      "libglib-2.0.so.0",
+      "libgraphite2.so.3",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libgraphite2.so.3": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgraphite2.so.3.2.1",
+    "package": "libgraphite2-3",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libthai.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libthai.so.0.3.1",
+    "package": "libthai0",
+    "needed": [
+      "libdatrie.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libdatrie.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libdatrie.so.1.4.0",
+    "package": "libdatrie1",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libfribidi.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libfribidi.so.0.4.0",
+    "package": "libfribidi0",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libgio-2.0.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgio-2.0.so.0.8400.4",
+    "package": "libglib2.0-0t64",
+    "needed": [
+      "libglib-2.0.so.0",
+      "libgobject-2.0.so.0",
+      "libgmodule-2.0.so.0",
+      "libz.so.1",
+      "libmount.so.1",
+      "libselinux.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libselinux.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libselinux.so.1",
+    "package": "libselinux1",
+    "needed": [
+      "libpcre2-8.so.0",
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libmount.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libmount.so.1.1.0",
+    "package": "libmount1",
+    "needed": [
+      "libblkid.so.1",
+      "libselinux.so.1",
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libblkid.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libblkid.so.1.1.0",
+    "package": "libblkid1",
+    "needed": [
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libgmodule-2.0.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgmodule-2.0.so.0.8400.4",
+    "package": "libglib2.0-0t64",
+    "needed": [
+      "libglib-2.0.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libpangocairo-1.0.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libpangocairo-1.0.so.0.5600.3",
+    "package": "libpangocairo-1.0-0",
+    "needed": [
+      "libpango-1.0.so.0",
+      "libpangoft2-1.0.so.0",
+      "libm.so.6",
+      "libglib-2.0.so.0",
+      "libgobject-2.0.so.0",
+      "libharfbuzz.so.0",
+      "libfontconfig.so.1",
+      "libcairo.so.2",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libpangoft2-1.0.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libpangoft2-1.0.so.0.5600.3",
+    "package": "libpangoft2-1.0-0",
+    "needed": [
+      "libpango-1.0.so.0",
+      "libglib-2.0.so.0",
+      "libgobject-2.0.so.0",
+      "libgio-2.0.so.0",
+      "libharfbuzz.so.0",
+      "libfontconfig.so.1",
+      "libfreetype.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libxml2.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libxml2.so.2.9.14",
+    "package": "libxml2",
+    "needed": [
+      "libz.so.1",
+      "liblzma.so.5",
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "liblzma.so.5": {
+    "path": "/usr/lib/x86_64-linux-gnu/liblzma.so.5.8.1",
+    "package": "liblzma5",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libdav1d.so.7": {
+    "path": "/usr/lib/x86_64-linux-gnu/libdav1d.so.7.0.0",
+    "package": "libdav1d7",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libcairo-gobject.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libcairo-gobject.so.2.11804.4",
+    "package": "libcairo-gobject2",
+    "needed": [
+      "libcairo.so.2",
+      "libglib-2.0.so.0",
+      "libgobject-2.0.so.0"
+    ],
+    "runpath": []
+  },
+  "libgdk_pixbuf-2.0.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgdk_pixbuf-2.0.so.0.4200.12",
+    "package": "libgdk-pixbuf-2.0-0",
+    "needed": [
+      "libm.so.6",
+      "libglib-2.0.so.0",
+      "libgobject-2.0.so.0",
+      "libgmodule-2.0.so.0",
+      "libgio-2.0.so.0",
+      "libpng16.so.16",
+      "libjpeg.so.62",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libjpeg.so.62": {
+    "path": "/usr/lib/x86_64-linux-gnu/libjpeg.so.62.3.0",
+    "package": "libjpeg62-turbo",
+    "needed": [
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libwebpmux.so.3": {
+    "path": "/usr/lib/x86_64-linux-gnu/libwebpmux.so.3.1.1",
+    "package": "libwebpmux3",
+    "needed": [
+      "libwebp.so.7",
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libvpx.so.9": {
+    "path": "/usr/lib/x86_64-linux-gnu/libvpx.so.9.1.0",
+    "package": "libvpx9",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libavformat.so.61": {
+    "path": "/usr/lib/x86_64-linux-gnu/libavformat.so.61.7.103",
+    "package": "libavformat61",
+    "needed": [
+      "libavcodec.so.61",
+      "libavutil.so.59",
+      "libm.so.6",
+      "libdvdnav.so.4",
+      "libdvdread.so.8",
+      "libxml2.so.2",
+      "libbz2.so.1.0",
+      "libgme.so.0",
+      "libopenmpt.so.0",
+      "libchromaprint.so.1",
+      "libbluray.so.2",
+      "libz.so.1",
+      "libgnutls.so.30",
+      "librabbitmq.so.4",
+      "librist.so.4",
+      "libsrt-gnutls.so.1.5",
+      "libssh.so.4",
+      "libzmq.so.5",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libzmq.so.5": {
+    "path": "/usr/lib/x86_64-linux-gnu/libzmq.so.5.2.5",
+    "package": "libzmq5",
+    "needed": [
+      "libbsd.so.0",
+      "libsodium.so.23",
+      "libpgm-5.3.so.0",
+      "libnorm.so.1",
+      "libgssapi_krb5.so.2",
+      "libstdc++.so.6",
+      "libc.so.6",
+      "libgcc_s.so.1"
+    ],
+    "runpath": []
+  },
+  "libgssapi_krb5.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgssapi_krb5.so.2.2",
+    "package": "libgssapi-krb5-2",
+    "needed": [
+      "libkrb5.so.3",
+      "libk5crypto.so.3",
+      "libcom_err.so.2",
+      "libkrb5support.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libkrb5support.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libkrb5support.so.0.1",
+    "package": "libkrb5support0",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libcom_err.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libcom_err.so.2.1",
+    "package": "libcom-err2",
+    "needed": [
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libk5crypto.so.3": {
+    "path": "/usr/lib/x86_64-linux-gnu/libk5crypto.so.3.1",
+    "package": "libk5crypto3",
+    "needed": [
+      "libkrb5support.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libkrb5.so.3": {
+    "path": "/usr/lib/x86_64-linux-gnu/libkrb5.so.3.3",
+    "package": "libkrb5-3",
+    "needed": [
+      "libk5crypto.so.3",
+      "libcom_err.so.2",
+      "libkrb5support.so.0",
+      "libkeyutils.so.1",
+      "libresolv.so.2",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libresolv.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libresolv.so.2",
+    "package": "libc6",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libkeyutils.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libkeyutils.so.1.10",
+    "package": "libkeyutils1",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libnorm.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libnorm.so.1",
+    "package": "libnorm1t64",
+    "needed": [
+      "libstdc++.so.6",
+      "libm.so.6",
+      "libgcc_s.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libpgm-5.3.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libpgm-5.3.so.0.0.128",
+    "package": "libpgm-5.3-0t64",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libsodium.so.23": {
+    "path": "/usr/lib/x86_64-linux-gnu/libsodium.so.23.3.0",
+    "package": "libsodium23",
+    "needed": [
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libbsd.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libbsd.so.0.12.2",
+    "package": "libbsd0",
+    "needed": [
+      "libmd.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libmd.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libmd.so.0.1.0",
+    "package": "libmd0",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libssh.so.4": {
+    "path": "/usr/lib/x86_64-linux-gnu/libssh.so.4.10.5",
+    "package": "libssh-4",
+    "needed": [
+      "libcrypto.so.3",
+      "libz.so.1",
+      "libgssapi_krb5.so.2",
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libcrypto.so.3": {
+    "path": "/usr/lib/x86_64-linux-gnu/libcrypto.so.3",
+    "package": "libssl3t64",
+    "needed": [
+      "libz.so.1",
+      "libzstd.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libzstd.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libzstd.so.1.5.7",
+    "package": "libzstd1",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libsrt-gnutls.so.1.5": {
+    "path": "/usr/lib/x86_64-linux-gnu/libsrt-gnutls.so.1.5.4",
+    "package": "libsrt1.5-gnutls",
+    "needed": [
+      "libgnutls.so.30",
+      "libnettle.so.8",
+      "libstdc++.so.6",
+      "libm.so.6",
+      "libgcc_s.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libnettle.so.8": {
+    "path": "/usr/lib/x86_64-linux-gnu/libnettle.so.8.10",
+    "package": "libnettle8t64",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libgnutls.so.30": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgnutls.so.30.40.3",
+    "package": "libgnutls30t64",
+    "needed": [
+      "libp11-kit.so.0",
+      "libidn2.so.0",
+      "libunistring.so.5",
+      "libtasn1.so.6",
+      "libhogweed.so.6",
+      "libnettle.so.8",
+      "libgmp.so.10",
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "libgmp.so.10": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgmp.so.10.5.0",
+    "package": "libgmp10",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libhogweed.so.6": {
+    "path": "/usr/lib/x86_64-linux-gnu/libhogweed.so.6.10",
+    "package": "libhogweed6t64",
+    "needed": [
+      "libnettle.so.8",
+      "libgmp.so.10",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libtasn1.so.6": {
+    "path": "/usr/lib/x86_64-linux-gnu/libtasn1.so.6.6.4",
+    "package": "libtasn1-6",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libunistring.so.5": {
+    "path": "/usr/lib/x86_64-linux-gnu/libunistring.so.5.2.0",
+    "package": "libunistring5",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libidn2.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libidn2.so.0.4.0",
+    "package": "libidn2-0",
+    "needed": [
+      "libunistring.so.5",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libp11-kit.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libp11-kit.so.0.4.1",
+    "package": "libp11-kit0",
+    "needed": [
+      "libffi.so.8",
+      "libc.so.6",
+      "ld-linux-x86-64.so.2"
+    ],
+    "runpath": []
+  },
+  "librist.so.4": {
+    "path": "/usr/lib/x86_64-linux-gnu/librist.so.4.4.0",
+    "package": "librist4",
+    "needed": [
+      "libmbedcrypto.so.16",
+      "libcjson.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libcjson.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libcjson.so.1.7.18",
+    "package": "libcjson1",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libmbedcrypto.so.16": {
+    "path": "/usr/lib/x86_64-linux-gnu/libmbedcrypto.so.3.6.6",
+    "package": "libmbedcrypto16",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "librabbitmq.so.4": {
+    "path": "/usr/lib/x86_64-linux-gnu/librabbitmq.so.0.15.0",
+    "package": "librabbitmq4",
+    "needed": [
+      "libssl.so.3",
+      "libcrypto.so.3",
+      "libc.so.6"
+    ],
+    "runpath": [
+      "$ORIGIN"
+    ]
+  },
+  "libssl.so.3": {
+    "path": "/usr/lib/x86_64-linux-gnu/libssl.so.3",
+    "package": "libssl3t64",
+    "needed": [
+      "libcrypto.so.3",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libbluray.so.2": {
+    "path": "/usr/lib/x86_64-linux-gnu/libbluray.so.2.4.3",
+    "package": "libbluray2",
+    "needed": [
+      "libxml2.so.2",
+      "libfontconfig.so.1",
+      "libfreetype.so.6",
+      "libudfread.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libudfread.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libudfread.so.0.1.0",
+    "package": "libudfread0",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libchromaprint.so.1": {
+    "path": "/usr/lib/x86_64-linux-gnu/libchromaprint.so.1.5.1",
+    "package": "libchromaprint1",
+    "needed": [
+      "libstdc++.so.6",
+      "libm.so.6",
+      "libgcc_s.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libopenmpt.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libopenmpt.so.0.4.4",
+    "package": "libopenmpt0t64",
+    "needed": [
+      "libz.so.1",
+      "libmpg123.so.0",
+      "libvorbis.so.0",
+      "libvorbisfile.so.3",
+      "libstdc++.so.6",
+      "libm.so.6",
+      "libc.so.6",
+      "libgcc_s.so.1"
+    ],
+    "runpath": []
+  },
+  "libvorbisfile.so.3": {
+    "path": "/usr/lib/x86_64-linux-gnu/libvorbisfile.so.3.3.8",
+    "package": "libvorbisfile3",
+    "needed": [
+      "libvorbis.so.0",
+      "libogg.so.0",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libmpg123.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libmpg123.so.0.48.3",
+    "package": "libmpg123-0t64",
+    "needed": [
+      "libm.so.6",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libgme.so.0": {
+    "path": "/usr/lib/x86_64-linux-gnu/libgme.so.0.6.3",
+    "package": "libgme0",
+    "needed": [
+      "libz.so.1",
+      "libstdc++.so.6",
+      "libm.so.6",
+      "libgcc_s.so.1",
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libdvdread.so.8": {
+    "path": "/usr/lib/x86_64-linux-gnu/libdvdread.so.8.0.0",
+    "package": "libdvdread8t64",
+    "needed": [
+      "libc.so.6"
+    ],
+    "runpath": []
+  },
+  "libdvdnav.so.4": {
+    "path": "/usr/lib/x86_64-linux-gnu/libdvdnav.so.4.3.0",
+    "package": "libdvdnav4",
+    "needed": [
+      "libdvdread.so.8",
+      "libc.so.6"
+    ],
+    "runpath": []
+  }
+}
