@@ -37,6 +37,7 @@ indépendants.
 - Fin naturelle, Stop puis second Play (4/4) et échecs de connexion propres ; 0 flux ou processus résiduel.
 - **Écoute humaine non attestée** (`B12_AUDIBLE=NOT_CONFIRMED`).
 - En i386, la partie QuickTime passe ; CoreAudio s'arrête au chargement faute de libpulse ELF 32 bits sur l'hôte. Il faut décider de l'installation de `libpulse0:i386`.
+- 15 novembre : fermeture exacte de `libpulse0:i386` établie (21 paquets, aucune mise à jour amd64 imposée). Voie privée sans installation préparée (18 paquets, cache `ld.so.cache` propre au banc, contrôle 3/3) ; rejeu i386 NOT_RUN. [Inventaire](docs/evidence/audio-i386-pulse-inventory-2026-11-15.md).
 - Aucun code de production modifié.
 
 [Preuves](docs/evidence/quicktime-b12-2026-11-14.md).
