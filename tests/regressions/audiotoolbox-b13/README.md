@@ -23,14 +23,22 @@ comparées hors de l'invité à un oracle indépendant de FFmpeg.
 | `tools/private_ffmpeg.py` | `plan` : épinglage des paquets FFmpeg i386 à extraire en privé, sans téléchargement ; `prepare … --allow-download` : extraction privée et cache commun FFmpeg + PulseAudio |
 | `closure-ffmpeg-i386.json`, `packages-private-ffmpeg.json`, `elf-ffmpeg-amd64.json` | Fermetures et plan |
 | `results-b13.json` | Résultats exécutés le 15 novembre (référence x86_64 et premier obstacle i386), sans chemins personnels |
-| `b13-fix.c` | Tests avant/après des correctifs : `fix1` (μ-law → S16 par AudioConverter, sans puis avec cookie magique), `fix2` (`ConvertBuffer`/`ConvertComplexBuffer` : arguments, conversions, réutilisation, capacités avec octets témoins) |
-| `verify_b13_fix.py` | Comparaison des sorties de `b13-fix` à `b13-oracle.json` |
-| `fixes/ATB-FIX1.patch`, `fixes/ATB-FIX2.patch` | Correctifs **candidats**, non appliqués à la production |
+| `b13-fix.c` | Tests avant/après des correctifs : `fix1` (μ-law → S16 par AudioConverter, sans puis avec cookie magique) ; `fix2` **v2** (B13-INT, 24 contrôles, contrat « tout ou rien » : arguments, listes à deux tampons de capacités différentes, sortie trop petite refusée sans écriture, conversions successives de tailles variables sur un même convertisseur, rééchantillonnage refusé). La v1 (13 contrôles, conversion partielle) reste à `0764f093` |
+| `verify_b13_fix.py` | Comparaison des sorties de `b13-fix` à `b13-oracle.json` (v2 : quatre fichiers pour `fix2`) |
+| `b13-afm.c`, `verify_b13_afm.py` | Défaut 3 (test seul) : propriétés `CFArrayRef` des composants AudioFile lues avec une taille de 4 octets ; composant WAVE interrogé directement (taille 4 / `sizeof(CFArrayRef)`), tables globales, recherche par extension, ouverture avec et sans indice ; 27 attendus fixés avant les essais |
+| `fixes/ATB-FIX1.patch` | Correctif ATB-FIX1, **intégré** à `master` le 15 novembre (commit `fix(audiotoolbox): initialize FFmpeg decoders from source ASBD`) |
+| `fixes/ATB-FIX2.patch` | Candidat ATB-FIX2 d'origine, **rejeté** par la revue B13-INT (conversion partielle et rééchantillonnage rendus `noErr` en tronquant, listes à plusieurs tampons mal traitées) |
+| `fixes/ATB-FIX2-R2.patch` | Candidat ATB-FIX2-R2 (tout ou rien, refus explicites), qualifié en privé, **non appliqué** : intégration soumise à décision |
 | `tools/build_candidate.py` | Candidat AudioToolbox privé : recompile seulement les sources substituées avec la commande exacte du build B11E, relie, signe, prépare une couche overlay ; vérifie que le build B11E est inchangé ; sans substitution, reproduit la référence |
 | `tools/run-guest-ldc.sh` | Banc AUDIO-I386 + empreinte d'AudioToolbox vue dans l'espace de noms (`PREFLIGHT ns_audiotoolbox`) |
 | `tools/observe-maps.sh` | Observateur hôte des ELF mappés (motif paramétrable) |
 | `tools/collect_fix_results.py` | Collecte de `results-b13-i386-fixes.json` |
 | `results-b13-i386-fixes.json` | Résultats de la phase i386 et des correctifs |
+| `results-b13-integration.json` | B13-INT : build privé de `master`, exports, matrice de 70 essais, B13-D, B12, images ELF chargées, défaut 3, état de l'hôte |
+| `tools/materialize-master.sh`, `tools/materialize-master-nested.sh` | Sous-modules de la worktree `master`, hors ligne, depuis les magasins locaux (libc++ `061279eb` depuis l'espace LIBCXX-LEGACY-01) |
+| `tools/build-master.sh` | Build privé `gui_stubs` de `master`, mêmes options que le build B11E |
+| `tools/master-campaign.sh` | Témoins, candidats et matrice de requalification sur `master` |
+| `tools/collect_integration_results.py` | Collecte de `results-b13-integration.json` |
 
 ## Reproduction (Bash, Debian 13 amd64, WSL2)
 
@@ -81,3 +89,28 @@ fichier en dernier argument (`demo-ulaw.wav`).
 Les index trixie-updates et trixie-security du 14 novembre expirent le
 21 novembre 2026. Au-delà, il faut les retélécharger, puis recalculer la
 fermeture et le plan.
+
+## Requalification sur `master` (B13-INT, 15 novembre 2026)
+
+Rapport : [docs/evidence/audiotoolbox-b13-integration-2026-11-15.md](../../../docs/evidence/audiotoolbox-b13-integration-2026-11-15.md).
+
+Les outils supposent la disposition privée de l'espace B13 (`probe/` pour les
+sources de ce dossier, `tools/`, `fix/` pour les copies corrigées) ; `b13-fix-v1.c`
+et `verify_b13_fix-v1.py` sont les versions publiées à `0764f093` :
+
+```sh
+T=$HOME/d4wrling-work/validation/audiotoolbox-b13-20261115
+git show 0764f093:tests/regressions/audiotoolbox-b13/b13-fix.c > "$T/probe/b13-fix-v1.c"
+git show 0764f093:tests/regressions/audiotoolbox-b13/verify_b13_fix.py > "$T/probe/verify_b13_fix-v1.py"
+bash tools/materialize-master.sh && bash tools/materialize-master-nested.sh
+bash tools/build-master.sh configure && bash tools/build-master.sh build && bash tools/build-master.sh install
+MACOSX_SDK=… bash tools/master-campaign.sh witnesses
+bash tools/master-campaign.sh candidates      # cand-ref0 doit redonner l'AudioToolbox du build
+bash tools/master-campaign.sh matrix          # CANDS="ref fix1 fix2 fix2r fix12 fix12r" par défaut
+AFMSFX=2 bash tools/master-campaign.sh afm
+python3 -I verify_b13_afm.py "$T/runs/afm/i386" "$T/runs/afm/x86_64"   # journaux copiés par sous-commande
+```
+
+B13-D et B12 se rejouent avec `WIT=$T/mwit INST=$T/mbuild/private-install`
+et `LAYER` pointant sur la couche du candidat (`b13-play-run.sh`, puis
+`b12-run-ldc.sh` de l'espace AUDIO-I386).

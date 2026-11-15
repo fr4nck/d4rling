@@ -3,10 +3,11 @@
 # Usage: build.sh i386|x86_64 OUT_DIR SOURCE.c [frameworks...]
 set -Eeuo pipefail
 Q=${B11E_STAGE:-$HOME/d4wrling-work/validation/quicktime-b11e-20261114}
-INST=$Q/build-gui/private-install/libexec/darling
-LD=$Q/build-gui/src/external/cctools-port/cctools/ld64/src/x86_64-apple-darwin20-ld
+BD=${B13_BUILD:-$Q/build-gui}   # B13-INT: the private master build ($T/mbuild) can be named instead
+INST=$BD/private-install/libexec/darling
+LD=$BD/src/external/cctools-port/cctools/ld64/src/x86_64-apple-darwin20-ld
 SDK=${MACOSX_SDK:?MACOSX_SDK must name a private MacOSX.sdk}
-S=$Q/src
+S=${B13_SRC:-$Q/src}
 A=$1; OUT=$2; SRC=$(realpath "$3"); shift 3
 case $A in i386) T=(-target i386-apple-darwin -mmacosx-version-min=10.9);; x86_64) T=(-target x86_64-apple-macosx10.9 -DPLATFORM_MacOSX);; *) exit 2;; esac
 mkdir -p "$OUT"; n=$(basename "$SRC" .c)

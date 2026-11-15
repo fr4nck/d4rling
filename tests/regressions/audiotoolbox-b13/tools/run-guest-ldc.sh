@@ -91,6 +91,7 @@ env -i PATH=/usr/sbin:/usr/bin:/sbin:/bin HOME="$R0/home" TMPDIR="$R0/tmp" LANG=
   echo "PREFLIGHT ns_kernel=$(sha256sum "$1/libexec/darling/usr/lib/system/libsystem_kernel.dylib" | cut -d" " -f1)" >&2
   echo "PREFLIGHT ns_dyld=$(sha256sum "$1/libexec/darling/usr/lib/dyld" | cut -d" " -f1)" >&2
   echo "PREFLIGHT ns_audiotoolbox=$(sha256sum "$1/libexec/darling/System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox" | cut -d" " -f1)" >&2
+  echo "PREFLIGHT ns_libcxx=$(sha256sum "$1/libexec/darling/usr/lib/libc++.1.dylib" | cut -d" " -f1) ns_mldr=$(sha256sum "$1/libexec/darling/usr/libexec/darling/mldr" | cut -d" " -f1)" >&2
   export DPREFIX="$2"
   test ! -e "$DPREFIX"
   if test "$4" = bypass; then export DSERVER_INIT=/usr/libexec/shellspawn; else unset DSERVER_INIT; fi

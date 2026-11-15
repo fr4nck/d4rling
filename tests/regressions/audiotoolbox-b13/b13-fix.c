@@ -7,9 +7,11 @@
  *     (ulaw -> S16LE) + AudioConverterFillComplexBuffer, without and with
  *     kAudioConverterDecompressionMagicCookie (decoder recreated); outputs saved.
  *   b13-fix fix2 MEDIA_DIR OUT_DIR
- *     AudioConverterConvertBuffer / AudioConverterConvertComplexBuffer: argument
- *     checks first, then S16LE->S16BE and S16LE->Float32 conversions, reuse of one
- *     converter over the whole file, capacity limits with canaries.
+ *     AudioConverterConvertBuffer / AudioConverterConvertComplexBuffer (v2, all or
+ *     nothing): argument checks, several buffers with different capacities, output
+ *     too small (refused, canaries intact), S16LE->S16BE and S16LE->Float32 over the
+ *     whole file with one converter in fixed and varying call sizes, sample rate
+ *     conversion refused.
  * Expected results are fixed here before the runs; outputs are also compared
  * outside the guest with b13-oracle.json (verify_b13_fix.py).
  */
@@ -164,6 +166,42 @@ static int fix1(const char *media, const char *out)
     return failures ? 1 : 0;
 }
 
+/* Canary helpers: 0xA5 everywhere, then checks that a range was left alone. */
+static void fill_canary(uint8_t *p, size_t n) { memset(p, 0xA5, n); }
+static bool canary_from(const uint8_t *p, size_t from, size_t to)
+{
+    for (size_t i = from; i < to; ++i)
+        if (p[i] != 0xA5)
+            return false;
+    return true;
+}
+/* Independent oracle for S16LE -> S16BE: a byte swap. */
+static bool is_swapped(const uint8_t *out, const uint8_t *in, size_t bytes)
+{
+    for (size_t i = 0; i + 1 < bytes; i += 2)
+        if (out[i] != in[i + 1] || out[i + 1] != in[i])
+            return false;
+    return true;
+}
+static OSStatus complex1(AudioConverterRef c, UInt32 frames, const void *in, UInt32 in_bytes, void *out, UInt32 *out_bytes)
+{
+    AudioBufferList i, o;
+    i.mNumberBuffers = o.mNumberBuffers = 1;
+    i.mBuffers[0].mNumberChannels = o.mBuffers[0].mNumberChannels = 2;
+    i.mBuffers[0].mData = (void *)in;
+    i.mBuffers[0].mDataByteSize = in_bytes;
+    o.mBuffers[0].mData = out;
+    o.mBuffers[0].mDataByteSize = *out_bytes;
+    OSStatus st = AudioConverterConvertComplexBuffer(c, frames, &i, &o);
+    *out_bytes = o.mBuffers[0].mDataByteSize;
+    return st;
+}
+
+/* Contract checked (v2, fixed before the runs): ConvertBuffer/ConvertComplexBuffer convert
+ * all of the input or nothing. Output capacity too small -> kAudioConverterErr_InvalidOutputSize,
+ * nothing written, size 0; several buffers -> kAudio_ParamError; sample rate conversion ->
+ * kAudioConverterErr_FormatNotSupported (the public header: these calls fail for any
+ * conversion with a variable input/output size relationship). */
 static int fix2(const char *media, const char *out)
 {
     char d[512];
@@ -179,62 +217,149 @@ static int fix2(const char *media, const char *out)
     check(st == noErr && c, "converter_new[s16le->s16be]", "");
     if (st != noErr)
         return 4;
+    const size_t O = 4096 * 8 + 64;
+    uint8_t *o = (uint8_t *)malloc(O), *o2 = (uint8_t *)malloc(O);
+    UInt32 osz;
+    bool ok;
 
-    /* 1. argument checks (nothing is converted, nothing is written) */
+    /* 1. arguments: nothing converted, nothing written */
     enter("null_converter");
-    UInt32 osz = 16;
-    uint8_t tiny[16];
-    st = AudioConverterConvertBuffer(NULL, 16, s16, &osz, tiny);
+    fill_canary(o, O);
+    osz = 16;
+    st = AudioConverterConvertBuffer(NULL, 16, s16, &osz, o);
     snprintf(d, sizeof d, "status=%d", (int)st);
-    check(st == kAudio_ParamError, "null_converter", d);
+    check(st == kAudio_ParamError && canary_from(o, 0, O), "null_converter", d);
     enter("null_output_size");
-    st = AudioConverterConvertBuffer(c, 16, s16, NULL, tiny);
+    st = AudioConverterConvertBuffer(c, 16, s16, NULL, o);
     snprintf(d, sizeof d, "status=%d", (int)st);
-    check(st == kAudio_ParamError, "null_output_size", d);
+    check(st == kAudio_ParamError && canary_from(o, 0, O), "null_output_size", d);
+    enter("null_input_nonzero_size");
+    osz = 16;
+    st = AudioConverterConvertBuffer(c, 16, NULL, &osz, o);
+    snprintf(d, sizeof d, "status=%d", (int)st);
+    check(st == kAudio_ParamError && canary_from(o, 0, O), "null_input_nonzero_size", d);
+    enter("null_output_nonzero_size");
+    osz = 16;
+    st = AudioConverterConvertBuffer(c, 16, s16, &osz, NULL);
+    snprintf(d, sizeof d, "status=%d", (int)st);
+    check(st == kAudio_ParamError, "null_output_nonzero_size", d);
     enter("input_not_whole_frames");
-    uint8_t *o = (uint8_t *)malloc(4096 * 8 + 64);
-    memset(o, 0xA5, 4096 * 8 + 64);
     osz = 4096 * 4;
     st = AudioConverterConvertBuffer(c, 4096 * 4 + 2, s16, &osz, o);
-    bool untouched = true;
-    for (int i = 0; i < 4096 * 8 + 64; ++i)
-        untouched &= o[i] == 0xA5;
-    snprintf(d, sizeof d, "status=%d out_untouched=%d", (int)st, untouched);
-    check(st == kAudioConverterErr_InvalidInputSize && untouched, "input_not_whole_frames", d);
+    snprintf(d, sizeof d, "status=%d out_untouched=%d", (int)st, canary_from(o, 0, O));
+    check(st == kAudioConverterErr_InvalidInputSize && canary_from(o, 0, O), "input_not_whole_frames", d);
     enter("zero_input");
     osz = 4096 * 4;
     st = AudioConverterConvertBuffer(c, 0, s16, &osz, o);
     snprintf(d, sizeof d, "status=%d out_bytes=%u", (int)st, (unsigned)osz);
-    check(st == noErr && osz == 0, "zero_input", d);
-    enter("complex_input_size_mismatch");
+    check(st == noErr && osz == 0 && canary_from(o, 0, O), "zero_input", d);
+    enter("zero_input_null_pointers");
+    osz = 0;
+    st = AudioConverterConvertBuffer(c, 0, NULL, &osz, NULL);
+    snprintf(d, sizeof d, "status=%d out_bytes=%u", (int)st, (unsigned)osz);
+    check(st == noErr && osz == 0, "zero_input_null_pointers", d);
+    enter("complex_null_lists");
     {
-        AudioBufferList in, ob;
-        in.mNumberBuffers = ob.mNumberBuffers = 1;
-        in.mBuffers[0].mNumberChannels = ob.mBuffers[0].mNumberChannels = 2;
+        AudioBufferList l;
+        l.mNumberBuffers = 1;
+        l.mBuffers[0].mNumberChannels = 2;
+        l.mBuffers[0].mData = o;
+        l.mBuffers[0].mDataByteSize = 4096;
+        OSStatus a = AudioConverterConvertComplexBuffer(c, 16, NULL, &l);
+        OSStatus b = AudioConverterConvertComplexBuffer(c, 16, &l, NULL);
+        snprintf(d, sizeof d, "status_in=%d status_out=%d", (int)a, (int)b);
+        check(a == kAudio_ParamError && b == kAudio_ParamError && canary_from(o, 0, O), "complex_null_lists", d);
+    }
+    enter("complex_input_short");
+    osz = 4096 * 4;
+    st = complex1(c, 1000, s16, 1000 * 4 - 1, o, &osz);
+    snprintf(d, sizeof d, "status=%d", (int)st);
+    check(st == kAudioConverterErr_InvalidInputSize && canary_from(o, 0, O), "complex_input_short", d);
+
+    /* 2. several buffers (a non-interleaved layout), with different capacities: refused, no write */
+    enter("complex_two_output_buffers_unequal");
+    {
+        AudioBufferList *ob = (AudioBufferList *)calloc(1, sizeof(AudioBufferList) + sizeof(AudioBuffer));
+        AudioBufferList in;
+        fill_canary(o, O);
+        fill_canary(o2, O);
+        in.mNumberBuffers = 1;
+        in.mBuffers[0].mNumberChannels = 2;
         in.mBuffers[0].mData = s16;
-        in.mBuffers[0].mDataByteSize = 1000 * 4 + 1;
+        in.mBuffers[0].mDataByteSize = 1000 * 4;
+        ob->mNumberBuffers = 2;
+        ob->mBuffers[0].mNumberChannels = ob->mBuffers[1].mNumberChannels = 1;
+        ob->mBuffers[0].mData = o;
+        ob->mBuffers[0].mDataByteSize = 4096 * 4;
+        ob->mBuffers[1].mData = o2;
+        ob->mBuffers[1].mDataByteSize = 100;
+        st = AudioConverterConvertComplexBuffer(c, 1000, &in, ob);
+        ok = canary_from(o, 0, O) && canary_from(o2, 0, O);
+        snprintf(d, sizeof d, "status=%d untouched=%d", (int)st, ok);
+        check(st == kAudio_ParamError && ok, "complex_two_output_buffers_unequal", d);
+        free(ob);
+    }
+    enter("complex_two_input_buffers");
+    {
+        AudioBufferList *ib = (AudioBufferList *)calloc(1, sizeof(AudioBufferList) + sizeof(AudioBuffer));
+        AudioBufferList ob;
+        ib->mNumberBuffers = 2;
+        ib->mBuffers[0].mNumberChannels = ib->mBuffers[1].mNumberChannels = 1;
+        ib->mBuffers[0].mData = s16;
+        ib->mBuffers[0].mDataByteSize = 1000 * 2;
+        ib->mBuffers[1].mData = s16 + 4096;
+        ib->mBuffers[1].mDataByteSize = 1000 * 2;
+        ob.mNumberBuffers = 1;
+        ob.mBuffers[0].mNumberChannels = 2;
         ob.mBuffers[0].mData = o;
-        ob.mBuffers[0].mDataByteSize = 1000 * 4;
-        st = AudioConverterConvertComplexBuffer(c, 1000, &in, &ob);
-        snprintf(d, sizeof d, "status=%d", (int)st);
-        check(st == kAudioConverterErr_InvalidInputSize, "complex_input_size_mismatch", d);
+        ob.mBuffers[0].mDataByteSize = 4096 * 4;
+        st = AudioConverterConvertComplexBuffer(c, 1000, ib, &ob);
+        snprintf(d, sizeof d, "status=%d untouched=%d", (int)st, canary_from(o, 0, O));
+        check(st == kAudio_ParamError && canary_from(o, 0, O), "complex_two_input_buffers", d);
+        free(ib);
     }
 
-    /* 2. a 4 096-frame buffer, S16LE -> S16BE, checked here byte by byte */
+    /* 3. one 4 096-frame buffer, checked here against a byte swap */
     enter("convertbuffer_s16be_4096");
-    memset(o, 0xA5, 4096 * 8 + 64);
+    fill_canary(o, O);
     osz = 4096 * 4;
     st = AudioConverterConvertBuffer(c, 4096 * 4, s16, &osz, o);
-    bool same = osz == 4096 * 4;
-    for (UInt32 i = 0; same && i < 4096 * 2; ++i)
-        same = o[2 * i] == s16[2 * i + 1] && o[2 * i + 1] == s16[2 * i];
-    bool canary = true;
-    for (int i = 4096 * 4; i < 4096 * 8 + 64; ++i)
-        canary &= o[i] == 0xA5;
-    snprintf(d, sizeof d, "status=%d out_bytes=%u swapped=%d canary=%d", (int)st, (unsigned)osz, same, canary);
-    check(st == noErr && same && canary, "convertbuffer_s16be_4096", d);
+    ok = osz == 4096 * 4 && is_swapped(o, s16, 4096 * 4) && canary_from(o, 4096 * 4, O);
+    snprintf(d, sizeof d, "status=%d out_bytes=%u exact_and_canary=%d", (int)st, (unsigned)osz, ok);
+    check(st == noErr && ok, "convertbuffer_s16be_4096", d);
+    enter("complex_input_larger_than_frames");
+    fill_canary(o, O);
+    osz = 4096 * 4;
+    st = complex1(c, 1000, s16, 4096 * 4, o, &osz);
+    ok = osz == 1000 * 4 && is_swapped(o, s16, 1000 * 4) && canary_from(o, 1000 * 4, O);
+    snprintf(d, sizeof d, "status=%d out_bytes=%u exact_and_canary=%d", (int)st, (unsigned)osz, ok);
+    check(st == noErr && ok, "complex_input_larger_than_frames", d);
 
-    /* 3. the whole file through the same converter, 4 096 frames per call */
+    /* 4. output smaller than the input needs: refused, nothing written, size 0 */
+    enter("capacity_half");
+    fill_canary(o, O);
+    osz = 2048 * 4;
+    st = AudioConverterConvertBuffer(c, 4096 * 4, s16, &osz, o);
+    snprintf(d, sizeof d, "status=%d out_bytes=%u untouched=%d", (int)st, (unsigned)osz, canary_from(o, 0, O));
+    check(st == kAudioConverterErr_InvalidOutputSize && osz == 0 && canary_from(o, 0, O), "capacity_half", d);
+    enter("capacity_one_byte_short");
+    osz = 4096 * 4 - 1;
+    st = AudioConverterConvertBuffer(c, 4096 * 4, s16, &osz, o);
+    snprintf(d, sizeof d, "status=%d out_bytes=%u untouched=%d", (int)st, (unsigned)osz, canary_from(o, 0, O));
+    check(st == kAudioConverterErr_InvalidOutputSize && osz == 0 && canary_from(o, 0, O), "capacity_one_byte_short", d);
+    enter("complex_output_short");
+    osz = 999 * 4;
+    st = complex1(c, 1000, s16, 1000 * 4, o, &osz);
+    snprintf(d, sizeof d, "status=%d out_bytes=%u untouched=%d", (int)st, (unsigned)osz, canary_from(o, 0, O));
+    check(st == kAudioConverterErr_InvalidOutputSize && osz == 0 && canary_from(o, 0, O), "complex_output_short", d);
+    enter("after_rejections_next_call_clean");
+    osz = 4096 * 4;
+    st = AudioConverterConvertBuffer(c, 4096 * 4, s16 + 4096 * 4, &osz, o);
+    ok = osz == 4096 * 4 && is_swapped(o, s16 + 4096 * 4, 4096 * 4) && canary_from(o, 4096 * 4, O);
+    snprintf(d, sizeof d, "status=%d out_bytes=%u frames_4096_8191_exact=%d", (int)st, (unsigned)osz, ok);
+    check(st == noErr && ok, "after_rejections_next_call_clean", d);
+
+    /* 5. the whole file through the same converter: 4 096-frame calls, then varying sizes */
     enter("convertbuffer_whole_file_reuse");
     uint8_t *all = (uint8_t *)malloc(n);
     size_t done = 0;
@@ -251,37 +376,57 @@ static int fix2(const char *media, const char *out)
     }
     snprintf(d, sizeof d, "status=%d calls=%u bytes=%zu", (int)last, calls, done);
     check(last == noErr && done == n && save(out, "fix2-convertbuffer-s16be.raw", all, done), "convertbuffer_whole_file_reuse", d);
-
-    /* 4. capacity smaller than the input: whole frames that fit, nothing beyond */
-    enter("capacity_half");
-    memset(o, 0xA5, 4096 * 8 + 64);
-    osz = 2048 * 4;
-    st = AudioConverterConvertBuffer(c, 4096 * 4, s16, &osz, o);
-    same = osz == 2048 * 4 && !memcmp(o, all, 2048 * 4);
-    canary = true;
-    for (int i = 2048 * 4; i < 4096 * 8 + 64; ++i)
-        canary &= o[i] == 0xA5;
-    snprintf(d, sizeof d, "status=%d out_bytes=%u prefix_ok=%d canary=%d", (int)st, (unsigned)osz, same, canary);
-    check(st == noErr && same && canary, "capacity_half", d);
-    enter("capacity_not_whole_frames");
-    memset(o, 0xA5, 4096 * 8 + 64);
-    osz = 4096 * 4 - 1;
-    st = AudioConverterConvertBuffer(c, 4096 * 4, s16, &osz, o);
-    same = osz == 4095 * 4 && !memcmp(o, all, 4095 * 4);
-    canary = true;
-    for (int i = 4095 * 4; i < 4096 * 8 + 64; ++i)
-        canary &= o[i] == 0xA5;
-    snprintf(d, sizeof d, "status=%d out_bytes=%u prefix_ok=%d canary=%d", (int)st, (unsigned)osz, same, canary);
-    check(st == noErr && same && canary, "capacity_not_whole_frames", d);
-    enter("after_partial_next_call_clean");
-    osz = 4096 * 4;
-    st = AudioConverterConvertBuffer(c, 4096 * 4, s16 + 4096 * 4, &osz, o);
-    same = osz == 4096 * 4 && !memcmp(o, all + 4096 * 4, 4096 * 4);
-    snprintf(d, sizeof d, "status=%d out_bytes=%u matches_frames_4096_8191=%d", (int)st, (unsigned)osz, same);
-    check(st == noErr && same, "after_partial_next_call_clean", d);
+    enter("complexbuffer_varchunks_whole_file");
+    {
+        static const UInt32 sizes[] = { 1, 7, 333, 4096, 1000, 2, 4095, 64 };
+        memset(all, 0, n);
+        done = 0;
+        calls = 0;
+        last = noErr;
+        bool sizes_ok = true;
+        while (done < n) {
+            UInt32 frames = sizes[calls % 8];
+            if (frames > (n - done) / 4)
+                frames = (UInt32)((n - done) / 4);
+            osz = frames * 4 + 64; /* larger than needed: the size reported must be exact */
+            uint8_t *dst = (uint8_t *)malloc(osz);
+            fill_canary(dst, osz);
+            last = complex1(c, frames, s16 + done, frames * 4, dst, &osz);
+            ++calls;
+            sizes_ok &= osz == frames * 4 && canary_from(dst, frames * 4, frames * 4 + 64);
+            memcpy(all + done, dst, frames * 4);
+            free(dst);
+            if (last != noErr || !sizes_ok)
+                break;
+            done += frames * 4;
+        }
+        snprintf(d, sizeof d, "status=%d calls=%u bytes=%zu sizes_and_canaries=%d", (int)last, calls, done, sizes_ok);
+        check(last == noErr && sizes_ok && done == n && save(out, "fix2-complexbuffer-s16be-varchunks.raw", all, done),
+              "complexbuffer_varchunks_whole_file", d);
+    }
     AudioConverterDispose(c);
 
-    /* 5. S16LE -> Float32 through ConvertBuffer (exact: s/32768) */
+    /* 6. sample rate conversion: a variable relationship, refused by both calls */
+    enter("sample_rate_conversion_refused");
+    {
+        AudioStreamBasicDescription le48 = le;
+        le48.mSampleRate = 48000;
+        c = NULL;
+        OSStatus nw = AudioConverterNew(&le, &le48, &c);
+        fill_canary(o, O);
+        osz = 4096 * 8;
+        OSStatus a = c ? AudioConverterConvertBuffer(c, 4096 * 4, s16, &osz, o) : nw;
+        UInt32 osz2 = 4096 * 8;
+        OSStatus b = c ? complex1(c, 4096, s16, 4096 * 4, o, &osz2) : nw;
+        snprintf(d, sizeof d, "new=%d convertbuffer=%d complex=%d out_bytes=%u untouched=%d", (int)nw, (int)a, (int)b,
+                 (unsigned)osz, canary_from(o, 0, O));
+        check(nw == noErr && a == kAudioConverterErr_FormatNotSupported && b == kAudioConverterErr_FormatNotSupported
+                  && osz == 4096 * 8 && canary_from(o, 0, O), "sample_rate_conversion_refused", d);
+        if (c)
+            AudioConverterDispose(c);
+    }
+
+    /* 7. S16LE -> Float32 through ConvertBuffer (exact: s/32768), 4 096 frames then varying sizes */
     enter("convertbuffer_f32_whole_file");
     c = NULL;
     st = AudioConverterNew(&le, &fl, &c);
@@ -299,11 +444,34 @@ static int fix2(const char *media, const char *out)
     snprintf(d, sizeof d, "new=%d status=%d bytes_in=%zu", (int)st, (int)last, done);
     check(st == noErr && last == noErr && done == n && save(out, "fix2-convertbuffer-f32.raw", f32, n * 2),
           "convertbuffer_f32_whole_file", d);
+    enter("convertbuffer_f32_varchunks");
+    {
+        static const UInt32 sizes[] = { 3, 4096, 17, 1024, 1 };
+        memset(f32, 0, n * 2);
+        done = 0;
+        calls = 0;
+        last = st;
+        while (st == noErr && done < n) {
+            UInt32 frames = sizes[calls % 5];
+            if (frames > (n - done) / 4)
+                frames = (UInt32)((n - done) / 4);
+            osz = frames * 8 + 32;
+            last = AudioConverterConvertBuffer(c, frames * 4, s16 + done, &osz, f32 + done * 2);
+            ++calls;
+            if (last != noErr || osz != frames * 8)
+                break;
+            done += frames * 4;
+        }
+        snprintf(d, sizeof d, "status=%d calls=%u bytes_in=%zu", (int)last, calls, done);
+        check(st == noErr && last == noErr && done == n && save(out, "fix2-convertbuffer-f32-varchunks.raw", f32, n * 2),
+              "convertbuffer_f32_varchunks", d);
+    }
     if (c)
         AudioConverterDispose(c);
     free(all);
     free(f32);
     free(o);
+    free(o2);
     printf("B13FIX_SUMMARY checks=%u failures=%u\n", checks, failures);
     return failures ? 1 : 0;
 }

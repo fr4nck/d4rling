@@ -2,7 +2,7 @@
 # B13-D: audio file -> AudioToolbox (ExtAudioFile + AudioConverter) -> CoreAudio -> PulseAudio
 # (WSLg), with the private ELF32 ld.so.cache (LDCACHE, required) and optional LAYER.
 # Usage: b13-play-run.sh LABEL i386|x86_64 play|stoprestart [CAPTURE_SECONDS] [FILE]
-# Env: PULSE_SERVER (guest), LDCACHE (private cache), LAYER (optional overlay).
+# Env: PULSE_SERVER (guest), LDCACHE (private cache), LAYER (optional overlay), WIT (witness dir), INST.
 # Host observer (pa-tool) uses the host libpulse; it never plays audio.
 set -Eeuo pipefail
 B=${B12_STAGE:-$HOME/d4wrling-work/validation/quicktime-b12-20261114}
@@ -17,7 +17,7 @@ rp=$!
 ( sleep 3.2; $PT inputs > "$O/pa-during.txt" 2>&1 ) &
 ip=$!
 sleep 0.3
-bash "$W/tools/run-b13.sh" "$L" "$W/build/b13-atb-$A" normal 60 \
+bash "$W/tools/run-b13.sh" "$L" "${WIT:-$W/build}/b13-atb-$A" normal 60 \
   play "/Volumes/SystemRoot$W/media" "/Volumes/SystemRoot$O" "$M" "$F" > "$O/run.log"
 wait "$ip" || true
 set +e; wait "$rp"; rrc=$?; set -e
