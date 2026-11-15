@@ -1,4 +1,4 @@
-# SoundHack 0.896 — SH01–SH15 static, archive and host witnesses (i386 target)
+# SoundHack 0.896 — SH01–SH16 static, archive and host witnesses (i386 target)
 
 These fixtures use **Python 3 standard-library** host tools. The static auditors
 read files only; SH07 explicitly creates one new output WAV and compiles pinned
@@ -426,3 +426,21 @@ its original delivered SHA-256 is
 `1ae4ac3e3a2bfdfaf28bd327519519c20fe65bf494e5814502ae8466c58ef126`.
 This does **not** validate a real cctools link or SoundHack guest startup.
 See [SH15 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH15-portable-kit.md).
+
+## SH16 — actual cctools Darwin i386 dylib link (operator-reported)
+
+On the **i5-10400 under Debian WSL2**, the unchanged SoundHack FFT sources
+were compiled to genuine i386 Mach-O objects, then linked by the **real**
+pinned cctools-port `ld` against the historical private i386 `libSystem`.
+The linker exited **0**. The resulting **8,688-byte** `MH_DYLIB` has
+SHA-256 `c578572e4679985a76d79c61717a5339799c3e638d0347963f130df38db76ed1`.
+The positive bounded check is **`SH16_MACHO_I386_DYLIB_EXPORTS_PASS`**,
+including i386 header/type and exports `_FFT`, `_RealFFT`.
+
+**Provenance:** terminal output supplied by the operator, **not replayed**
+by the assistant or GitHub CI. No actual D4rling guest run, dynamic loader
+resolution, numerical FFT guest verification, app launch or audio test.
+The next qualified step is SH17 guest execution using the original private
+installation and existing namespace runner.
+
+See [SH16 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH16-10400-real-i386-link.md).
