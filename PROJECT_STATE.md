@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## SOUNDHACK SH17 — FFT originale exécutée dans l'invité i386 (15 novembre 2026)
+
+**`SOUNDHACK_SH17_GUEST_FFT_PASS` — preuve transmise depuis le 10400, non rejouée par l'agent.** Vraie dylib SH16 Mach-O i386 inchangée, chargée par `dyld` via `@loader_path` ; `InitFFTTable`, `FFT` complexe aller/retour et `RealFFT` d'impulsion aller/retour validées numériquement, code invité 0 et quatre marqueurs positifs. L'échec initial `@rpath` est conservé comme contre-épreuve. Pas de démarrage de SoundHack.app, d'interface ou d'audio. [Preuves et source témoin](docs/evidence/soundhack-sh01-2026-11-10/SH17-10400-guest-fft-pass.md).
+
 ## ATB-FIX3 — reconnaissance des formats AudioFile (15 novembre 2026)
 
 **`ATB_FIX3_PRODUCTION_PASS`.** `AudioFileFormatManager` lisait les tableaux `CFArrayRef` des composants AudioFile (extensions, UTI, MIME) avec une taille de 4 octets : en x86_64, les tables restaient vides, un AIFF sans indice s'ouvrait comme AIFC et un `.wav` invalide rendait `typ?`. La taille est maintenant celle d'un pointeur. Binaire du commit de production, i386 et x86_64 : oracle positif 95/95 (attendus tirés de la source, figés avant les essais), comportement identique entre architectures ; `fix2` 27/27, B13 26/26, FIX1 6/6, B13-D et B12 identiques au bit près, exports inchangés. MP3, AAC et ALAC restent non testés. Hôte inchangé. [Rapport](docs/evidence/audiotoolbox-b13-fix3-2026-11-15.md).

@@ -17,6 +17,10 @@ le plafond de trois morceaux par artiste. Ce repère éditorial ne vaut pas
 validation technique : les critères R/U/A/M/QT/L/P et leurs statuts restent
 indépendants.
 
+## SoundHack SH17 — calcul FFT exécuté dans D4rling i386 (15 novembre 2026)
+
+**TEST / `SOUNDHACK_SH17_GUEST_FFT_PASS` (opérateur 10400, non rejoué).** Bibliothèque FFT originale SH16 inchangée, `@loader_path` qualifié pour le témoin, quatre marqueurs invités et code retour 0. Tests limités à l'initialisation, deux impulsions complexes et une impulsion réelle avec inverses, sentinelles contrôlées. L'application SoundHack, GUI et audio restent non testés. [Rapport](docs/evidence/soundhack-sh01-2026-11-10/SH17-10400-guest-fft-pass.md).
+
 ## LIBCXX-LEGACY-01 — exports historiques Darwin (15 novembre 2026)
 
 **TEST / LIBCXX_LEGACY_01_PASS.** Gitlink libc++ `caf34a8c` → fusion officielle `061279eb` (#8), seul `__config_site` modifié dans le module. Référence/candidat : 46 unités FAT reconstruites chacune ; cinq exports absents puis résolus en **i386 et x86_64**, liaison forte négative/positive ; sept tests LLVM passent sur les deux variantes et architectures (28 exécutions). Dix exports ajoutés, aucun retiré ; UUID réels vérifiés. Canon et autres bancs intacts. [Preuves et reproduction](docs/evidence/libcxx-legacy-01-2026-11-15.md). Le témoin ptrace-wait4 de #2112 reste à expertiser, hors de ce lot.

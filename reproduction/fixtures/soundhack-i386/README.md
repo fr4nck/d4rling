@@ -1,4 +1,4 @@
-# SoundHack 0.896 — SH01–SH16 static, archive and host witnesses (i386 target)
+# SoundHack 0.896 — SH01–SH17 static, archive and real i386 guest witnesses
 
 These fixtures use **Python 3 standard-library** host tools. The static auditors
 read files only; SH07 explicitly creates one new output WAV and compiles pinned
@@ -444,3 +444,34 @@ The next qualified step is SH17 guest execution using the original private
 installation and existing namespace runner.
 
 See [SH16 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH16-10400-real-i386-link.md).
+
+## SH17 — actual SoundHack FFT executed in the Darling i386 guest (operator-reported)
+
+**`SOUNDHACK_SH17_GUEST_FFT_PASS`**, on the i5-10400 historical/private
+Debian WSL2 installation. The operator supplied output of a real
+`reproduction/run-guest.sh` execution: guest exit code **0**, and
+`InitFFTTable`, complex `FFT` (forward/inverse), and real `RealFFT`
+(impulse forward/inverse) positive markers. The original SH16 dylib SHA-256
+`c578572e4679985a76d79c61717a5339799c3e638d0347963f130df38db76ed1`
+was unchanged.
+
+The first guest executable **failed** (`dyld` could not resolve `@rpath`).
+Re-linking only the test executable and changing its `LC_LOAD_DYLIB`
+dependency to `@loader_path` allowed actual loading and calculations.
+Successful executable SHA-256:
+`6c126699e6a2797cc9c337ebb20ade655084a0ef202e834034f544a89e6b6374`.
+Original results in `/tmp/d4rl-replay.iZCCcM8i`.
+
+The committed [SH17 witness C source](sh17_fft_guest.c) is transcribed from
+the supplied shell block; it separately cross-compiles as Darwin i386 but
+has **not** been byte-matched to the operator's local C file.
+The source is not a replacement for Tom Erbe's FFT code.
+
+**Proof scope:** real i386 guest loading and numerical tests for selected
+FFT inputs, as reported by the operator; **not** launch of SoundHack.app,
+GUI/audio playback, or generalized audio compatibility. This milestone did
+not require editing D4rling production code, resetting a protected tree,
+or installing dependencies.
+
+[SH17 guest evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH17-10400-guest-fft-pass.md) |
+[SH17 initial loader failure](../../../docs/evidence/soundhack-sh01-2026-11-10/SH17-10400-rpath-guest-blocked.md).
