@@ -1,0 +1,162 @@
+--- a/src/CoreAudio/AudioToolbox/AudioConverter.cpp	2026-11-15 02:36:55.099719684 +0100
++++ b/src/CoreAudio/AudioToolbox/AudioConverter.cpp	2026-11-15 02:54:13.657881784 +0100
+@@ -22,6 +22,7 @@
+ #include <CarbonCore/MacErrors.h>
+ #include <stdexcept>
+ #include <cstring>
++#include <algorithm>
+ 
+ OSStatus AudioConverterNew(const AudioStreamBasicDescription* inSourceFormat, const AudioStreamBasicDescription* inDestinationFormat, AudioConverterRef* outAudioConverter)
+ {
+@@ -68,13 +69,23 @@
+ 
+ OSStatus AudioConverterConvertBuffer(AudioConverterRef inAudioConverter, UInt32 inInputDataSize, const void* inInputData, UInt32 *ioOutputDataSize, void *outOutputData)
+ {
+-	AudioBufferList in, out;
+-	OSStatus stat;
++	if (!inAudioConverter || !ioOutputDataSize || (inInputDataSize && !inInputData) || (*ioOutputDataSize && !outOutputData))
++		return kAudio_ParamError;
+ 
+-	in.mNumberBuffers = out.mNumberBuffers = 1;
++	AudioConverter* converter = reinterpret_cast<AudioConverter*>(inAudioConverter);
++	const AudioStreamBasicDescription& source = converter->sourceFormat();
++	const AudioStreamBasicDescription& destination = converter->destinationFormat();
++
++	// Only interleaved PCM with one frame per packet can be given as a plain buffer
++	if (!source.mBytesPerFrame || !destination.mBytesPerFrame)
++		return kAudioConverterErr_FormatNotSupported;
++	if (inInputDataSize % source.mBytesPerFrame)
++		return kAudioConverterErr_InvalidInputSize;
+ 
+-	in.mBuffers[0].mNumberChannels = 2;
+-	out.mBuffers[0].mNumberChannels = 2;
++	AudioBufferList in, out;
++	in.mNumberBuffers = out.mNumberBuffers = 1;
++	in.mBuffers[0].mNumberChannels = source.mChannelsPerFrame;
++	out.mBuffers[0].mNumberChannels = destination.mChannelsPerFrame;
+ 
+ 	in.mBuffers[0].mDataByteSize = inInputDataSize;
+ 	in.mBuffers[0].mData = const_cast<void*>(inInputData);
+@@ -82,7 +93,7 @@
+ 	out.mBuffers[0].mDataByteSize = *ioOutputDataSize;
+ 	out.mBuffers[0].mData = outOutputData;
+ 
+-	stat = AudioConverterConvertComplexBuffer(inAudioConverter, inInputDataSize/((AudioConverter*)inAudioConverter)->frameSize(), &in, &out);
++	OSStatus stat = AudioConverterConvertComplexBuffer(inAudioConverter, inInputDataSize / source.mBytesPerFrame, &in, &out);
+ 	*ioOutputDataSize = out.mBuffers[0].mDataByteSize;
+ 
+ 	return stat;
+@@ -93,38 +104,78 @@
+ 	return ((AudioConverter*)inAudioConverter)->fillComplex(inInputDataProc, inInputDataProcUserData, ioOutputDataPacketSize, outOutputData, outPacketDescription);
+ }
+ 
+-OSStatus AudioConverterConvertComplexBuffer(AudioConverterRef inAudioConverter, UInt32 inNumberPCMFrames, const AudioBufferList *inInputData, AudioBufferList *outOutputData)
++namespace
++{
++// The whole input of AudioConverterConvertComplexBuffer, handed to the converter in the
++// pieces it asks for, then an empty answer for the end of the stream.
++struct ComplexBufferInput
+ {
+-	OSStatus status;
+-	UInt32 dataPacketSize;
+-	int64_t totalOutBytes = 0;
+-	typedef OSStatus (^CallbackBlock)(AudioConverterRef audioConverter, UInt32* numberDataPackets, AudioBufferList* data, AudioStreamPacketDescription** dataPacketDescription);
+-	
+-	CallbackBlock callbackBlock =
+-		^ OSStatus (AudioConverterRef audioConverter, UInt32* numberDataPackets, AudioBufferList* data, AudioStreamPacketDescription** dataPacketDescription)
++	const AudioBufferList* list;
++	UInt32 frames;
++	UInt32 position;
++};
++
++OSStatus complexBufferInputProc(AudioConverterRef, UInt32* ioNumberDataPackets, AudioBufferList* ioData,
++	AudioStreamPacketDescription** outDataPacketDescription, void* userData)
++{
++	ComplexBufferInput* input = static_cast<ComplexBufferInput*>(userData);
++	const UInt32 frames = std::min(*ioNumberDataPackets, input->frames - input->position);
++	const UInt32 buffers = std::min(ioData->mNumberBuffers, input->list->mNumberBuffers);
++
++	if (outDataPacketDescription)
++		*outDataPacketDescription = nullptr;
++
++	for (UInt32 i = 0; i < buffers; i++)
+ 	{
+-		const AudioBufferList *inInputData = (AudioBufferList*) inInputData;
++		const AudioBuffer& source = input->list->mBuffers[i];
++		const UInt32 bytesPerFrame = source.mDataByteSize / input->frames;
++
++		ioData->mBuffers[i].mNumberChannels = source.mNumberChannels;
++		ioData->mBuffers[i].mData = frames ? static_cast<uint8_t*>(source.mData) + size_t(input->position) * bytesPerFrame : nullptr;
++		ioData->mBuffers[i].mDataByteSize = frames * bytesPerFrame;
++	}
+ 
+-		if (dataPacketDescription)
+-			*dataPacketDescription = nullptr;
+-		
+-		// TODO
++	input->position += frames;
++	*ioNumberDataPackets = frames;
++	return noErr;
++}
++}
++
++OSStatus AudioConverterConvertComplexBuffer(AudioConverterRef inAudioConverter, UInt32 inNumberPCMFrames, const AudioBufferList *inInputData, AudioBufferList *outOutputData)
++{
++	if (!inAudioConverter || !inInputData || !outOutputData || !inInputData->mNumberBuffers || !outOutputData->mNumberBuffers)
++		return kAudio_ParamError;
+ 
+-		return unimpErr;
+-	};
++	AudioConverter* converter = reinterpret_cast<AudioConverter*>(inAudioConverter);
++	const AudioStreamBasicDescription& destination = converter->destinationFormat();
+ 
+-	// Squeezing a block through a function pointer
+-	AudioConverterComplexInputDataProc proc = [](AudioConverterRef audioConverter, UInt32* numberDataPackets, AudioBufferList* data, AudioStreamPacketDescription** dataPacketDescription, void* userData) -> OSStatus
++	if (!destination.mBytesPerFrame)
++		return kAudioConverterErr_FormatNotSupported;
++
++	// Every input buffer must hold whole frames
++	for (UInt32 i = 0; i < inInputData->mNumberBuffers; i++)
+ 	{
+-		CallbackBlock callbackBlock = (CallbackBlock) userData;
+-		return callbackBlock(audioConverter, numberDataPackets, data, dataPacketDescription);
+-	};
++		if (inNumberPCMFrames ? (inInputData->mBuffers[i].mDataByteSize % inNumberPCMFrames) != 0
++			|| !inInputData->mBuffers[i].mData : inInputData->mBuffers[i].mDataByteSize != 0)
++			return kAudioConverterErr_InvalidInputSize;
++	}
++
++	// PCM to PCM: as many output frames as there are input frames, within the caller's buffer
++	UInt32 outputFrames = outOutputData->mBuffers[0].mDataByteSize / destination.mBytesPerFrame;
++	if (outputFrames > inNumberPCMFrames)
++		outputFrames = inNumberPCMFrames;
+ 
+-	for (UInt32 i = 0; i < outOutputData->mNumberBuffers; i++)
+-		totalOutBytes += outOutputData->mBuffers[i].mDataByteSize;
++	if (!inNumberPCMFrames)
++	{
++		for (UInt32 i = 0; i < outOutputData->mNumberBuffers; i++)
++			outOutputData->mBuffers[i].mDataByteSize = 0;
++		return noErr;
++	}
+ 
+-	dataPacketSize = totalOutBytes / ((AudioConverter*)inAudioConverter)->frameSize();
++	ComplexBufferInput input = { inInputData, inNumberPCMFrames, 0 };
++	OSStatus status = AudioConverterFillComplexBuffer(inAudioConverter, complexBufferInputProc, &input, &outputFrames, outOutputData, nullptr);
+ 
+-	status = AudioConverterFillComplexBuffer(inAudioConverter, proc, (void*) inInputData, &dataPacketSize, outOutputData, nullptr);
++	// Each call converts a self-contained buffer: nothing may carry over to the next one
++	converter->flush();
+ 	return status;
+ }
+--- a/src/CoreAudio/AudioToolbox/AudioConverterImpl.h	2026-11-15 02:36:55.099719684 +0100
++++ b/src/CoreAudio/AudioToolbox/AudioConverterImpl.h	2026-11-15 02:54:13.657988037 +0100
+@@ -19,6 +19,8 @@
+ 
+ 	void flush();
+ 	UInt32 frameSize() const { return m_sourceFormat.mBytesPerFrame; }
++	const AudioStreamBasicDescription& sourceFormat() const { return m_sourceFormat; }
++	const AudioStreamBasicDescription& destinationFormat() const { return m_destinationFormat; }
+ 	
+ 	OSStatus fillComplex(AudioConverterComplexInputDataProc dataProc, void* opaque, UInt32* ioOutputDataPacketSize, AudioBufferList *outOutputData, AudioStreamPacketDescription* outPacketDescription);
+ 	

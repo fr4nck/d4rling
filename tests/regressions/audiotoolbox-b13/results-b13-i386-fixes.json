@@ -1,0 +1,2055 @@
+{
+  "private_ffmpeg": {
+    "packages": 111,
+    "bytes": 48205200,
+    "ld_so_conf": [
+      "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu",
+      "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/engines-3",
+      "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/gdk-pixbuf-2.0/2.10.0/loaders",
+      "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/i686/sse2",
+      "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/krb5/plugins/preauth",
+      "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/vdpau",
+      "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu",
+      "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/pulseaudio",
+      "include /etc/ld.so.conf"
+    ],
+    "ld_so_cache_sha256": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+    "elf32_images": 142,
+    "unresolved": []
+  },
+  "mapped_in_i386_guest_i3": [
+    {
+      "process": "mldr32",
+      "sha256": "dcd00e8273e821602f2acdb3bfd1710113dce770a323f2be8cae6d0a494d3c81",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libasyncns.so.0.3.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "1f8802b453948d1342c019b5e455acef3d1ee80e966b445919754cf9e479218a",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libcap.so.2.75"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "d64f342fbe3e4328cb5c3a09a9a3ec161ebb7da55ed305aa32f751c76a17a765",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libdbus-1.so.3.38.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "240321f750854025b4714f6d78529965074e65e7a4c7b74d0d4b536a132435df",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libFLAC.so.14.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "1f52cea3c8dd943570301196da4ce2449280b8721ec4dbdc11cb71b2d94009c6",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libmp3lame.so.0.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "b721abd017355310df694b2fab4c0c5fb78adc1a4efb63945869255faf3ad941",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libmpg123.so.0.48.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "54e126f60a055717bbfe8b45f8de2b0bce1531b1eebecfe4882252cd45f001f1",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libogg.so.0.8.5"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "3d69ad59cb00c8c30d8461cc96e6f73c699c3a415915dcf2d12853dac303a67d",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libopus.so.0.10.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "0bf63e5c7d5f5d8a0d452046e601641c607b436b028cd5e3e282cd7cca350ea8",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libpulse.so.0.24.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6057380c8593537add1f4bdfc1eb85eb83ce94365c410876950de73986086176",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libsndfile.so.1.0.37"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "07a20a86e91713db96e81f66b2ce013f95230fe14f549377d74a58f8a06a86d8",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libsystemd.so.0.40.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "91ba928298d78d7b9a3e9898e6956fbf3ec91bc962f77d643a5bec0db41f9f3a",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libvorbisenc.so.2.0.12"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "ed09d2c16e1c7c79194734941845bb70bf1c0414318b46a26b468e390499490d",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libvorbis.so.0.4.9"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "dbd0437061af9899d4b93ee7621c0b8549125f907b98a2c48b4afd438b715221",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libX11.so.6.4.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "c3f1c52194698ad2f253e952f4d733f54b30011880861bc103bd68983938aaf6",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libX11-xcb.so.1.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "b2f4f87cc402421bf34f140a4ed028a8c0894acd44916a87da955dcbc25c54dc",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libXau.so.6.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "395cffd588f36632fdd89a617adb6d4d08216557057e3632e00a107fbb5a3963",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libxcb.so.1.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6f66e9a180f9fd8433ebbdf35ffc7b43a66190880e2e6fa20e5fa9ced0cb62f4",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/libXdmcp.so.6.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6512313b9d34cc81fbb0419a90f8126e9d05ff60627624f7e2cbe10baea532c4",
+      "file": "<AUDIO_STAGE>/private-pulse-20261115/sysroot/usr/lib/i386-linux-gnu/pulseaudio/libpulsecommon-17.0.so"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "e299c771d4057104aed7eed5d5b92c395d44b6f89c6d945bc6854670dbdd1370",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libaom.so.3.12.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "9c49b62a7dbbf8ed13ecf9a3112305d42c5bc44a65802f67f4e7d815ba65721a",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libavcodec.so.61.19.101"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "477e168fc166e63704007e9c2cb30daed8dc405b6c5804c0542e5568c4526950",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libavformat.so.61.7.103"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "3bdaae087923e2b78676f3af2af7d5778b68e8ec8d24b722b4d61a143388e7a8",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libavutil.so.59.39.100"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "cdb318ebb5ea5b3097a2f73a08e5fcee6fda386d244238fa3bb2f5653781d822",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libblkid.so.1.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "aff434db9b0342e259e0d3961fc4e3c433f471cd78722b1245599d2ced38ec1b",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libbluray.so.2.4.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "ccd7231d13f1bd5529d2074a37b044ee25f3e04e48079848f39cba7fac445185",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libbrotlicommon.so.1.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "4f86ea7d99a84ad35a895190706bcbf07ed550542b3f617f347d1a4dafbb11f2",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libbrotlidec.so.1.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "ba8ff2bae21f9c4d934d2d30d33e3101a9dfd365d32bb45254fc4d7a3e94d301",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libbrotlienc.so.1.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6c93247da8533bb2104de216ae1a94c2775648031b3f035465424a140d2b0987",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libbsd.so.0.12.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "0a672cf33845f12fa1e5be29ef689b29d01efa95e25acf33e4fd130cefe2f597",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libbz2.so.1.0.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "e9329ce2b7339fde3a8c205ee48dd3a578b7375a184b5c628f4a1115b0d2d6f6",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libcairo-gobject.so.2.11804.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "dc2ef3b7427dc0862fa052232d78cbd5f05119236d6dfadacdc37a4df862f2cf",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libcairo.so.2.11804.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "1a2ac427021a5f5cb580a03cbc0f78d21e338a55a7194792f3d8bc65fc5510a9",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libchromaprint.so.1.5.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "ac752899dae46b52be5688e7516debaa9c95cf6f73031086308eb00be98e5cb4",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libcjson.so.1.7.18"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "3dfa1531db10efb60bd7d039607019410e028232088baf1cf0d6b9870cec8114",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libcodec2.so.1.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "75c6649b8915d0475dcd1dfac329f525baa12114542359e461efdda830bf70ec",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libcom_err.so.2.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "c1a4d22c176c8869b3f91083e5c9ff7921da791294397c7db2814281fc99467f",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libcrypto.so.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "bf95d418740545e94a12beaabe9a30467a05912af6f4f5630710178c0333ed6a",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libdatrie.so.1.4.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "8156205808ef1103b2d8d1dbbf957b123431cd9d3aaa834f9e5d7adabaf3e175",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libdav1d.so.7.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "cd807bfc0d038bf8275d3c221cddab7ba5f49e71e808346ce1257dd41063336a",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libdrm.so.2.124.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "56241f66d7d40e9d033e30c779694d7f0007faa87532adc3f8793a1371d7d8df",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libdvdnav.so.4.3.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "efac14c4ddbd9ebbee035078e15f87c605464d6a6746064501a10b2488144a60",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libdvdread.so.8.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "12251fba83d0d4a9200c30222e06cab8b497a26714be9e43981c3ae307b98567",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libexpat.so.1.13.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6fdb675075f28dfeb24552a78cf06b3adfe3ee4dc7b51c379be07f8a73d10f1b",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libffi.so.8.1.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "2b7f27c926fb2af6769f2acd52eb6b307d3579851e6382ce6108bafd3ad9fafa",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libfontconfig.so.1.12.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "c222f4442e4eee602eeb92f5e8eee8058fb912cc18bb9db0ecbaaa5ec4f03fef",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libfreetype.so.6.20.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "df055a6d07d54550d22ed2eafafcb17ffb1e94826581b4d59217eda8151a50f8",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libfribidi.so.0.4.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "d296b21ea8828d08e1b3c7b56e1c7454d6112ac86629534fa05b03722e720300",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libgdk_pixbuf-2.0.so.0.4200.12"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "894c7d5afdec2925a8a033b4c51219d49974d65f912133ff9d129fec4cb6268e",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libgio-2.0.so.0.8400.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "5f28e2495f3364d45acdc7b3e93fb9df8a71e307ad7d090fda55e15bd79fa79f",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libglib-2.0.so.0.8400.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "f6e6b962ae47c74d31c6f0f1768ad9cc1ab6ac3e0b041e96b1004d700524c0cc",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libgme.so.0.6.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "cd1120b9508b9312301b7539a58afb5788999f03d9daac016dad403fdade5eef",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libgmodule-2.0.so.0.8400.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "c8d09e700375d70b56d06c9a709e340d678c53adbdf8bef89ef7bbe357918b49",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libgmp.so.10.5.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "1b7ad46ecb8a156645e5baa369c16630868c738366d098403af9adfb67d878b9",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libgnutls.so.30.40.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "bd6ebf8ccea992711e388e2cd2d55560a9734e589295843ae52fb502a66ea429",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libgobject-2.0.so.0.8400.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "e5f4ab06f2ca0cb6e24946615f35a36a43a18de4ff570d1224a7191f9c4a210c",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libgraphite2.so.3.2.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "b5242401db3ac0a635a63057e1823662f8bc4215598eb1b33c9ab8381ac57c11",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libgsm.so.1.0.19"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "2a8a9d4e18dce4c5a1af9e773754de782f2a8308402800483f0284256e5f943c",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libgssapi_krb5.so.2.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "43f92659db0dbfce725a82d5441c7de8bfcb1418483d57d44fd3da5d82eb21aa",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libharfbuzz.so.0.61020.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "97c852755ee30b969752377bb5a515b40a8236e63d924ccf9b581f354b53b6ee",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libhogweed.so.6.10"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "ad541ffb853dc1612f303805564323527228b31828b4546b7088bb3138bd7890",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libhwy.so.1.2.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6888fc78f380b9e5449a378381a54ac4b9a32da6f148bd783c92d00c25ef0e16",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libidn2.so.0.4.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "fd4e4d886b844dc6860e93f47b3595207201b23495c47bee763ab5f69587e5dd",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libjpeg.so.62.3.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "f26205330a8c0397a1327d3d24851daff38bfd9c0f5032a9ec83b856ce4e755c",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libjxl_cms.so.0.11.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "8eee29dbcced5a45e87d658d73061d2e4348eb0aa741a00d6367d18214fc4251",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libjxl.so.0.11.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "b4354c0fdbb52e3337a64e6e2a8060493f48dd652a522de8490ca049feecbbc6",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libjxl_threads.so.0.11.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "04d9f8776025f1526df33f476b098a71937341c86f7f7929e5e4fd5cc5880b29",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libk5crypto.so.3.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "cff1bcb925efd40e92b4d1ae427a2b118227cc184551c78dd2de814448645fd1",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libkeyutils.so.1.10"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "9c8e02c086b720318a3d20a0ff11c02862b13c313d556f096f96b6091d975335",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libkrb5.so.3.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "c931f9a279556fa2fdd03859a49defd6121aea5eda9c80531a891ea09f6be019",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libkrb5support.so.0.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "9e9661881f65af8c8935342017bda1a0661f33f0ed2ba8fe17b547df515ebe18",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/liblcms2.so.2.0.16"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "3d471eec2f59f8e628ab0dc6d2e1764eced1ccd853adb4e4faf24cf01bd059c3",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/liblzma.so.5.8.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "9eaf76919e12e3f6d325841e5bc281286c6ebc9c648439cac85f173499abf360",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libmbedcrypto.so.3.6.6"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "3136e45db3efafeb3e95592041a31bb45bf55f846a49eae0d11148b6936813a2",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libmd.so.0.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "0df498c08c62cc45b6b23fa40c2a6319f8c55b882c8e3874336c835745550705",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libmount.so.1.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "8c1f38598ae0256a290188fa3d54921e979d9fd2917c3ff6c01301f592e3f21b",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libnettle.so.8.10"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "428c84a8a10e912b8a8a9397c47558a173d5f3e70a5135c81fd11e5c2660c9e5",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libnorm.so.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "01f9c1c2200ffa4e41541cb862e86bdc784e7fdfd0b164c940c6361a7b743697",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libnuma.so.1.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "a50ae443b7b50a43a388b2b872006b568624d3248ae48a147347aa266554194f",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libOpenCL.so.1.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "81240b86c5d55b21055d01a8afd97723fd40c910f47736ae8e416967c179ab02",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libopenjp2.so.2.5.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "8f1a9241b96938305b840ce219b81e47d8732413796053cf0eab8bb6f7ba6f2f",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libopenmpt.so.0.4.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "009ab7384c8db8006970394771355e793cc8db7eabc941aaf9cc21299b7e9045",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libp11-kit.so.0.4.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "9264f4ab0d9d79c53696d622ab38ca53ec065994901309b5b4b03c037d89272e",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libpango-1.0.so.0.5600.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "03b0705d927810b45cc9cbbfbda3a7836a8cc59343d894ce94ca5f31559da3b5",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libpangocairo-1.0.so.0.5600.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "7faa2d16660177c0fee98e1f9152016a0fb0f8bbb10974bee019d0e43968a903",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libpangoft2-1.0.so.0.5600.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "5076243308b45858c61f24c5a62f54ca4e081ea7ac435e112fcdbf0232ce3b3c",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libpcre2-8.so.0.14.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "a145b8bb6f56e720d8a39ab0f40a3dd0a1c45350b20140aaf6ce0331a68e0f00",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libpgm-5.3.so.0.0.128"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "fb0a8a4dc04d2bcf6fbc4d09422fa7bb8ad9a2e380f8c0f5f31426975605acb0",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libpixman-1.so.0.44.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "51cd474b6ad1da1a97f3c88a30466c1a9c6de6fced0bd094eeafe4b636d04cfc",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libpng16.so.16.48.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "f363ecdee6b94655f0d71954ec5245000f874744a41b701b4bbaa8e9caa48447",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/librabbitmq.so.0.15.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6a0c0d4bacb9166ffd3e011ab343103d52130f007004e89f66e3cc126f819c43",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/librav1e.so.0.7.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "415418eac00e4c3ba5cfb9d09196d8dbca0e37b626cde1627452ecaedaca2dd1",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/librist.so.4.4.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "b09856116c95919d80a2778f32225e011396d16493e7bb14b70ade904eea5843",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/librsvg-2.so.2.60.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "f96cbbd8a72a13c3d65147a74051988437137cc93fc57fad4a5271047d4a35e5",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libselinux.so.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "312c8596b25d53c1233b2b0f15d12e119e7bfb2058bf821aeb32f3e1d4468f95",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libsharpyuv.so.0.1.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "0be23fda168076d7296b2b9c40be833d57de207f8cbcec64f9d2e8eee23961cc",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libshine.so.3.0.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "2aa6dd6e824fd07db1089a449521bfd16b756d35434fb26467adfc815ea134fe",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libsnappy.so.1.2.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "8fd85cc02db21911745d39db350f0af8532ea55e7a3726971346c49a9b39223c",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libsodium.so.23.3.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "95f59c6ef365d589029eb8bbfaa6b2a596f25e45fa131eac822c77e8388a813f",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libsoxr.so.0.1.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "267ff1e867dbe6dd1551be5bc7969a06e96b0ee4f8c79d1314d4d4d1a873a54a",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libspeex.so.1.5.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "a8fb2a34d825eba2f316403a249e97f9f6833ddd00c539c107ef302db2c911b5",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libsrt-gnutls.so.1.5.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "7d44ebb3975506e64c6a74f7e38e2b7931cf3f4a4eb6148c02e2fa1c06d7f31d",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libssh.so.4.10.5"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "f8c974df09de3e4328bd1425540f7c5fad362f67f1374dd36f49770700114fb3",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libssl.so.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6284e8d135c43ebaa0d91e1e7d68885dfbb0424c00685daddf7617de9bc49377",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libSvtAv1Enc.so.2.3.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "9c9ad71c1269ca1db4d258fd122f936259bf7a4383e8bc6116cbe99344a4ed53",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libswresample.so.5.3.100"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "fd6bccd8550c96078349a73cd691952bb9640bc089d54f5e8aa4753671c0ab75",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libtasn1.so.6.6.4"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "1dd1895d6fb4d158dd2546dddb865420b6dadfd76f40416c2e569648789131a8",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libthai.so.0.3.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "2894d3a3e6664b3406bdae81c304a31b7ad68e393371202d0972dc3324fd87d5",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libtheoradec.so.1.1.5"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "cfa3edbbe0ad6251f2fcadd03899204d9d49b7d27ac76162ef4ac4ae594b8fe9",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libtheoraenc.so.1.2.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "5ef76780e656391b8aad2a94c7f6ca026e616d4bf274b36e2ecf59a407310731",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libtwolame.so.0.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "912b6ca823972a5db71751f8958d26f35774266d6de764e189e0a7f2406b3938",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libudfread.so.0.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "09addbe14845e752d2ba992013165a85df5907f1e8c2fdfa35b00e231b062e69",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libunistring.so.5.2.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "f4224cdbf9b0938fa38c1ca9c96ca70916733c14c7c1a4076b02d6a5f7a724e9",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libva-drm.so.2.2200.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "b1640a90977a9a0e3dd631013a8fe9bdce65dff618577cfe45a5ef732999c0de",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libva.so.2.2200.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "c55c2abba98d122345982f50da79d995f25b611e440a044a76080a531fca6b4d",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libva-x11.so.2.2200.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "4feadd2c459b791be9c8a031aa9ec77da750db8e422fc63b38347aa5b99104ab",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libvdpau.so.1.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "acffce57a6ba7cc242584486202702da62baf84064f25e3bf5d6e64ed20a8313",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libvorbisfile.so.3.3.8"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "4ec598241a57cc7aea740b09ae7bdab0f9a4b7ad21163317cd878156378777c1",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libvpx.so.9.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "4fd6acba1bc70288bef4455548e9803ced6ffc2e3f4fea89bacb60fec50ac3c5",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libwebpmux.so.3.1.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "6c8db93d4e1270fded1a680a7033cd3470529f6e51406ccce0836d7e623ae6cc",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libwebp.so.7.1.10"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "5f4e6503220b736a1b06f421f55fff315afb566d6ce25ef62efe9da49a3f8bd4",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libx264.so.164"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "a501591370fa2de6407b045acf03dbc1fafeb0bfbe195cfc7a168fa32329744b",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libx265.so.215"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "e5311cb7ca82c5920e96aaa049fc4b094c2dc86ca6289dd992e3d9f772e4a96b",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libxcb-dri3.so.0.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "9070290ff0c4aba942e8515e085312c8d30e5dc261327f340b94c175f0aa67d2",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libxcb-render.so.0.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "f72e3e3217f40bbe07c5bb239d773f6d9a7cdebbc2aa2fbb20ee72f23820c3b8",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libxcb-shm.so.0.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "4ad9794c7b2f3120da8b393d6499b4919c714a561f52624227fdd7a2d08dbc9b",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libXext.so.6.4.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "16649207a480a8703a54ac297184dcf1f65369114ba3e921342736060d81b890",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libXfixes.so.3.1.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "8c1eb0af9ebfe2fcdde022d8b582167231b1b6c5e71c670879447e68b1cbb658",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libxml2.so.2.9.14"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "28d91cf674a8ac90f898434637a1c040890a5eaf48505aa7fc36f1cd29375808",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libXrender.so.1.3.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "c50aa95456e68d2354f6c8624d60527f7ab93d954114032dd62ae475b28f76c3",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libxvidcore.so.4.3"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "5932b2aaf04656ac1b3c000d171fb41067d919b43a1d83ae3476e2b88f6b1b72",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libzmq.so.5.2.5"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "cbd8e2d6d4333db26831200000c80af2065d082a6f93a70a0b806680634579f5",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libz.so.1.3.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "11e071b1b7358d5593bdc5b6ffbbd2f038b792fcaca30ca85019030fef5278fc",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libzstd.so.1.5.7"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "2710fe9a5bf1c5ec099d91b28653db2b531cff4e5bc6b80c656e3703cf346e5d",
+      "file": "<B13_STAGE>/private-ffmpeg-20261115/sysroot/usr/lib/i386-linux-gnu/libzvbi.so.0.13.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "73e22dd41a5404b75db70b4c51be08075ddec01261eeed91546655def92b284c",
+      "file": "/usr/lib32/ld-linux.so.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "18eaf451baa74fc6c59cc0cd721122e0485cca9e918c49ce6072fc77eae9340b",
+      "file": "/usr/lib32/libatomic.so.1.2.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "f2ed349542c0be517ea7e66381f342eda08857e01772d6aa33916ca41702f61c",
+      "file": "/usr/lib32/libc.so.6"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "c5876eb1fde3666dc9049888c572ddfed2ee341837547175aad3b55a4dbc6eb7",
+      "file": "/usr/lib32/libgcc_s.so.1"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "aedb504778120931a95523695240cc1e1fdd3d3c6ce787738221185b2d8231e3",
+      "file": "/usr/lib32/libgomp.so.1.0.0"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "e578f5c12edbad0dcbf5a53dd04834dac70897890ce905978d2e5fc39c1aa858",
+      "file": "/usr/lib32/libm.so.6"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "ce64e544a682bc2920fdef3560efa85ba6cd435ca54aee4cdf6fdce3521af363",
+      "file": "/usr/lib32/libresolv.so.2"
+    },
+    {
+      "process": "mldr32",
+      "sha256": "fbefd10ac1b28483405c3af35425c369e2dfe3f162f836a5ac047304a393cc5c",
+      "file": "/usr/lib32/libstdc++.so.6.0.33"
+    }
+  ],
+  "i386_probe": [
+    {
+      "label": "i2",
+      "rc": 1,
+      "program_sha256": "98c1fc0f5bfc849140d43d9a03fbb3da89b54bebfdfe45b79ec372e97111cb93",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/i2",
+      "layer": "none",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": null,
+      "summary": [
+        "B13_SUMMARY checks=38 failures=1"
+      ],
+      "last_enter": null,
+      "failures": [
+        "B13 ext_formats[ulaw-s16] FAIL status=0,0,-50,0 file_format=ulaw file_rate=44100.0 file_length_frames=88200 client_rate=44100.0 client_flags=0xc client_bits=16"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY packets_bytes[demo-s16.wav] PASS sha=2b22df303e0bcfe6 expected=2b22df303e0bcfe6 bytes=352800",
+        "VERIFY properties[demo-s16.wav] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xc file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-s16.wav] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.aiff] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.aiff] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=AIFF (written as AIFF)",
+        "VERIFY readpacketdata_offset[demo-s16.aiff] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.caf] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.caf] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=caff (written as caff)",
+        "VERIFY readpacketdata_offset[demo-s16.caf] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-ulaw.wav] PASS sha=fd3c3c5af205df5f expected=fd3c3c5af205df5f bytes=176400",
+        "VERIFY properties[demo-ulaw.wav] PASS format=ulaw packets=88200 data_bytes=176400 bits=8 flags=0x0 file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-ulaw.wav] PASS bytes=4096 packets 1000..3047",
+        "VERIFY negative[missing] PASS {'open_status': '-43', 'handle': 'null'}",
+        "VERIFY negative[bad-garbage.wav] PASS {'open_status': '1685348671', 'handle': 'null'}",
+        "VERIFY negative[bad-empty.wav] PASS {'open_status': '1685348671', 'handle': 'null'}",
+        "VERIFY negative[bad-trunc.wav] PASS {'open_status': '0', 'count_status': '0', 'packets_reported': '35273', 'read_last_status': '0', 'packets_read': '35273', 'bytes_read': '141092', 'close': '0'} available_frames=35273 (criterion: truthful count, no data beyond the cut, prefix identical)",
+        "VERIFY ext[wav-f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[aiff-s16le] exact byteswap PASS sha=2b22df303e0bcfe6",
+        "VERIFY ext[ulaw-s16] exact G.711 FAIL sha=None",
+        "VERIFY converter[s16le->f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[wav-f32-48k] frames PASS frames=96000 expected=96000±64",
+        "VERIFY ext[wav-f32-48k] snr PASS lag=0 snr_db=85.99 min=50.0",
+        "VERIFY ext[wav-f32-48k] note1 PASS hz=439.990 expected=440.0 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note2 PASS hz=554.384 expected=554.365 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note3 PASS hz=659.248 expected=659.255 level_db=+0.000",
+        "VERIFY ext[wav-f32-48k] note4 PASS hz=880.028 expected=880.0 level_db=+0.000",
+        "VERIFY_SUMMARY pass=25 fail=1"
+      ],
+      "guest": [
+        "B13_IMAGE AudioFileOpenURL /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox",
+        "B13_IMAGE ExtAudioFileRead /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox",
+        "B13_IMAGE AudioConverterNew /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox",
+        "B13_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B13_READABLE status=0 AIFC AIFF MPG3 NeXT WAVE ac-3 adts caff flac m4af mp4f",
+        "B13_PROPS demo-s16.wav status=0,0,0,0,0,0 file_type=WAVE format=lpcm flags=0xc rate=44100.0 channels=2 bits=16 bytes_per_packet=4 frames_per_packet=1 packets=88200 data_bytes=352800 max_packet=4 duration=2.000000",
+        "B13_PROPS demo-s16.aiff status=0,0,0,0,0,0 file_type=AIFF format=lpcm flags=0xe rate=44100.0 channels=2 bits=16 bytes_per_packet=4 frames_per_packet=1 packets=88200 data_bytes=352800 max_packet=4 duration=2.000000",
+        "B13_PROPS demo-s16.caf status=0,0,0,0,0,0 file_type=caff format=lpcm flags=0xe rate=44100.0 channels=2 bits=16 bytes_per_packet=4 frames_per_packet=1 packets=88200 data_bytes=352800 max_packet=4 duration=2.000000",
+        "B13_PROPS demo-ulaw.wav status=0,0,0,0,0,0 file_type=WAVE format=ulaw flags=0x0 rate=44100.0 channels=2 bits=8 bytes_per_packet=2 frames_per_packet=1 packets=88200 data_bytes=176400 max_packet=2 duration=2.000000",
+        "B13_OBS missing.wav open_status=-43 (-43) handle=null",
+        "B13_OBS bad-garbage.wav open_status=1685348671 (dta?) handle=null",
+        "B13_OBS bad-empty.wav open_status=1685348671 (dta?) handle=null",
+        "B13_OBS bad-trunc.wav open_status=0 count_status=0 packets_reported=35273 read_last_status=0 packets_read=35273 bytes_read=141092 close=0",
+        "B13_LOADED /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox",
+        "B13_LOADED /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B13_LOADED /usr/lib/native/libavformat.dylib",
+        "B13_LOADED /usr/lib/native/libswresample.dylib",
+        "B13_LOADED /usr/lib/native/libavcodec.dylib",
+        "B13_LOADED /usr/lib/native/libavutil.dylib",
+        "B13_LOADED /usr/lib/native/libpulse.dylib",
+        "B13_LOADED /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox",
+        "B13_LOADED /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B13_LOADED /usr/lib/native/libavformat.dylib",
+        "B13_LOADED /usr/lib/native/libswresample.dylib",
+        "B13_LOADED /usr/lib/native/libavcodec.dylib",
+        "B13_LOADED /usr/lib/native/libavutil.dylib",
+        "B13_LOADED /usr/lib/native/libpulse.dylib"
+      ],
+      "outputs_sha256": {
+        "bad-trunc.wav.packets": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423",
+        "conv-s16le-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "demo-s16.aiff.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.aiff.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.caf.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.caf.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.wav.packets": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "demo-s16.wav.pd1000": "71866c6e01a1d8e1984c0d2dac4544147c1b355dfab4f3f3cf20c2ec1aae5afc",
+        "demo-ulaw.wav.packets": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+        "demo-ulaw.wav.pd1000": "b0108ca1bbbcc6334a4e995b53c3820466bc71dc60e4e236f53c0135768b4976",
+        "ext-aiff-s16le.raw": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "ext-wav-f32-48k.raw": "9693e8ca9b50f3dc1522219fadea2fa58efe812a88860ff6c97930dacdf39dd1",
+        "ext-wav-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0"
+      }
+    },
+    {
+      "label": "i3",
+      "rc": 1,
+      "program_sha256": "98c1fc0f5bfc849140d43d9a03fbb3da89b54bebfdfe45b79ec372e97111cb93",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/i3",
+      "layer": "none",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": null,
+      "summary": [
+        "B13_SUMMARY checks=38 failures=1"
+      ],
+      "last_enter": null,
+      "failures": [
+        "B13 ext_formats[ulaw-s16] FAIL status=0,0,-50,0 file_format=ulaw file_rate=44100.0 file_length_frames=88200 client_rate=44100.0 client_flags=0xc client_bits=16"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY packets_bytes[demo-s16.wav] PASS sha=2b22df303e0bcfe6 expected=2b22df303e0bcfe6 bytes=352800",
+        "VERIFY properties[demo-s16.wav] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xc file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-s16.wav] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.aiff] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.aiff] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=AIFF (written as AIFF)",
+        "VERIFY readpacketdata_offset[demo-s16.aiff] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.caf] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.caf] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=caff (written as caff)",
+        "VERIFY readpacketdata_offset[demo-s16.caf] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-ulaw.wav] PASS sha=fd3c3c5af205df5f expected=fd3c3c5af205df5f bytes=176400",
+        "VERIFY properties[demo-ulaw.wav] PASS format=ulaw packets=88200 data_bytes=176400 bits=8 flags=0x0 file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-ulaw.wav] PASS bytes=4096 packets 1000..3047",
+        "VERIFY negative[missing] PASS {'open_status': '-43', 'handle': 'null'}",
+        "VERIFY negative[bad-garbage.wav] PASS {'open_status': '1685348671', 'handle': 'null'}",
+        "VERIFY negative[bad-empty.wav] PASS {'open_status': '1685348671', 'handle': 'null'}",
+        "VERIFY negative[bad-trunc.wav] PASS {'open_status': '0', 'count_status': '0', 'packets_reported': '35273', 'read_last_status': '0', 'packets_read': '35273', 'bytes_read': '141092', 'close': '0'} available_frames=35273 (criterion: truthful count, no data beyond the cut, prefix identical)",
+        "VERIFY ext[wav-f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[aiff-s16le] exact byteswap PASS sha=2b22df303e0bcfe6",
+        "VERIFY ext[ulaw-s16] exact G.711 FAIL sha=None",
+        "VERIFY converter[s16le->f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[wav-f32-48k] frames PASS frames=96000 expected=96000±64",
+        "VERIFY ext[wav-f32-48k] snr PASS lag=0 snr_db=85.99 min=50.0",
+        "VERIFY ext[wav-f32-48k] note1 PASS hz=439.990 expected=440.0 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note2 PASS hz=554.384 expected=554.365 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note3 PASS hz=659.248 expected=659.255 level_db=+0.000",
+        "VERIFY ext[wav-f32-48k] note4 PASS hz=880.028 expected=880.0 level_db=+0.000",
+        "VERIFY_SUMMARY pass=25 fail=1"
+      ],
+      "guest": [
+        "B13_IMAGE AudioFileOpenURL /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox",
+        "B13_IMAGE ExtAudioFileRead /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox",
+        "B13_IMAGE AudioConverterNew /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox",
+        "B13_IMAGE AudioDeviceStart /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B13_READABLE status=0 AIFC AIFF MPG3 NeXT WAVE ac-3 adts caff flac m4af mp4f",
+        "B13_PROPS demo-s16.wav status=0,0,0,0,0,0 file_type=WAVE format=lpcm flags=0xc rate=44100.0 channels=2 bits=16 bytes_per_packet=4 frames_per_packet=1 packets=88200 data_bytes=352800 max_packet=4 duration=2.000000",
+        "B13_PROPS demo-s16.aiff status=0,0,0,0,0,0 file_type=AIFF format=lpcm flags=0xe rate=44100.0 channels=2 bits=16 bytes_per_packet=4 frames_per_packet=1 packets=88200 data_bytes=352800 max_packet=4 duration=2.000000",
+        "B13_PROPS demo-s16.caf status=0,0,0,0,0,0 file_type=caff format=lpcm flags=0xe rate=44100.0 channels=2 bits=16 bytes_per_packet=4 frames_per_packet=1 packets=88200 data_bytes=352800 max_packet=4 duration=2.000000",
+        "B13_PROPS demo-ulaw.wav status=0,0,0,0,0,0 file_type=WAVE format=ulaw flags=0x0 rate=44100.0 channels=2 bits=8 bytes_per_packet=2 frames_per_packet=1 packets=88200 data_bytes=176400 max_packet=2 duration=2.000000",
+        "B13_OBS missing.wav open_status=-43 (-43) handle=null",
+        "B13_OBS bad-garbage.wav open_status=1685348671 (dta?) handle=null",
+        "B13_OBS bad-empty.wav open_status=1685348671 (dta?) handle=null",
+        "B13_OBS bad-trunc.wav open_status=0 count_status=0 packets_reported=35273 read_last_status=0 packets_read=35273 bytes_read=141092 close=0",
+        "B13_LOADED /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox",
+        "B13_LOADED /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B13_LOADED /usr/lib/native/libavformat.dylib",
+        "B13_LOADED /usr/lib/native/libswresample.dylib",
+        "B13_LOADED /usr/lib/native/libavcodec.dylib",
+        "B13_LOADED /usr/lib/native/libavutil.dylib",
+        "B13_LOADED /usr/lib/native/libpulse.dylib",
+        "B13_LOADED /System/Library/Frameworks/AudioToolbox.framework/Versions/A/AudioToolbox",
+        "B13_LOADED /System/Library/Frameworks/CoreAudio.framework/Versions/A/CoreAudio",
+        "B13_LOADED /usr/lib/native/libavformat.dylib",
+        "B13_LOADED /usr/lib/native/libswresample.dylib",
+        "B13_LOADED /usr/lib/native/libavcodec.dylib",
+        "B13_LOADED /usr/lib/native/libavutil.dylib",
+        "B13_LOADED /usr/lib/native/libpulse.dylib"
+      ],
+      "outputs_sha256": {
+        "bad-trunc.wav.packets": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423",
+        "conv-s16le-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+        "demo-s16.aiff.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.aiff.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.caf.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+        "demo-s16.caf.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+        "demo-s16.wav.packets": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "demo-s16.wav.pd1000": "71866c6e01a1d8e1984c0d2dac4544147c1b355dfab4f3f3cf20c2ec1aae5afc",
+        "demo-ulaw.wav.packets": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+        "demo-ulaw.wav.pd1000": "b0108ca1bbbcc6334a4e995b53c3820466bc71dc60e4e236f53c0135768b4976",
+        "ext-aiff-s16le.raw": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "ext-wav-f32-48k.raw": "9693e8ca9b50f3dc1522219fadea2fa58efe812a88860ff6c97930dacdf39dd1",
+        "ext-wav-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0"
+      }
+    }
+  ],
+  "i386_play": [
+    {
+      "label": "di1",
+      "summary": [
+        "label=di1 arch=i386 mode=play layer=none ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=95 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.518560832 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-s16.aiff open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=34d3a0a44a607e38",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.089 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=34d3a0a44a607e38 decoded_fnv64=34d3a0a44a607e38 bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": null,
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "di2",
+      "summary": [
+        "label=di2 arch=i386 mode=play layer=none ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=96 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.488266622 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-s16.aiff open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=34d3a0a44a607e38",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.062 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=34d3a0a44a607e38 decoded_fnv64=34d3a0a44a607e38 bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": null,
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "di3",
+      "summary": [
+        "label=di3 arch=i386 mode=play layer=none ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=97 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.550445670 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-s16.aiff open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=34d3a0a44a607e38",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.091 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=34d3a0a44a607e38 decoded_fnv64=34d3a0a44a607e38 bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": null,
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "di4",
+      "summary": [
+        "label=di4 arch=i386 mode=stoprestart layer=none ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=10 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1587600",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.885725940 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=396900 seconds=9.00",
+        "  first_play_audible_s=0.556 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=24589/88200 DIFFERENT"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-s16.aiff open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=34d3a0a44a607e38",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 first_play PASS status=0",
+        "B13 stop_silences_ioproc PASS stop_status=0 pos_at_stop=114688 callbacks_at_stop=14 callbacks_after_stop=0 pos_after=114688",
+        "B13 second_play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.073 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=34d3a0a44a607e38 decoded_fnv64=34d3a0a44a607e38 bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": null,
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=24589/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=163840 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "di5",
+      "summary": [
+        "label=di5 arch=i386 mode=stoprestart layer=none ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=10 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1587600",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.810398801 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=396900 seconds=9.00",
+        "  first_play_audible_s=0.556 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=24589/88200 DIFFERENT"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-s16.aiff open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=34d3a0a44a607e38",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 first_play PASS status=0",
+        "B13 stop_silences_ioproc PASS stop_status=0 pos_at_stop=114688 callbacks_at_stop=14 callbacks_after_stop=0 pos_after=114688",
+        "B13 second_play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.078 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=34d3a0a44a607e38 decoded_fnv64=34d3a0a44a607e38 bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": null,
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=24589/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=163840 identical_frames=88200/88200 IDENTICAL"
+    }
+  ],
+  "b13d_candidates": [
+    {
+      "label": "d1a",
+      "summary": [
+        "label=d1a arch=i386 mode=play layer=<B13_STAGE>/fix/cand-fix1/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=102 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.607521634 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-s16.aiff open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=34d3a0a44a607e38",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.024 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=34d3a0a44a607e38 decoded_fnv64=34d3a0a44a607e38 bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": "1774e3e93d9cb283c8c78672beb85eb111ea4c266e5b7a14bbedfc897d609b44",
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "d1u",
+      "summary": [
+        "label=d1u arch=i386 mode=play layer=<B13_STAGE>/fix/cand-fix1/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=103 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.556000652 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-ulaw.wav open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=d514d33b1b15acfc",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.008 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=d514d33b1b15acfc decoded_fnv64=d514d33b1b15acfc bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": "1774e3e93d9cb283c8c78672beb85eb111ea4c266e5b7a14bbedfc897d609b44",
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "d2a",
+      "summary": [
+        "label=d2a arch=i386 mode=play layer=<B13_STAGE>/fix/cand-fix2/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=104 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.509320162 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-s16.aiff open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=34d3a0a44a607e38",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.012 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=34d3a0a44a607e38 decoded_fnv64=34d3a0a44a607e38 bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": "b05a2715dbc08f05d974b6ce9f7e4ef09b9ad1e502f9ed1fb7bc9ac89af69187",
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "d3a",
+      "summary": [
+        "label=d3a arch=i386 mode=play layer=<B13_STAGE>/fix/cand-fix12/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=105 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.513641127 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-s16.aiff open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=34d3a0a44a607e38",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.011 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=34d3a0a44a607e38 decoded_fnv64=34d3a0a44a607e38 bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "d3u",
+      "summary": [
+        "label=d3u arch=i386 mode=play layer=<B13_STAGE>/fix/cand-fix12/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=106 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.520907064 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-ulaw.wav open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=d514d33b1b15acfc",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.019 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=d514d33b1b15acfc decoded_fnv64=d514d33b1b15acfc bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "d3s",
+      "summary": [
+        "label=d3s arch=i386 mode=stoprestart layer=<B13_STAGE>/fix/cand-fix12/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=10 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1587600",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.946207978 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=396900 seconds=9.00",
+        "  first_play_audible_s=0.649 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=28859/88200 DIFFERENT"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-ulaw.wav open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=d514d33b1b15acfc",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 first_play PASS status=0",
+        "B13 stop_silences_ioproc PASS stop_status=0 pos_at_stop=131072 callbacks_at_stop=16 callbacks_after_stop=0 pos_after=131072",
+        "B13 second_play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.073 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=d514d33b1b15acfc decoded_fnv64=d514d33b1b15acfc bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=28859/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=167936 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "dx4u",
+      "summary": [
+        "label=dx4u arch=x86_64 mode=play layer=<B13_STAGE>/fix/cand-fix12/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=114 client=b13-atb-x86_64 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.608787517 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "guest": [
+        "B13 decode_to_s16le PASS file=demo-ulaw.wav open=0 client=0 read=0 frames=88200 bytes=352800 fnv64=d514d33b1b15acfc",
+        "B13 default_output_device PASS status=0 device=2",
+        "B13 device_format_is_decoded_format PASS set=0 get=0 rate=44100 flags=0xc channels=2 bits=16",
+        "B13 create_ioproc PASS status=0",
+        "B13 play PASS status=0",
+        "B13 natural_end PASS ended=1 elapsed_to_end_s=2.091 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B13 delivered_bytes_equal_decoded PASS delivered_fnv64=d514d33b1b15acfc decoded_fnv64=d514d33b1b15acfc bad_shape=0",
+        "B13 destroy_ioproc PASS status=0"
+      ],
+      "ns_audiotoolbox": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+    }
+  ],
+  "b12_non_regression": [
+    {
+      "label": "n1p",
+      "summary": [
+        "label=n1p arch=i386 mode=play layer=<B13_STAGE>/fix/cand-fix1/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=109 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.322916213 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "guest": [
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=1.981 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "ns_audiotoolbox": null,
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "n2p",
+      "summary": [
+        "label=n2p arch=i386 mode=play layer=<B13_STAGE>/fix/cand-fix2/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=110 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.405622218 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "guest": [
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=1.971 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "ns_audiotoolbox": null,
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "n3p",
+      "summary": [
+        "label=n3p arch=i386 mode=play layer=<B13_STAGE>/fix/cand-fix12/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=111 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.395417450 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "guest": [
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=1.971 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "ns_audiotoolbox": null,
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL"
+    },
+    {
+      "label": "n3s",
+      "summary": [
+        "label=n3s arch=i386 mode=stoprestart layer=<B13_STAGE>/fix/cand-fix12/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=14 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1587600",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.755511404 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=396900 seconds=9.00",
+        "  first_play_audible_s=0.649 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "guest": [
+        "B12 stop_silences_ioproc PASS stop_status=0 pos_at_stop=131072 callbacks_at_stop=16 callbacks_after_stop=0 pos_after=131072",
+        "B12 natural_end PASS ended=1 elapsed_to_end_s=2.056 expected_s=2.000 delivered_bytes=352800 total=352800 last_partial_frames=136 callbacks=52 silent_callbacks_after_end=8 stop_status=0",
+        "B12 delivered_bytes_equal_getmediasample PASS delivered_fnv64=650e02020185ef2a pcm_fnv64=650e02020185ef2a bad_shape=0"
+      ],
+      "ns_audiotoolbox": null,
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=28687/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=159744 identical_frames=88200/88200 IDENTICAL"
+    }
+  ],
+  "fix_matrix": [
+    {
+      "label": "f1ri",
+      "rc": 1,
+      "program_sha256": "d58a74721709ce192980a38cd9b01d6aca6568cba631b7a2e82e8cd9cec45eba",
+      "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f1ri",
+      "layer": "none",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "19badd671a7e18c8bdce7b0c6f436368f7854abc11f0494837de50e09f7e0510",
+      "summary": [
+        "B13FIX_SUMMARY checks=3 failures=2"
+      ],
+      "last_enter": null,
+      "failures": [
+        "B13FIX converter_new[ulaw_s16] FAIL status=-50",
+        "B13FIX converter_new[ulaw_s16_after_cookie] FAIL status=-50"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY fix1-ulaw_s16.s16le FAIL sha=None expected=14c0f6d33cb5dd35",
+        "VERIFY fix1-ulaw_s16_after_cookie.s16le FAIL sha=None expected=14c0f6d33cb5dd35",
+        "VERIFY_SUMMARY FAIL"
+      ]
+    },
+    {
+      "label": "f2ri",
+      "rc": 139,
+      "program_sha256": "d58a74721709ce192980a38cd9b01d6aca6568cba631b7a2e82e8cd9cec45eba",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f2ri",
+      "layer": "none",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "19badd671a7e18c8bdce7b0c6f436368f7854abc11f0494837de50e09f7e0510",
+      "summary": [],
+      "last_enter": "B13FIX_ENTER null_converter",
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ]
+    },
+    {
+      "label": "f1rx",
+      "rc": 1,
+      "program_sha256": "3bd38d297237f9b0ba700faee13ac818ec7dd3cde956fd7b84c5e6997d72e300",
+      "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f1rx",
+      "layer": "none",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "19badd671a7e18c8bdce7b0c6f436368f7854abc11f0494837de50e09f7e0510",
+      "summary": [
+        "B13FIX_SUMMARY checks=3 failures=2"
+      ],
+      "last_enter": null,
+      "failures": [
+        "B13FIX converter_new[ulaw_s16] FAIL status=-50",
+        "B13FIX converter_new[ulaw_s16_after_cookie] FAIL status=-50"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY fix1-ulaw_s16.s16le FAIL sha=None expected=14c0f6d33cb5dd35",
+        "VERIFY fix1-ulaw_s16_after_cookie.s16le FAIL sha=None expected=14c0f6d33cb5dd35",
+        "VERIFY_SUMMARY FAIL"
+      ]
+    },
+    {
+      "label": "f2rx",
+      "rc": 139,
+      "program_sha256": "3bd38d297237f9b0ba700faee13ac818ec7dd3cde956fd7b84c5e6997d72e300",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f2rx",
+      "layer": "none",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "19badd671a7e18c8bdce7b0c6f436368f7854abc11f0494837de50e09f7e0510",
+      "summary": [],
+      "last_enter": "B13FIX_ENTER null_converter",
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ]
+    },
+    {
+      "label": "f1ci",
+      "rc": 0,
+      "program_sha256": "d58a74721709ce192980a38cd9b01d6aca6568cba631b7a2e82e8cd9cec45eba",
+      "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f1ci",
+      "layer": "<B13_STAGE>/fix/cand-fix1/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "1774e3e93d9cb283c8c78672beb85eb111ea4c266e5b7a14bbedfc897d609b44",
+      "summary": [
+        "B13FIX_SUMMARY checks=6 failures=0"
+      ],
+      "last_enter": null,
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "f1cx",
+      "rc": 0,
+      "program_sha256": "3bd38d297237f9b0ba700faee13ac818ec7dd3cde956fd7b84c5e6997d72e300",
+      "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f1cx",
+      "layer": "<B13_STAGE>/fix/cand-fix1/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "1774e3e93d9cb283c8c78672beb85eb111ea4c266e5b7a14bbedfc897d609b44",
+      "summary": [
+        "B13FIX_SUMMARY checks=6 failures=0"
+      ],
+      "last_enter": null,
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "p1ci",
+      "rc": 0,
+      "program_sha256": "98c1fc0f5bfc849140d43d9a03fbb3da89b54bebfdfe45b79ec372e97111cb93",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/p1ci",
+      "layer": "<B13_STAGE>/fix/cand-fix1/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "1774e3e93d9cb283c8c78672beb85eb111ea4c266e5b7a14bbedfc897d609b44",
+      "summary": [
+        "B13_SUMMARY checks=40 failures=0"
+      ],
+      "last_enter": null,
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY packets_bytes[demo-s16.wav] PASS sha=2b22df303e0bcfe6 expected=2b22df303e0bcfe6 bytes=352800",
+        "VERIFY properties[demo-s16.wav] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xc file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-s16.wav] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.aiff] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.aiff] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=AIFF (written as AIFF)",
+        "VERIFY readpacketdata_offset[demo-s16.aiff] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.caf] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.caf] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=caff (written as caff)",
+        "VERIFY readpacketdata_offset[demo-s16.caf] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-ulaw.wav] PASS sha=fd3c3c5af205df5f expected=fd3c3c5af205df5f bytes=176400",
+        "VERIFY properties[demo-ulaw.wav] PASS format=ulaw packets=88200 data_bytes=176400 bits=8 flags=0x0 file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-ulaw.wav] PASS bytes=4096 packets 1000..3047",
+        "VERIFY negative[missing] PASS {'open_status': '-43', 'handle': 'null'}",
+        "VERIFY negative[bad-garbage.wav] PASS {'open_status': '1685348671', 'handle': 'null'}",
+        "VERIFY negative[bad-empty.wav] PASS {'open_status': '1685348671', 'handle': 'null'}",
+        "VERIFY negative[bad-trunc.wav] PASS {'open_status': '0', 'count_status': '0', 'packets_reported': '35273', 'read_last_status': '0', 'packets_read': '35273', 'bytes_read': '141092', 'close': '0'} available_frames=35273 (criterion: truthful count, no data beyond the cut, prefix identical)",
+        "VERIFY ext[wav-f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[aiff-s16le] exact byteswap PASS sha=2b22df303e0bcfe6",
+        "VERIFY ext[ulaw-s16] exact G.711 PASS sha=14c0f6d33cb5dd35",
+        "VERIFY converter[s16le->f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[wav-f32-48k] frames PASS frames=96000 expected=96000±64",
+        "VERIFY ext[wav-f32-48k] snr PASS lag=0 snr_db=85.99 min=50.0",
+        "VERIFY ext[wav-f32-48k] note1 PASS hz=439.990 expected=440.0 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note2 PASS hz=554.384 expected=554.365 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note3 PASS hz=659.248 expected=659.255 level_db=+0.000",
+        "VERIFY ext[wav-f32-48k] note4 PASS hz=880.028 expected=880.0 level_db=+0.000",
+        "VERIFY_SUMMARY pass=26 fail=0"
+      ]
+    },
+    {
+      "label": "p1cx",
+      "rc": 0,
+      "program_sha256": "cc13477c3625945e1f74b9e9d9cd57bbeaa50738d117a1f825deed4089423d01",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/p1cx",
+      "layer": "<B13_STAGE>/fix/cand-fix1/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "1774e3e93d9cb283c8c78672beb85eb111ea4c266e5b7a14bbedfc897d609b44",
+      "summary": [
+        "B13_SUMMARY checks=40 failures=0"
+      ],
+      "last_enter": null,
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY packets_bytes[demo-s16.wav] PASS sha=2b22df303e0bcfe6 expected=2b22df303e0bcfe6 bytes=352800",
+        "VERIFY properties[demo-s16.wav] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xc file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-s16.wav] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.aiff] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.aiff] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=AIFC (written as AIFF)",
+        "VERIFY readpacketdata_offset[demo-s16.aiff] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.caf] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.caf] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=caff (written as caff)",
+        "VERIFY readpacketdata_offset[demo-s16.caf] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-ulaw.wav] PASS sha=fd3c3c5af205df5f expected=fd3c3c5af205df5f bytes=176400",
+        "VERIFY properties[demo-ulaw.wav] PASS format=ulaw packets=88200 data_bytes=176400 bits=8 flags=0x0 file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-ulaw.wav] PASS bytes=4096 packets 1000..3047",
+        "VERIFY negative[missing] PASS {'open_status': '-43', 'handle': 'null'}",
+        "VERIFY negative[bad-garbage.wav] PASS {'open_status': '1954115647', 'handle': 'null'}",
+        "VERIFY negative[bad-empty.wav] PASS {'open_status': '1954115647', 'handle': 'null'}",
+        "VERIFY negative[bad-trunc.wav] PASS {'open_status': '0', 'count_status': '0', 'packets_reported': '35273', 'read_last_status': '0', 'packets_read': '35273', 'bytes_read': '141092', 'close': '0'} available_frames=35273 (criterion: truthful count, no data beyond the cut, prefix identical)",
+        "VERIFY ext[wav-f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[aiff-s16le] exact byteswap PASS sha=2b22df303e0bcfe6",
+        "VERIFY ext[ulaw-s16] exact G.711 PASS sha=14c0f6d33cb5dd35",
+        "VERIFY converter[s16le->f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[wav-f32-48k] frames PASS frames=96000 expected=96000±64",
+        "VERIFY ext[wav-f32-48k] snr PASS lag=0 snr_db=85.99 min=50.0",
+        "VERIFY ext[wav-f32-48k] note1 PASS hz=439.990 expected=440.0 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note2 PASS hz=554.384 expected=554.365 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note3 PASS hz=659.248 expected=659.255 level_db=+0.000",
+        "VERIFY ext[wav-f32-48k] note4 PASS hz=880.028 expected=880.0 level_db=+0.000",
+        "VERIFY_SUMMARY pass=26 fail=0"
+      ]
+    },
+    {
+      "label": "f2ci",
+      "rc": 0,
+      "program_sha256": "d58a74721709ce192980a38cd9b01d6aca6568cba631b7a2e82e8cd9cec45eba",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f2ci",
+      "layer": "<B13_STAGE>/fix/cand-fix2/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "b05a2715dbc08f05d974b6ce9f7e4ef09b9ad1e502f9ed1fb7bc9ac89af69187",
+      "summary": [
+        "B13FIX_SUMMARY checks=13 failures=0"
+      ],
+      "last_enter": "B13FIX_ENTER convertbuffer_f32_whole_file",
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "f2cx",
+      "rc": 0,
+      "program_sha256": "3bd38d297237f9b0ba700faee13ac818ec7dd3cde956fd7b84c5e6997d72e300",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f2cx",
+      "layer": "<B13_STAGE>/fix/cand-fix2/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "b05a2715dbc08f05d974b6ce9f7e4ef09b9ad1e502f9ed1fb7bc9ac89af69187",
+      "summary": [
+        "B13FIX_SUMMARY checks=13 failures=0"
+      ],
+      "last_enter": "B13FIX_ENTER convertbuffer_f32_whole_file",
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "cbci",
+      "rc": 0,
+      "program_sha256": "98c1fc0f5bfc849140d43d9a03fbb3da89b54bebfdfe45b79ec372e97111cb93",
+      "args": "convertbuffer /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/cbci",
+      "layer": "<B13_STAGE>/fix/cand-fix2/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "b05a2715dbc08f05d974b6ce9f7e4ef09b9ad1e502f9ed1fb7bc9ac89af69187",
+      "summary": [],
+      "last_enter": null,
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "observation": [
+        "B13_OBS convertbuffer_enter new_status=0",
+        "B13_OBS converter_convertbuffer[s16le->s16be] new_status=0 convert_status=0 out_bytes=16384"
+      ]
+    },
+    {
+      "label": "cbcx",
+      "rc": 0,
+      "program_sha256": "cc13477c3625945e1f74b9e9d9cd57bbeaa50738d117a1f825deed4089423d01",
+      "args": "convertbuffer /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/cbcx",
+      "layer": "<B13_STAGE>/fix/cand-fix2/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "b05a2715dbc08f05d974b6ce9f7e4ef09b9ad1e502f9ed1fb7bc9ac89af69187",
+      "summary": [],
+      "last_enter": null,
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "observation": [
+        "B13_OBS convertbuffer_enter new_status=0",
+        "B13_OBS converter_convertbuffer[s16le->s16be] new_status=0 convert_status=0 out_bytes=16384"
+      ]
+    },
+    {
+      "label": "p2ci",
+      "rc": 1,
+      "program_sha256": "98c1fc0f5bfc849140d43d9a03fbb3da89b54bebfdfe45b79ec372e97111cb93",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/p2ci",
+      "layer": "<B13_STAGE>/fix/cand-fix2/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "b05a2715dbc08f05d974b6ce9f7e4ef09b9ad1e502f9ed1fb7bc9ac89af69187",
+      "summary": [
+        "B13_SUMMARY checks=38 failures=1"
+      ],
+      "last_enter": null,
+      "failures": [
+        "B13 ext_formats[ulaw-s16] FAIL status=0,0,-50,0 file_format=ulaw file_rate=44100.0 file_length_frames=88200 client_rate=44100.0 client_flags=0xc client_bits=16"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY packets_bytes[demo-s16.wav] PASS sha=2b22df303e0bcfe6 expected=2b22df303e0bcfe6 bytes=352800",
+        "VERIFY properties[demo-s16.wav] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xc file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-s16.wav] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.aiff] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.aiff] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=AIFF (written as AIFF)",
+        "VERIFY readpacketdata_offset[demo-s16.aiff] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.caf] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.caf] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=caff (written as caff)",
+        "VERIFY readpacketdata_offset[demo-s16.caf] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-ulaw.wav] PASS sha=fd3c3c5af205df5f expected=fd3c3c5af205df5f bytes=176400",
+        "VERIFY properties[demo-ulaw.wav] PASS format=ulaw packets=88200 data_bytes=176400 bits=8 flags=0x0 file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-ulaw.wav] PASS bytes=4096 packets 1000..3047",
+        "VERIFY negative[missing] PASS {'open_status': '-43', 'handle': 'null'}",
+        "VERIFY negative[bad-garbage.wav] PASS {'open_status': '1685348671', 'handle': 'null'}",
+        "VERIFY negative[bad-empty.wav] PASS {'open_status': '1685348671', 'handle': 'null'}",
+        "VERIFY negative[bad-trunc.wav] PASS {'open_status': '0', 'count_status': '0', 'packets_reported': '35273', 'read_last_status': '0', 'packets_read': '35273', 'bytes_read': '141092', 'close': '0'} available_frames=35273 (criterion: truthful count, no data beyond the cut, prefix identical)",
+        "VERIFY ext[wav-f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[aiff-s16le] exact byteswap PASS sha=2b22df303e0bcfe6",
+        "VERIFY ext[ulaw-s16] exact G.711 FAIL sha=None",
+        "VERIFY converter[s16le->f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[wav-f32-48k] frames PASS frames=96000 expected=96000±64",
+        "VERIFY ext[wav-f32-48k] snr PASS lag=0 snr_db=85.99 min=50.0",
+        "VERIFY ext[wav-f32-48k] note1 PASS hz=439.990 expected=440.0 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note2 PASS hz=554.384 expected=554.365 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note3 PASS hz=659.248 expected=659.255 level_db=+0.000",
+        "VERIFY ext[wav-f32-48k] note4 PASS hz=880.028 expected=880.0 level_db=+0.000",
+        "VERIFY_SUMMARY pass=25 fail=1"
+      ]
+    },
+    {
+      "label": "p2cx",
+      "rc": 1,
+      "program_sha256": "cc13477c3625945e1f74b9e9d9cd57bbeaa50738d117a1f825deed4089423d01",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/p2cx",
+      "layer": "<B13_STAGE>/fix/cand-fix2/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "b05a2715dbc08f05d974b6ce9f7e4ef09b9ad1e502f9ed1fb7bc9ac89af69187",
+      "summary": [
+        "B13_SUMMARY checks=38 failures=1"
+      ],
+      "last_enter": null,
+      "failures": [
+        "B13 ext_formats[ulaw-s16] FAIL status=0,0,-50,0 file_format=ulaw file_rate=44100.0 file_length_frames=88200 client_rate=44100.0 client_flags=0xc client_bits=16"
+      ],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY packets_bytes[demo-s16.wav] PASS sha=2b22df303e0bcfe6 expected=2b22df303e0bcfe6 bytes=352800",
+        "VERIFY properties[demo-s16.wav] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xc file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-s16.wav] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.aiff] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.aiff] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=AIFC (written as AIFF)",
+        "VERIFY readpacketdata_offset[demo-s16.aiff] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.caf] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.caf] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=caff (written as caff)",
+        "VERIFY readpacketdata_offset[demo-s16.caf] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-ulaw.wav] PASS sha=fd3c3c5af205df5f expected=fd3c3c5af205df5f bytes=176400",
+        "VERIFY properties[demo-ulaw.wav] PASS format=ulaw packets=88200 data_bytes=176400 bits=8 flags=0x0 file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-ulaw.wav] PASS bytes=4096 packets 1000..3047",
+        "VERIFY negative[missing] PASS {'open_status': '-43', 'handle': 'null'}",
+        "VERIFY negative[bad-garbage.wav] PASS {'open_status': '1954115647', 'handle': 'null'}",
+        "VERIFY negative[bad-empty.wav] PASS {'open_status': '1954115647', 'handle': 'null'}",
+        "VERIFY negative[bad-trunc.wav] PASS {'open_status': '0', 'count_status': '0', 'packets_reported': '35273', 'read_last_status': '0', 'packets_read': '35273', 'bytes_read': '141092', 'close': '0'} available_frames=35273 (criterion: truthful count, no data beyond the cut, prefix identical)",
+        "VERIFY ext[wav-f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[aiff-s16le] exact byteswap PASS sha=2b22df303e0bcfe6",
+        "VERIFY ext[ulaw-s16] exact G.711 FAIL sha=None",
+        "VERIFY converter[s16le->f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[wav-f32-48k] frames PASS frames=96000 expected=96000±64",
+        "VERIFY ext[wav-f32-48k] snr PASS lag=0 snr_db=85.99 min=50.0",
+        "VERIFY ext[wav-f32-48k] note1 PASS hz=439.990 expected=440.0 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note2 PASS hz=554.384 expected=554.365 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note3 PASS hz=659.248 expected=659.255 level_db=+0.000",
+        "VERIFY ext[wav-f32-48k] note4 PASS hz=880.028 expected=880.0 level_db=+0.000",
+        "VERIFY_SUMMARY pass=25 fail=1"
+      ]
+    },
+    {
+      "label": "p3ci",
+      "rc": 0,
+      "program_sha256": "98c1fc0f5bfc849140d43d9a03fbb3da89b54bebfdfe45b79ec372e97111cb93",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/p3ci",
+      "layer": "<B13_STAGE>/fix/cand-fix12/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "summary": [
+        "B13_SUMMARY checks=40 failures=0"
+      ],
+      "last_enter": null,
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY packets_bytes[demo-s16.wav] PASS sha=2b22df303e0bcfe6 expected=2b22df303e0bcfe6 bytes=352800",
+        "VERIFY properties[demo-s16.wav] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xc file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-s16.wav] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.aiff] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.aiff] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=AIFF (written as AIFF)",
+        "VERIFY readpacketdata_offset[demo-s16.aiff] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.caf] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.caf] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=caff (written as caff)",
+        "VERIFY readpacketdata_offset[demo-s16.caf] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-ulaw.wav] PASS sha=fd3c3c5af205df5f expected=fd3c3c5af205df5f bytes=176400",
+        "VERIFY properties[demo-ulaw.wav] PASS format=ulaw packets=88200 data_bytes=176400 bits=8 flags=0x0 file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-ulaw.wav] PASS bytes=4096 packets 1000..3047",
+        "VERIFY negative[missing] PASS {'open_status': '-43', 'handle': 'null'}",
+        "VERIFY negative[bad-garbage.wav] PASS {'open_status': '1685348671', 'handle': 'null'}",
+        "VERIFY negative[bad-empty.wav] PASS {'open_status': '1685348671', 'handle': 'null'}",
+        "VERIFY negative[bad-trunc.wav] PASS {'open_status': '0', 'count_status': '0', 'packets_reported': '35273', 'read_last_status': '0', 'packets_read': '35273', 'bytes_read': '141092', 'close': '0'} available_frames=35273 (criterion: truthful count, no data beyond the cut, prefix identical)",
+        "VERIFY ext[wav-f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[aiff-s16le] exact byteswap PASS sha=2b22df303e0bcfe6",
+        "VERIFY ext[ulaw-s16] exact G.711 PASS sha=14c0f6d33cb5dd35",
+        "VERIFY converter[s16le->f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[wav-f32-48k] frames PASS frames=96000 expected=96000±64",
+        "VERIFY ext[wav-f32-48k] snr PASS lag=0 snr_db=85.99 min=50.0",
+        "VERIFY ext[wav-f32-48k] note1 PASS hz=439.990 expected=440.0 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note2 PASS hz=554.384 expected=554.365 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note3 PASS hz=659.248 expected=659.255 level_db=+0.000",
+        "VERIFY ext[wav-f32-48k] note4 PASS hz=880.028 expected=880.0 level_db=+0.000",
+        "VERIFY_SUMMARY pass=26 fail=0"
+      ]
+    },
+    {
+      "label": "p3cx",
+      "rc": 0,
+      "program_sha256": "cc13477c3625945e1f74b9e9d9cd57bbeaa50738d117a1f825deed4089423d01",
+      "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/p3cx",
+      "layer": "<B13_STAGE>/fix/cand-fix12/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "summary": [
+        "B13_SUMMARY checks=40 failures=0"
+      ],
+      "last_enter": null,
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY packets_bytes[demo-s16.wav] PASS sha=2b22df303e0bcfe6 expected=2b22df303e0bcfe6 bytes=352800",
+        "VERIFY properties[demo-s16.wav] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xc file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-s16.wav] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.aiff] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.aiff] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=AIFC (written as AIFF)",
+        "VERIFY readpacketdata_offset[demo-s16.aiff] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-s16.caf] PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77 bytes=352800",
+        "VERIFY properties[demo-s16.caf] PASS format=lpcm packets=88200 data_bytes=352800 bits=16 flags=0xe file_type=caff (written as caff)",
+        "VERIFY readpacketdata_offset[demo-s16.caf] PASS bytes=8192 packets 1000..3047",
+        "VERIFY packets_bytes[demo-ulaw.wav] PASS sha=fd3c3c5af205df5f expected=fd3c3c5af205df5f bytes=176400",
+        "VERIFY properties[demo-ulaw.wav] PASS format=ulaw packets=88200 data_bytes=176400 bits=8 flags=0x0 file_type=WAVE (written as WAVE)",
+        "VERIFY readpacketdata_offset[demo-ulaw.wav] PASS bytes=4096 packets 1000..3047",
+        "VERIFY negative[missing] PASS {'open_status': '-43', 'handle': 'null'}",
+        "VERIFY negative[bad-garbage.wav] PASS {'open_status': '1954115647', 'handle': 'null'}",
+        "VERIFY negative[bad-empty.wav] PASS {'open_status': '1954115647', 'handle': 'null'}",
+        "VERIFY negative[bad-trunc.wav] PASS {'open_status': '0', 'count_status': '0', 'packets_reported': '35273', 'read_last_status': '0', 'packets_read': '35273', 'bytes_read': '141092', 'close': '0'} available_frames=35273 (criterion: truthful count, no data beyond the cut, prefix identical)",
+        "VERIFY ext[wav-f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[aiff-s16le] exact byteswap PASS sha=2b22df303e0bcfe6",
+        "VERIFY ext[ulaw-s16] exact G.711 PASS sha=14c0f6d33cb5dd35",
+        "VERIFY converter[s16le->f32] exact s/32768 PASS sha=4f8551e27c66fbb2",
+        "VERIFY ext[wav-f32-48k] frames PASS frames=96000 expected=96000±64",
+        "VERIFY ext[wav-f32-48k] snr PASS lag=0 snr_db=85.99 min=50.0",
+        "VERIFY ext[wav-f32-48k] note1 PASS hz=439.990 expected=440.0 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note2 PASS hz=554.384 expected=554.365 level_db=-0.000",
+        "VERIFY ext[wav-f32-48k] note3 PASS hz=659.248 expected=659.255 level_db=+0.000",
+        "VERIFY ext[wav-f32-48k] note4 PASS hz=880.028 expected=880.0 level_db=+0.000",
+        "VERIFY_SUMMARY pass=26 fail=0"
+      ]
+    },
+    {
+      "label": "f13i",
+      "rc": 0,
+      "program_sha256": "d58a74721709ce192980a38cd9b01d6aca6568cba631b7a2e82e8cd9cec45eba",
+      "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f13i",
+      "layer": "<B13_STAGE>/fix/cand-fix12/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "summary": [
+        "B13FIX_SUMMARY checks=6 failures=0"
+      ],
+      "last_enter": null,
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "f13x",
+      "rc": 0,
+      "program_sha256": "3bd38d297237f9b0ba700faee13ac818ec7dd3cde956fd7b84c5e6997d72e300",
+      "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f13x",
+      "layer": "<B13_STAGE>/fix/cand-fix12/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "summary": [
+        "B13FIX_SUMMARY checks=6 failures=0"
+      ],
+      "last_enter": null,
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "f23i",
+      "rc": 0,
+      "program_sha256": "d58a74721709ce192980a38cd9b01d6aca6568cba631b7a2e82e8cd9cec45eba",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f23i",
+      "layer": "<B13_STAGE>/fix/cand-fix12/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "summary": [
+        "B13FIX_SUMMARY checks=13 failures=0"
+      ],
+      "last_enter": "B13FIX_ENTER convertbuffer_f32_whole_file",
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ]
+    },
+    {
+      "label": "f23x",
+      "rc": 0,
+      "program_sha256": "3bd38d297237f9b0ba700faee13ac818ec7dd3cde956fd7b84c5e6997d72e300",
+      "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/f23x",
+      "layer": "<B13_STAGE>/fix/cand-fix12/layer",
+      "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+      "ns_audiotoolbox": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "summary": [
+        "B13FIX_SUMMARY checks=13 failures=0"
+      ],
+      "last_enter": "B13FIX_ENTER convertbuffer_f32_whole_file",
+      "failures": [],
+      "end": [
+        "host_mounts_after=41",
+        "darlingserver_after=0",
+        "residual_prefix_processes=0"
+      ],
+      "verify": [
+        "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+        "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+        "VERIFY_SUMMARY PASS"
+      ]
+    }
+  ],
+  "candidates": {
+    "ref": {
+      "audiotoolbox_sha256": "f3550f635cf59f33f201d360ed2b4f3be50e55487ac4b5a02052e195c7d38292",
+      "reference_build_sha256": "19badd671a7e18c8bdce7b0c6f436368f7854abc11f0494837de50e09f7e0510",
+      "objects": {
+        "AudioConverterImpl.cpp.o": {
+          "candidate_source_sha256": "8398dbc8523f9ccf6d527ec752492d8fbee8e2d3b19568b445bf97efc937f280",
+          "object_sha256": "d12c73b7661d2cf657d127a2e4208db4935019296bbbf1bd21ecc5b004b9ef14"
+        },
+        "AudioConverter.cpp.o": {
+          "candidate_source_sha256": "bac294772ac7f24a7789eb4229fcc67e494fd1de80bdb132e952cc68a6d966c3",
+          "object_sha256": "e9703f993dfc8562bb78d4b7c4860256c7b2327307baab84e709891fe0f65da8"
+        }
+      },
+      "build_tree_unchanged": true
+    },
+    "ref0": {
+      "audiotoolbox_sha256": "19badd671a7e18c8bdce7b0c6f436368f7854abc11f0494837de50e09f7e0510",
+      "reference_build_sha256": "19badd671a7e18c8bdce7b0c6f436368f7854abc11f0494837de50e09f7e0510",
+      "objects": {},
+      "build_tree_unchanged": true
+    },
+    "fix1": {
+      "audiotoolbox_sha256": "1774e3e93d9cb283c8c78672beb85eb111ea4c266e5b7a14bbedfc897d609b44",
+      "reference_build_sha256": "19badd671a7e18c8bdce7b0c6f436368f7854abc11f0494837de50e09f7e0510",
+      "objects": {
+        "AudioConverterImpl.cpp.o": {
+          "candidate_source_sha256": "6754334445b5e3d1030bf146f5997d72194e76109bc09b44625ed9dba27830a2",
+          "object_sha256": "03cf061b9ba2773f8c6dc823c4b3083683bb6addfdee8febe4f37f6835b7c622"
+        }
+      },
+      "build_tree_unchanged": true
+    },
+    "fix2": {
+      "audiotoolbox_sha256": "b05a2715dbc08f05d974b6ce9f7e4ef09b9ad1e502f9ed1fb7bc9ac89af69187",
+      "reference_build_sha256": "19badd671a7e18c8bdce7b0c6f436368f7854abc11f0494837de50e09f7e0510",
+      "objects": {
+        "AudioConverter.cpp.o": {
+          "candidate_source_sha256": "dcba9e8d78da4f544b902e14b7e291aa62bf9d95b3a2ee7506b41266f7dbeea2",
+          "object_sha256": "3516f1c466d429924daa5951170ab5784ef46afea4cb599e50620aa77ad7c486"
+        }
+      },
+      "build_tree_unchanged": true
+    },
+    "fix12": {
+      "audiotoolbox_sha256": "57840d4ddb31583716a6fbd0abd58594fc94b91f17a02f885581963c320964d8",
+      "reference_build_sha256": "19badd671a7e18c8bdce7b0c6f436368f7854abc11f0494837de50e09f7e0510",
+      "objects": {
+        "AudioConverterImpl.cpp.o": {
+          "candidate_source_sha256": "6754334445b5e3d1030bf146f5997d72194e76109bc09b44625ed9dba27830a2",
+          "object_sha256": "41dc9940876c270212505ffc2e75023fa23d0b4ba48fcff0b69840a20270e9cb"
+        },
+        "AudioConverter.cpp.o": {
+          "candidate_source_sha256": "dcba9e8d78da4f544b902e14b7e291aa62bf9d95b3a2ee7506b41266f7dbeea2",
+          "object_sha256": "8cc8f95091a422c8d7d97c914a27d8f8ad0594f088c139998cedc57e2190cd26"
+        }
+      },
+      "build_tree_unchanged": true
+    }
+  }
+}

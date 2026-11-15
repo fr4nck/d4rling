@@ -35,5 +35,5 @@ sha256sum "$O/monitor.raw" "$O"/decoded.s16le 2>/dev/null > "$O/SHA256SUMS" || t
   grep -E 'mounts_after|residual|seconds' "$G/meta.txt" | tr '\n' ' '; echo
   echo "decoded_sha256=$(sha256sum "$O/decoded.s16le" 2>/dev/null | cut -d' ' -f1)"
   python3 -I "$B/probe/verify_audio.py" capture "$B/media/demo.json" "$O/monitor.raw" "$M"
-  python3 -I "$B/probe/bitexact.py" "$W/media/ref-s16be.raw" "$O/monitor.raw"
+  python3 -I "$B/probe/bitexact.py" "${REF:-$W/media/ref-s16be.raw}" "$O/monitor.raw"
 } | tee "$O/summary.txt"

@@ -22,7 +22,15 @@ comparées hors de l'invité à un oracle indépendant de FFmpeg.
 | `tools/elf_closure_amd64.py` | Fermeture `DT_NEEDED` des mêmes bibliothèques amd64 de l'hôte (recoupement) |
 | `tools/private_ffmpeg.py` | `plan` : épinglage des paquets FFmpeg i386 à extraire en privé, sans téléchargement ; `prepare … --allow-download` : extraction privée et cache commun FFmpeg + PulseAudio |
 | `closure-ffmpeg-i386.json`, `packages-private-ffmpeg.json`, `elf-ffmpeg-amd64.json` | Fermetures et plan |
-| `results-b13.json` | Résultats exécutés, sans chemins personnels |
+| `results-b13.json` | Résultats exécutés le 15 novembre (référence x86_64 et premier obstacle i386), sans chemins personnels |
+| `b13-fix.c` | Tests avant/après des correctifs : `fix1` (μ-law → S16 par AudioConverter, sans puis avec cookie magique), `fix2` (`ConvertBuffer`/`ConvertComplexBuffer` : arguments, conversions, réutilisation, capacités avec octets témoins) |
+| `verify_b13_fix.py` | Comparaison des sorties de `b13-fix` à `b13-oracle.json` |
+| `fixes/ATB-FIX1.patch`, `fixes/ATB-FIX2.patch` | Correctifs **candidats**, non appliqués à la production |
+| `tools/build_candidate.py` | Candidat AudioToolbox privé : recompile seulement les sources substituées avec la commande exacte du build B11E, relie, signe, prépare une couche overlay ; vérifie que le build B11E est inchangé ; sans substitution, reproduit la référence |
+| `tools/run-guest-ldc.sh` | Banc AUDIO-I386 + empreinte d'AudioToolbox vue dans l'espace de noms (`PREFLIGHT ns_audiotoolbox`) |
+| `tools/observe-maps.sh` | Observateur hôte des ELF mappés (motif paramétrable) |
+| `tools/collect_fix_results.py` | Collecte de `results-b13-i386-fixes.json` |
+| `results-b13-i386-fixes.json` | Résultats de la phase i386 et des correctifs |
 
 ## Reproduction (Bash, Debian 13 amd64, WSL2)
 
@@ -54,6 +62,21 @@ Après accord explicite de l'opérateur pour le téléchargement :
 python3 -I tools/private_ffmpeg.py prepare "$T" "$A/index-20261115" "$A/private-pulse-20261115" "$T/private-ffmpeg-<date>" --allow-download
 LDCACHE=$T/private-ffmpeg-<date>/ld.so.cache bash tools/run-b13.sh i2 "$T/build/b13-atb-i386" normal 120 probe …
 ```
+
+Correctifs, avec le candidat comme couche overlay et le cache FFmpeg + PulseAudio :
+
+```sh
+G=$HOME/d4wrling-work/validation/quicktime-b11e-20261114/build-gui; S0=…/quicktime-b11e-20261114/src/src/CoreAudio/AudioToolbox
+(cd "$G" && ninja -t compdb > "$T/fix/compdb-all.json" && ninja -t commands -s src/CoreAudio/AudioToolbox/AudioToolbox > "$T/fix/link-command.txt")
+python3 -I tools/build_candidate.py "$G" "$T/fix/compdb-all.json" "$T/fix/link-command.txt" "$T/fix/cand-ref0"   # = 19badd67…
+# copie privée du dossier AudioToolbox + patch, puis :
+python3 -I tools/build_candidate.py "$G" … "$T/fix/cand-fix1" "$S0/AudioConverterImpl.cpp=$T/fix/fix1/AudioToolbox/AudioConverterImpl.cpp"
+LAYER=$T/fix/cand-fix1/layer LDCACHE=$T/private-ffmpeg-<date>/ld.so.cache bash tools/run-b13.sh f1ci "$T/build/b13-fix-i386" normal 180 fix1 "/Volumes/SystemRoot$T/media" "/Volumes/SystemRoot$T/runs/out/f1ci"
+python3 -I verify_b13_fix.py "$T/media" "$T/runs/out/f1ci" fix1
+```
+
+`b13-play-run.sh` accepte `REF` (référence big-endian de la capture) et un
+fichier en dernier argument (`demo-ulaw.wav`).
 
 Les index trixie-updates et trixie-security du 14 novembre expirent le
 21 novembre 2026. Au-delà, il faut les retélécharger, puis recalculer la
