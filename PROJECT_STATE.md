@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## ATB-FIX3 — reconnaissance des formats AudioFile (15 novembre 2026)
+
+**`ATB_FIX3_PRODUCTION_PASS`.** `AudioFileFormatManager` lisait les tableaux `CFArrayRef` des composants AudioFile (extensions, UTI, MIME) avec une taille de 4 octets : en x86_64, les tables restaient vides, un AIFF sans indice s'ouvrait comme AIFC et un `.wav` invalide rendait `typ?`. La taille est maintenant celle d'un pointeur. Binaire du commit de production, i386 et x86_64 : oracle positif 95/95 (attendus tirés de la source, figés avant les essais), comportement identique entre architectures ; `fix2` 27/27, B13 26/26, FIX1 6/6, B13-D et B12 identiques au bit près, exports inchangés. MP3, AAC et ALAC restent non testés. Hôte inchangé. [Rapport](docs/evidence/audiotoolbox-b13-fix3-2026-11-15.md).
+
 ## ATB-FIX2-R2b — `AudioConverterConvertBuffer` corrigé sur `master` (15 novembre 2026)
 
 **ATB-FIX2-R2b intégré ; R2 remplacé.** La revue de R2 a trouvé une erreur silencieuse : une entrée PCM à trous rendait `noErr` avec des données mal lues. R2b refuse le PCM non tassé avant toute écriture (`fmt?`) et annonce une taille 0 pour toute erreur en cours de conversion ; une taille 0 ne garantit pas un tampon intact, seuls les refus avant conversion le garantissent. Binaire du commit de production, i386 et x86_64 : `fix2` 27/27, B13 26/26, FIX1 6/6, limites 8/8, B13-D et B12 identiques au bit près, exports inchangés. `AudioConverterConvertBuffer` ne plante plus sur `master`. `FillComplexBuffer` lit toujours mal le PCM non tassé (hors de ce correctif). Hôte inchangé. [Rapport](docs/evidence/audiotoolbox-b13-fix2-r2b-2026-11-15.md).

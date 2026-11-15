@@ -37,6 +37,16 @@ indépendants.
 
 **TEST / PASS borné :** gitlink Security `84c0a3e1` (#16 officielle), après comparaison des cinq fichiers supplémentaires par rapport à `a536cfff`, recompilation de 44 objets FAT et reliaison des deux architectures. Chargement standard sans `-dead_strip_dylibs`, HomeResFile **88/88 normal + 88/88 bypass**, témoins SSL bornés et Carbon Events passent. Exports inchangés ; test du trousseau compilé mais non exécuté (banc UID Darwin 0). TLS complet, certificats et trousseau restent non qualifiés. [Preuves et reproduction S4](docs/evidence/security-s4-official-reference-2026-11-14.md).
 
+## ATB-FIX3 — intégration (15 novembre 2026)
+
+**TEST / PASS : `ATB_FIX3_PRODUCTION_PASS`, défaut 3 corrigé sur `master`.**
+- Tableaux des composants AudioFile lus avec `sizeof(CFArrayRef)` : tables d'extensions, d'UTI et de MIME renseignées en x86_64.
+- Oracle positif 95/95 dans les deux architectures, sorties identiques ; référence négative : défaut reproduit avant correctif.
+- Non-régression : `fix2` 27/27, B13 26/26, FIX1 6/6, B13-D et B12 identiques au bit près.
+- Suites distinctes : codecs MP3/AAC/ALAC, durcissement du contrôle de taille de R2b.
+
+[Preuves](docs/evidence/audiotoolbox-b13-fix3-2026-11-15.md).
+
 ## ATB-FIX2-R2b — intégration (15 novembre 2026)
 
 **TEST / PASS : ATB-FIX2-R2b intégré à `master`, R2 remplacé.**

@@ -1,0 +1,3349 @@
+{
+  "lot": "B13 / ATB-FIX3",
+  "date": "2026-11-15",
+  "production_commit": "aa28a6bed52638a6db069d3e31a6f6363828a01b",
+  "parent": "89d6000e5df91d02361b25ae798646ac41252c3b",
+  "files": [
+    " src/CoreAudio/AudioToolbox/AudioFileFormatManager.cpp | 5 +++++",
+    " 1 file changed, 5 insertions(+)"
+  ],
+  "patch_sha256": "1f27c2a1e3752f455566848bb054fecdec4d81a0d8483cb2f9fb31fcab4b7761",
+  "local_replays": {
+    "note": "unpublished local commits replayed over concurrent documentation commits (disjoint files); same source blob",
+    "commits": [
+      {
+        "sha": "2a70a0ee604e7da8cb15358a325e7d41f3c2f276",
+        "parent": "8b47e4461fb5afc5a3ddf342e49901fa5fc9b02d",
+        "rebuilt": "cand-prod3"
+      },
+      {
+        "sha": "8372fd42bb3286e287626513f7b98c811b0a505f",
+        "parent": "786cf3813bfbac8e2206df2f44933707e62e4a38",
+        "rebuilt": "cand-prod3b"
+      }
+    ],
+    "published": "production_commit, built by plumbing over 89d6000e without touching the source file: ninja found no work, the build output stays cand-prod3b"
+  },
+  "rebuild_logs": {
+    "first": [
+      "2 warnings generated.",
+      "[2/3] Linking CXX shared library src/CoreAudio/AudioToolbox/AudioToolbox",
+      "rc=0"
+    ],
+    "final": [
+      "2 warnings generated.",
+      "[2/3] Linking CXX shared library src/CoreAudio/AudioToolbox/AudioToolbox",
+      "rc=0"
+    ]
+  },
+  "frozen_before_runs": [
+    "2026-11-15T09:39:48+01:00",
+    "2a921e277ba2f2b8482993ba43e765ae66d03cadd3b64a3515d737868806d1e6  <B13_STAGE>/probe/verify_b13_afm2.py",
+    "4b805658b09ead6548bb085e32d2640d93e5b9e172891c29a8ddd144fa858d68  <B13_STAGE>/probe/b13-afm2.c",
+    "b585065160b39a123e500099d0e9a8b98d2be7e9891e97b8b0226e253e6f2509  <B13_STAGE>/probe/make_fix3_media.py",
+    "9ab15a5bb93fe2e1169805e9036827e8979d322cb54e38152ef205ae4001e6b3  <B13_STAGE>/media-fix3/fix3-media.json",
+    "1f27c2a1e3752f455566848bb054fecdec4d81a0d8483cb2f9fb31fcab4b7761  <B13_STAGE>/fix/ATB-FIX3.patch",
+    "2026-11-15T09:42:36+01:00",
+    "witness corrected after the first runs (specifier passed as &s instead of the CFStringRef: recipe error, 8 lookup runs invalid); verifier unchanged",
+    "4b805658b09ead6548bb085e32d2640d93e5b9e172891c29a8ddd144fa858d68  <B13_STAGE>/reports/b13-afm2-invalid-specifier.c",
+    "771caf5713f42fde62981751693ccfb97989455953a461038b3eec2c0249f39c  <B13_STAGE>/probe/b13-afm2.c",
+    "2a921e277ba2f2b8482993ba43e765ae66d03cadd3b64a3515d737868806d1e6  <B13_STAGE>/probe/verify_b13_afm2.py"
+  ],
+  "reference_installation_audiotoolbox": "c86bde57c0ad5c956d70908a0b4080730fc6806efd09732721707ed0ed8c177b",
+  "binaries": {
+    "prod3b": {
+      "role": "production commit (final) rebuilt in the master build",
+      "sha256": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+      "i386": {
+        "__text": "147ed4089ee94ca84237320b00d5b7fc5bef31fb15469251b91428828af35d82",
+        "__const": "06a571b477657ef3c02639743883d4eee35035cbeedd1b4e9f60287649acd2ab",
+        "__cstring": "b892e421512bdaa5b51c68356e48b493fac6202ab585ddedc1c5e2c021803322",
+        "__unwind_info": "dcb07ed723500f33cebbfd03187c75cbe94b24ac007a2c1d31b666df22ae0072",
+        "__eh_frame": "30959f9ef5cc5ec9fa3d12d439d5036e9295c53f434f2ec3719219058ed95e19",
+        "__DATA,__data": "b25533575d1f68471d555a0d09a3d8c120d31783f89290aaf917f42f753e1576",
+        "exports": 655,
+        "exports_equal_master_reference": true
+      },
+      "x86_64": {
+        "__text": "f90c15871939fb20ec3d6ee71791bb98d80ff2ecc6539fbb76d2dc1592ac75c3",
+        "__const": "54a4ef9db9c16d2246b7a59e62d69781e90a113c363d85954bc696b0080ab32d",
+        "__cstring": "8f684ca671e28530e7782a39f83c241a5e15af89d7dd1d466b9046e723af13ae",
+        "__unwind_info": "1fd195621e8e5a13aa45c9a05cead2e7bf4af29511152805ad6bde56d08e16d0",
+        "__eh_frame": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "__DATA,__data": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "exports": 672,
+        "exports_equal_master_reference": true
+      }
+    },
+    "prod3": {
+      "role": "first local commit rebuilt (same source; differs by N_OSO timestamps and signature)",
+      "sha256": "ad9cd07587b6902b59b0dd9aa2319d1bdf016fc569d23fdd20d5e6695e670f6c",
+      "i386": {
+        "__text": "147ed4089ee94ca84237320b00d5b7fc5bef31fb15469251b91428828af35d82",
+        "__const": "06a571b477657ef3c02639743883d4eee35035cbeedd1b4e9f60287649acd2ab",
+        "__cstring": "b892e421512bdaa5b51c68356e48b493fac6202ab585ddedc1c5e2c021803322",
+        "__unwind_info": "dcb07ed723500f33cebbfd03187c75cbe94b24ac007a2c1d31b666df22ae0072",
+        "__eh_frame": "30959f9ef5cc5ec9fa3d12d439d5036e9295c53f434f2ec3719219058ed95e19",
+        "__DATA,__data": "b25533575d1f68471d555a0d09a3d8c120d31783f89290aaf917f42f753e1576",
+        "exports": 655,
+        "exports_equal_master_reference": true
+      },
+      "x86_64": {
+        "__text": "f90c15871939fb20ec3d6ee71791bb98d80ff2ecc6539fbb76d2dc1592ac75c3",
+        "__const": "54a4ef9db9c16d2246b7a59e62d69781e90a113c363d85954bc696b0080ab32d",
+        "__cstring": "8f684ca671e28530e7782a39f83c241a5e15af89d7dd1d466b9046e723af13ae",
+        "__unwind_info": "1fd195621e8e5a13aa45c9a05cead2e7bf4af29511152805ad6bde56d08e16d0",
+        "__eh_frame": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "__DATA,__data": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "exports": 672,
+        "exports_equal_master_reference": true
+      }
+    },
+    "fix3": {
+      "role": "private candidate (build_candidate.py)",
+      "sha256": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+      "i386": {
+        "__text": "147ed4089ee94ca84237320b00d5b7fc5bef31fb15469251b91428828af35d82",
+        "__const": "06a571b477657ef3c02639743883d4eee35035cbeedd1b4e9f60287649acd2ab",
+        "__cstring": "b892e421512bdaa5b51c68356e48b493fac6202ab585ddedc1c5e2c021803322",
+        "__unwind_info": "dcb07ed723500f33cebbfd03187c75cbe94b24ac007a2c1d31b666df22ae0072",
+        "__eh_frame": "30959f9ef5cc5ec9fa3d12d439d5036e9295c53f434f2ec3719219058ed95e19",
+        "__DATA,__data": "b25533575d1f68471d555a0d09a3d8c120d31783f89290aaf917f42f753e1576",
+        "exports": 655,
+        "exports_equal_master_reference": true
+      },
+      "x86_64": {
+        "__text": "f90c15871939fb20ec3d6ee71791bb98d80ff2ecc6539fbb76d2dc1592ac75c3",
+        "__const": "54a4ef9db9c16d2246b7a59e62d69781e90a113c363d85954bc696b0080ab32d",
+        "__cstring": "8f684ca671e28530e7782a39f83c241a5e15af89d7dd1d466b9046e723af13ae",
+        "__unwind_info": "1fd195621e8e5a13aa45c9a05cead2e7bf4af29511152805ad6bde56d08e16d0",
+        "__eh_frame": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "__DATA,__data": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "exports": 672,
+        "exports_equal_master_reference": true
+      }
+    },
+    "ref3": {
+      "role": "method control: no substitution, must equal prod2",
+      "sha256": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "i386": {
+        "__text": "c469122196171d143ed405e437b896df381671c30bcf49c39dab9ca299803eb0",
+        "__const": "06a571b477657ef3c02639743883d4eee35035cbeedd1b4e9f60287649acd2ab",
+        "__cstring": "b892e421512bdaa5b51c68356e48b493fac6202ab585ddedc1c5e2c021803322",
+        "__unwind_info": "e90838cbfaa65074168f0ca7c39951661412fd84faa0cf39fb809ba3f9f0f79b",
+        "__eh_frame": "270ce7cf9fcd4e72a812d9371009b01f6eb82ce4ed27353640bfa42a7a8024e7",
+        "__DATA,__data": "b25533575d1f68471d555a0d09a3d8c120d31783f89290aaf917f42f753e1576",
+        "exports": 655,
+        "exports_equal_master_reference": true
+      },
+      "x86_64": {
+        "__text": "71053dc3556eb54e7b10808cff332414b5d6cddd340ed263b5706fdec5b3fba8",
+        "__const": "54a4ef9db9c16d2246b7a59e62d69781e90a113c363d85954bc696b0080ab32d",
+        "__cstring": "8f684ca671e28530e7782a39f83c241a5e15af89d7dd1d466b9046e723af13ae",
+        "__unwind_info": "650226ef48620ad7e81d218797e012e356f86440b397ad93f506b5b8b9c2aadb",
+        "__eh_frame": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "__DATA,__data": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "exports": 672,
+        "exports_equal_master_reference": true
+      }
+    },
+    "prod2": {
+      "role": "master before FIX3 (ATB-FIX2-R2b production)",
+      "sha256": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+      "i386": {
+        "__text": "c469122196171d143ed405e437b896df381671c30bcf49c39dab9ca299803eb0",
+        "__const": "06a571b477657ef3c02639743883d4eee35035cbeedd1b4e9f60287649acd2ab",
+        "__cstring": "b892e421512bdaa5b51c68356e48b493fac6202ab585ddedc1c5e2c021803322",
+        "__unwind_info": "e90838cbfaa65074168f0ca7c39951661412fd84faa0cf39fb809ba3f9f0f79b",
+        "__eh_frame": "270ce7cf9fcd4e72a812d9371009b01f6eb82ce4ed27353640bfa42a7a8024e7",
+        "__DATA,__data": "b25533575d1f68471d555a0d09a3d8c120d31783f89290aaf917f42f753e1576",
+        "exports": 655,
+        "exports_equal_master_reference": true
+      },
+      "x86_64": {
+        "__text": "71053dc3556eb54e7b10808cff332414b5d6cddd340ed263b5706fdec5b3fba8",
+        "__const": "54a4ef9db9c16d2246b7a59e62d69781e90a113c363d85954bc696b0080ab32d",
+        "__cstring": "8f684ca671e28530e7782a39f83c241a5e15af89d7dd1d466b9046e723af13ae",
+        "__unwind_info": "650226ef48620ad7e81d218797e012e356f86440b397ad93f506b5b8b9c2aadb",
+        "__eh_frame": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "__DATA,__data": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+        "exports": 672,
+        "exports_equal_master_reference": true
+      }
+    }
+  },
+  "witnesses": {
+    "mwit-afm2/b13-afm2-i386": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+    "mwit-afm2/b13-afm2-x86_64": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+    "b13-afm2.c": "771caf5713f42fde62981751693ccfb97989455953a461038b3eec2c0249f39c",
+    "verify_b13_afm2.py": "2a921e277ba2f2b8482993ba43e765ae66d03cadd3b64a3515d737868806d1e6",
+    "b13-afm2-invalid-specifier.c (first version, recipe error)": "4b805658b09ead6548bb085e32d2640d93e5b9e172891c29a8ddd144fa858d68",
+    "make_fix3_media.py": "b585065160b39a123e500099d0e9a8b98d2be7e9891e97b8b0226e253e6f2509",
+    "mwit/b13-afm-i386": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+    "mwit/b13-afm-x86_64": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd"
+  },
+  "media_fix3": {
+    "demo-s16.aifc": {
+      "bytes": 352886,
+      "sha256": "7856504ed95392f326936e170e9f2f41dd11a3c233f3cc2d3c506b5a330164b4"
+    },
+    "demo-s16.aif": {
+      "bytes": 352854,
+      "sha256": "06b728bd94d25a31fdf2bfacc1da368cab10d6911e1aa01fa303f423df1d3c30"
+    },
+    "bad-garbage.zzzq": {
+      "bytes": 4096,
+      "sha256": "9a54a3002237623bd50e4d15cdaebbe324505c78975401ed944cbdfb79bfa9a7"
+    },
+    "bad-empty.zzzq": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "source": {
+      "demo-s16.aiff": "06b728bd94d25a31fdf2bfacc1da368cab10d6911e1aa01fa303f423df1d3c30",
+      "bad-garbage.wav": "9a54a3002237623bd50e4d15cdaebbe324505c78975401ed944cbdfb79bfa9a7"
+    }
+  },
+  "format_recognition": {
+    "unpatched_prod2": {
+      "defect_witness_b13_afm": [
+        "AFM i386_sizeof_cfarrayref_4 PASS ",
+        "AFM x86_64_sizeof_cfarrayref_8 PASS ",
+        "AFM i386_control_filetypename PASS {'status': '0', 'size': '4', 'name': 'WAVE'}",
+        "AFM i386_component_correct_size_answers PASS {'status': '0', 'size': '4', 'count': '2', 'values': 'wav,wave'}",
+        "AFM i386_unknown_extension_no_type PASS {'ext': 'zzzq', 'status': '0', 'count': '0', 'values': ''}",
+        "AFM x86_64_control_filetypename PASS {'status': '0', 'size': '8', 'name': 'WAVE'}",
+        "AFM x86_64_component_correct_size_answers PASS {'status': '0', 'size': '8', 'count': '2', 'values': 'wav,wave'}",
+        "AFM x86_64_unknown_extension_no_type PASS {'ext': 'zzzq', 'status': '0', 'count': '0', 'values': ''}",
+        "AFM i386_size4_accepted PASS ",
+        "AFM x86_64_size4_refused_bad_property_size PASS {'status': '!siz', 'size': '4', 'count': '-1', 'values': ''}",
+        "AFM readable_types_same_both PASS i386=11 x86_64=11",
+        "AFM i386_extensions_for_WAVE_filled PASS count=2",
+        "AFM x86_64_extensions_for_WAVE_empty PASS count=0",
+        "AFM i386_utis_for_WAVE_filled PASS count=3",
+        "AFM x86_64_utis_for_WAVE_empty PASS count=0",
+        "AFM i386_mimes_for_WAVE_filled PASS count=3",
+        "AFM x86_64_mimes_for_WAVE_empty PASS count=0",
+        "AFM i386_extensions_for_AIFF_filled PASS count=2",
+        "AFM x86_64_extensions_for_AIFF_empty PASS count=0",
+        "AFM i386_all_extensions_filled PASS count=17",
+        "AFM x86_64_all_extensions_empty PASS count=0",
+        "AFM i386_all_utis_filled PASS count=13",
+        "AFM x86_64_all_utis_empty PASS count=0",
+        "AFM i386_all_mimes_filled PASS count=16",
+        "AFM x86_64_all_mimes_empty PASS count=0",
+        "AFM i386_wav_extension_to_WAVE PASS {'ext': 'wav', 'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM x86_64_wav_extension_no_type PASS {'ext': 'wav', 'status': '0', 'count': '0', 'values': ''}",
+        "AFM_INFO i386 open:aiff_nohint {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO i386 open:aiff_hint_AIFF {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO i386 open:wav_nohint {'status': '0', 'file_format': 'WAVE'}",
+        "AFM_INFO i386 open:garbage_wav_nohint {'status': 'dta?', 'file_format': '-'}",
+        "AFM_INFO i386 open:garbage_wav_hint_WAVE {'status': 'dta?', 'file_format': '-'}",
+        "AFM_INFO x86_64 open:aiff_nohint {'status': '0', 'file_format': 'AIFC'}",
+        "AFM_INFO x86_64 open:aiff_hint_AIFF {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO x86_64 open:wav_nohint {'status': '0', 'file_format': 'WAVE'}",
+        "AFM_INFO x86_64 open:garbage_wav_nohint {'status': 'typ?', 'file_format': '-'}",
+        "AFM_INFO x86_64 open:garbage_wav_hint_WAVE {'status': 'dta?', 'file_format': '-'}",
+        "AFM_SUMMARY checks=27 failures=0 verdict=DEFECT3_REPRODUCED"
+      ],
+      "positive_oracle_b13_afm2": [
+        "AFM2 i386_extensions_for_WAVE PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 i386_utis_for_WAVE PASS {'status': '0', 'count': '3', 'values': 'com.microsoft.waveform-audio,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_WAVE PASS {'status': '0', 'count': '3', 'values': 'audio/wav,audio/x-wav,audio/vnd.wave'}",
+        "AFM2 i386_extensions_for_AIFF PASS {'status': '0', 'count': '2', 'values': 'aif,aiff'}",
+        "AFM2 i386_utis_for_AIFF PASS {'status': '0', 'count': '3', 'values': 'public.aiff-audio,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_AIFF PASS {'status': '0', 'count': '2', 'values': 'audio/aiff,audio/x-aiff'}",
+        "AFM2 i386_extensions_for_AIFC PASS {'status': '0', 'count': '2', 'values': 'aifc,cdda'}",
+        "AFM2 i386_utis_for_AIFC PASS {'status': '0', 'count': '3', 'values': 'public.aifc-audio,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_AIFC PASS {'status': '0', 'count': '2', 'values': 'audio/aiff,audio/x-aiff'}",
+        "AFM2 i386_extensions_for_caff PASS {'status': '0', 'count': '1', 'values': 'caf'}",
+        "AFM2 i386_utis_for_caff PASS {'status': '0', 'count': '3', 'values': 'com.apple.coreaudio-format,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_caff PASS {'status': '0', 'count': '1', 'values': 'audio/x-caf'}",
+        "AFM2 i386_all_extensions PASS count=17",
+        "AFM2 i386_all_utis PASS count=13",
+        "AFM2 i386_all_mimes PASS count=16",
+        "AFM2 i386_readable_types PASS {'status': '0', 'count': '11', 'values': 'AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f'}",
+        "AFM2 i386_component_wave_extensions PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 i386_types_for_extension:wav PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_extension:wave PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_extension:aif PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 i386_types_for_extension:aiff PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 i386_types_for_extension:aifc PASS {'status': '0', 'count': '1', 'values': 'AIFC'}",
+        "AFM2 i386_types_for_extension:caf PASS {'status': '0', 'count': '1', 'values': 'caff'}",
+        "AFM2 i386_types_for_extension:zzzq PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 i386_types_for_uti:com.microsoft.waveform-audio PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_uti:public.aiff-audio PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 i386_types_for_uti:public.aifc-audio PASS {'status': '0', 'count': '1', 'values': 'AIFC'}",
+        "AFM2 i386_types_for_uti:org.example.none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 i386_types_for_mime:audio/x-wav PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_mime:audio/aiff PASS {'status': '0', 'count': '2', 'values': 'AIFC,AIFF'}",
+        "AFM2 i386_types_for_mime:audio/x-none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 i386_open_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_wav_hint_WAVE PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_wav_hint_AIFF PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aiff_nohint PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aiff_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aiff_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aif_nohint PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aifc_nohint PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aifc_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aifc_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_garbage_wav_nohint PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_garbage_wav_hint_WAVE PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_empty_wav_nohint PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_trunc_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '35273', 'handle': 'set'}",
+        "AFM2 i386_open_garbage_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_empty_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_extensions_for_WAVE FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_utis_for_WAVE FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_mimes_for_WAVE FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_extensions_for_AIFF FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_utis_for_AIFF FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_mimes_for_AIFF FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_extensions_for_AIFC FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_utis_for_AIFC FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_mimes_for_AIFC FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_extensions_for_caff FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_utis_for_caff FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_mimes_for_caff FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_all_extensions FAIL count=0",
+        "AFM2 x86_64_all_utis FAIL count=0",
+        "AFM2 x86_64_all_mimes FAIL count=0",
+        "AFM2 x86_64_readable_types PASS {'status': '0', 'count': '11', 'values': 'AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f'}",
+        "AFM2 x86_64_component_wave_extensions PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 x86_64_types_for_extension:wav FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_extension:wave FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_extension:aif FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_extension:aiff FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_extension:aifc FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_extension:caf FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_extension:zzzq PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_uti:com.microsoft.waveform-audio FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_uti:public.aiff-audio FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_uti:public.aifc-audio FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_uti:org.example.none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_mime:audio/x-wav FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_mime:audio/aiff FAIL {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_mime:audio/x-none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_open_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_wav_hint_WAVE PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_wav_hint_AIFF PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aiff_nohint FAIL {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aiff_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aiff_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aif_nohint FAIL {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aifc_nohint PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aifc_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aifc_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_garbage_wav_nohint FAIL {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_garbage_wav_hint_WAVE PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_empty_wav_nohint FAIL {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_trunc_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '35273', 'handle': 'set'}",
+        "AFM2 x86_64_open_garbage_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_empty_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_equals_x86_64 FAIL lines=47/47 differing=30 [('B13AFM2 extensions_for_WAVE status=0 count=2 values=wav,wave', 'B13AFM2 extensions_for_WAVE status=0 count=0 values='), ('B13AFM2 utis_for_WAVE status=0 count=3 values=com.microsoft.waveform-audio,public.audio,public.data', 'B13AFM2 utis_for_WAVE status=0 count=0 values='), ('B13AFM2 mimes_for_WAVE status=0 count=3 values=audio/wav,audio/x-wav,audio/vnd.wave', 'B13AFM2 mimes_for_WAVE status=0 count=0 values=')]",
+        "AFM2_SUMMARY checks=95 failures=31 verdict=FIX3_POSITIVE_FAIL"
+      ],
+      "raw": {
+        "i386": [
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 types_for_extension:(empty) status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 types_for_extension:wav status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_extension:wave status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_extension:aif status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_extension:aiff status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_extension:aifc status=0 count=1 values=AIFC",
+          "B13AFM2 types_for_extension:caf status=0 count=1 values=caff",
+          "B13AFM2 types_for_extension:zzzq status=0 count=0 values=",
+          "B13AFM2 types_for_uti:com.microsoft.waveform-audio status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_uti:public.aiff-audio status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_uti:public.aifc-audio status=0 count=1 values=AIFC",
+          "B13AFM2 types_for_uti:org.example.none status=0 count=0 values=",
+          "B13AFM2 types_for_mime:audio/x-wav status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_mime:audio/aiff status=0 count=2 values=AIFC,AIFF",
+          "B13AFM2 types_for_mime:audio/x-none status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 open wav_nohint status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_WAVE status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_AIFF status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open aiff_nohint status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aif_nohint status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aifc_nohint status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open garbage_wav_nohint status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open garbage_wav_hint_WAVE status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_wav_nohint status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open trunc_wav_nohint status=0 file_format=WAVE packets=35273 handle=set",
+          "B13AFM2 open garbage_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 extensions_for_WAVE status=0 count=2 values=wav,wave",
+          "B13AFM2 utis_for_WAVE status=0 count=3 values=com.microsoft.waveform-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_WAVE status=0 count=3 values=audio/wav,audio/x-wav,audio/vnd.wave",
+          "B13AFM2 extensions_for_AIFF status=0 count=2 values=aif,aiff",
+          "B13AFM2 utis_for_AIFF status=0 count=3 values=public.aiff-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_AIFF status=0 count=2 values=audio/aiff,audio/x-aiff",
+          "B13AFM2 extensions_for_AIFC status=0 count=2 values=aifc,cdda",
+          "B13AFM2 utis_for_AIFC status=0 count=3 values=public.aifc-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_AIFC status=0 count=2 values=audio/aiff,audio/x-aiff",
+          "B13AFM2 extensions_for_caff status=0 count=1 values=caf",
+          "B13AFM2 utis_for_caff status=0 count=3 values=com.apple.coreaudio-format,public.audio,public.data",
+          "B13AFM2 mimes_for_caff status=0 count=1 values=audio/x-caf",
+          "B13AFM2 all_extensions status=0 count=17 values=aac,ac3,adts,aif,aifc,aiff,au,caf,cdda,flac,m4a,m4r,mp3,mp4,snd,wav,wave",
+          "B13AFM2 all_utis status=0 count=13 values=com.apple.coreaudio-format,com.apple.m4a-audio,com.microsoft.waveform-audio,org.xiph.flac,public.aac-audio,public.ac3-audio,public.aifc-audio,public.aiff-audio,public.audio,public.data,public.mp3,public.mpeg-4-audio,public.ulaw-audio",
+          "B13AFM2 all_mimes status=0 count=16 values=audio/aac,audio/ac3,audio/aiff,audio/basic,audio/flac,audio/mp3,audio/mp4,audio/mpeg,audio/vnd.wave,audio/wav,audio/x-aac,audio/x-aiff,audio/x-caf,audio/x-flac,audio/x-m4a,audio/x-wav",
+          "B13AFM2 readable_types status=0 count=11 values=AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f",
+          "B13AFM2 component_wave_extensions status=0 count=2 values=wav,wave"
+        ],
+        "x86_64": [
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 types_for_extension:(empty) status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 types_for_extension:wav status=0 count=0 values=",
+          "B13AFM2 types_for_extension:wave status=0 count=0 values=",
+          "B13AFM2 types_for_extension:aif status=0 count=0 values=",
+          "B13AFM2 types_for_extension:aiff status=0 count=0 values=",
+          "B13AFM2 types_for_extension:aifc status=0 count=0 values=",
+          "B13AFM2 types_for_extension:caf status=0 count=0 values=",
+          "B13AFM2 types_for_extension:zzzq status=0 count=0 values=",
+          "B13AFM2 types_for_uti:com.microsoft.waveform-audio status=0 count=0 values=",
+          "B13AFM2 types_for_uti:public.aiff-audio status=0 count=0 values=",
+          "B13AFM2 types_for_uti:public.aifc-audio status=0 count=0 values=",
+          "B13AFM2 types_for_uti:org.example.none status=0 count=0 values=",
+          "B13AFM2 types_for_mime:audio/x-wav status=0 count=0 values=",
+          "B13AFM2 types_for_mime:audio/aiff status=0 count=0 values=",
+          "B13AFM2 types_for_mime:audio/x-none status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 open wav_nohint status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_WAVE status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_AIFF status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open aiff_nohint status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aif_nohint status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_nohint status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open garbage_wav_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2 open garbage_wav_hint_WAVE status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_wav_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2 open trunc_wav_nohint status=0 file_format=WAVE packets=35273 handle=set",
+          "B13AFM2 open garbage_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 extensions_for_WAVE status=0 count=0 values=",
+          "B13AFM2 utis_for_WAVE status=0 count=0 values=",
+          "B13AFM2 mimes_for_WAVE status=0 count=0 values=",
+          "B13AFM2 extensions_for_AIFF status=0 count=0 values=",
+          "B13AFM2 utis_for_AIFF status=0 count=0 values=",
+          "B13AFM2 mimes_for_AIFF status=0 count=0 values=",
+          "B13AFM2 extensions_for_AIFC status=0 count=0 values=",
+          "B13AFM2 utis_for_AIFC status=0 count=0 values=",
+          "B13AFM2 mimes_for_AIFC status=0 count=0 values=",
+          "B13AFM2 extensions_for_caff status=0 count=0 values=",
+          "B13AFM2 utis_for_caff status=0 count=0 values=",
+          "B13AFM2 mimes_for_caff status=0 count=0 values=",
+          "B13AFM2 all_extensions status=0 count=0 values=",
+          "B13AFM2 all_utis status=0 count=0 values=",
+          "B13AFM2 all_mimes status=0 count=0 values=",
+          "B13AFM2 readable_types status=0 count=11 values=AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f",
+          "B13AFM2 component_wave_extensions status=0 count=2 values=wav,wave"
+        ]
+      }
+    },
+    "candidate_fix3": {
+      "defect_witness_b13_afm": [
+        "AFM i386_sizeof_cfarrayref_4 PASS ",
+        "AFM x86_64_sizeof_cfarrayref_8 PASS ",
+        "AFM i386_control_filetypename PASS {'status': '0', 'size': '4', 'name': 'WAVE'}",
+        "AFM i386_component_correct_size_answers PASS {'status': '0', 'size': '4', 'count': '2', 'values': 'wav,wave'}",
+        "AFM i386_unknown_extension_no_type PASS {'ext': 'zzzq', 'status': '0', 'count': '0', 'values': ''}",
+        "AFM x86_64_control_filetypename PASS {'status': '0', 'size': '8', 'name': 'WAVE'}",
+        "AFM x86_64_component_correct_size_answers PASS {'status': '0', 'size': '8', 'count': '2', 'values': 'wav,wave'}",
+        "AFM x86_64_unknown_extension_no_type PASS {'ext': 'zzzq', 'status': '0', 'count': '0', 'values': ''}",
+        "AFM i386_size4_accepted PASS ",
+        "AFM x86_64_size4_refused_bad_property_size PASS {'status': '!siz', 'size': '4', 'count': '-1', 'values': ''}",
+        "AFM readable_types_same_both PASS i386=11 x86_64=11",
+        "AFM i386_extensions_for_WAVE_filled PASS count=2",
+        "AFM x86_64_extensions_for_WAVE_empty FAIL count=2",
+        "AFM i386_utis_for_WAVE_filled PASS count=3",
+        "AFM x86_64_utis_for_WAVE_empty FAIL count=3",
+        "AFM i386_mimes_for_WAVE_filled PASS count=3",
+        "AFM x86_64_mimes_for_WAVE_empty FAIL count=3",
+        "AFM i386_extensions_for_AIFF_filled PASS count=2",
+        "AFM x86_64_extensions_for_AIFF_empty FAIL count=2",
+        "AFM i386_all_extensions_filled PASS count=17",
+        "AFM x86_64_all_extensions_empty FAIL count=17",
+        "AFM i386_all_utis_filled PASS count=13",
+        "AFM x86_64_all_utis_empty FAIL count=13",
+        "AFM i386_all_mimes_filled PASS count=16",
+        "AFM x86_64_all_mimes_empty FAIL count=16",
+        "AFM i386_wav_extension_to_WAVE PASS {'ext': 'wav', 'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM x86_64_wav_extension_no_type FAIL {'ext': 'wav', 'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM_INFO i386 open:aiff_nohint {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO i386 open:aiff_hint_AIFF {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO i386 open:wav_nohint {'status': '0', 'file_format': 'WAVE'}",
+        "AFM_INFO i386 open:garbage_wav_nohint {'status': 'dta?', 'file_format': '-'}",
+        "AFM_INFO i386 open:garbage_wav_hint_WAVE {'status': 'dta?', 'file_format': '-'}",
+        "AFM_INFO x86_64 open:aiff_nohint {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO x86_64 open:aiff_hint_AIFF {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO x86_64 open:wav_nohint {'status': '0', 'file_format': 'WAVE'}",
+        "AFM_INFO x86_64 open:garbage_wav_nohint {'status': 'dta?', 'file_format': '-'}",
+        "AFM_INFO x86_64 open:garbage_wav_hint_WAVE {'status': 'dta?', 'file_format': '-'}",
+        "AFM_SUMMARY checks=27 failures=8 verdict=NOT_REPRODUCED_AS_PREDICTED"
+      ],
+      "positive_oracle_b13_afm2": [
+        "AFM2 i386_extensions_for_WAVE PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 i386_utis_for_WAVE PASS {'status': '0', 'count': '3', 'values': 'com.microsoft.waveform-audio,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_WAVE PASS {'status': '0', 'count': '3', 'values': 'audio/wav,audio/x-wav,audio/vnd.wave'}",
+        "AFM2 i386_extensions_for_AIFF PASS {'status': '0', 'count': '2', 'values': 'aif,aiff'}",
+        "AFM2 i386_utis_for_AIFF PASS {'status': '0', 'count': '3', 'values': 'public.aiff-audio,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_AIFF PASS {'status': '0', 'count': '2', 'values': 'audio/aiff,audio/x-aiff'}",
+        "AFM2 i386_extensions_for_AIFC PASS {'status': '0', 'count': '2', 'values': 'aifc,cdda'}",
+        "AFM2 i386_utis_for_AIFC PASS {'status': '0', 'count': '3', 'values': 'public.aifc-audio,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_AIFC PASS {'status': '0', 'count': '2', 'values': 'audio/aiff,audio/x-aiff'}",
+        "AFM2 i386_extensions_for_caff PASS {'status': '0', 'count': '1', 'values': 'caf'}",
+        "AFM2 i386_utis_for_caff PASS {'status': '0', 'count': '3', 'values': 'com.apple.coreaudio-format,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_caff PASS {'status': '0', 'count': '1', 'values': 'audio/x-caf'}",
+        "AFM2 i386_all_extensions PASS count=17",
+        "AFM2 i386_all_utis PASS count=13",
+        "AFM2 i386_all_mimes PASS count=16",
+        "AFM2 i386_readable_types PASS {'status': '0', 'count': '11', 'values': 'AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f'}",
+        "AFM2 i386_component_wave_extensions PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 i386_types_for_extension:wav PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_extension:wave PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_extension:aif PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 i386_types_for_extension:aiff PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 i386_types_for_extension:aifc PASS {'status': '0', 'count': '1', 'values': 'AIFC'}",
+        "AFM2 i386_types_for_extension:caf PASS {'status': '0', 'count': '1', 'values': 'caff'}",
+        "AFM2 i386_types_for_extension:zzzq PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 i386_types_for_uti:com.microsoft.waveform-audio PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_uti:public.aiff-audio PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 i386_types_for_uti:public.aifc-audio PASS {'status': '0', 'count': '1', 'values': 'AIFC'}",
+        "AFM2 i386_types_for_uti:org.example.none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 i386_types_for_mime:audio/x-wav PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_mime:audio/aiff PASS {'status': '0', 'count': '2', 'values': 'AIFC,AIFF'}",
+        "AFM2 i386_types_for_mime:audio/x-none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 i386_open_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_wav_hint_WAVE PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_wav_hint_AIFF PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aiff_nohint PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aiff_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aiff_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aif_nohint PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aifc_nohint PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aifc_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aifc_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_garbage_wav_nohint PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_garbage_wav_hint_WAVE PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_empty_wav_nohint PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_trunc_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '35273', 'handle': 'set'}",
+        "AFM2 i386_open_garbage_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_empty_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_extensions_for_WAVE PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 x86_64_utis_for_WAVE PASS {'status': '0', 'count': '3', 'values': 'com.microsoft.waveform-audio,public.audio,public.data'}",
+        "AFM2 x86_64_mimes_for_WAVE PASS {'status': '0', 'count': '3', 'values': 'audio/wav,audio/x-wav,audio/vnd.wave'}",
+        "AFM2 x86_64_extensions_for_AIFF PASS {'status': '0', 'count': '2', 'values': 'aif,aiff'}",
+        "AFM2 x86_64_utis_for_AIFF PASS {'status': '0', 'count': '3', 'values': 'public.aiff-audio,public.audio,public.data'}",
+        "AFM2 x86_64_mimes_for_AIFF PASS {'status': '0', 'count': '2', 'values': 'audio/aiff,audio/x-aiff'}",
+        "AFM2 x86_64_extensions_for_AIFC PASS {'status': '0', 'count': '2', 'values': 'aifc,cdda'}",
+        "AFM2 x86_64_utis_for_AIFC PASS {'status': '0', 'count': '3', 'values': 'public.aifc-audio,public.audio,public.data'}",
+        "AFM2 x86_64_mimes_for_AIFC PASS {'status': '0', 'count': '2', 'values': 'audio/aiff,audio/x-aiff'}",
+        "AFM2 x86_64_extensions_for_caff PASS {'status': '0', 'count': '1', 'values': 'caf'}",
+        "AFM2 x86_64_utis_for_caff PASS {'status': '0', 'count': '3', 'values': 'com.apple.coreaudio-format,public.audio,public.data'}",
+        "AFM2 x86_64_mimes_for_caff PASS {'status': '0', 'count': '1', 'values': 'audio/x-caf'}",
+        "AFM2 x86_64_all_extensions PASS count=17",
+        "AFM2 x86_64_all_utis PASS count=13",
+        "AFM2 x86_64_all_mimes PASS count=16",
+        "AFM2 x86_64_readable_types PASS {'status': '0', 'count': '11', 'values': 'AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f'}",
+        "AFM2 x86_64_component_wave_extensions PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 x86_64_types_for_extension:wav PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 x86_64_types_for_extension:wave PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 x86_64_types_for_extension:aif PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 x86_64_types_for_extension:aiff PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 x86_64_types_for_extension:aifc PASS {'status': '0', 'count': '1', 'values': 'AIFC'}",
+        "AFM2 x86_64_types_for_extension:caf PASS {'status': '0', 'count': '1', 'values': 'caff'}",
+        "AFM2 x86_64_types_for_extension:zzzq PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_uti:com.microsoft.waveform-audio PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 x86_64_types_for_uti:public.aiff-audio PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 x86_64_types_for_uti:public.aifc-audio PASS {'status': '0', 'count': '1', 'values': 'AIFC'}",
+        "AFM2 x86_64_types_for_uti:org.example.none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_mime:audio/x-wav PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 x86_64_types_for_mime:audio/aiff PASS {'status': '0', 'count': '2', 'values': 'AIFC,AIFF'}",
+        "AFM2 x86_64_types_for_mime:audio/x-none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_open_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_wav_hint_WAVE PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_wav_hint_AIFF PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aiff_nohint PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aiff_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aiff_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aif_nohint PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aifc_nohint PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aifc_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aifc_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_garbage_wav_nohint PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_garbage_wav_hint_WAVE PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_empty_wav_nohint PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_trunc_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '35273', 'handle': 'set'}",
+        "AFM2 x86_64_open_garbage_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_empty_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_equals_x86_64 PASS lines=47/47 differing=0 []",
+        "AFM2_SUMMARY checks=95 failures=0 verdict=FIX3_POSITIVE_PASS"
+      ],
+      "raw": {
+        "i386": [
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 types_for_extension:(empty) status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 types_for_extension:wav status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_extension:wave status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_extension:aif status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_extension:aiff status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_extension:aifc status=0 count=1 values=AIFC",
+          "B13AFM2 types_for_extension:caf status=0 count=1 values=caff",
+          "B13AFM2 types_for_extension:zzzq status=0 count=0 values=",
+          "B13AFM2 types_for_uti:com.microsoft.waveform-audio status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_uti:public.aiff-audio status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_uti:public.aifc-audio status=0 count=1 values=AIFC",
+          "B13AFM2 types_for_uti:org.example.none status=0 count=0 values=",
+          "B13AFM2 types_for_mime:audio/x-wav status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_mime:audio/aiff status=0 count=2 values=AIFC,AIFF",
+          "B13AFM2 types_for_mime:audio/x-none status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 open wav_nohint status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_WAVE status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_AIFF status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open aiff_nohint status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aif_nohint status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aifc_nohint status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open garbage_wav_nohint status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open garbage_wav_hint_WAVE status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_wav_nohint status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open trunc_wav_nohint status=0 file_format=WAVE packets=35273 handle=set",
+          "B13AFM2 open garbage_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 extensions_for_WAVE status=0 count=2 values=wav,wave",
+          "B13AFM2 utis_for_WAVE status=0 count=3 values=com.microsoft.waveform-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_WAVE status=0 count=3 values=audio/wav,audio/x-wav,audio/vnd.wave",
+          "B13AFM2 extensions_for_AIFF status=0 count=2 values=aif,aiff",
+          "B13AFM2 utis_for_AIFF status=0 count=3 values=public.aiff-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_AIFF status=0 count=2 values=audio/aiff,audio/x-aiff",
+          "B13AFM2 extensions_for_AIFC status=0 count=2 values=aifc,cdda",
+          "B13AFM2 utis_for_AIFC status=0 count=3 values=public.aifc-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_AIFC status=0 count=2 values=audio/aiff,audio/x-aiff",
+          "B13AFM2 extensions_for_caff status=0 count=1 values=caf",
+          "B13AFM2 utis_for_caff status=0 count=3 values=com.apple.coreaudio-format,public.audio,public.data",
+          "B13AFM2 mimes_for_caff status=0 count=1 values=audio/x-caf",
+          "B13AFM2 all_extensions status=0 count=17 values=aac,ac3,adts,aif,aifc,aiff,au,caf,cdda,flac,m4a,m4r,mp3,mp4,snd,wav,wave",
+          "B13AFM2 all_utis status=0 count=13 values=com.apple.coreaudio-format,com.apple.m4a-audio,com.microsoft.waveform-audio,org.xiph.flac,public.aac-audio,public.ac3-audio,public.aifc-audio,public.aiff-audio,public.audio,public.data,public.mp3,public.mpeg-4-audio,public.ulaw-audio",
+          "B13AFM2 all_mimes status=0 count=16 values=audio/aac,audio/ac3,audio/aiff,audio/basic,audio/flac,audio/mp3,audio/mp4,audio/mpeg,audio/vnd.wave,audio/wav,audio/x-aac,audio/x-aiff,audio/x-caf,audio/x-flac,audio/x-m4a,audio/x-wav",
+          "B13AFM2 readable_types status=0 count=11 values=AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f",
+          "B13AFM2 component_wave_extensions status=0 count=2 values=wav,wave"
+        ],
+        "x86_64": [
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 types_for_extension:(empty) status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 types_for_extension:wav status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_extension:wave status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_extension:aif status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_extension:aiff status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_extension:aifc status=0 count=1 values=AIFC",
+          "B13AFM2 types_for_extension:caf status=0 count=1 values=caff",
+          "B13AFM2 types_for_extension:zzzq status=0 count=0 values=",
+          "B13AFM2 types_for_uti:com.microsoft.waveform-audio status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_uti:public.aiff-audio status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_uti:public.aifc-audio status=0 count=1 values=AIFC",
+          "B13AFM2 types_for_uti:org.example.none status=0 count=0 values=",
+          "B13AFM2 types_for_mime:audio/x-wav status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_mime:audio/aiff status=0 count=2 values=AIFC,AIFF",
+          "B13AFM2 types_for_mime:audio/x-none status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 open wav_nohint status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_WAVE status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_AIFF status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open aiff_nohint status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aif_nohint status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aifc_nohint status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open garbage_wav_nohint status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open garbage_wav_hint_WAVE status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_wav_nohint status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open trunc_wav_nohint status=0 file_format=WAVE packets=35273 handle=set",
+          "B13AFM2 open garbage_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 extensions_for_WAVE status=0 count=2 values=wav,wave",
+          "B13AFM2 utis_for_WAVE status=0 count=3 values=com.microsoft.waveform-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_WAVE status=0 count=3 values=audio/wav,audio/x-wav,audio/vnd.wave",
+          "B13AFM2 extensions_for_AIFF status=0 count=2 values=aif,aiff",
+          "B13AFM2 utis_for_AIFF status=0 count=3 values=public.aiff-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_AIFF status=0 count=2 values=audio/aiff,audio/x-aiff",
+          "B13AFM2 extensions_for_AIFC status=0 count=2 values=aifc,cdda",
+          "B13AFM2 utis_for_AIFC status=0 count=3 values=public.aifc-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_AIFC status=0 count=2 values=audio/aiff,audio/x-aiff",
+          "B13AFM2 extensions_for_caff status=0 count=1 values=caf",
+          "B13AFM2 utis_for_caff status=0 count=3 values=com.apple.coreaudio-format,public.audio,public.data",
+          "B13AFM2 mimes_for_caff status=0 count=1 values=audio/x-caf",
+          "B13AFM2 all_extensions status=0 count=17 values=aac,ac3,adts,aif,aifc,aiff,au,caf,cdda,flac,m4a,m4r,mp3,mp4,snd,wav,wave",
+          "B13AFM2 all_utis status=0 count=13 values=com.apple.coreaudio-format,com.apple.m4a-audio,com.microsoft.waveform-audio,org.xiph.flac,public.aac-audio,public.ac3-audio,public.aifc-audio,public.aiff-audio,public.audio,public.data,public.mp3,public.mpeg-4-audio,public.ulaw-audio",
+          "B13AFM2 all_mimes status=0 count=16 values=audio/aac,audio/ac3,audio/aiff,audio/basic,audio/flac,audio/mp3,audio/mp4,audio/mpeg,audio/vnd.wave,audio/wav,audio/x-aac,audio/x-aiff,audio/x-caf,audio/x-flac,audio/x-m4a,audio/x-wav",
+          "B13AFM2 readable_types status=0 count=11 values=AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f",
+          "B13AFM2 component_wave_extensions status=0 count=2 values=wav,wave"
+        ]
+      }
+    },
+    "production_prod3b": {
+      "defect_witness_b13_afm": [
+        "AFM i386_sizeof_cfarrayref_4 PASS ",
+        "AFM x86_64_sizeof_cfarrayref_8 PASS ",
+        "AFM i386_control_filetypename PASS {'status': '0', 'size': '4', 'name': 'WAVE'}",
+        "AFM i386_component_correct_size_answers PASS {'status': '0', 'size': '4', 'count': '2', 'values': 'wav,wave'}",
+        "AFM i386_unknown_extension_no_type PASS {'ext': 'zzzq', 'status': '0', 'count': '0', 'values': ''}",
+        "AFM x86_64_control_filetypename PASS {'status': '0', 'size': '8', 'name': 'WAVE'}",
+        "AFM x86_64_component_correct_size_answers PASS {'status': '0', 'size': '8', 'count': '2', 'values': 'wav,wave'}",
+        "AFM x86_64_unknown_extension_no_type PASS {'ext': 'zzzq', 'status': '0', 'count': '0', 'values': ''}",
+        "AFM i386_size4_accepted PASS ",
+        "AFM x86_64_size4_refused_bad_property_size PASS {'status': '!siz', 'size': '4', 'count': '-1', 'values': ''}",
+        "AFM readable_types_same_both PASS i386=11 x86_64=11",
+        "AFM i386_extensions_for_WAVE_filled PASS count=2",
+        "AFM x86_64_extensions_for_WAVE_empty FAIL count=2",
+        "AFM i386_utis_for_WAVE_filled PASS count=3",
+        "AFM x86_64_utis_for_WAVE_empty FAIL count=3",
+        "AFM i386_mimes_for_WAVE_filled PASS count=3",
+        "AFM x86_64_mimes_for_WAVE_empty FAIL count=3",
+        "AFM i386_extensions_for_AIFF_filled PASS count=2",
+        "AFM x86_64_extensions_for_AIFF_empty FAIL count=2",
+        "AFM i386_all_extensions_filled PASS count=17",
+        "AFM x86_64_all_extensions_empty FAIL count=17",
+        "AFM i386_all_utis_filled PASS count=13",
+        "AFM x86_64_all_utis_empty FAIL count=13",
+        "AFM i386_all_mimes_filled PASS count=16",
+        "AFM x86_64_all_mimes_empty FAIL count=16",
+        "AFM i386_wav_extension_to_WAVE PASS {'ext': 'wav', 'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM x86_64_wav_extension_no_type FAIL {'ext': 'wav', 'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM_INFO i386 open:aiff_nohint {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO i386 open:aiff_hint_AIFF {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO i386 open:wav_nohint {'status': '0', 'file_format': 'WAVE'}",
+        "AFM_INFO i386 open:garbage_wav_nohint {'status': 'dta?', 'file_format': '-'}",
+        "AFM_INFO i386 open:garbage_wav_hint_WAVE {'status': 'dta?', 'file_format': '-'}",
+        "AFM_INFO x86_64 open:aiff_nohint {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO x86_64 open:aiff_hint_AIFF {'status': '0', 'file_format': 'AIFF'}",
+        "AFM_INFO x86_64 open:wav_nohint {'status': '0', 'file_format': 'WAVE'}",
+        "AFM_INFO x86_64 open:garbage_wav_nohint {'status': 'dta?', 'file_format': '-'}",
+        "AFM_INFO x86_64 open:garbage_wav_hint_WAVE {'status': 'dta?', 'file_format': '-'}",
+        "AFM_SUMMARY checks=27 failures=8 verdict=NOT_REPRODUCED_AS_PREDICTED"
+      ],
+      "positive_oracle_b13_afm2": [
+        "AFM2 i386_extensions_for_WAVE PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 i386_utis_for_WAVE PASS {'status': '0', 'count': '3', 'values': 'com.microsoft.waveform-audio,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_WAVE PASS {'status': '0', 'count': '3', 'values': 'audio/wav,audio/x-wav,audio/vnd.wave'}",
+        "AFM2 i386_extensions_for_AIFF PASS {'status': '0', 'count': '2', 'values': 'aif,aiff'}",
+        "AFM2 i386_utis_for_AIFF PASS {'status': '0', 'count': '3', 'values': 'public.aiff-audio,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_AIFF PASS {'status': '0', 'count': '2', 'values': 'audio/aiff,audio/x-aiff'}",
+        "AFM2 i386_extensions_for_AIFC PASS {'status': '0', 'count': '2', 'values': 'aifc,cdda'}",
+        "AFM2 i386_utis_for_AIFC PASS {'status': '0', 'count': '3', 'values': 'public.aifc-audio,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_AIFC PASS {'status': '0', 'count': '2', 'values': 'audio/aiff,audio/x-aiff'}",
+        "AFM2 i386_extensions_for_caff PASS {'status': '0', 'count': '1', 'values': 'caf'}",
+        "AFM2 i386_utis_for_caff PASS {'status': '0', 'count': '3', 'values': 'com.apple.coreaudio-format,public.audio,public.data'}",
+        "AFM2 i386_mimes_for_caff PASS {'status': '0', 'count': '1', 'values': 'audio/x-caf'}",
+        "AFM2 i386_all_extensions PASS count=17",
+        "AFM2 i386_all_utis PASS count=13",
+        "AFM2 i386_all_mimes PASS count=16",
+        "AFM2 i386_readable_types PASS {'status': '0', 'count': '11', 'values': 'AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f'}",
+        "AFM2 i386_component_wave_extensions PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 i386_types_for_extension:wav PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_extension:wave PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_extension:aif PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 i386_types_for_extension:aiff PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 i386_types_for_extension:aifc PASS {'status': '0', 'count': '1', 'values': 'AIFC'}",
+        "AFM2 i386_types_for_extension:caf PASS {'status': '0', 'count': '1', 'values': 'caff'}",
+        "AFM2 i386_types_for_extension:zzzq PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 i386_types_for_uti:com.microsoft.waveform-audio PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_uti:public.aiff-audio PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 i386_types_for_uti:public.aifc-audio PASS {'status': '0', 'count': '1', 'values': 'AIFC'}",
+        "AFM2 i386_types_for_uti:org.example.none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 i386_types_for_mime:audio/x-wav PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 i386_types_for_mime:audio/aiff PASS {'status': '0', 'count': '2', 'values': 'AIFC,AIFF'}",
+        "AFM2 i386_types_for_mime:audio/x-none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 i386_open_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_wav_hint_WAVE PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_wav_hint_AIFF PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aiff_nohint PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aiff_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aiff_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aif_nohint PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aifc_nohint PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aifc_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_aifc_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 i386_open_garbage_wav_nohint PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_garbage_wav_hint_WAVE PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_empty_wav_nohint PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_trunc_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '35273', 'handle': 'set'}",
+        "AFM2 i386_open_garbage_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_open_empty_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_extensions_for_WAVE PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 x86_64_utis_for_WAVE PASS {'status': '0', 'count': '3', 'values': 'com.microsoft.waveform-audio,public.audio,public.data'}",
+        "AFM2 x86_64_mimes_for_WAVE PASS {'status': '0', 'count': '3', 'values': 'audio/wav,audio/x-wav,audio/vnd.wave'}",
+        "AFM2 x86_64_extensions_for_AIFF PASS {'status': '0', 'count': '2', 'values': 'aif,aiff'}",
+        "AFM2 x86_64_utis_for_AIFF PASS {'status': '0', 'count': '3', 'values': 'public.aiff-audio,public.audio,public.data'}",
+        "AFM2 x86_64_mimes_for_AIFF PASS {'status': '0', 'count': '2', 'values': 'audio/aiff,audio/x-aiff'}",
+        "AFM2 x86_64_extensions_for_AIFC PASS {'status': '0', 'count': '2', 'values': 'aifc,cdda'}",
+        "AFM2 x86_64_utis_for_AIFC PASS {'status': '0', 'count': '3', 'values': 'public.aifc-audio,public.audio,public.data'}",
+        "AFM2 x86_64_mimes_for_AIFC PASS {'status': '0', 'count': '2', 'values': 'audio/aiff,audio/x-aiff'}",
+        "AFM2 x86_64_extensions_for_caff PASS {'status': '0', 'count': '1', 'values': 'caf'}",
+        "AFM2 x86_64_utis_for_caff PASS {'status': '0', 'count': '3', 'values': 'com.apple.coreaudio-format,public.audio,public.data'}",
+        "AFM2 x86_64_mimes_for_caff PASS {'status': '0', 'count': '1', 'values': 'audio/x-caf'}",
+        "AFM2 x86_64_all_extensions PASS count=17",
+        "AFM2 x86_64_all_utis PASS count=13",
+        "AFM2 x86_64_all_mimes PASS count=16",
+        "AFM2 x86_64_readable_types PASS {'status': '0', 'count': '11', 'values': 'AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f'}",
+        "AFM2 x86_64_component_wave_extensions PASS {'status': '0', 'count': '2', 'values': 'wav,wave'}",
+        "AFM2 x86_64_types_for_extension:wav PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 x86_64_types_for_extension:wave PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 x86_64_types_for_extension:aif PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 x86_64_types_for_extension:aiff PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 x86_64_types_for_extension:aifc PASS {'status': '0', 'count': '1', 'values': 'AIFC'}",
+        "AFM2 x86_64_types_for_extension:caf PASS {'status': '0', 'count': '1', 'values': 'caff'}",
+        "AFM2 x86_64_types_for_extension:zzzq PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_uti:com.microsoft.waveform-audio PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 x86_64_types_for_uti:public.aiff-audio PASS {'status': '0', 'count': '1', 'values': 'AIFF'}",
+        "AFM2 x86_64_types_for_uti:public.aifc-audio PASS {'status': '0', 'count': '1', 'values': 'AIFC'}",
+        "AFM2 x86_64_types_for_uti:org.example.none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_types_for_mime:audio/x-wav PASS {'status': '0', 'count': '1', 'values': 'WAVE'}",
+        "AFM2 x86_64_types_for_mime:audio/aiff PASS {'status': '0', 'count': '2', 'values': 'AIFC,AIFF'}",
+        "AFM2 x86_64_types_for_mime:audio/x-none PASS {'status': '0', 'count': '0', 'values': ''}",
+        "AFM2 x86_64_open_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_wav_hint_WAVE PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_wav_hint_AIFF PASS {'status': '0', 'file_format': 'WAVE', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aiff_nohint PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aiff_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aiff_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aif_nohint PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aifc_nohint PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aifc_hint_AIFC PASS {'status': '0', 'file_format': 'AIFC', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_aifc_hint_AIFF PASS {'status': '0', 'file_format': 'AIFF', 'packets': '88200', 'handle': 'set'}",
+        "AFM2 x86_64_open_garbage_wav_nohint PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_garbage_wav_hint_WAVE PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_empty_wav_nohint PASS {'status': 'dta?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_trunc_wav_nohint PASS {'status': '0', 'file_format': 'WAVE', 'packets': '35273', 'handle': 'set'}",
+        "AFM2 x86_64_open_garbage_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 x86_64_open_empty_zzzq_nohint PASS {'status': 'typ?', 'file_format': '-', 'packets': '-1', 'handle': 'null'}",
+        "AFM2 i386_equals_x86_64 PASS lines=47/47 differing=0 []",
+        "AFM2_SUMMARY checks=95 failures=0 verdict=FIX3_POSITIVE_PASS"
+      ],
+      "raw": {
+        "i386": [
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 types_for_extension:(empty) status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 types_for_extension:wav status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_extension:wave status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_extension:aif status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_extension:aiff status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_extension:aifc status=0 count=1 values=AIFC",
+          "B13AFM2 types_for_extension:caf status=0 count=1 values=caff",
+          "B13AFM2 types_for_extension:zzzq status=0 count=0 values=",
+          "B13AFM2 types_for_uti:com.microsoft.waveform-audio status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_uti:public.aiff-audio status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_uti:public.aifc-audio status=0 count=1 values=AIFC",
+          "B13AFM2 types_for_uti:org.example.none status=0 count=0 values=",
+          "B13AFM2 types_for_mime:audio/x-wav status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_mime:audio/aiff status=0 count=2 values=AIFC,AIFF",
+          "B13AFM2 types_for_mime:audio/x-none status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 open wav_nohint status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_WAVE status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_AIFF status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open aiff_nohint status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aif_nohint status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aifc_nohint status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open garbage_wav_nohint status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open garbage_wav_hint_WAVE status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_wav_nohint status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open trunc_wav_nohint status=0 file_format=WAVE packets=35273 handle=set",
+          "B13AFM2 open garbage_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2_ABI pointer_bits=32",
+          "B13AFM2 extensions_for_WAVE status=0 count=2 values=wav,wave",
+          "B13AFM2 utis_for_WAVE status=0 count=3 values=com.microsoft.waveform-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_WAVE status=0 count=3 values=audio/wav,audio/x-wav,audio/vnd.wave",
+          "B13AFM2 extensions_for_AIFF status=0 count=2 values=aif,aiff",
+          "B13AFM2 utis_for_AIFF status=0 count=3 values=public.aiff-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_AIFF status=0 count=2 values=audio/aiff,audio/x-aiff",
+          "B13AFM2 extensions_for_AIFC status=0 count=2 values=aifc,cdda",
+          "B13AFM2 utis_for_AIFC status=0 count=3 values=public.aifc-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_AIFC status=0 count=2 values=audio/aiff,audio/x-aiff",
+          "B13AFM2 extensions_for_caff status=0 count=1 values=caf",
+          "B13AFM2 utis_for_caff status=0 count=3 values=com.apple.coreaudio-format,public.audio,public.data",
+          "B13AFM2 mimes_for_caff status=0 count=1 values=audio/x-caf",
+          "B13AFM2 all_extensions status=0 count=17 values=aac,ac3,adts,aif,aifc,aiff,au,caf,cdda,flac,m4a,m4r,mp3,mp4,snd,wav,wave",
+          "B13AFM2 all_utis status=0 count=13 values=com.apple.coreaudio-format,com.apple.m4a-audio,com.microsoft.waveform-audio,org.xiph.flac,public.aac-audio,public.ac3-audio,public.aifc-audio,public.aiff-audio,public.audio,public.data,public.mp3,public.mpeg-4-audio,public.ulaw-audio",
+          "B13AFM2 all_mimes status=0 count=16 values=audio/aac,audio/ac3,audio/aiff,audio/basic,audio/flac,audio/mp3,audio/mp4,audio/mpeg,audio/vnd.wave,audio/wav,audio/x-aac,audio/x-aiff,audio/x-caf,audio/x-flac,audio/x-m4a,audio/x-wav",
+          "B13AFM2 readable_types status=0 count=11 values=AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f",
+          "B13AFM2 component_wave_extensions status=0 count=2 values=wav,wave"
+        ],
+        "x86_64": [
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 types_for_extension:(empty) status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 types_for_extension:wav status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_extension:wave status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_extension:aif status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_extension:aiff status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_extension:aifc status=0 count=1 values=AIFC",
+          "B13AFM2 types_for_extension:caf status=0 count=1 values=caff",
+          "B13AFM2 types_for_extension:zzzq status=0 count=0 values=",
+          "B13AFM2 types_for_uti:com.microsoft.waveform-audio status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_uti:public.aiff-audio status=0 count=1 values=AIFF",
+          "B13AFM2 types_for_uti:public.aifc-audio status=0 count=1 values=AIFC",
+          "B13AFM2 types_for_uti:org.example.none status=0 count=0 values=",
+          "B13AFM2 types_for_mime:audio/x-wav status=0 count=1 values=WAVE",
+          "B13AFM2 types_for_mime:audio/aiff status=0 count=2 values=AIFC,AIFF",
+          "B13AFM2 types_for_mime:audio/x-none status=0 count=0 values=",
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 open wav_nohint status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_WAVE status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open wav_hint_AIFF status=0 file_format=WAVE packets=88200 handle=set",
+          "B13AFM2 open aiff_nohint status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aiff_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aif_nohint status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open aifc_nohint status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFC status=0 file_format=AIFC packets=88200 handle=set",
+          "B13AFM2 open aifc_hint_AIFF status=0 file_format=AIFF packets=88200 handle=set",
+          "B13AFM2 open garbage_wav_nohint status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open garbage_wav_hint_WAVE status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_wav_nohint status=dta? file_format=- packets=-1 handle=null",
+          "B13AFM2 open trunc_wav_nohint status=0 file_format=WAVE packets=35273 handle=set",
+          "B13AFM2 open garbage_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2 open empty_zzzq_nohint status=typ? file_format=- packets=-1 handle=null",
+          "B13AFM2_ABI pointer_bits=64",
+          "B13AFM2 extensions_for_WAVE status=0 count=2 values=wav,wave",
+          "B13AFM2 utis_for_WAVE status=0 count=3 values=com.microsoft.waveform-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_WAVE status=0 count=3 values=audio/wav,audio/x-wav,audio/vnd.wave",
+          "B13AFM2 extensions_for_AIFF status=0 count=2 values=aif,aiff",
+          "B13AFM2 utis_for_AIFF status=0 count=3 values=public.aiff-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_AIFF status=0 count=2 values=audio/aiff,audio/x-aiff",
+          "B13AFM2 extensions_for_AIFC status=0 count=2 values=aifc,cdda",
+          "B13AFM2 utis_for_AIFC status=0 count=3 values=public.aifc-audio,public.audio,public.data",
+          "B13AFM2 mimes_for_AIFC status=0 count=2 values=audio/aiff,audio/x-aiff",
+          "B13AFM2 extensions_for_caff status=0 count=1 values=caf",
+          "B13AFM2 utis_for_caff status=0 count=3 values=com.apple.coreaudio-format,public.audio,public.data",
+          "B13AFM2 mimes_for_caff status=0 count=1 values=audio/x-caf",
+          "B13AFM2 all_extensions status=0 count=17 values=aac,ac3,adts,aif,aifc,aiff,au,caf,cdda,flac,m4a,m4r,mp3,mp4,snd,wav,wave",
+          "B13AFM2 all_utis status=0 count=13 values=com.apple.coreaudio-format,com.apple.m4a-audio,com.microsoft.waveform-audio,org.xiph.flac,public.aac-audio,public.ac3-audio,public.aifc-audio,public.aiff-audio,public.audio,public.data,public.mp3,public.mpeg-4-audio,public.ulaw-audio",
+          "B13AFM2 all_mimes status=0 count=16 values=audio/aac,audio/ac3,audio/aiff,audio/basic,audio/flac,audio/mp3,audio/mp4,audio/mpeg,audio/vnd.wave,audio/wav,audio/x-aac,audio/x-aiff,audio/x-caf,audio/x-flac,audio/x-m4a,audio/x-wav",
+          "B13AFM2 readable_types status=0 count=11 values=AIFC,AIFF,MPG3,NeXT,WAVE,ac-3,adts,caff,flac,m4af,mp4f",
+          "B13AFM2 component_wave_extensions status=0 count=2 values=wav,wave"
+        ]
+      }
+    }
+  },
+  "format_recognition_runs": {
+    "unpatched_prod2": [
+      {
+        "label": "hpr2ci",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "component",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hpr2ti",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "tables",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hpr2wi",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "ext wav",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hpr2zi",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "ext zzzq",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hpr2oi",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hpr2cx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "component",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hpr2tx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "tables",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hpr2wx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "ext wav",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hpr2zx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "ext zzzq",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hpr2ox",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jpr2li",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "lookup",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jpr2ei",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "lookup_empty",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jpr2ti",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "tables",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jpr2oi",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/media-fix3",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jpr2lx",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "lookup",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=2",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jpr2ex",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "lookup_empty",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jpr2tx",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "tables",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jpr2ox",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/media-fix3",
+        "layer_files": [
+          "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "a6d717503787d9ec53e1ff0868e0c59fa3dcbbfde3f07daf613ceebe6482858f",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      }
+    ],
+    "candidate_fix3": [
+      {
+        "label": "hfi3ci",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "component",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hfi3ti",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "tables",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hfi3wi",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "ext wav",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=2",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hfi3zi",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "ext zzzq",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=2",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hfi3oi",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hfi3cx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "component",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=2",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hfi3tx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "tables",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hfi3wx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "ext wav",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hfi3zx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "ext zzzq",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "hfi3ox",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jfi3li",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "lookup",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jfi3ei",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "lookup_empty",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jfi3ti",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "tables",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jfi3oi",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/media-fix3",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jfi3lx",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "lookup",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=2",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jfi3ex",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "lookup_empty",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jfi3tx",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "tables",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "jfi3ox",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/media-fix3",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ]
+      }
+    ],
+    "production_prod3b": [
+      {
+        "label": "uci",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "component",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "uti",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "tables",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "uwi",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "ext wav",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "uzi",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "ext zzzq",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "uoi",
+        "rc": 0,
+        "program_sha256": "e3f80aed26418832db82cfe51e576dbf84b0a73ec19ca953f7b3c5a84c26d10d",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "ucx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "component",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "utx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "tables",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "uwx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "ext wav",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "uzx",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "ext zzzq",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "uox",
+        "rc": 0,
+        "program_sha256": "68b39d9b59dad1a901c8b78d7239527a5f1cfcadbb658f645e509e8ca76c40fd",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "vti",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "tables",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "vli",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "lookup",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "vei",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "lookup_empty",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "voi",
+        "rc": 0,
+        "program_sha256": "80d7f9b0f9685716244b719f3cd49bdeb840de101da60367782196941057f76f",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/media-fix3",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "vtx",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "tables",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "vlx",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "lookup",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "vex",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "lookup_empty",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      },
+      {
+        "label": "vox",
+        "rc": 0,
+        "program_sha256": "7a67dc26944e663c8d03f809691282550f7d60d77e37b08026a583ac13efe3b6",
+        "args": "open /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/media-fix3",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ]
+      }
+    ],
+    "invalid_attempts": {
+      "labels": [
+        "kpr2ti",
+        "kpr2ei",
+        "kpr2oi",
+        "kpr2li",
+        "kpr2tx",
+        "kpr2ex",
+        "kpr2ox",
+        "kpr2lx",
+        "kfi3ti",
+        "kfi3ei",
+        "kfi3oi",
+        "kfi3li",
+        "kfi3tx",
+        "kfi3ex",
+        "kfi3ox",
+        "kfi3lx"
+      ],
+      "note": "first b13-afm2 build: TypesFor* specifier passed as &CFStringRef instead of the CFStringRef (witness error); lookup and lookup_empty crashed (rc=139) on both binaries; tables and open outputs of these runs are superseded by the j* runs",
+      "rc": {
+        "kpr2ti": 0,
+        "kpr2li": 139,
+        "kpr2ei": 139,
+        "kpr2oi": 0,
+        "kpr2tx": 0,
+        "kpr2lx": 139,
+        "kpr2ex": 139,
+        "kpr2ox": 0,
+        "kfi3ti": 0,
+        "kfi3li": 139,
+        "kfi3ei": 139,
+        "kfi3oi": 0,
+        "kfi3tx": 0,
+        "kfi3lx": 139,
+        "kfi3ex": 139,
+        "kfi3ox": 0
+      }
+    }
+  },
+  "non_regression": {
+    "candidate_fix3": [
+      {
+        "label": "ypi",
+        "rc": 0,
+        "program_sha256": "3951c28a59503db01fa2473bec9b14eab2baa84624f3d3401dd1c3340dbb28d7",
+        "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/ypi",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13_SUMMARY checks=40 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3",
+        "verify": [
+          "VERIFY_SUMMARY pass=26 fail=0"
+        ],
+        "outputs_sha256": {
+          "bad-trunc.wav.packets": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423",
+          "conv-s16le-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "demo-s16.aiff.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "demo-s16.aiff.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+          "demo-s16.caf.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "demo-s16.caf.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+          "demo-s16.wav.packets": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+          "demo-s16.wav.pd1000": "71866c6e01a1d8e1984c0d2dac4544147c1b355dfab4f3f3cf20c2ec1aae5afc",
+          "demo-ulaw.wav.packets": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+          "demo-ulaw.wav.pd1000": "b0108ca1bbbcc6334a4e995b53c3820466bc71dc60e4e236f53c0135768b4976",
+          "ext-aiff-s16le.raw": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+          "ext-ulaw-s16.raw": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+          "ext-wav-f32-48k.raw": "9693e8ca9b50f3dc1522219fadea2fa58efe812a88860ff6c97930dacdf39dd1",
+          "ext-wav-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0"
+        }
+      },
+      {
+        "label": "yci",
+        "rc": 0,
+        "program_sha256": "3951c28a59503db01fa2473bec9b14eab2baa84624f3d3401dd1c3340dbb28d7",
+        "args": "convertbuffer /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/yci",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3"
+      },
+      {
+        "label": "yai",
+        "rc": 0,
+        "program_sha256": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+        "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/yai",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=6 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3",
+        "verify": [
+          "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+          "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+          "VERIFY_SUMMARY PASS"
+        ],
+        "outputs_sha256": {
+          "fix1-ulaw_s16.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+          "fix1-ulaw_s16_after_cookie.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb"
+        }
+      },
+      {
+        "label": "ybi",
+        "rc": 0,
+        "program_sha256": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/ybi",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=27 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3",
+        "verify": [
+          "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY_SUMMARY PASS"
+        ],
+        "outputs_sha256": {
+          "fix2-complexbuffer-s16be-varchunks.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "fix2-convertbuffer-f32-varchunks.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "fix2-convertbuffer-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "fix2-convertbuffer-s16be.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+        }
+      },
+      {
+        "label": "yvi",
+        "rc": 1,
+        "program_sha256": "9f2a3b470be62f59bdd9b6f0439b91bb45cbf8a9f96529c3d39426d2c2018977",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/yvi",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=13 failures=3"
+        ],
+        "failures": [
+          "B13FIX complex_input_size_mismatch FAIL status=0",
+          "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+          "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1"
+        ],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=2",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3",
+        "verify": [
+          "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY_SUMMARY PASS"
+        ]
+      },
+      {
+        "label": "yli",
+        "rc": 0,
+        "program_sha256": "2e4887c9b442ab92de5f8ae74d58aad19cd56975d1c0f83fa97e4cb4a3b600fa",
+        "args": "",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13LIM_SUMMARY checks=8 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3"
+      },
+      {
+        "label": "ypx",
+        "rc": 0,
+        "program_sha256": "906ca418dbceab4c842097c3377f76c5ec8b2739fb30415a3ad9f8caa52a2e0c",
+        "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/ypx",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13_SUMMARY checks=40 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3",
+        "verify": [
+          "VERIFY_SUMMARY pass=26 fail=0"
+        ],
+        "outputs_sha256": {
+          "bad-trunc.wav.packets": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423",
+          "conv-s16le-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "demo-s16.aiff.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "demo-s16.aiff.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+          "demo-s16.caf.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "demo-s16.caf.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+          "demo-s16.wav.packets": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+          "demo-s16.wav.pd1000": "71866c6e01a1d8e1984c0d2dac4544147c1b355dfab4f3f3cf20c2ec1aae5afc",
+          "demo-ulaw.wav.packets": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+          "demo-ulaw.wav.pd1000": "b0108ca1bbbcc6334a4e995b53c3820466bc71dc60e4e236f53c0135768b4976",
+          "ext-aiff-s16le.raw": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+          "ext-ulaw-s16.raw": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+          "ext-wav-f32-48k.raw": "9693e8ca9b50f3dc1522219fadea2fa58efe812a88860ff6c97930dacdf39dd1",
+          "ext-wav-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0"
+        }
+      },
+      {
+        "label": "ycx",
+        "rc": 0,
+        "program_sha256": "906ca418dbceab4c842097c3377f76c5ec8b2739fb30415a3ad9f8caa52a2e0c",
+        "args": "convertbuffer /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/ycx",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=2",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3"
+      },
+      {
+        "label": "yax",
+        "rc": 0,
+        "program_sha256": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+        "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/yax",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=6 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3",
+        "verify": [
+          "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+          "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+          "VERIFY_SUMMARY PASS"
+        ],
+        "outputs_sha256": {
+          "fix1-ulaw_s16.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+          "fix1-ulaw_s16_after_cookie.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb"
+        }
+      },
+      {
+        "label": "ybx",
+        "rc": 0,
+        "program_sha256": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/ybx",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=27 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3",
+        "verify": [
+          "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY_SUMMARY PASS"
+        ],
+        "outputs_sha256": {
+          "fix2-complexbuffer-s16be-varchunks.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "fix2-convertbuffer-f32-varchunks.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "fix2-convertbuffer-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "fix2-convertbuffer-s16be.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+        }
+      },
+      {
+        "label": "yvx",
+        "rc": 1,
+        "program_sha256": "98a1ed36778b13f15a165ab3448c6dd88d4442e366d0bf3f46be97ebaf20ee24",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/yvx",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=13 failures=3"
+        ],
+        "failures": [
+          "B13FIX complex_input_size_mismatch FAIL status=0",
+          "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+          "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1"
+        ],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3",
+        "verify": [
+          "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY_SUMMARY PASS"
+        ]
+      },
+      {
+        "label": "ylx",
+        "rc": 0,
+        "program_sha256": "e9e637c1550d4a913074bf0724a9fbb4b27d10387779ba46c8e6569ebb2007df",
+        "args": "",
+        "layer_files": [
+          "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13LIM_SUMMARY checks=8 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=2",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "fix3"
+      }
+    ],
+    "production_prod3b": [
+      {
+        "label": "wpi",
+        "rc": 0,
+        "program_sha256": "3951c28a59503db01fa2473bec9b14eab2baa84624f3d3401dd1c3340dbb28d7",
+        "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/wpi",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13_SUMMARY checks=40 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b",
+        "verify": [
+          "VERIFY_SUMMARY pass=26 fail=0"
+        ],
+        "outputs_sha256": {
+          "bad-trunc.wav.packets": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423",
+          "conv-s16le-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "demo-s16.aiff.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "demo-s16.aiff.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+          "demo-s16.caf.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "demo-s16.caf.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+          "demo-s16.wav.packets": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+          "demo-s16.wav.pd1000": "71866c6e01a1d8e1984c0d2dac4544147c1b355dfab4f3f3cf20c2ec1aae5afc",
+          "demo-ulaw.wav.packets": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+          "demo-ulaw.wav.pd1000": "b0108ca1bbbcc6334a4e995b53c3820466bc71dc60e4e236f53c0135768b4976",
+          "ext-aiff-s16le.raw": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+          "ext-ulaw-s16.raw": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+          "ext-wav-f32-48k.raw": "9693e8ca9b50f3dc1522219fadea2fa58efe812a88860ff6c97930dacdf39dd1",
+          "ext-wav-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0"
+        }
+      },
+      {
+        "label": "wci",
+        "rc": 0,
+        "program_sha256": "3951c28a59503db01fa2473bec9b14eab2baa84624f3d3401dd1c3340dbb28d7",
+        "args": "convertbuffer /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/wci",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=1",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b"
+      },
+      {
+        "label": "wai",
+        "rc": 0,
+        "program_sha256": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+        "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/wai",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=6 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=1",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b",
+        "verify": [
+          "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+          "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+          "VERIFY_SUMMARY PASS"
+        ],
+        "outputs_sha256": {
+          "fix1-ulaw_s16.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+          "fix1-ulaw_s16_after_cookie.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb"
+        }
+      },
+      {
+        "label": "wbi",
+        "rc": 0,
+        "program_sha256": "533ad93b7444e346d36ec82f615e934ad3b3b9719d7600a618e09b5130dedab9",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/wbi",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=27 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=2",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b",
+        "verify": [
+          "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY_SUMMARY PASS"
+        ],
+        "outputs_sha256": {
+          "fix2-complexbuffer-s16be-varchunks.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "fix2-convertbuffer-f32-varchunks.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "fix2-convertbuffer-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "fix2-convertbuffer-s16be.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+        }
+      },
+      {
+        "label": "wvi",
+        "rc": 1,
+        "program_sha256": "9f2a3b470be62f59bdd9b6f0439b91bb45cbf8a9f96529c3d39426d2c2018977",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/wvi",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=13 failures=3"
+        ],
+        "failures": [
+          "B13FIX complex_input_size_mismatch FAIL status=0",
+          "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+          "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1"
+        ],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b",
+        "verify": [
+          "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY_SUMMARY PASS"
+        ]
+      },
+      {
+        "label": "wli",
+        "rc": 0,
+        "program_sha256": "2e4887c9b442ab92de5f8ae74d58aad19cd56975d1c0f83fa97e4cb4a3b600fa",
+        "args": "",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13LIM_SUMMARY checks=8 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b"
+      },
+      {
+        "label": "wpx",
+        "rc": 0,
+        "program_sha256": "906ca418dbceab4c842097c3377f76c5ec8b2739fb30415a3ad9f8caa52a2e0c",
+        "args": "probe /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/wpx",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13_SUMMARY checks=40 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b",
+        "verify": [
+          "VERIFY_SUMMARY pass=26 fail=0"
+        ],
+        "outputs_sha256": {
+          "bad-trunc.wav.packets": "d213af3535f44f898b8fc66341f3f69350025a8c3ff10f2bbc22b589cfbc1423",
+          "conv-s16le-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "demo-s16.aiff.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "demo-s16.aiff.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+          "demo-s16.caf.packets": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "demo-s16.caf.pd1000": "bb9a051dc471ad1978aeccecf4e2e1e6bdc87479b9aeb85c495d95dadd74d755",
+          "demo-s16.wav.packets": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+          "demo-s16.wav.pd1000": "71866c6e01a1d8e1984c0d2dac4544147c1b355dfab4f3f3cf20c2ec1aae5afc",
+          "demo-ulaw.wav.packets": "fd3c3c5af205df5fc975b98618875ed9b7d8ae967995d24b563695d9a88ace46",
+          "demo-ulaw.wav.pd1000": "b0108ca1bbbcc6334a4e995b53c3820466bc71dc60e4e236f53c0135768b4976",
+          "ext-aiff-s16le.raw": "2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+          "ext-ulaw-s16.raw": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+          "ext-wav-f32-48k.raw": "9693e8ca9b50f3dc1522219fadea2fa58efe812a88860ff6c97930dacdf39dd1",
+          "ext-wav-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0"
+        }
+      },
+      {
+        "label": "wcx",
+        "rc": 0,
+        "program_sha256": "906ca418dbceab4c842097c3377f76c5ec8b2739fb30415a3ad9f8caa52a2e0c",
+        "args": "convertbuffer /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/wcx",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b"
+      },
+      {
+        "label": "wax",
+        "rc": 0,
+        "program_sha256": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+        "args": "fix1 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/wax",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=6 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b",
+        "verify": [
+          "VERIFY fix1-ulaw_s16.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+          "VERIFY fix1-ulaw_s16_after_cookie.s16le PASS sha=14c0f6d33cb5dd35 expected=14c0f6d33cb5dd35",
+          "VERIFY_SUMMARY PASS"
+        ],
+        "outputs_sha256": {
+          "fix1-ulaw_s16.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+          "fix1-ulaw_s16_after_cookie.s16le": "14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb"
+        }
+      },
+      {
+        "label": "wbx",
+        "rc": 0,
+        "program_sha256": "3298d195a7a5b41a9ea7e88aa64ade15c55726ce564a952ae8a96b47a35ce906",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/wbx",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=27 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b",
+        "verify": [
+          "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-complexbuffer-s16be-varchunks.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY fix2-convertbuffer-f32-varchunks.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY_SUMMARY PASS"
+        ],
+        "outputs_sha256": {
+          "fix2-complexbuffer-s16be-varchunks.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530",
+          "fix2-convertbuffer-f32-varchunks.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "fix2-convertbuffer-f32.raw": "4f8551e27c66fbb265434c483c2dc6ea043a54f2fe37783a8d90c4e11ec7f2b0",
+          "fix2-convertbuffer-s16be.raw": "21622b0ba081ed77b167ab4526d1431771890d8844217654ceb3cf85a5b57530"
+        }
+      },
+      {
+        "label": "wvx",
+        "rc": 1,
+        "program_sha256": "98a1ed36778b13f15a165ab3448c6dd88d4442e366d0bf3f46be97ebaf20ee24",
+        "args": "fix2 /Volumes/SystemRoot<B13_STAGE>/media /Volumes/SystemRoot<B13_STAGE>/runs/out/wvx",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13FIX_SUMMARY checks=13 failures=3"
+        ],
+        "failures": [
+          "B13FIX complex_input_size_mismatch FAIL status=0",
+          "B13FIX capacity_half FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1",
+          "B13FIX capacity_not_whole_frames FAIL status=1869902714 out_bytes=0 prefix_ok=0 canary=1"
+        ],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b",
+        "verify": [
+          "VERIFY fix2-convertbuffer-s16be.raw PASS sha=21622b0ba081ed77 expected=21622b0ba081ed77",
+          "VERIFY fix2-convertbuffer-f32.raw PASS sha=4f8551e27c66fbb2 expected=4f8551e27c66fbb2",
+          "VERIFY_SUMMARY PASS"
+        ]
+      },
+      {
+        "label": "wlx",
+        "rc": 0,
+        "program_sha256": "e9e637c1550d4a913074bf0724a9fbb4b27d10387779ba46c8e6569ebb2007df",
+        "args": "",
+        "layer_files": [
+          "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+        ],
+        "installation": "<B13_STAGE>/mbuild/private-install",
+        "dyld": "0ee53a21a3a6db61bce4b4fa65dacb379b50f9a8b3186e074f1891980afaa696",
+        "ns_ldcache": "44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc",
+        "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b",
+        "ns_libcxx": "4d7e6e414102ad9b057ae2460034f385bb2a9b836dda7323f2f66934c6fd3312",
+        "summary": [
+          "B13LIM_SUMMARY checks=8 failures=0"
+        ],
+        "failures": [],
+        "end": [
+          "darlingserver_before=0",
+          "host_mounts_after=41",
+          "darlingserver_after=0",
+          "residual_prefix_processes=0"
+        ],
+        "candidate": "prod3b"
+      }
+    ]
+  },
+  "b13d": [
+    {
+      "label": "xdui",
+      "summary": [
+        "label=xdui arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-prod3b/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=163 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.558151211 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+    },
+    {
+      "label": "xdai",
+      "summary": [
+        "label=xdai arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-prod3b/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=164 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.593108242 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+    },
+    {
+      "label": "xdsi",
+      "summary": [
+        "label=xdsi arch=i386 mode=stoprestart layer=<B13_STAGE>/mfix/cand-prod3b/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=10 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.923838669 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  first_play_audible_s=0.695 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=30737/88200 DIFFERENT"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=30737/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=169984 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+    },
+    {
+      "label": "xdux",
+      "summary": [
+        "label=xdux arch=x86_64 mode=play layer=<B13_STAGE>/mfix/cand-prod3b/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=167 client=b13-atb-x86_64 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.506385581 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+    },
+    {
+      "label": "xdax",
+      "summary": [
+        "label=xdax arch=x86_64 mode=play layer=<B13_STAGE>/mfix/cand-prod3b/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=168 client=b13-atb-x86_64 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.591782997 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+    },
+    {
+      "label": "ydui",
+      "summary": [
+        "label=ydui arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-fix3/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=154 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.550619406 host_mounts_after=41 darlingserver_after=1 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+    },
+    {
+      "label": "ydai",
+      "summary": [
+        "label=ydai arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-fix3/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=155 client=b13-atb-i386 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.566796694 host_mounts_after=41 darlingserver_after=1 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+    },
+    {
+      "label": "ydsi",
+      "summary": [
+        "label=ydsi arch=i386 mode=stoprestart layer=<B13_STAGE>/mfix/cand-fix3/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=10 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.911056164 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  first_play_audible_s=0.649 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=28687/88200 DIFFERENT"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=28687/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=167936 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+    },
+    {
+      "label": "ydux",
+      "summary": [
+        "label=ydux arch=x86_64 mode=play layer=<B13_STAGE>/mfix/cand-fix3/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=158 client=b13-atb-x86_64 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.578219818 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=14c0f6d33cb5dd3538869cebb0459ca0b705bd9549dc59092b841da1c7a185cb",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+    },
+    {
+      "label": "ydax",
+      "summary": [
+        "label=ydax arch=x86_64 mode=play layer=<B13_STAGE>/mfix/cand-fix3/layer ldcache=44b298cbbad47bf1236dc55bb110d3432274dc2fdc28c85b927f84a361d67bcc pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B13_SUMMARY checks=8 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=159 client=b13-atb-x86_64 media=CoreAudio format=s16le rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.553785261 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "decoded_sha256=2b22df303e0bcfe6acf2742779e771074ffd3232fa65c29071bf2bf8cf0f7a9a",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)",
+        "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+    }
+  ],
+  "b12_non_regression": [
+    {
+      "label": "xn1p",
+      "summary": [
+        "label=xn1p arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-prod3b/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=169 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.334929752 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": null
+    },
+    {
+      "label": "xn1s",
+      "summary": [
+        "label=xn1s arch=i386 mode=stoprestart layer=<B13_STAGE>/mfix/cand-prod3b/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=14 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.775853631 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  first_play_audible_s=0.695 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=30737/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=161792 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "e63f11a60481904ab21d671cf4ccb1d6f899403954fdc52139d60b8f77edc42b"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": null
+    },
+    {
+      "label": "yn1p",
+      "summary": [
+        "label=yn1p arch=i386 mode=play layer=<B13_STAGE>/mfix/cand-fix3/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=12 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUT index=160 client=b12-play-i386 media=CoreAudio format=s16be rate=44100 channels=2 corked=0 PA_INPUTS count=1 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=4.355183320 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=98304 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": null
+    },
+    {
+      "label": "yn1s",
+      "summary": [
+        "label=yn1s arch=i386 mode=stoprestart layer=<B13_STAGE>/mfix/cand-fix3/layer ldcache=2b46350d35dc9f5376bd981d1ec9803ca8602c45626949a9a432bc86aae35d4d pulse_server=unix:/mnt/wslg/PulseServer",
+        "guest_rc=0 B12_SUMMARY checks=14 failures=0",
+        "record_rc=0 PA_RECORDED bytes=1411200",
+        "during: PA_INPUTS count=0 ",
+        "after: PA_INPUTS count=0 ",
+        "seconds=5.820938129 host_mounts_after=41 darlingserver_after=0 residual_prefix_processes=0 ",
+        "VERIFY_PCM PASS",
+        "VERIFY_CAPTURE PASS",
+        "  capture frames=352800 seconds=8.00",
+        "  first_play_audible_s=0.556 silent_gap_after_stop_s=0.744",
+        "  sounding_duration_s=1.997 expected_s=2.000",
+        "  after_end_rms=0.0 (window 0.1-1.0 s after end, 39690 frames)"
+      ],
+      "bitexact": "BITEXACT alignment_frame=106496 identical_frames=24589/88200 DIFFERENT",
+      "bitexact_second_pass": "BITEXACT alignment_frame=163840 identical_frames=88200/88200 IDENTICAL",
+      "layer_files": [
+        "7aed13154be6290d4707b75dfb1dd9fc3faa749826617e395b871aa9e1186acc"
+      ],
+      "installation": "<B13_STAGE>/mbuild/private-install",
+      "ns_audiotoolbox": null
+    }
+  ],
+  "mapped_elf_i386": {
+    "mmaps-xdui": {
+      "count": 142,
+      "private_ffmpeg": 115,
+      "private_pulse": 19,
+      "usr_lib32": 8,
+      "x86_64": 0,
+      "etc_ld_so_cache": 0
+    },
+    "mmaps-ydui": {
+      "count": 143,
+      "private_ffmpeg": 115,
+      "private_pulse": 19,
+      "usr_lib32": 8,
+      "x86_64": 0,
+      "etc_ld_so_cache": 1
+    },
+    "note": "/etc/ld.so.cache is the path inside the private mount namespace, where the bench bind-mounts the private cache (PREFLIGHT ns_ldcache); the observer matches it through its \\.so pattern and hashes the host file at the same path"
+  },
+  "host": {
+    "i386_packages": 0,
+    "foreign_architectures": [],
+    "ld_so_cache_sha256": "3ffa6037471f2ec983ca2a4e9cf29a171b956676e6ccd53012881aaf62ae0996",
+    "dpkg_status_sha256": "2a4ff8dd15a5a02fa74408e2d3ec9b2ad5ae6b3aed8d1f1989cdc9dc7ec74a8e",
+    "usr_lib_i386_linux_gnu": false,
+    "mounts": 41
+  }
+}

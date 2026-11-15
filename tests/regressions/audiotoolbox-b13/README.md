@@ -27,15 +27,19 @@ comparées hors de l'invité à un oracle indépendant de FFmpeg.
 | `b13-limits.c` | Revue R2b, hors des 27 contrôles : limites de taille avant conversion (débordement 32 bits du contrôle de format avec un nombre de canaux aberrant, tailles d'octets au-delà de 32 bits) ; 8 contrôles |
 | `verify_b13_fix.py` | Comparaison des sorties de `b13-fix` à `b13-oracle.json` (v2 : quatre fichiers pour `fix2`) |
 | `b13-afm.c`, `verify_b13_afm.py` | Défaut 3 (test seul) : propriétés `CFArrayRef` des composants AudioFile lues avec une taille de 4 octets ; composant WAVE interrogé directement (taille 4 / `sizeof(CFArrayRef)`), tables globales, recherche par extension, ouverture avec et sans indice ; 27 attendus fixés avant les essais |
+| `b13-afm2.c`, `verify_b13_afm2.py` | ATB-FIX3, oracle positif : tables par type et globales, recherches par extension, UTI et MIME, ouvertures avec et sans indice (WAV, AIFF, `.aif`, AIFF-C, fichiers invalides, extension inconnue) ; 47 contrôles par architecture et égalité i386/x86_64, attendus tirés de `AudioFileFormats.cpp` et d'`AudioFileOpenURL`, figés avant les essais |
+| `make_fix3_media.py` | Médias ATB-FIX3 dérivés des médias B13 : AIFF-C véritable, copie `.aif`, fichiers aléatoire et vide sous une extension inconnue |
 | `fixes/ATB-FIX1.patch` | Correctif ATB-FIX1, **intégré** à `master` le 15 novembre (commit `fix(audiotoolbox): initialize FFmpeg decoders from source ASBD`) |
 | `fixes/ATB-FIX2.patch` | Candidat ATB-FIX2 d'origine, **rejeté** par la revue B13-INT (conversion partielle et rééchantillonnage rendus `noErr` en tronquant, listes à plusieurs tampons mal traitées) |
 | `fixes/ATB-FIX2-R2.patch` | Candidat ATB-FIX2-R2, **remplacé par R2b** : une entrée PCM à trous y rend `noErr` avec des données mal lues, et une erreur en cours de conversion y annonce une taille partielle |
+| `fixes/ATB-FIX3.patch` | Correctif ATB-FIX3 (taille `sizeof(CFArrayRef)` pour les tableaux des composants AudioFile), **intégré** à `master` le 15 novembre (commit `fix(audiotoolbox): read AudioFile component arrays with pointer size`) |
 | `fixes/ATB-FIX2-R2b.patch` | Correctif ATB-FIX2-R2b, **intégré** à `master` le 15 novembre (commit `fix(audiotoolbox): repair AudioConverterConvertBuffer callback`) |
 | `tools/build_candidate.py` | Candidat AudioToolbox privé : recompile seulement les sources substituées avec la commande exacte du build B11E, relie, signe, prépare une couche overlay ; vérifie que le build B11E est inchangé ; sans substitution, reproduit la référence |
 | `tools/run-guest-ldc.sh` | Banc AUDIO-I386 + empreinte d'AudioToolbox vue dans l'espace de noms (`PREFLIGHT ns_audiotoolbox`) |
 | `tools/observe-maps.sh` | Observateur hôte des ELF mappés (motif paramétrable) |
 | `tools/collect_fix_results.py` | Collecte de `results-b13-i386-fixes.json` |
 | `results-b13-i386-fixes.json` | Résultats de la phase i386 et des correctifs |
+| `results-b13-fix3.json`, `tools/collect_fix3_results.py` | ATB-FIX3 : référence négative, candidat et binaire du commit de production ; oracle positif, non-régressions, B13-D, B12, empreintes, essais invalides, état de l'hôte |
 | `results-b13-fix2-r2b.json` | ATB-FIX2-R2b : candidats R2, R2 « taille 0 seule » et R2b, binaire du commit de production, limites, B13-D, B12, images ELF, état de l'hôte |
 | `tools/collect_r2b_results.py` | Collecte de `results-b13-fix2-r2b.json` |
 | `results-b13-integration.json` | B13-INT : build privé de `master`, exports, matrice de 70 essais, B13-D, B12, images ELF chargées, défaut 3, état de l'hôte |
@@ -139,3 +143,26 @@ LAYER=$T/mfix/cand-prod2/layer bash tools/run-b13.sh zli "$T/mwit-lim/b13-limits
 ```
 
 B13-D, Stop/Play et B12 se rejouent comme pour B13-INT, avec `LAYER=$T/mfix/cand-prod2/layer`.
+
+## ATB-FIX3 (15 novembre 2026)
+
+Rapport : [docs/evidence/audiotoolbox-b13-fix3-2026-11-15.md](../../../docs/evidence/audiotoolbox-b13-fix3-2026-11-15.md).
+`b13-afm` (défaut 3) reste la référence négative ; `b13-afm2` est l'oracle positif.
+
+```sh
+T=$HOME/d4wrling-work/validation/audiotoolbox-b13-20261115
+python3 -I make_fix3_media.py "$T/media" "$T/media-fix3"
+(cd "$T/probe" && for a in i386 x86_64; do B13_BUILD=$T/mbuild B13_SRC=$T/src CXX=1 MACOSX_SDK=… bash "$T/tools/build.sh" $a "$T/mwit-afm2" b13-afm2.c AudioToolbox CoreAudio CoreFoundation; done)
+(cd "$T/mbuild" && ninja src/CoreAudio/AudioToolbox/AudioToolbox)   # binaire du commit de production
+P=$T/mfix/cand-prod3b/layer/System/Library/Frameworks/AudioToolbox.framework/Versions/A
+mkdir -p "$P" && cp "$T/mbuild/src/CoreAudio/AudioToolbox/AudioToolbox" "$P/"
+export INST=$T/mbuild/private-install LDCACHE=$T/private-ffmpeg-20261115/ld.so.cache
+for a in i386 x86_64; do x=${a:0:1}; E=$T/runs/fix3/prod3b/afm2/$a; mkdir -p "$E"
+  for s in tables lookup; do LAYER=$T/mfix/cand-prod3b/layer bash tools/run-b13.sh v${s:0:1}$x "$T/mwit-afm2/b13-afm2-$a" normal 60 $s
+    cp "$T/runs/guest/v${s:0:1}$x/stdout.log" "$E/$s.log"; done
+  LAYER=$T/mfix/cand-prod3b/layer bash tools/run-b13.sh vo$x "$T/mwit-afm2/b13-afm2-$a" normal 60 open "/Volumes/SystemRoot$T/media" "/Volumes/SystemRoot$T/media-fix3"
+  cp "$T/runs/guest/vo$x/stdout.log" "$E/open.log"; done
+python3 -I verify_b13_afm2.py "$T/runs/fix3/prod3b/afm2/i386" "$T/runs/fix3/prod3b/afm2/x86_64"
+```
+
+La référence négative se rejoue comme dans B13-INT (`afm`), avec la couche du binaire voulu.
