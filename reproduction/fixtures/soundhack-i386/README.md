@@ -475,3 +475,21 @@ or installing dependencies.
 
 [SH17 guest evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH17-10400-guest-fft-pass.md) |
 [SH17 initial loader failure](../../../docs/evidence/soundhack-sh01-2026-11-10/SH17-10400-rpath-guest-blocked.md).
+
+## SH18 — official SoundHack 0.896 DMG retrieved (operator-reported)
+
+The original archive was fetched over HTTPS from the UCSD-hosted download
+linked on Tom Erbe's official SoundHack page. Original ZIP **1,247,567 bytes**,
+SHA-256 `47c9596bcf9d6aa8ae98c0dd4231accf05cb5bff555a9b95f0ba70bb7db504ae`.
+The ZIP contains `SH896.dmg` plus a `__MACOSX/._SH896.dmg` AppleDouble sidecar.
+The original DMG was safely extracted without redownloading the archive:
+**1,361,910 bytes**, SHA-256
+`269b0446d45e6ab155c96c53bd89c4e69d709e28b29fae8837e9643b06fb25ee`,
+with a valid `koly` UDIF trailer.
+
+The i5-10400 environment did not have `7zz`/`7z`; reading the DMG's HFS+
+filesystem, extracting SoundHack.app and running any application are still
+**NOT TESTED**. The next step is an explicit, SHA-pinned portable 7-Zip
+reader confined to the existing validation directory (no system install).
+
+[SH18 acquisition evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH18-10400-official-dmg-acquisition.md).
