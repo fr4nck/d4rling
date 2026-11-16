@@ -6,18 +6,22 @@ travail ; sa lecture ne déclenche ni expérimentation ni publication.
 Objectif : livrer une amélioration bornée, prouvée et réutilisable sans
 endommager les travaux existants ni annoncer une compatibilité non démontrée.
 
-## Remise des commandes au responsable sur iPhone 12 mini
+## Remise des commandes — règle permanente, indépendante de l'appareil
 
-**Instruction explicite du responsable du projet (16 novembre 2026) :**
-par defaut, il pilote les chantiers depuis son **iPhone 12 mini** jusqu'a indication contraire. **Il souhaite les commandes a copier-coller, et refuse les fichiers de scripts a telecharger.** Ne pas confondre appareil de conversation et machine cible (5700X/WSL2, 10400, etc.).
+**Consigne explicite et permanente du responsable (16 novembre 2026) :** ces préférences s'appliquent quel que soit l'appareil utilisé. Ne pas les conditionner à un téléphone, à un contexte mobile ou à un changement d'appareil ; ne pas présumer l'appareil courant. Adapter les commandes au shell et à la machine cible réellement identifiés.
 
-- Remettre **dans le chat**, en un bloc unique autonome, toute commande Bash, sh ou PowerShell requise, avec prevol, chemins, limites d'ecriture, acces reseau, protections, execution et bilan. Pas de `.sh`/`.ps1` telechargeable, d'archive, de piece jointe ou de lien sandbox comme substitut, sauf demande explicite.
-- Aucun besoin de clavier PC pour simplement recevoir ou copier un bloc ; ne pas presenter l'iPhone comme une interdiction de travailler avec le shell ou un agent.
-- **Un bloc colle dans la conversation n'est pas une preuve d'execution.** Ne parler de resultat observe qu'a partir d'une vraie sortie du terminal, d'un rapport ou de l'action d'un outil.
-- Lorsque l'execution sur la machine cible n'est pas possible depuis l'agent courant, le dire et fournir le bloc directement exploitable. Ne pas attribuer a un agent des executions non effectuees.
-- Ceci regit la **forme de livraison** ; les agents techniques peuvent toujours creer des fichiers dans les emplacements de travail autorises si leur mission et les autres regles le permettent.
+- **Commandes intégrales dans le chat :** fournir toute commande Bash/Shell (dont `sh`) ou PowerShell dans **un bloc unique, autonome et directement copiable**, avec prévol, chemins, limites d'écriture, accès réseau, protections, exécution et bilan. Aucune retouche ni composition manuelle ne doit être exigée.
+- **Jamais de scripts à télécharger, sauf demande explicite :** ne fournir ni fichier `.sh`/`.ps1`, ni archive, pièce jointe ou lien de téléchargement/sandbox pour remettre un script à l'utilisateur sans cette demande.
+- **Copie automatique pour CHAQUE commande ou script Bash/Shell :** incorporer dans le même bloc la collecte du bilan/journal utile et sa copie dans le presse-papiers **à la fin de l'exécution, y compris en cas d'échec**, sans demander une seconde commande ni une étape manuelle supplémentaire. Le résultat doit être prêt à coller dans la conversation.
+- **Finalisation et code de retour :** installer la finalisation avant les prévols et opérations susceptibles d'échouer (`trap EXIT` en Bash, mécanisme équivalent compatible avec le shell employé). Capturer immédiatement le véritable code de retour de l'exécution, joindre au bilan le diagnostic et ce code, puis préserver ce même code après journalisation, copie et nettoyage. Une erreur du presse-papiers ne doit ni masquer l'échec initial ni transformer une exécution réussie en échec.
+- **Presse-papiers disponible :** privilégier `clip.exe` sous WSL2, `pbcopy` sous macOS, puis `wl-copy` ou `xclip` sous Linux selon les outils et la session disponibles. Vérifier la disponibilité et le succès réel de la copie ; ne pas installer d'outil implicitement.
+- **Protection des secrets :** ne collecter que les informations utiles et non sensibles ; expurger avant affichage, enregistrement ou copie les mots de passe, jetons, clés, données personnelles et chemins sensibles. Ne pas activer de trace de commandes ni copier un inventaire brut de l'environnement susceptible de révéler des secrets.
+- **Rapport préservé si la copie est impossible :** afficher un avertissement explicite, garder le bilan expurgé lisible dans le terminal et conserver tout rapport déjà enregistré dans son emplacement autorisé à accès restreint, sans le supprimer ni l'écraser lors du nettoyage. L'absence ou l'échec du presse-papiers ne doit jamais faire perdre le rapport ni altérer le code de retour initial.
+- **Un bloc collé n'est pas une preuve d'exécution.** Seule une sortie de terminal, un rapport ou l'action effective d'un outil permet d'affirmer qu'une commande a été exécutée ou qu'un résultat est observé.
+- Ne pas confondre l'appareil de conversation et la machine cible (5700X/WSL2, 10400, etc.), ni présumer un accès à celle-ci. Si l'agent ne peut pas y exécuter les commandes, le dire et remettre le bloc directement exploitable.
+- Cette règle concerne **la forme de livraison à l'utilisateur** ; les agents peuvent créer leurs propres fichiers de travail uniquement dans les emplacements et limites autorisés par leur mission.
 
-Voir aussi la consigne transversale du depot `PMSL-Arch/AGENTS.md`.
+Voir aussi la consigne transversale du dépôt `PMSL-Arch/AGENTS.md`.
 
 ## Gouvernance transversale — PMSL-ARCH
 
