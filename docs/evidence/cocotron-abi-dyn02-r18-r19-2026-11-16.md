@@ -40,3 +40,25 @@ Le document [cocotron-abi-dyn02-t3-2026-11-16.md](cocotron-abi-dyn02-t3-2026-11-
 **Preuves privées, non publiées** (sous `/home/Deniel/d4wrling-work/validation/cocotron-abi-dyn-01-20261115/`) : `d2-t3-12/RESULT.txt`, `d2-memory14/RESULT.txt`, `d2-build15c/RESULT.txt`, `d2-smoke17/RESULT.txt`, `d2-matrix18/RESULT.txt`, `d2-x64-19/RESULT.txt`. Les binaires, préfixes et journaux complets restent sur le poste opérateur.
 
 Coordination : [issue D4rling #16](https://github.com/fr4nck/d4rling/issues/16).
+
+## Revue statique R20 — adaptation du correctif aux ivars `NS_EXTRA`
+
+**Source inspectée directement sur GitHub, sans exécution locale :** `darlinghq/darling-cocotron` au commit `44b6bec2cb852be07e62dec35dbd3c6c0596b7cf`, dans `AppKit/NSCell.m`, `AppKit/NSMenu.subproj/NSMenu.m` et `AppKit/include/AppKit/AppKitIvarLayout.h`. Il s'agit de la base amont analysée, **pas** du gitlink D4rling, qui reste `deef99117`.
+
+La PR amont [#256](https://github.com/darlinghq/darling-cocotron/pull/256) a introduit `NS_EXTRA_COPY(cls, copy, self)` pour préserver l'empreinte de l'ABI fragile i386. Son implémentation détache le bloc d'ivars par `memcpy` (ou copie le stockage associé), et **ne copie ni ne retient séparément les objets référencés par les champs de ce bloc** ; sur l'ABI non fragile, la macro n'a pas d'effet et `NSCopyObject` recopie les ivars. Dans les deux fichiers amont, `_identifier` utilise `NS_EXTRA_SYNTHESIZE_COPY` pour son *setter*, mais `copyWithZone:` laisse le pointeur copié sans nouvelle acquisition de propriété, puis `dealloc` libère `NS_EXTRA(...)->_identifier`. Ce mécanisme constitue un **risque de double libération établi par revue de source**, sans preuve de reproduction dynamique sur le commit amont actuel.
+
+**Portage proposé pour essai privé, après `NS_EXTRA_COPY` dans chaque `copyWithZone:` :**
+
+```objective-c
+NS_EXTRA(NSCell, copy)->_identifier =
+    [NS_EXTRA(NSCell, self)->_identifier copyWithZone: zone];
+```
+
+```objective-c
+NS_EXTRA(NSMenu, copy)->_identifier =
+    [NS_EXTRA(NSMenu, self)->_identifier copyWithZone: zone];
+```
+
+**Statut : `STATIC_PORT_CANDIDATE_NOT_BUILT`.** Aucune modification de source amont, commit Cocotron, déplacement de gitlink ou requalification ABI n'a été effectué. L'ancienne modification `copy->_identifier = ...` de R14 **ne s'applique pas telle quelle** aux deux fichiers amont actuels. Les signatures, tailles et offsets de l'ABI i386 doivent être reconfirmés sur le candidat construit avant toute intégration.
+
+Avant de rapprocher les deux candidats locaux `6e7a6ed8…` et `5585dd21…`, comparer leurs tranches Mach-O et leurs métadonnées de liaison/signature : **des SHA-256 FAT distincts ne suffisent pas à conclure que leur code machine diverge.** La comparaison locale n'est pas encore exécutée dans ce lot.
