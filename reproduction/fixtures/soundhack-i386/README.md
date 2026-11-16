@@ -527,3 +527,40 @@ Output: `validation/soundhack-sh18/SoundHack896-payload`.
 Bundle resources/Carbon dependencies have not yet been reviewed; the
 application has not started or produced audio. **SH19** should audit the
 i386 slice, dylib load commands and bundle contents before any guest run.
+
+## SH19 — original application static dependency gate (host only)
+
+[sh19_app_gate.py](sh19_app_gate.py) is an **offline**, read-only gate
+for the actual SoundHack 0.896 Universal Binary app obtained in SH18.
+It calls the **existing** [macho_audit.py](macho_audit.py) rather than
+introducing a second Mach-O parser. Its authenticated app-executable
+SHA-256 is pinned to
+`6fb11c708079ca3b8f91dc53ab0d8ae732fbb8be32f0e22e34114764b9be089c`.
+
+The gate checks the bundle manifest (`Info.plist` / `CFBundleExecutable`),
+requires i386 `MH_EXECUTE` in a PPC+i386 FAT image, lists resources and
+Mach-O imports, and *optionally* checks whether the exact recorded library
+paths exist within an **already existing private** Darling sysroot.
+A file's presence is **not** a dyld loader PASS, nor proof of correct
+architecture, reexports, symbol binding or audio. It never executes code
+from SoundHack, touches the installed prefix or modifies D4rling sources.
+It creates no file by default; the optional `--output` uses exclusive
+creation in an existing directory.
+
+The original operator-provided SH18 bundle is located under
+`~/atelier/d4rling-10400/validation/soundhack-sh18/SoundHack896-payload/SoundHack.app`
+on the **10400**. The **5700X does not automatically possess that bundle**;
+do not treat a checkout or successful synthetic test as an app replay.
+Use `--app /verified/SoundHack.app` with an optional
+`--sysroot /verified/private-install/libexec/darling` only after verifying
+the local source and prefix. The command returns a JSON report.
+
+`test_sh19_app_gate.py` exercises **14** synthetic positive/negative cases
+with a mocked interface to the previously tested Mach-O parser: missing
+framework, missing prefix, bad hash, PPC-only/thin binary, wrong filetype,
+wrong hash from parser, symbolic links, invalid Info.plist, unexpected
+executable key, loader escape and invalid dylib install name.
+14/14 host tests passed locally in an isolated Python session; **neither
+the original SH18 app nor guest runtime were available in that session**.
+
+[SH19 host evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH19-original-app-static-gate.md).
