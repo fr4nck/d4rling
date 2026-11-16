@@ -17,6 +17,10 @@ le plafond de trois morceaux par artiste. Ce repère éditorial ne vaut pas
 validation technique : les critères R/U/A/M/QT/L/P et leurs statuts restent
 indépendants.
 
+## SoundHack SH18 — vraie application universelle extraite (16 novembre 2026)
+
+**OBS / `SH18_ORIGINAL_UNIVERSAL_APP_EXTRACTED_PASS` (10400, non rejoué).** Le vrai installateur SoundHack 0.896 officiel a livré un `SoundHack.app` de 8 fichiers, avec exécutable Mach-O universel **PPC + i386**, SHA-256 `6fb11c708079ca3b8f91dc53ab0d8ae732fbb8be32f0e22e34114764b9be089c`. Aucune dépendance applicative ni audio qualifié ; SH19 = audit du binaire i386 et des ressources avant lancement invité. [Preuves](docs/evidence/soundhack-sh01-2026-11-10/SH18-10400-official-dmg-acquisition.md).
+
 ## SoundHack SH17 — calcul FFT exécuté dans D4rling i386 (15 novembre 2026)
 
 **TEST / `SOUNDHACK_SH17_GUEST_FFT_PASS` (opérateur 10400, non rejoué).** Bibliothèque FFT originale SH16 inchangée, `@loader_path` qualifié pour le témoin, quatre marqueurs invités et code retour 0. Tests limités à l'initialisation, deux impulsions complexes et une impulsion réelle avec inverses, sentinelles contrôlées. L'application SoundHack, GUI et audio restent non testés. [Rapport](docs/evidence/soundhack-sh01-2026-11-10/SH17-10400-guest-fft-pass.md).

@@ -508,3 +508,22 @@ visible `.app` bundle. Global extraction was **BLOCKED by two safe-by-default
 step.** Next: inspect and extract the `Contents/Archive.pax.gz` payload
 as CPIO or TAR with path and size guards, without overriding link safety or
 replaying the entire DMG extraction.
+
+### SH18 — original application extracted from legacy CPIO (operator update)
+
+An **offline** safe parser read the real `Contents/Archive.pax.gz` from the
+partially extracted Apple installer: gzip SHA-256
+`8896cf91dd4eab673f2b2d2fd1113aa6af260dd21ff70ccbc74c26cb37bca719`;
+1,658,199 bytes decompressed; old `cpio-odc` format, 14 entries.
+Exactly **one `SoundHack.app` bundle** was selected, containing **8 files**
+and no included symlinks. The unmodified executable
+`SoundHack.app/Contents/MacOS/SoundHack` is a real **FAT Mach-O
+`ppc` + `i386`**, confirmed using `file` and `llvm-lipo-19`.
+SHA-256:
+`6fb11c708079ca3b8f91dc53ab0d8ae732fbb8be32f0e22e34114764b9be089c`.
+Output: `validation/soundhack-sh18/SoundHack896-payload`.
+
+**`SH18_ORIGINAL_UNIVERSAL_APP_EXTRACTED_PASS` (operator-reported)**.
+Bundle resources/Carbon dependencies have not yet been reviewed; the
+application has not started or produced audio. **SH19** should audit the
+i386 slice, dylib load commands and bundle contents before any guest run.

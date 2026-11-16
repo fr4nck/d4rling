@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## SOUNDHACK SH18 — application officielle universelle extraite (16 novembre 2026)
+
+**`SH18_ORIGINAL_UNIVERSAL_APP_EXTRACTED_PASS` — observation opérateur 10400.** ZIP officiel et DMG UDIF vérifiés ; lecteur 7-Zip portable SHA-épinglé, ancien installateur `.pkg`, `Archive.pax.gz` au format CPIO odc. Extraction isolée de **8 fichiers** dans `SoundHack.app` ; véritable exécutable universel **PowerPC + i386**, SHA-256 `6fb11c708079ca3b8f91dc53ab0d8ae732fbb8be32f0e22e34114764b9be089c`. **Pas de lancement applicatif ni d'audio.** Étape SH19 : commandes Mach-O i386, ressources et dépendances sur sysroot privé. [Preuve](docs/evidence/soundhack-sh01-2026-11-10/SH18-10400-official-dmg-acquisition.md).
+
 ## SOUNDHACK SH17 — FFT originale exécutée dans l'invité i386 (15 novembre 2026)
 
 **`SOUNDHACK_SH17_GUEST_FFT_PASS` — preuve transmise depuis le 10400, non rejouée par l'agent.** Vraie dylib SH16 Mach-O i386 inchangée, chargée par `dyld` via `@loader_path` ; `InitFFTTable`, `FFT` complexe aller/retour et `RealFFT` d'impulsion aller/retour validées numériquement, code invité 0 et quatre marqueurs positifs. L'échec initial `@rpath` est conservé comme contre-épreuve. Pas de démarrage de SoundHack.app, d'interface ou d'audio. [Preuves et source témoin](docs/evidence/soundhack-sh01-2026-11-10/SH17-10400-guest-fft-pass.md).

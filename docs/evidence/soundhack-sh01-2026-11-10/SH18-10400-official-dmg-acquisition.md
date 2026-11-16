@@ -72,3 +72,21 @@ sources historiques de D4rling restent intacts.
 
 Source technique : [Documentation historique Apple sur PackageMaker](https://leopard-adc.pepas.com/documentation/Darwin/Conceptual/KEXTConcept/KEXTConceptPackaging/packaging_kext.html)
 (explique `Archive.pax.gz`, `Archive.bom` et `Contents/Resources`).
+
+## SH18 — extraction contrôlée du véritable bundle Universal Binary (observation opérateur du 16 novembre 2026)
+
+Le script `SH18_PAX`, exécuté **en lecture hors réseau** sur le 10400, a trouvé **une seule archive** du paquet de l'image partiellement extraite :
+
+`SoundHack896-extracted/SH896/SoundHack 0.896 - Universal Binary.pkg/Contents/Archive.pax.gz`
+
+- SHA-256 de `Archive.pax.gz` : `8896cf91dd4eab673f2b2d2fd1113aa6af260dd21ff70ccbc74c26cb37bca719`.
+- Après décompression gzip : **1 658 199 octets**, structure **CPIO odc** (`070707`), **14 entrées**.
+- Un seul bundle applicatif : `SoundHack.app` ; **8 fichiers ordinaires** extraits ; **0 lien symbolique** inclus dans ce bundle.
+- Destination isolée : `~/atelier/d4rling-10400/validation/soundhack-sh18/SoundHack896-payload/SoundHack.app/`.
+- Exécutable d'origine : `Contents/MacOS/SoundHack`, **Mach-O universel à deux architectures `ppc` + `i386`**, confirmé indépendamment par `file` et `llvm-lipo-19 -archs` dans le terminal.
+- SHA-256 de cet exécutable universel : **`6fb11c708079ca3b8f91dc53ab0d8ae732fbb8be32f0e22e34114764b9be089c`**.
+- Marqueurs de fin : **`SH18_PAYLOAD=EXTRACTED_FOR_REVIEW`**, **`SH18_APP_EXECUTED=NO`**.
+
+**Statut acquis : `SH18_ORIGINAL_UNIVERSAL_APP_EXTRACTED_PASS` (preuve opérateur, non rejouée par l'agent).** Ce n'est ni la validation des dépendances Carbon/QuickTime/CoreAudio ni celle des ressources historiques du bundle (dont d'éventuelles resource forks), ni un démarrage de SoundHack.app. Le code de production D4rling, son préfixe, le build historique, le dépôt local et les autres travaux sont restés inchangés.
+
+Suite ciblée **SH19** : auditer directement le `MH_EXECUTE` i386 interne au FAT, les commandes `LC_LOAD_DYLIB`, les ressources/Info.plist et la disponibilité des dépendances dans le sysroot privé. Ne pas supposer qu'une extraction de huit fichiers suffit à restituer les ressources Carbon ; ne pas déclarer un lancement applicatif avant un vrai essai invité borné.
