@@ -94,3 +94,46 @@ ne pas toucher aux lots Logic/Carbon/QuickTime/audio détenus par d'autres.
 **Niveau de preuve de la publication : `SH20_TOOL_SYNTHETIC_19_PASS` ;
 `REAL_APP_5700X=NOT_RUN` ; `SH_LOAD=NOT_RUN` ; `GUI=NOT_RUN` ;
 `DSP=NOT_RUN` ; `AUDIO=NOT_RUN`.**
+
+## Résultat post-publication sur le vrai SoundHack (5700X, journal opérateur du 16 novembre 2026)
+
+**Nouveau statut : `SH20_OFFICIAL_APP_REPLAY_STATIC_PASS` sur données réelles,
+observé dans la sortie terminal transmise par l'opérateur**. Cette section
+complète la qualification synthétique qui précédait le rejeu ; elle ne
+constitue pas une exécution indépendante par le rédacteur.
+
+- Hôte : `5700X`, Debian WSL2 ; checkout historique propre
+  `/home/Deniel/d4wrling-work/validation/security-s4-logic-l1-20261114/src`
+  à `a007a5399d40868588d8cf7fbba97b726506ffa3`.
+  Sources SH20/SH19/Mach-O récupérées depuis le commit immutable
+  `1756654add25beb07301d813b6f6965b70e91276` ;
+  **4/4 empreintes Git blob validées**.
+- Stage nouveau et isolé :
+  `/home/Deniel/d4wrling-work/validation/soundhack-sh20.3OvPqBmm`.
+  Les 19 tests hôtes sont repassés : **19/19 PASS** sur le 5700X.
+- Rejeu réel du ZIP UCSD et de l'archive portable 7-Zip :
+  `SH20_PIN_DMG=PASS`, `SH20_PIN_PAX=PASS`,
+  `SH20_PIN_SOUNDHACK_EXECUTABLE=PASS`, SH19 exécuté sur l'authentique
+  `SoundHack.app` extrait, avec sysroot privé B13 existant en lecture seule.
+- Rapport officiel :
+  `/home/Deniel/d4wrling-work/validation/soundhack-sh20.3OvPqBmm/replay/SH20-summary.json`.
+  Console : `SH20_IMPORTED_SYMBOLS=393`, `SH20_DYLIB_COUNT=7`,
+  `SH20_MISSING_LITERAL_STRONG=0`.
+- Sept dépendances Mach-O référencées par le véritable exécutable i386 :
+  `Carbon`, `QuickTime`, `CoreAudio`, `AudioToolbox`, `AudioUnit`,
+  `/usr/lib/libgcc_s.1.dylib` et `/usr/lib/libSystem.B.dylib`.
+  Pour chacune, l'outil annonce `FILE_PRESENT_NOT_LOAD_VERIFIED` dans
+  le sysroot privé inspecté. **La présence d'un fichier ne prouve pas
+  la compatibilité ABI, la résolution des 393 imports ou le chargement
+  effectif par dyld.**
+- Fin du lot : `STATUS=SH20_ORIGINAL_APP_STATIC_REPLAY_REPORTED`,
+  `FINAL_EXIT_CODE=0`, `CLIPBOARD=WINDOWS_COPIED`,
+  `SOUNDHACK_APP_EXECUTED=NO` et `SOUNDHACK_AUDIO=NOT_TESTED`.
+  Aucun commit, build, install ou guest-run réalisé par le script hôte.
+
+**Qualification acquise : vrai SoundHack universel d'origine identifié,
+récupéré et audité statiquement sur le 5700X.**
+**Qualification non acquise : lancement `SH-LOAD`, résolution des 393
+imports, interface Carbon, QuickTime en fonctionnement, DSP et audio.**
+Prochaine étape : analyser la fermeture des imports par bibliothèque
+dans le sysroot privé sans modifier les autres chantiers D4rling.

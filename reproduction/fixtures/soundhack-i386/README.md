@@ -611,3 +611,21 @@ command supplied in conversation and documented by
 **Qualification:** syntax + **19/19** synthetic tests PASS (including mocked
 end-to-end 7-Zip/HFS/SH19); real 5700X download/HFS replay **NOT YET RUN**.
 Guest app load, Carbon GUI, audio and resource forks remain unqualified.
+
+### SH20 — real official archive replay on 5700X (operator log, 2026-11-16)
+
+**Subsequent to the initial synthetic-only publication**, the operator
+ran the pinned SH20 script on the 5700X. The real SH18-verified
+SoundHack 0.896 application was recovered and its i386 Mach-O inspected
+by SH19 with the **existing private B13 sysroot**: 
+`SH20_OFFICIAL_APP_REPLAY_STATIC_PASS`, `FINAL_EXIT_CODE=0`,
+and 19/19 local synthetic tests PASS. Guest execution and audio: **NO**.
+
+Measured on the authentic executable: **393 nlist imports**, **seven
+recorded dylib load commands**: Carbon, QuickTime, CoreAudio,
+AudioToolbox, AudioUnit, libgcc_s.1.dylib and libSystem.B.dylib.
+**0 strong dylibs missing from their literal on-disk locations** in the
+private sysroot; every location is `FILE_PRESENT_NOT_LOAD_VERIFIED`.
+This is **not** a dyld bind/ABI, Carbon GUI or audio PASS.
+Private stage: `~/d4wrling-work/validation/soundhack-sh20.3OvPqBmm`.
+[Operator-reported evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH20-official-portable-replay.md).
