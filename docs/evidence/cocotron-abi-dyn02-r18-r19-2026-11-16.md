@@ -91,3 +91,14 @@ Le candidat initial FAT signé `6e7a6ed8da65aaaf7f3f847d756d64f825721ca8289616e7
 Les deux fichiers sources modifiés en copie privée ont les SHA-256 `bc01ea243636ef5f695192f04b315e4137ccc8b9f87e159d5319e88f73c6ccbb` et `99c9425165e6c66930986402f296d9b25a85f697f17210ce1f29de8a5cafcc71`. Patch effectif `27480ed7cbb966cdb1d92efcc6661bfb95ff9387b3e2a3a2e4fb793b8afa3ea6`. **Le patch R21 et le patch généré R22 s'appliquent tous les deux aux sources exactes** ; `AppKitIvarLayout.h` demeure inchangé. Rapport : `d2-port21/upstream22/RESULT.txt`, statut `PASS_EXACT_UPSTREAM_PATCH_STAGED`, `SCRIPT_RC=0`, 204 KiB privés écrits.
 
 **Limite :** aucun AppKit amont compilé, ni test invité, ni preuve de conformité ABI sur cette révision. Le dépôt D4rling, son gitlink `deef99117`, la base B13 et l'installation n'ont pas été modifiés. **Prochaine étape :** obtenir l'arborescence amont complète et cohérente du commit épinglé dans un autre dossier privé, puis vérifier son arbre Git avant une compilation isolée. Ne pas compiler seulement les trois fichiers dans le contexte ancien B13.
+
+## R23 — source amont complète épinglée et corrigée en privé
+
+**Résultats rapportés depuis le terminal 5700X le 16 novembre 2026 ; non rejoués par l'agent.** R23 a réalisé un `git fetch --depth=1 --no-tags` exclusivement dans `validation/cocotron-abi-dyn-01-20261115/d2-port23/source`, puis un checkout **détaché**, sans nouvelle branche.
+
+- Commit Cocotron : `44b6bec2cb852be07e62dec35dbd3c6c0596b7cf`; arbre Git intégral : `233fd60739bf39f78f49add880f402a418915fd3`, validé ; **2 336 fichiers suivis** dans le checkout initial propre.
+- Trois blobs d'origine recoupés avec R22 : `NSCell.m` `1051fac5775db9de76ae1ea4fcf20dc4c2a3b4d6`, `NSMenu.m` `2fdc3c8f843e96e97534ce89e0a735ca47628970`, `AppKitIvarLayout.h` `ef51278e1b845417c2828be3c9a323debe7091e0`.
+- Application en privé du patch de SHA-256 `27480ed7cbb966cdb1d92efcc6661bfb95ff9387b3e2a3a2e4fb793b8afa3ea6` : **exactement deux fichiers modifiés** (`NSCell.m`, `NSMenu.subproj/NSMenu.m`), vérifiés par les SHA-256 `bc01ea243636ef5f695192f04b315e4137ccc8b9f87e159d5319e88f73c6ccbb` et `99c9425165e6c66930986402f296d9b25a85f697f17210ce1f29de8a5cafcc71`. Aucun changement du header de disposition ABI.
+- L'espace R23 occupe 28 380 KiB ; `RESULT=PASS_COHERENT_UPSTREAM_SOURCE_STAGED`, `SCRIPT_RC=0`. Ni le gitlink D4rling `deef99117`, ni les sources/artefacts B13 ni l'installation de référence n'ont été modifiés.
+
+**Prochain lot :** prévol du graphe CMake/Ninja B13 et plan de compilation **avec l'ensemble des headers ABI du Cocotron épinglé**, sans réutiliser aveuglément les objets issus de l'ancienne disposition ABI. Aucune compilation, exécution invité ou preuve de conformité de l'ABI Apple i386 à ce stade. Le candidat R15C ancien reste 44/44 PASS T3 sur son propre binaire et sa propre source, sans transfert automatique de la qualification au nouveau portage.
