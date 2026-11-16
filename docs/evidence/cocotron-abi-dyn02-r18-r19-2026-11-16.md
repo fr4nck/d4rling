@@ -77,3 +77,17 @@ Le candidat initial FAT signé `6e7a6ed8da65aaaf7f3f847d756d64f825721ca8289616e7
 | Signature embarquée, octets | 37 376 | 0 | 44 192 | 0 |
 
 **Verdict : `PASS_BINARY_COMPARISON` ; `TEXT_OR_ARCHITECTURE_DIFFERENCES`.** Les sections de code ne sont pas identiques, en plus des signatures et UUID. **Ne pas assimiler ces différences binaires à des différences fonctionnelles**, ni combiner leurs journaux de test. Conserver les deux origines et leurs preuves. R15C conserve la matrice T3 44/44 la plus complète ; la compilation, les liens et d'éventuels écarts de code doivent encore être examinés par provenance. Aucun déplacement de gitlink et aucune intégration production.
+
+## R22 — validation des fichiers amont épinglés
+
+**Compte rendu de l'opérateur du 16 novembre 2026 ; non rejoué par l'agent.** À la suite du blocage R21 (`44b6bec2` absent des objets Git du checkout B13), R22 a téléchargé par HTTPS uniquement trois fichiers publics épinglés à `44b6bec2cb852be07e62dec35dbd3c6c0596b7cf` dans `validation/cocotron-abi-dyn-01-20261115/d2-port21/upstream22`. Aucun `git fetch`, checkout ou changement de production.
+
+| Fichier | Blob Git amont vérifié | SHA-256 de la source originale |
+| --- | --- | --- |
+| `AppKit/NSCell.m` | `1051fac5775db9de76ae1ea4fcf20dc4c2a3b4d6` | `b34b9e0798ec51cda9a2a1a03d191c8769c544964c624bf42087991106586780` |
+| `AppKit/NSMenu.subproj/NSMenu.m` | `2fdc3c8f843e96e97534ce89e0a735ca47628970` | `6d55ba1aff18f56f41e71b43abac27b67547d1797a8347a33cdff71d02a83b0d` |
+| `AppKit/include/AppKit/AppKitIvarLayout.h` | `ef51278e1b845417c2828be3c9a323debe7091e0` | `6d9fca849e94b0aa82666ab808e5d654bd68c1bb3d7833dbf07e1c103322cc4f` |
+
+Les deux fichiers sources modifiés en copie privée ont les SHA-256 `bc01ea243636ef5f695192f04b315e4137ccc8b9f87e159d5319e88f73c6ccbb` et `99c9425165e6c66930986402f296d9b25a85f697f17210ce1f29de8a5cafcc71`. Patch effectif `27480ed7cbb966cdb1d92efcc6661bfb95ff9387b3e2a3a2e4fb793b8afa3ea6`. **Le patch R21 et le patch généré R22 s'appliquent tous les deux aux sources exactes** ; `AppKitIvarLayout.h` demeure inchangé. Rapport : `d2-port21/upstream22/RESULT.txt`, statut `PASS_EXACT_UPSTREAM_PATCH_STAGED`, `SCRIPT_RC=0`, 204 KiB privés écrits.
+
+**Limite :** aucun AppKit amont compilé, ni test invité, ni preuve de conformité ABI sur cette révision. Le dépôt D4rling, son gitlink `deef99117`, la base B13 et l'installation n'ont pas été modifiés. **Prochaine étape :** obtenir l'arborescence amont complète et cohérente du commit épinglé dans un autre dossier privé, puis vérifier son arbre Git avant une compilation isolée. Ne pas compiler seulement les trois fichiers dans le contexte ancien B13.
