@@ -62,3 +62,18 @@ NS_EXTRA(NSMenu, copy)->_identifier =
 **Statut : `STATIC_PORT_CANDIDATE_NOT_BUILT`.** Aucune modification de source amont, commit Cocotron, déplacement de gitlink ou requalification ABI n'a été effectué. L'ancienne modification `copy->_identifier = ...` de R14 **ne s'applique pas telle quelle** aux deux fichiers amont actuels. Les signatures, tailles et offsets de l'ABI i386 doivent être reconfirmés sur le candidat construit avant toute intégration.
 
 Avant de rapprocher les deux candidats locaux `6e7a6ed8…` et `5585dd21…`, comparer leurs tranches Mach-O et leurs métadonnées de liaison/signature : **des SHA-256 FAT distincts ne suffisent pas à conclure que leur code machine diverge.** La comparaison locale n'est pas encore exécutée dans ce lot.
+
+## R20 — comparaison binaire locale des candidats
+
+**Preuve :** compte rendu du script local `DYN02-R20` transmis par l'opérateur le 16 novembre 2026 ; lecture seule, sans construction, installation, invité ni modification Git. Révision Cocotron B13 retrouvée : `deef99117c634c4e05cdd8fda4487c2dbc1d78a0`. Les qualifications R18 i386 et R19 x86_64 ont été vérifiées dans les rapports présents sur le 5700X, et non rejouées.
+
+Le candidat initial FAT signé `6e7a6ed8da65aaaf7f3f847d756d64f825721ca8289616e72a4397b8f3cb940f` a été retrouvé à `validation/cocotron-abi-dyn-01-20261115/codex-dyn02-run/retry.d4FOaxxd/layer/System/Library/Frameworks/AppKit.framework/Versions/C/AppKit`. Recherche bornée : 5 racines, 596 fichiers visités, 5 binaires hachés, aucune troncature. Candidat R15C : `5585dd21db3abc13b748d28ac5a406dd4ed1b1df4d188b438460eea03d2f78ed`.
+
+| Propriété | Ancien i386 | R15C i386 | Ancien x86_64 | R15C x86_64 |
+| --- | --- | --- | --- | --- |
+| Tranche, octets | 4 788 816 | 4 751 272 | 5 671 520 | 5 627 148 |
+| UUID | `78ff90fb5e293129b2027720ffb6eaee` | `8f9d26426ad3322abc620cf4ee3257cd` | `514c96b7ae653fc0aa1f9a302bf8400c` | `495f3f6d77a63d46bda0cc684bbf2720` |
+| SHA-256 `__TEXT,__text` | `e92ac5a45b89c869c73811ff5dc0a10959787df2c7132e66bd190a3ffa858749` | `70ea1a5de863780a9174356d2902837564cf43e714a8b37a9c7b5af2a201b3e3` | `1b7845f1e528c72de034bd77137bb008ea94a7a8a9ea65e94527e06c6e44308f` | `b1da8b21582397dae79adebe9ffa60eb3f2546ea8010955d07e13fa17b9043b5` |
+| Signature embarquée, octets | 37 376 | 0 | 44 192 | 0 |
+
+**Verdict : `PASS_BINARY_COMPARISON` ; `TEXT_OR_ARCHITECTURE_DIFFERENCES`.** Les sections de code ne sont pas identiques, en plus des signatures et UUID. **Ne pas assimiler ces différences binaires à des différences fonctionnelles**, ni combiner leurs journaux de test. Conserver les deux origines et leurs preuves. R15C conserve la matrice T3 44/44 la plus complète ; la compilation, les liens et d'éventuels écarts de code doivent encore être examinés par provenance. Aucun déplacement de gitlink et aucune intégration production.
