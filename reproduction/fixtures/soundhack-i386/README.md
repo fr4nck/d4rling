@@ -564,3 +564,50 @@ executable key, loader escape and invalid dylib install name.
 the original SH18 app nor guest runtime were available in that session**.
 
 [SH19 host evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH19-original-app-static-gate.md).
+
+## SH20 — official application portable replay on 5700X (host-only)
+
+[sh20_official_replay.py](sh20_official_replay.py) closes the **real-artifact
+availability gap** left by SH19. It reconstructs the original SoundHack 0.896
+application from the exact public ZIP and a SHA-pinned portable official 7-Zip
+26.06 release, without transferring a proprietary binary through GitHub,
+installing a package or running a Mac process. It extracts only the historical
+`Archive.pax.gz` member of the HFS+ image, avoiding the two unsafe
+`Contents/Resources` symlinks reported by SH18.
+
+Official archives and checks are anchored in [SH18 evidence]
+(../../../docs/evidence/soundhack-sh01-2026-11-10/SH18-10400-official-dmg-acquisition.md).
+The replay **requires all five SHA-256 pins**: official ZIP, UDIF DMG, gzipped
+old CPIO, exact SoundHack executable (PPC + i386) and portable 7-Zip release.
+The previous codebase's [SH19 tool](sh19_app_gate.py) and
+[macho_audit.py](macho_audit.py) then examine the recovered *real* binary.
+Passing extraction is classified `STATIC`, never `SH-LOAD` or audio.
+
+The tool writes only inside a new private directory designated by `--output`,
+preserves the checked original ZIP/DMG/tool archive, refuses overwrites,
+traversals and app symlinks, limits input size, and emits
+`SH20-summary.json` plus a full `SH19-report.json`. The optional `--sysroot`
+must be an existing private Darling libexec/darling tree and is read-only.
+Networking happens **only with explicit flags** `--fetch-zip` and
+`--fetch-seven`; existing locally verified archives can instead be passed as
+`--zip` and `--seven-archive`.
+
+Run synthetic tests (no network, no vendor binary, no real 7-Zip invocation):
+
+`python3 -m unittest discover -s reproduction/fixtures/soundhack-i386 -p 'test_sh20_official_replay.py' -v`
+
+A private replay from a trusted existing checkout and an existing
+validation directory, with explicit HTTPS downloads:
+
+`python3 reproduction/fixtures/soundhack-i386/sh20_official_replay.py --fetch-zip --fetch-seven --audit-dir reproduction/fixtures/soundhack-i386 --output /allowed/validation/new-sh20`
+
+On the 5700X the pinned SH20 source and SH19 dependencies may first need
+to be obtained from the verified GitHub commit: local historical
+checkouts are **not automatically up to date**. No auto-pull or
+forced Git change is permitted. Follow the paste-ready bounded replay
+command supplied in conversation and documented by
+[SH20 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH20-official-portable-replay.md).
+
+**Qualification:** syntax + **19/19** synthetic tests PASS (including mocked
+end-to-end 7-Zip/HFS/SH19); real 5700X download/HFS replay **NOT YET RUN**.
+Guest app load, Carbon GUI, audio and resource forks remain unqualified.
