@@ -6,6 +6,19 @@ travail ; sa lecture ne déclenche ni expérimentation ni publication.
 Objectif : livrer une amélioration bornée, prouvée et réutilisable sans
 endommager les travaux existants ni annoncer une compatibilité non démontrée.
 
+## Remise des commandes au responsable sur iPhone 12 mini
+
+**Instruction explicite du responsable du projet (16 novembre 2026) :**
+par defaut, il pilote les chantiers depuis son **iPhone 12 mini** jusqu'a indication contraire. **Il souhaite les commandes a copier-coller, et refuse les fichiers de scripts a telecharger.** Ne pas confondre appareil de conversation et machine cible (5700X/WSL2, 10400, etc.).
+
+- Remettre **dans le chat**, en un bloc unique autonome, toute commande Bash, sh ou PowerShell requise, avec prevol, chemins, limites d'ecriture, acces reseau, protections, execution et bilan. Pas de `.sh`/`.ps1` telechargeable, d'archive, de piece jointe ou de lien sandbox comme substitut, sauf demande explicite.
+- Aucun besoin de clavier PC pour simplement recevoir ou copier un bloc ; ne pas presenter l'iPhone comme une interdiction de travailler avec le shell ou un agent.
+- **Un bloc colle dans la conversation n'est pas une preuve d'execution.** Ne parler de resultat observe qu'a partir d'une vraie sortie du terminal, d'un rapport ou de l'action d'un outil.
+- Lorsque l'execution sur la machine cible n'est pas possible depuis l'agent courant, le dire et fournir le bloc directement exploitable. Ne pas attribuer a un agent des executions non effectuees.
+- Ceci regit la **forme de livraison** ; les agents techniques peuvent toujours creer des fichiers dans les emplacements de travail autorises si leur mission et les autres regles le permettent.
+
+Voir aussi la consigne transversale du depot `PMSL-Arch/AGENTS.md`.
+
 ## Gouvernance transversale — PMSL-ARCH
 
 La **source de règles transversales de développement** est le dépôt privé
