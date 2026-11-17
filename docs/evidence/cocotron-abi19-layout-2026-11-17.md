@@ -320,6 +320,53 @@ Notation : assertions/échecs. Les deux sondes d'en-têtes et compilations/liais
 
 **Limite :** ces copies et propriétés ciblées ne qualifient ni toutes les durées de vie/threads, ni le rendu ou les événements GUI, ni Logic. Les groupes ont encore été exécutés dans des processus distincts des lots précédents. La prochaine vérification combinée les enchaînera tous dans un seul processus et une même initialisation d'application, pour détecter d'éventuelles interactions d'état.
 
+## ABI24-COMBINED — six groupes dans un seul processus
+
+**TEST directement exécuté et relu par l'agent sur le 5700X/WSL2 Debian, 17 novembre 2026.** Étape `d2-abi24-combined.dBxo3w`, checkpoint ABI23 `fe05f1b71ac715cdeba7fc170996e2c8e6cf8050`. Cette vérification répond à une limite nouvelle des essais isolés : l'état partagé entre groupes, dans un seul processus et une même initialisation NSApplication. Elle ne consiste pas à répéter sans changement les lots précédents.
+
+Pilote privé SHA-256 `62beb2e8010931df76e7eb896016d18e356245ecf9b03145890d259e60819f47` ; témoin `03106797668f33cedf01e74eeef4f191e7af516ba5d252a89d7d917e7d462eb8`. Il s'agit d'une **adaptation instrumentée** du test amont MIT épinglé, conservant ses 59 assertions dans les six groupes et les 28 assertions d'allocation non nulle ajoutées dans les lots précédents : **87 assertions**, hors gardes initiales de layout/identité. Ce n'est pas une exécution inchangée du fichier amont.
+
+### Scénario et négatif
+
+Les groupes s'enchaînent dans l'ordre NSResponder, NSView, NSWindow, contrôles, contrôleurs et copies. Chaque groupe vérifie ses propres nombres d'assertions et d'échecs avant de laisser poursuivre le suivant. Le main conserve les gardes de layout et d'identité avant l'initialisation d'application ; le runtime, l'overlay, les en-têtes, la définition WASI et le lanceur Xvfb d'ABI23 restent identiques.
+
+Le négatif i386 cumule quatre corruptions **à l'intérieur des canaris encore alloués** (NSResponder, NSView après retrait, NSWindow après fermeture, NSDocument), et remplace volontairement la copie NSTextFieldCell par **un alias retenu** `[textCell retain]`. La mutation de cet alias doit faire échouer l'invariant du placeholder original. Les deux libérations sont équilibrées par cette retenue supplémentaire. Les cas positifs utilisent toujours la vraie opération `copy`.
+
+Le code invité négatif attendu reste 1, tandis que le **nombre d'échecs attendus vaut 5**. Ces deux valeurs sont enregistrées et contrôlées séparément. Il faut exactement quatre marqueurs de corruption et un marqueur d'alias, ainsi que ces cinq échecs dans cet ordre :
+
+1. `NSResponder subclass ivars intact` ;
+2. `NSView subclass ivars intact after removal` ;
+3. `NSWindow subclass ivars intact after close` ;
+4. `NSDocument subclass ivars intact` ;
+5. `NSTextFieldCell original placeholder`.
+
+### Résultats réels
+
+| Groupe | Assertions | Échecs dans chaque positif | Échecs négatifs attendus et observés |
+| --- | ---: | ---: | ---: |
+| NSResponder | 6 | 0 | 1 |
+| NSView | 16 | 0 | 1 |
+| NSWindow | 16 | 0 | 1 |
+| Contrôles | 14 | 0 | 0 |
+| Contrôleurs | 10 | 0 | 1 |
+| Copies | 25 | 0 | 1 |
+| **Total** | **87** | **0** | **5** |
+
+Les trois positifs B13 x86_64, candidat i386 et candidat x86_64 terminent chacun code 0. Le négatif candidat i386 termine code 1 attendu. Les sondes d'en-têtes et compilations/liaisons passent. Codes, comptes par groupe et finaux, cinq échecs négatifs exacts, marqueurs de faute, cinq fournisseurs de classes par UUID et liaisons/cache sont relus dans les quatre sorties sauvegardées. Ils concordent avec `results.json` et les plans privés. Les empreintes des sorties sont :
+
+- B13 x86_64 : `8d6a5c917c9823668cd3e06a324a026a0de7fb72fa7095a22f6e30bc806bd3fe` ;
+- candidat i386 : `e508d809a4e481517fc99669adad029157f9762085f42a4d59a1588740963528` ;
+- candidat x86_64 : `3a44d7c9842b9c3d8169dc3d7aaa5543f55da9d3966f8361ebde4b82f326842a` ;
+- négatif i386 : `bf40d2183efe01aeca6d5482f6ae291192715349b530254156283fec7f858801`.
+
+`COMBINED_CANARIES=PASS I386_AND_X86_64 NEGATIVE_CONTROL=DETECTED`, code final du lot 0. Rapport SHA-256 : `e1d4d33b74628bfa2ad3d5bfbf0597fd1276563eec7a404d60281f99e441829f`. Chaque cas contient un démarrage et un arrêt attendu de son Xvfb possédé. Rapport ABI23 et entrées protégées inchangés, cache hôte identique depuis R6 et aucun montage de l'étape dans l'espace hôte après essai. Aucune reconstruction de bibliothèque ni écriture B13/source/Git/cache hôte ou acquisition réseau. Bilan final conservé et copie `clip.exe` réussie.
+
+### Portée du jalon
+
+**La qualification privée du contrat AppKit exercé par ce témoin est acquise.** Les 76 différences de layout x86_64 constatées en ABI19 restent historiques ; les comportements testés en ABI moderne passent ici, sans imposer une identité de layout x86_64 avec B13. Le contrôle i386 conserve la porte fragile et ses déclarations de sous-classes.
+
+Ce résultat ne qualifie pas tout AppKit, les APIs absentes de l'oracle, le rendu, les événements GUI, l'audio, les durées de vie multithread, la stabilité répétée ou Logic. Le correctif R22 d'ownership d'identifiant reste séparé. **Le port sélectif n'est pas intégré à l'installation historique ni à la production publique.** Prochaine étape : revue du patch/source sélectif et de sa provenance avant toute proposition d'intégration ; conserver B13 et les preuves privées.
+
 ## Contrat conservé du lot ABI20-RESPONDER
 
 **Contrat NSResponder exécuté avec succès par R6 ci-dessus ; les tentatives antérieures restent conservées.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
