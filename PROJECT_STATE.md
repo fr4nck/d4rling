@@ -3,6 +3,10 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
+## Cocotron ABI19 — layout i386 conforme, contrôle comportemental x86_64 à suivre (17 novembre 2026)
+
+**OBS / TEST rapporté depuis le 5700X, non rejoué par l'agent.** La substitution privée de toute la racine runtime charge enfin les UUID AppKit attendus dans les deux architectures. Le candidat sélectif ABI16 passe **33 tailles + 104 offsets i386 (137/137)** ; B13 reproduit 33 tailles et 95 offsets incorrects. **76 valeurs x86_64 diffèrent de B13** : ABI19 conserve son arrêt code 2, mais l'identité du layout n'est pas l'oracle de l'ABI moderne non fragile. Les canaris et comportements restent à qualifier ; ABI20-RESPONDER est préparé, pas exécuté. Aucune intégration, fenêtre ni exécution de Logic. [Preuves, limites et reprise](docs/evidence/cocotron-abi19-layout-2026-11-17.md).
+
 ## SOUNDHACK SH18 — application officielle universelle extraite (16 novembre 2026)
 
 **`SH18_ORIGINAL_UNIVERSAL_APP_EXTRACTED_PASS` — observation opérateur 10400.** ZIP officiel et DMG UDIF vérifiés ; lecteur 7-Zip portable SHA-épinglé, ancien installateur `.pkg`, `Archive.pax.gz` au format CPIO odc. Extraction isolée de **8 fichiers** dans `SoundHack.app` ; véritable exécutable universel **PowerPC + i386**, SHA-256 `6fb11c708079ca3b8f91dc53ab0d8ae732fbb8be32f0e22e34114764b9be089c`. **Pas de lancement applicatif ni d'audio.** Étape SH19 : commandes Mach-O i386, ressources et dépendances sur sysroot privé. [Preuve](docs/evidence/soundhack-sh01-2026-11-10/SH18-10400-official-dmg-acquisition.md).
