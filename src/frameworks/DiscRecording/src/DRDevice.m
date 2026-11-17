@@ -43,3 +43,6 @@
 }
 
 @end
+
+/* Public DiscRecording notification name (Objective-C data symbol). */
+NSString * const DRDeviceStatusChangedNotification = @"DRDeviceStatusChangedNotification";

@@ -19,6 +19,9 @@
 
 #include <Foundation/Foundation.h>
 
+/* Name posted by the DiscRecording device notification center. */
+extern NSString * const DRDeviceStatusChangedNotification;
+
 @interface DRDevice : NSObject
 
 @end
