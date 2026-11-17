@@ -50,9 +50,35 @@ Les entrées privées, sous `<VALIDATION>/cocotron-abi-dyn-01-20261115/`, resten
 
 La reproduction du résultat exige ces artefacts, leurs empreintes et le runtime B13 correspondant. **Cette note documentaire seule ne permet pas de reconstruire le port privé depuis un clone neuf.** Ne pas substituer un autre AppKit, le correctif de propriété R22 ou le build R26G. Ne pas répéter ABI17/ABI18 avec les montages fichier par fichier déjà réfutés ; ne pas installer globalement ni nettoyer les étapes historiques. Le mécanisme de préfixe est décrit dans [darlingserver.cpp à 7c1e6d2d, lowerdir OverlayFS](https://github.com/darlinghq/darlingserver/blob/7c1e6d2d2b2e14774568127bed574dc8cc91925a/src/darlingserver.cpp#L756).
 
-## Prochain lot borné : ABI20-RESPONDER
+## ABI20-RESPONDER — arrêt au prévol des en-têtes
 
-**À EXÉCUTER, aucun résultat ABI20 revendiqué dans cette publication.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
+**OBS opérateur 5700X, bilan transmis dans le chat ; non rejoué par l'agent.** L'étape privée `d2-abi20-responder.XYfBWx` se termine par :
+
+```text
+LOT=COCOTRON-ABI20-RESPONDER
+STATUS=STOP STEP=INPUTS REASON=CAPTURED_SDK_NOT_UNAMBIGUOUS RC=2
+FINAL_STAGE=canari_responder
+EXIT_CODE=2
+```
+
+Le pilote exigeait une unique racine déduite exclusivement de `-isysroot` / `--sysroot` dans la commande AppKit enregistrée. **Le bilan ne dit pas si ces options étaient absentes ou multiples.** Il ne prouve ni SDK manquant, ni échec de compilation, ni échec de canari. Dans le code remis, la garde précède la compilation et les lancements invités : **aucun canari ABI20 n'a été exécuté**. Une source de test privée a pu être préparée avant cet arrêt ; l'historique est conservé.
+
+### Reprise ABI20-R2 — reprendre la recherche d'en-têtes capturée
+
+**À EXÉCUTER sur le 5700X.** La reprise réutilise le pilote ABI20 conservé, le plan ABI16 et le lanceur runtime ABI19 épinglé ; elle ne change pas les tests de canaris, les bibliothèques ou l'overlay qualifié.
+
+- Extraire dans leur ordre les chemins `-I`, `-isystem`, `-iquote`, `-F`, `-iframework`, les éventuelles options de sysroot et les définitions pertinentes de la recette capturée. Aucun inventaire général ni SDK arbitraire à télécharger.
+- Désactiver les chemins système implicites et les modules précompilés pour la sonde. Dans chaque architecture, Clang doit vérifier la syntaxe des déclarations, la taille des pointeurs et le mode Objective-C attendu.
+- Lire sa trace `-H` pour identifier les cinq fournisseurs effectifs : `Foundation.h`, `objc/runtime.h`, `dlfcn.h`, `mach-o/dyld.h` et `stdio.h`. Vérifier qu'ils appartiennent à la référence privée en lecture seule et conserver leurs SHA-256. Arrêt si un fournisseur est absent, ambigu ou modifié.
+- Seulement ensuite : les contrôles NSResponder définis ci-dessous, avec UUID réels et contrôle négatif. La détection de mots sensibles dans une définition interdit sa réutilisation ; pas de copie publique des commandes ou macros brutes.
+
+**Vérification locale de préparation :** syntaxe Python générée, maintien du transformateur de canari, cas de recherche d'en-têtes sans sysroot, avec un ou plusieurs sysroots, chemins relatifs et espacés, refus d'options incomplètes ou sensibles. Ces fixtures de transformation passent ; elles ne sont ni une compilation du témoin avec le SDK du 5700X, ni un résultat invité. **Aucun résultat ABI20-R2 n'est encore revendiqué.**
+
+Sources de méthode : [Clang 19, options de recherche et `-H`](https://releases.llvm.org/19.1.0/tools/clang/docs/ClangCommandLineReference.html), [génération du SDK ouvert à la révision B13](https://github.com/fr4nck/d4rling/blob/0a804cfa03608c0c12cc04bd744b9ba537ef1034/cmake/darling_open_source_sdk.cmake). La reprise traite le défaut du prévol ; elle ne transforme pas les 76 écarts x86_64 en qualification fonctionnelle.
+
+## Contrat conservé du lot ABI20-RESPONDER
+
+**Canaris toujours À EXÉCUTER après correction du prévol ci-dessus.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
 
 Critères : contrôle positif B13 x86_64, candidat i386 après garde de layout fragile et candidat x86_64, identité réelle de l'image pour chaque cas, accès à l'ivar protégé, objets non nuls et canari intact ; contrôle négatif séparé modifiant volontairement **un mot à l'intérieur du canari alloué**, dont l'échec précis doit être détecté. Arrêt au premier résultat inattendu, préfixes/namespaces neufs, entrées protégées inchangées, bilan et code retour préservés avec copie automatique.
 
