@@ -127,6 +127,37 @@ Le diagnostic distingue `error:`, `fatal error:` et les erreurs d'édition de li
 
 Les 137/137 mesures i386 d'ABI19 restent acquises dans leur périmètre ; les 76 différences x86_64 et les comportements restent ouverts. Aucun résultat R4 sur le 5700X n'est revendiqué par cette publication.
 
+## Retour ABI20-R4 — cause exacte de l'arrêt R3
+
+**OBS opérateur 5700X, bilan transmis dans le chat ; non rejoué par l'agent.** Le diagnostic `d2-abi20-r4-diag.53V9oV`, checkpoint `5722c9f21d7488ca1cf9af21bcb8f146ddeab523`, termine code 0 après lecture seule des journaux R3. Ce code valide l'extraction du diagnostic ; l'échec historique R3 reste `SOURCE_EXIT_CODE=1`.
+
+La première phase fautive est **la sonde d'en-têtes i386**, avec `HEADER_PROBE_FAILED_i386 RC=1`. Le journal `header-probe-i386.err` contient 1 321 901 octets, 1 033 avertissements et **quatre erreurs** ; SHA-256 : `3b6af8fafffe03eb8f9e6314447ab6a385a7704e4adca0249de7ba7200683f56`. Chaque erreur indique `'TARGET_OS_WASI' is not defined, evaluates to 0 [-Werror,-Wundef-prefix=TARGET_OS_]` :
+
+| En-tête CoreFoundation | Ligne |
+| --- | --- |
+| `CoreFoundation.h` | 65 |
+| `CFPropertyList.h` | 18 |
+| `CFPropertyList.h` | 88 |
+| `CFPropertyList.h` | 134 |
+
+Les journaux de compilation et de lien du témoin i386 sont absents ; la sonde x86_64 et les phases suivantes n'ont pas été atteintes dans ce pilote séquentiel. Aucun fichier de retour invité n'est enregistré. R4 n'a lancé aucune compilation ni aucun invité et rapporte ses entrées observées inchangées. **Les avertissements de nullabilité n'étaient pas la cause des quatre erreurs.**
+
+### Contrat de plateforme et reprise ABI20-R5-WASI
+
+**Sources primaires relues aux révisions B13.** Le gitlink CoreFoundation est `584b8e08900148ba7e7ddcc49be7f387390e3e1d` ; il renvoie au sous-module swift-corelibs-foundation `efb3637c5e79057fc13c57dd3c88a7febbd1e781`. Les quatre usages ci-dessus existent aux mêmes lignes dans [CoreFoundation.h](https://github.com/darlinghq/darling-swift-corelibs-foundation/blob/efb3637c5e79057fc13c57dd3c88a7febbd1e781/CoreFoundation/Base.subproj/CoreFoundation.h#L65) et [CFPropertyList.h](https://github.com/darlinghq/darling-swift-corelibs-foundation/blob/efb3637c5e79057fc13c57dd3c88a7febbd1e781/CoreFoundation/Parsing.subproj/CFPropertyList.h#L18). Le [TargetConditionals du même composant](https://github.com/darlinghq/darling-swift-corelibs-foundation/blob/efb3637c5e79057fc13c57dd3c88a7febbd1e781/CoreFoundation/Base.subproj/SwiftRuntime/TargetConditionals.h#L77) définit `TARGET_OS_WASI=0` pour `__APPLE__`. Le [basic-headers/TargetConditionals.h de B13](https://github.com/fr4nck/d4rling/blob/0a804cfa03608c0c12cc04bd744b9ba537ef1034/basic-headers/TargetConditionals.h) ne définit pas cette macro. Cela explique le décalage de contrat possible ; le fournisseur précis de TargetConditionals chargé à distance n'est pas déduit du seul extrait R4. Le [diagnostic Clang 19](https://releases.llvm.org/19.1.0/tools/clang/docs/DiagnosticsReference.html#wundef-prefix) correspond à une macro non définie utilisée dans une condition.
+
+**Bloc R5 préparé, À EXÉCUTER sur le 5700X.** Vérifier les rapports R3/R4, le pilote R3, son témoin, ses options et le journal de sonde épinglé, puis adapter uniquement une nouvelle copie privée du pilote :
+
+- Ajouter `-DTARGET_OS_WASI=0` à la base commune des commandes de sonde et de compilation du témoin, pour i386 et x86_64. Refuser une option capturée `-D` ou `-U` de la même macro au lieu de l'écraser.
+- Vérifier par le préprocesseur `__APPLE__`, `__MACH__`, l'absence de `__wasi__` et la valeur 0, puis confirmer cette valeur après inclusion des en-têtes. Conserver les contrôles de taille de pointeur, du mode ObjC et des fournisseurs d'en-têtes.
+- Conserver les diagnostics de compilation actifs : aucun `-Wno-undef`, aucun déclassement d'erreur et aucune modification des en-têtes B13. La définition explicite décrit la cible Darwin ; elle ne qualifie pas l'ABI par elle-même.
+- Réutiliser le contrat NSResponder : trois positifs (B13 x86_64, candidat i386 et x86_64) et un négatif i386 dont l'altération volontaire du canari doit être détectée. UUID réellement chargés, six assertions par cas et contrôles des fichiers/cache restent obligatoires. Le témoin NSResponder est inchangé.
+- Corriger aussi le tri des diagnostics dans les deux niveaux du pilote privé : erreurs réelles et contexte en priorité, avertissements comptés séparément, détails expurgés. Arrêt au premier résultat inattendu, sans seconde campagne implicite.
+
+**Vérifications locales :** syntaxe du wrapper, du pilote et du lanceur générés ; définition dans les deux commandes de cible ; gardes avant/après en-têtes ; refus de quatre formes de `-D/-U` concurrentes ; conservation du transformateur de canari, des fournisseurs d'en-têtes et des empreintes de bibliothèques ; sélection d'erreur après avertissements et masquage des valeurs sensibles. Ces tests utilisent des fixtures Python et **ne sont ni une compilation avec le SDK B13 réel ni une exécution du canari**.
+
+Écritures limitées au nouveau répertoire privé sous `validation`, bibliothèques et installations historiques protégées, réseau nul, délai global 780 s pour le pilote. Bilan conservé et copie presse-papiers automatique avec délai borné, y compris sur échec ; code d'exécution préservé. Aucun résultat R5 réel, aucune qualification complète d'AppKit ni exécution de Logic revendiqués.
+
 ## Contrat conservé du lot ABI20-RESPONDER
 
 **Canaris toujours À EXÉCUTER après résolution de l'échec de compilation ci-dessus.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
