@@ -177,6 +177,25 @@ Le bilan indique explicitement `ACTION=EXISTING_R5_RESULT_NO_REPLAY` ou `ACTION=
 
 **Vérifications locales :** neuf fixtures couvrent l'absence d'étape, l'échec sauvegardé, le rapport inachevé, le mauvais marqueur, le succès cohérent, le négatif incohérent, le retour invité absent, le récépissé valide et la référence cyclique. Tri des routes, refus sans rejeu, masquage des valeurs sensibles, marqueurs et syntaxe Python passent. Le transformateur R5 et son nettoyage sont inchangés. **Ces fixtures ne sont pas des exécutions du canari sur le 5700X. Aucun résultat R5-R2 réel n'est encore revendiqué.**
 
+## Retour U1grrG — bilan R4 à nouveau, sélection du bloc à établir
+
+**OBS opérateur 5700X, non rejoué par l'agent.** Le retour présenté comme « ABI20-R5-R2-REPRISE » porte encore `LOT=COCOTRON-ABI20-R4-DIAG`, `RUN_ID=d2-abi20-r4-diag.U1grrG`, `START_MARKER=ABI20-R4`, mode `READ_EXISTING_COMPILER_LOGS_ONLY` et checkpoint `5722c9f21d7488ca1cf9af21bcb8f146ddeab523`. Il confirme le même journal R3 (SHA-256 `3b6af8fafffe03eb8f9e6314447ab6a385a7704e4adca0249de7ba7200683f56`), les quatre erreurs `TARGET_OS_WASI`, les 1 033 avertissements et l'absence de phases ultérieures dans ce pilote. Son code 0 valide seulement le diagnostic R4.
+
+**Aucune exécution ni aucun échec R5-R2 n'est établi par ce retour.** Le mécanisme de sélection répétée d'un bloc ou rapport R4 reste inconnu ; aucune attribution à l'opérateur, à l'interface, au terminal ou au presse-papiers. L'inventaire R5 prévu n'a pas de résultat observable dans ce message.
+
+### ABI20-R5-R3-REPERE — contrôle court de la transmission
+
+**Bloc préparé, À EXÉCUTER sur le 5700X.** Pour isoler cette difficulté de transmission avant un nouveau lot natif, fournir un bloc plus court, avec le marqueur `ABI20-R5-R3-REPERE` affiché dès le début et repris dans le bilan final. Le bloc :
+
+- lit le bilan R4 exact `U1grrG` et inspecte seulement les deux préfixes R5/R5-R2 déjà connus, au maximum 64 répertoires et les quatre rapports les plus récents ; lectures bornées à 1 Mio par rapport, au plus cinq rapports avec R4 ;
+- restitue les marqueurs, checkpoints, statuts, codes sauvegardés et quelques diagnostics expurgés ; vérifie la cohérence lot/marqueur et la présence d'un unique code final, sans requalifier les succès natifs sauvegardés ;
+- ne lance aucun compilateur, canari ou commande Git ; n'utilise aucun réseau et ne lit ni l'historique du terminal ni le contenu du presse-papiers ;
+- conserve les rapports lus, vérifie leur contenu après lecture, écrit seulement son nouveau petit bilan privé et une éventuelle erreur Python, puis copie automatiquement le bilan expurgé avec délai borné et code de retour préservé.
+
+Le code du nouveau bloc décrit uniquement la lecture : 0 si l'inventaire ciblé est complet, 2 si une entrée nécessaire est manquante, incomplète ou incohérente. Les codes anciens restent explicitement présentés comme des **champs sauvegardés**. L'absence de répertoire R5 dans ces deux préfixes ne prouve pas son absence ailleurs. La présence d'un rapport de succès ne constitue pas un nouvel essai du runtime courant.
+
+**Vérifications locales :** sept fixtures Python couvrent l'absence de R5, un échec sauvegardé, un succès sauvegardé sans requalification, un rapport inachevé, un mauvais lot, un mauvais marqueur et l'absence du rapport R4. Classement, conservation des contenus lus, masquage des valeurs sensibles, marqueur distinct et syntaxe passent. Aucune compilation ni exécution invitée par ces fixtures ; aucun résultat R5-R3 réel revendiqué. Le correctif WASI et le contrat NSResponder restent inchangés et à exécuter ou retrouver.
+
 ## Contrat conservé du lot ABI20-RESPONDER
 
 **Canaris toujours À EXÉCUTER après résolution de l'échec de compilation ci-dessus.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
