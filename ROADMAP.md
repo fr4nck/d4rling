@@ -17,6 +17,10 @@ le plafond de trois morceaux par artiste. Ce repère éditorial ne vaut pas
 validation technique : les critères R/U/A/M/QT/L/P et leurs statuts restent
 indépendants.
 
+## Cocotron ABI25 — revue du port : atomicité i386 à corriger avant intégration (17 novembre 2026)
+
+**REVUE statique directement exécutée sur le 5700X/WSL2 Debian.** Les 76 fichiers du port, le snapshot complet de 1 983 fichiers et les empreintes AppKit/X11 sont vérifiés ; aucun écart des symboles externes ou dépendances comparés sur les deux architectures. **Intégration différée : les nouveaux accesseurs i386 perdent l’atomicité de propriétés publiques**, cas `NSMenuItem.view` confirmé dans le code et les binaires. Les 87 assertions positives ABI24 restent valides dans leur périmètre séquentiel. 2 146 fichiers protégés contrôlés inchangés, B13 intact ; aucun build ni invité relancé. Prochaine étape : correction privée de l’atomicité et qualification ciblée, puis build cohérent de la tête de production. [Constat, preuves et conditions d’intégration](docs/evidence/cocotron-abi25-port-review-2026-11-17.md).
+
 ## Cocotron ABI24 — témoin AppKit combiné : 87 assertions par cas positif (17 novembre 2026)
 
 **TEST directement exécuté et relu sur le 5700X/WSL2 Debian.** Le témoin AppKit combiné ABI24 enchaîne NSResponder, NSView, NSWindow, contrôles, contrôleurs et copies : **87 assertions, zéro échec** pour B13 x86_64 et les candidats i386/x86_64. Le négatif i386 détecte exactement quatre canaris altérés et un alias volontaire de copie : cinq échecs attendus, code invité 1. Les gardes de layout, cinq fournisseurs de classes par UUID, en-têtes et liaisons/cache sont vérifiés ; chaque Xvfb privé est arrêté et attendu. B13, les sources, les bibliothèques et le cache hôte sont inchangés. **Validation privée ciblée réussie ; intégration du port non réalisée.** Rendu, événements GUI, stabilité générale et Logic restent à qualifier. [Preuves, limites et prochaine étape](docs/evidence/cocotron-abi19-layout-2026-11-17.md).
