@@ -3,9 +3,9 @@
 Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
 proposer une suite de développement, y compris depuis mobile.
 
-## Cocotron ABI22 — canaris NSResponder, NSView et NSWindow passent (17 novembre 2026)
+## Cocotron ABI23 — canaris, contrôles et copies ciblées passent (17 novembre 2026)
 
-**TESTS exécutés et relus directement sur le 5700X/WSL2 Debian.** Les canaris NSResponder (R6, six assertions), NSView (ABI21, seize assertions) et NSWindow (ABI22, seize assertions) passent chacun dans les trois cas positifs : B13 x86_64, candidat i386 et candidat x86_64. Les trois négatifs i386 détectent l'altération volontaire attendue, code 1. UUID réellement chargés, liaisons privées et en-têtes épinglés sont vérifiés ; le cache hôte et les entrées historiques sont inchangés. La garde de layout i386 précède les canaris ; les 76 différences x86_64 d'ABI19 sont couvertes seulement par ces comportements ciblés. Les quatre cas NSWindow utilisent chacun un Xvfb dans leurs espaces privés, démarré et arrêté sans toucher aux serveurs historiques. Contrôles, copies, rendu/événements GUI et Logic restent à qualifier. [Preuves et limites](docs/evidence/cocotron-abi19-layout-2026-11-17.md).
+**TESTS exécutés et relus directement sur le 5700X/WSL2 Debian.** Les canaris NSResponder (R6, six assertions), NSView (ABI21, seize assertions), NSWindow (ABI22, seize assertions) et les groupes contrôles/contrôleurs/copies (ABI23, 49 assertions) passent chacun dans les trois cas positifs : B13 x86_64, candidat i386 et candidat x86_64. Les quatre négatifs i386 détectent l'altération volontaire attendue, code 1. UUID réellement chargés, liaisons privées et en-têtes épinglés sont vérifiés ; le cache hôte et les entrées historiques sont inchangés. La garde de layout i386 précède les canaris ; les 76 différences x86_64 d'ABI19 sont couvertes seulement par ces comportements ciblés. Les quatre cas NSWindow utilisent chacun un Xvfb dans leurs espaces privés, démarré et arrêté sans toucher aux serveurs historiques. Les contrats ciblés de contrôles, contrôleurs et copies sont aussi qualifiés. Le témoin combiné, le rendu/événements GUI et Logic restent à vérifier. [Preuves et limites](docs/evidence/cocotron-abi19-layout-2026-11-17.md).
 
 ## SOUNDHACK SH18 — application officielle universelle extraite (16 novembre 2026)
 

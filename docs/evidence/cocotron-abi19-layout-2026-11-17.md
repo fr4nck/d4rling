@@ -290,6 +290,36 @@ Les sondes i386/x86_64, compilations et liens passent. Les sorties, codes, cinq 
 
 **Limite :** ce succès qualifie le contrat d'objet NSWindow décrit, pas un affichage réel, une boucle d'événements ou Logic. Contrôles, contrôleurs et copies restent à vérifier. Le correctif R22 d'ownership d'identifiant reste séparé et n'est pas qualifié par ce test.
 
+## ABI23 — contrôles, contrôleurs et copies ciblées
+
+**TEST directement exécuté et relu par l'agent sur le 5700X/WSL2 Debian, 17 novembre 2026.** Étape `d2-abi23-remaining.MmUS4n`, checkpoint ABI22 `bc80837d0366122e290237ee4030e594e1b04fbc`. Les sources et le résultat ABI22 sont épinglés ; le pilote ne rejoue pas les groupes précédemment qualifiés. Le commit documentaire concurrent `dab9b15725a04f1c319db8095f032208a6a0128a` concerne uniquement le checkpoint mldr R4-H4 ; les trois documents de ce chantier sont inchangés et la publication est reconstruite sur cette tête, sans écraser ce travail.
+
+Pilote privé SHA-256 `d4c1925f48e3e592a99ff7b33c44620bd817dade2574ed8e520276494f8bd386`, témoin `ed0f9c13c0b25d4d3bc36d01c879e217c51f91a68bf740e69cd23857919fca3c`. Il sélectionne les trois groupes restants de l'oracle amont, conserve leurs 31 assertions et ajoute 18 vérifications d'allocation non nulle et sorties protégées :
+
+| Groupe | Assertions par cas | Contrat ciblé |
+| --- | ---: | --- |
+| Contrôles | 14 | NSTextField/NSControl et NSButton : propriétés, délégué, valeurs et canaris de sous-classe |
+| Contrôleurs | 10 | NSWindowController : fenêtre/ivar/cascade ; NSDocument : type, état modifié et canari |
+| Copies | 25 | NSButtonCell, NSTextFieldCell, NSMenuItem, NSMenu, NSImage : valeurs après mutation de la copie, allocations non nulles, survie du bouton-cellule après libération de sa copie |
+| **Total** | **49** | Contrat limité aux opérations de l'oracle |
+
+Les comptes sont enregistrés et vérifiés séparément par groupe. Le main conserve la garde de layout et d'identité, initialise NSApplication puis enchaîne contrôles, contrôleurs et copies ; il s'arrête au premier groupe positif en échec. Le négatif i386 altère un mot du canari NSDocument avant sa vérification, puis exige **le seul échec `NSDocument subclass ivars intact`**. Les copies ne sont pas artificiellement altérées dans ce lot. Le lanceur Xvfb, les en-têtes et le runtime ABI22 sont conservés ; les fixtures vérifient les décomptes 14/10/25, la sélection des groupes et ce maintien.
+
+### Résultats réels
+
+| Cas | Architecture | Retour invité | Contrôles | Contrôleurs | Copies |
+| --- | --- | ---: | --- | --- | --- |
+| B13 `b64` | x86_64 | 0 | 14/0 | 10/0 | 25/0 |
+| Candidat `c32` | i386 | 0 | 14/0 | 10/0 | 25/0 |
+| Candidat `c64` | x86_64 | 0 | 14/0 | 10/0 | 25/0 |
+| Négatif `n32` | i386 | 1 attendu | 14/0 | 10/1 attendu | 25/0 |
+
+Notation : assertions/échecs. Les deux sondes d'en-têtes et compilations/liaisons passent. Codes, sorties et comptes des groupes, identités réelles des cinq classes et liaisons/cache sont relus et cohérents avec les plans sauvegardés. Chaque cas contient un démarrage et un arrêt attendu de son Xvfb possédé.
+
+`REMAINING_CANARIES=PASS I386_AND_X86_64 NEGATIVE_CONTROL=DETECTED`, code final 0. Rapport SHA-256 : `7840bec7642ed8268e602ac6b1dfd284cd4940e7fd25cbcc083c0547b3eb0058`. Rapport ABI22 et entrées protégées inchangés, cache hôte identique à la mesure R6, aucun montage de l'étape dans l'espace hôte après essai. Aucune reconstruction de bibliothèque, écriture B13/source/Git/cache hôte ou acquisition réseau ; bilan copié par `clip.exe`.
+
+**Limite :** ces copies et propriétés ciblées ne qualifient ni toutes les durées de vie/threads, ni le rendu ou les événements GUI, ni Logic. Les groupes ont encore été exécutés dans des processus distincts des lots précédents. La prochaine vérification combinée les enchaînera tous dans un seul processus et une même initialisation d'application, pour détecter d'éventuelles interactions d'état.
+
 ## Contrat conservé du lot ABI20-RESPONDER
 
 **Contrat NSResponder exécuté avec succès par R6 ci-dessus ; les tentatives antérieures restent conservées.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
