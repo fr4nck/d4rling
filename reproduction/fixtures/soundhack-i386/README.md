@@ -678,3 +678,21 @@ These are *textual export-trie/alias hints*, **not dyld symbol
 binding or ABI proof**.
 
 [Full SH23 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH23-llvm-exports-trie-batch.md).
+
+### SH23 — true 5700X static lot: 12/12 PASS (operator report)
+
+The SH23 tool has now been run against the authenticated SoundHack
+0.896 application and B13 i386 private dylibs on the 5700X:
+`SH23_COMPOSITE_STATIC_PASS`, 12/12 gates and exit code 0.
+74/74 LLVM export-trie inventories inspected, zero `N_INDR` hints.
+Of 211 names left to review after SH22, **5** were found as
+export-trie text name hints; **206** remain unmatched by the
+examined bounded nlist/trie oracle. All 211 are marked strong.
+`CARBON_REVIEW=197` refers to the 211-name set **before**
+the five export-trie additions; the breakdown of those five
+by framework was not supplied in the short report.
+Total static named candidates: 57 + 125 + 5 = **187/393**.
+
+[Full operator-result qualification](../../../docs/evidence/soundhack-sh01-2026-11-10/SH23-llvm-exports-trie-batch.md).
+The **application has not been launched**: dyld binding, GUI and
+audio remain untested.

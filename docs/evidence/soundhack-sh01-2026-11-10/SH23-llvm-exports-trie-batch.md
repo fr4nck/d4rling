@@ -79,3 +79,47 @@ pas être inférée des tests synthétiques.
 `SH23_REAL_5700X=NOT_RUN` ;
 `DYLD_BIND=NOT_TESTED` ;
 `SH_LOAD=NOT_RUN` ; `AUDIO=NOT_RUN`.**
+
+## Complément : exécution SH23 réelle sur le 5700X (rapport opérateur)
+
+**Statut acquis : `SH23_COMPOSITE_STATIC_PASS`, `GATES=12/12_PASS`,
+`EXIT_CODE=0`, `SYNTHETIC=PASS`.** Ce complément provient du
+bilan court affiché/copier-collé par l'opérateur ; le JSON intégral
+n'a pas été inspecté dans cette publication.
+
+Rapport conservé :
+`/home/Deniel/d4wrling-work/validation/soundhack-sh23.3hNQ2F7L/SH23-result.json`,
+journal : `/home/Deniel/d4wrling-work/validation/soundhack-sh23.3hNQ2F7L/console.log`.
+
+### Comptage réel
+
+- `EXPORT_TRIE=74/74` : 74 fournisseurs du graphe i386 examinés ;
+  `NINDR_HINTS=0` : aucun alias indirect signalé par l'oracle
+  textuel de ce lot.
+- Ensemble des **211** imports restant après SH22 :
+  **5** `NAME_IN_TRIE_TEXT_EXPECTED_REEXPORT_GRAPH`,
+  **206** `NO_NAME_IN_SCANNED_NLIST_OR_TRIE`.
+- `WEAK=0 STRONG=211` sur cet ensemble. **197** des 211 imports
+  d'entrée de cette passe correspondent à Carbon
+  (`CARBON_REVIEW=197`). Le bilan ne donne pas la ventilation
+  Carbon des 5 noms retrouvés dans le trie : ne pas supposer
+  que les 197 sont tous parmi les 206 résiduels.
+- Agrégation des niveaux de preuve de SH21, SH22 et SH23 :
+  57 noms directs + 125 noms via reexports nlist
+  + 5 noms supplémentaires vus dans l'export-trie
+  = **187 noms retrouvés sur 393**.
+  **206** demeurent sans correspondance selon ces oracles.
+
+### Barrière de preuve
+
+`APP_RUN=NO`, `DYLD_BIND=NOT_TESTED`, `AUDIO=NO`. La lecture
+de 74 affichages export-trie, même réussie, ne démontre
+ni la liaison des 206 noms restants ni leur absence effective
+au niveau dyld. Ne créer aucun stub ou correctif Carbon
+à partir de cette seule différence.
+
+**Prochain jalon : SH24 guest-loader smoke-test**, limité à l'application
+authentifiée, dans le banc Darling i386 à préfixe court et namespaces
+contrôlés ; réutiliser le témoin i386 positif déjà qualifié pour
+séparer échec du lanceur et échec de résolution SoundHack.
+Ne pas modifier les fichiers historiques ou les préfixes existants.
