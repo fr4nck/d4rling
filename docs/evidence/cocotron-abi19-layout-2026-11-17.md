@@ -76,6 +76,34 @@ Le pilote exigeait une unique racine déduite exclusivement de `-isysroot` / `--
 
 Sources de méthode : [Clang 19, options de recherche et `-H`](https://releases.llvm.org/19.1.0/tools/clang/docs/ClangCommandLineReference.html), [génération du SDK ouvert à la révision B13](https://github.com/fr4nck/d4rling/blob/0a804cfa03608c0c12cc04bd744b9ba537ef1034/cmake/darling_open_source_sdk.cmake). La reprise traite le défaut du prévol ; elle ne transforme pas les 76 écarts x86_64 en qualification fonctionnelle.
 
+## Retour suivant — bilan ABI20 initial, preuve R2 absente du message
+
+**OBS opérateur, non rejoué par l'agent.** Le retour présenté comme « ABI20-R2 » porte en fait les champs suivants :
+
+```text
+LOT=COCOTRON-ABI20-RESPONDER
+RUN_ID=d2-abi20-responder.5WY4Tm
+START_MARKER=ABI20
+MODE=PRIVATE_RESPONDER_CANARY_WITH_NEGATIVE_CONTROL
+PUBLIC_CHECKPOINT=164c41ea1b100569b25230d427ce83164c5b29cd
+STATUS=STOP STEP=INPUTS REASON=CAPTURED_SDK_NOT_UNAMBIGUOUS RC=2
+EXIT_CODE=2
+```
+
+Ce bilan est classé dans **ABI20 initial**. Le RUN_ID diffère de `XYfBWx`, mais le lot, le marqueur, le mode et le checkpoint restent ceux du premier bloc. **Il ne constitue pas une preuve d'exécution ou d'échec de R2.** La cause d'une éventuelle sélection de bloc ou de rapport n'est pas déduite : aucune faute de l'opérateur, du terminal ou du presse-papiers n'est établie. Le résultat transmis reste un arrêt du prévol, avant compilation et canaris.
+
+### Reprise ABI20-R3-REPRISE
+
+**Bloc fourni, à exécuter ; aucun nouveau canari revendiqué dans cette publication.** Le début et la fin du nouveau bilan porteront `LOT=COCOTRON-ABI20-R3-REPRISE` et `START_MARKER=ABI20-R3`, avec un nouveau checkpoint public.
+
+La reprise inspecte uniquement les répertoires privés correspondant au préfixe connu `d2-abi20-r2-responder.*`, avec une borne de 64 candidats. Elle ne suppose pas qu'une campagne non visible dans le message n'a pas eu lieu :
+
+- si un rapport R2 terminé existe, restituer ses données utiles sans rejouer les tests ; un succès exige aussi les quatre entrées de `results.json`, leurs codes, six assertions, le contrôle négatif et les UUID attendus ;
+- si le dernier R2 est en échec, restituer ce premier résultat pour analyse ; si son rapport n'est pas finalisé ou sa provenance n'est pas vérifiable, arrêter sans nouvelle exécution ;
+- si aucune étape R2 n'est retrouvée dans ce périmètre, sélectionner le pilote ABI20 sauvegardé de `5WY4Tm`, ou l'emplacement antérieur connu `XYfBWx` s'il est absent, puis appliquer le correctif d'en-têtes R2 **inchangé** dans une nouvelle étape privée. Ne pas modifier les fichiers d'origine.
+
+Les essais Python de préparation couvrent les routes absence/échec/succès/rapport inachevé, les marqueurs erronés, le refus d'un contrôle négatif incohérent et le choix de la source connue la plus récente. **Ils ne sont pas des exécutions du canari sur le 5700X.** L'overlay ABI19, les recherches d'en-têtes R2, les gardes UUID et le contrat NSResponder sont conservés.
+
 ## Contrat conservé du lot ABI20-RESPONDER
 
 **Canaris toujours À EXÉCUTER après correction du prévol ci-dessus.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
