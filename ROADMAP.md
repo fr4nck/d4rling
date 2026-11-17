@@ -17,9 +17,9 @@ le plafond de trois morceaux par artiste. Ce repère éditorial ne vaut pas
 validation technique : les critères R/U/A/M/QT/L/P et leurs statuts restent
 indépendants.
 
-## Cocotron ABI20-R6 — NSResponder qualifié, NSView à suivre (17 novembre 2026)
+## Cocotron ABI21 — canaris NSResponder et NSView passent (17 novembre 2026)
 
-**TEST R6 exécuté et relu directement par l'agent sur le 5700X/WSL2 Debian.** NSResponder passe dans les trois cas positifs (B13 x86_64, candidat i386 et x86_64), six assertions par cas ; le négatif i386 détecte exactement l'altération volontaire du canari, code 1 attendu. Les cinq fournisseurs de classes par UUID et les liaisons privées sont revérifiés. Les deux sondes d'en-têtes passent après définition privée de `TARGET_OS_WASI=0` et distinction des rôles de `stdio.h` ; bibliothèques et entrées historiques inchangées. Les 137 mesures i386 d'ABI19 restent le préalable rapporté ; les 76 différences x86_64 ne sont couvertes ici que par le comportement NSResponder. NSView, fenêtres, contrôles, copies et Logic restent à qualifier. [Preuves, limites et reprise](docs/evidence/cocotron-abi19-layout-2026-11-17.md).
+**TESTS exécutés et relus directement sur le 5700X/WSL2 Debian.** Les canaris NSResponder (R6, six assertions) et NSView (ABI21, seize assertions) passent chacun dans les trois cas positifs : B13 x86_64, candidat i386 et candidat x86_64. Les deux négatifs i386 détectent l'altération volontaire attendue, code 1. UUID réellement chargés, liaisons privées et en-têtes épinglés sont vérifiés ; le cache hôte et les entrées historiques sont inchangés. La garde de layout i386 précède les canaris ; les 76 différences x86_64 d'ABI19 sont couvertes seulement par ces comportements ciblés. Fenêtres, contrôles, copies, rendu/événements GUI et Logic restent à qualifier. [Preuves et limites](docs/evidence/cocotron-abi19-layout-2026-11-17.md).
 
 ## SoundHack SH18 — vraie application universelle extraite (16 novembre 2026)
 

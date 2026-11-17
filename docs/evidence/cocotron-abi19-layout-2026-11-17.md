@@ -227,6 +227,40 @@ Rapport final SHA-256 : `b15c71b2d1640958b6b178179957c5c689fb1b8ac0794e04e7a559e
 
 **Limite :** seul le contrat NSResponder est qualifié. NSView, fenêtres, contrôles et copies restent NOT_RUN. Les 76 différences de layout x86_64 restent des observations d'ABI19 ; ce succès comportemental ciblé ne qualifie pas tout AppKit. **Prochain lot autorisé par l'opérateur : canari NSView privé, avant NSWindow**, avec mêmes identités, en-têtes et protections.
 
+## ABI21-VIEW — comportement NSView et canari qualifiés
+
+**TEST directement exécuté et relu par l'agent sur le 5700X/WSL2 Debian, 17 novembre 2026, après instruction explicite de poursuivre.** Étape `d2-abi21-view.PfDmBD`, checkpoint de départ R6 `55adf970af68a4345adf95d28fa2c7ee9115f0a9`. Le succès R6 est relu et épinglé avant le nouveau lot ; NSResponder n'est pas rejoué.
+
+### Contrat et provenance
+
+Le pilote privé SHA-256 `0f641fcfd8edc5b470e9749103ffbb33a2bb9d3fa35a9b8cb3ba2f37fd4b76ab` adapte uniquement la sélection du témoin et son décompte. La source du témoin, SHA-256 `389ae49395b1b45fb8bd8e39d82b3c77219634cc104b0031a417ac3694be6034`, conserve l'oracle amont MIT de Lubos Dolezel et ses douze assertions NSView ; elle ajoute quatre assertions d'allocation non nulle avec sorties protégées en cas d'échec. Total : **seize assertions par cas**.
+
+Le main appelle `checkViewSubclass()` après les gardes de déclaration/layout et d'identité. Il ne sélectionne ni `checkWindowSubclass()` ni `sharedApplication`. Les comportements vérifiés incluent menu, masque de redimensionnement, état caché, infobulle, stockage des zones de suivi, relation parent/enfant, frame/bounds, ivars protégés et canari après retrait. Cela ne mesure ni rendu ni livraison d'événements GUI.
+
+Le négatif i386 modifie volontairement un seul mot **à l'intérieur du canari alloué**, après retrait de la sous-vue et de la zone de suivi, juste avant la dernière assertion. Il doit produire exactement `FAIL: NSView subclass ivars intact after removal`, un échec sur seize et code 1. La première vérification du canari reste intacte.
+
+Le lanceur runtime, les bibliothèques ABI16/B13, leurs UUID, le correctif WASI, les cinq en-têtes publics et deux auxiliaires de R6 restent identiques. Les fixtures locales vérifient le main limité à NSView, le décompte des seize assertions, le placement du négatif, le maintien des gardes/lanceur et la syntaxe ; elles sont distinctes des essais réels ci-dessous.
+
+### Résultats réels
+
+| Cas | Architecture | Retour invité | Assertions | Résultat |
+| --- | --- | ---: | ---: | --- |
+| B13 de contrôle `b64` | x86_64 | 0 | 16, zéro échec | PASS |
+| Candidat `c32` | i386 | 0 | 16, zéro échec | PASS |
+| Candidat `c64` | x86_64 | 0 | 16, zéro échec | PASS |
+| Négatif `n32` | i386 | 1 attendu | 16, un échec attendu | Altération finale détectée |
+
+Les deux sondes d'en-têtes, la compilation et la liaison passent. Les cinq fournisseurs de classes sont identifiés par les UUID attendus dans chaque cas. Retours, marqueurs de fin, quatre sorties invitées et fichiers de liaisons/cache sont relus après exécution : ils concordent avec les résultats sauvegardés et plans privés. Les empreintes des quatre sorties sont :
+
+- `b64` : `0887bc73c63faec99e21a3e167d08e7436a798798f53b93133b73b51f5e848e2` ;
+- `c32` : `abbf245c4e0d3013c893b872ff17a88483e0f48a6efacda93266f158cbd2668f` ;
+- `c64` : `ab5ebe6df2da491268a048877c4519741837386800a5eb41492a090b95cc1d21` ;
+- `n32` : `7edc04fac65a1055de172b6b78594e53084e185fbe41ce888a2b6645bcce2d5a`.
+
+`VIEW_CANARY=PASS I386_AND_X86_64 NEGATIVE_CONTROL=DETECTED`, code final 0. Rapport SHA-256 : `5089d2e11e1494c4132a3b77c9d40f5f1de57bcddb5f9cdd0e84bad94f60d27d`. Les entrées protégées et R6 sont inchangées ; le rapport R6 garde son empreinte. Le cache hôte est identique à la mesure après R6 et aucun montage de cette étape n'est trouvé dans l'espace hôte. Le lanceur termine les seuls espaces PID possédés. Aucune reconstruction de bibliothèque, écriture B13/source/Git/cache hôte ou acquisition réseau. Copie finale observée par `clip.exe`.
+
+**Limites et prochain jalon :** NSResponder et le contrat NSView ci-dessus sont qualifiés dans ces cas ; ce n'est pas une qualification complète d'AppKit. Fenêtres, contrôles, copies, rendu/événements GUI et Logic restent NOT_RUN. Prochaine porte : canari NSWindow avec affichage privé isolé, avant les contrôles et copies ; ne pas utiliser les serveurs historiques.
+
 ## Contrat conservé du lot ABI20-RESPONDER
 
 **Contrat NSResponder exécuté avec succès par R6 ci-dessus ; les tentatives antérieures restent conservées.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
