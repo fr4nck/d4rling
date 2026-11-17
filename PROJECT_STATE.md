@@ -1,7 +1,12 @@
 # D4RLING — état de référence pour reprendre le projet
 
-Dernière consolidation : **29 octobre 2026**. Lire ce fichier avant de
-proposer une suite de développement, y compris depuis mobile.
+Dernière consolidation générale : **29 octobre 2026** ; consolidation du
+dépôt, des PR et des branches : **17 novembre 2026** (ci-dessous). Lire ce
+fichier avant de proposer une suite de développement, y compris depuis mobile.
+
+## Consolidation du dépôt — PR, branches et reversements (17 novembre 2026)
+
+**Audit DOC/SRC + TEST hôte borné, à la tête `5972647f`.** Aucune des quatre PR brouillon n'est présente sur `master`. #6 (bitmap RPC `mldr`) est **remplacée** par le correctif amont `19e6f684f` déjà intégré ; #4 (runner Carbon) se qualifie sur l'arbre `master` avec vrais en-têtes, **246/246** dans quatre modes, alors que le runner de `master` ignore en silence `SANITIZE=undefined`, `address,undefined` et toute valeur inconnue (0/8 appel instrumenté) ; #8 (`@rpath`) doit d'abord être rejouée sans C2 depuis la correction BSD i386 ; #5 reste une archive sur une base hors `master`. `Carbon.c` définit encore `GetApplicationEventTarget` → `NULL` à côté de l'implémentation HIToolbox. ATB-FIX3 et le défaut de chemin de socket darlingserver sont toujours présents dans l'amont ; AudioConverter recoupe désormais l'amont #2134. Fork en retard de **503 commits** sur l'amont. Aucune fusion, fermeture ni suppression. [Verdicts, preuves et décisions à prendre](docs/audits/consolidation-depot-2026-11-17.md).
 
 ## Cocotron ABI25 — revue du port : atomicité i386 à corriger avant intégration (17 novembre 2026)
 
