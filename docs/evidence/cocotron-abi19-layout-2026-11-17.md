@@ -196,9 +196,40 @@ Le code du nouveau bloc décrit uniquement la lecture : 0 si l'inventaire ciblé
 
 **Vérifications locales :** sept fixtures Python couvrent l'absence de R5, un échec sauvegardé, un succès sauvegardé sans requalification, un rapport inachevé, un mauvais lot, un mauvais marqueur et l'absence du rapport R4. Classement, conservation des contenus lus, masquage des valeurs sensibles, marqueur distinct et syntaxe passent. Aucune compilation ni exécution invitée par ces fixtures ; aucun résultat R5-R3 réel revendiqué. Le correctif WASI et le contrat NSResponder restent inchangés et à exécuter ou retrouver.
 
+## Accès direct au 5700X et qualification ABI20-R6
+
+**OBS / TEST directement exécuté et relu par l'agent, 17 novembre 2026.** Après la précision de l'opérateur sur l'accès à distance, le poste de travail est identifié comme `5700X`. La lecture du service WSL, d'abord refusée dans l'environnement restreint, est autorisée avec l'accès nécessaire ; la distribution `Debian` et le compte WSL du lot sont accessibles. Avant essai, les quatre étapes R4 `53V9oV`, `hn5M5S`, `U1grrG` et `w7cik9` sont présentes, mais aucune étape R5, R5-R2 ou REPERE n'est retrouvée dans les trois préfixes inspectés. Ce constat ne désigne pas la cause du transfert répété d'un bloc R4.
+
+### Premier R5 réel : WASI franchi, garde de provenance trop grossière
+
+L'étape `d2-abi20-r5-wasi.ApohYS` exécute le correctif préparé, avec pilote SHA-256 `91be85ea0e804545a7db1576d87ba8ede4b571392c91afa3b3b3b8060c57bb08`. La sonde i386 ne comporte plus aucune erreur de compilation ; son journal SHA-256 est `62b8604213115489ae3a555c9473e717cc74bb56c23ef380a1b433345cd270bd`. Elle s'arrête ensuite code 2 sur `CRITICAL_HEADER_PROVIDER_MISSING_OR_AMBIGUOUS_i386`, avant compilation du témoin et canaris.
+
+La garde regroupe les fichiers par leur seul nom final. Elle compte un fournisseur pour Foundation, runtime, dlfcn et dyld, mais trois `stdio.h` distincts : enveloppe libc++ `include_next`, en-tête public Libc et en-tête `sys/stdio.h` XNU. Les sources locales et la trace d'inclusion sont lues directement. Ce sont des rôles différents ; le simple nombre de noms identiques ne prouve pas une ambiguïté de fournisseur public.
+
+Le premier acheminement du script par l'entrée standard PowerShell ajoute aussi un retour chariot final, provoquant un retour 1 de l'enveloppe après le rapport R5 code 2. Ce défaut d'invocation est distinct de la garde d'en-têtes et ne permet pas d'expliquer les transferts R4 antérieurs. R6 est lancé depuis le fichier de travail à fins de lignes LF ; le code final du lot et celui du processus de lancement concordent à 0.
+
+### R6 : rôles canoniques épinglés et même canari NSResponder
+
+`d2-abi20-r6-headers.ecMLak` utilise le pilote SHA-256 `7dbb47f8c2407408f457372b959beb97bb83b9da7a3aee7838d2735f20c19e61`. Le correctif privé vérifie les chemins canoniques et empreintes de **cinq en-têtes publics et deux auxiliaires connus** ; tout autre fournisseur critique est refusé. Les auxiliaires sont admis seulement selon leur rôle et leur empreinte, et revérifiés après compilation. Les fixtures locales acceptent la chaîne stdio légitime et refusent fournisseur inconnu ou contenu modifié.
+
+Le correctif WASI, la source du canari (`fe1f6cf297bc2a72381af501e0b24b63d31c35011fc46d3977289a8472ddb406`), les gardes i386 et les UUID runtime sont conservés. Les deux sondes d'en-têtes et la compilation/liaison des témoins passent.
+
+| Cas réel | Architecture | Retour invité | Assertions | Résultat |
+| --- | --- | ---: | ---: | --- |
+| B13 de contrôle `b64` | x86_64 | 0 | 6, zéro échec | PASS |
+| Candidat `c32` | i386 | 0 | 6, zéro échec | PASS |
+| Candidat `c64` | x86_64 | 0 | 6, zéro échec | PASS |
+| Négatif `n32` | i386 | 1 attendu | 6, un échec attendu | Altération du canari détectée |
+
+Les cinq classes NSResponder, NSView, NSWindow, NSCell et NSMenu proviennent à chaque fois de l'UUID attendu. Cela qualifie leur **identité chargée**, pas leurs comportements hors NSResponder. Les retours, sorties, identités et quatre fichiers de liaisons/cache sont relus après l'exécution : cohérents avec `results.json` et les plans privés.
+
+Rapport final SHA-256 : `b15c71b2d1640958b6b178179957c5c689fb1b8ac0794e04e7a559ee40648349`. `RESPONDER_CANARY=PASS I386_AND_X86_64 NEGATIVE_CONTROL=DETECTED`, `EXIT_CODE=0`. Le lanceur rapporte la fin des espaces PID possédés, les entrées protégées et R5 inchangés. Aucun montage de cette étape n'est trouvé dans l'espace hôte lors du contrôle après essai. Aucune reconstruction de bibliothèque, écriture B13/source/Git/cache hôte, utilisation réseau, fenêtre ou exécution de Logic. Copie finale observée par `clip.exe`.
+
+**Limite :** seul le contrat NSResponder est qualifié. NSView, fenêtres, contrôles et copies restent NOT_RUN. Les 76 différences de layout x86_64 restent des observations d'ABI19 ; ce succès comportemental ciblé ne qualifie pas tout AppKit. **Prochain lot autorisé par l'opérateur : canari NSView privé, avant NSWindow**, avec mêmes identités, en-têtes et protections.
+
 ## Contrat conservé du lot ABI20-RESPONDER
 
-**Canaris toujours À EXÉCUTER après résolution de l'échec de compilation ci-dessus.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
+**Contrat NSResponder exécuté avec succès par R6 ci-dessus ; les tentatives antérieures restent conservées.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
 
 Critères : contrôle positif B13 x86_64, candidat i386 après garde de layout fragile et candidat x86_64, identité réelle de l'image pour chaque cas, accès à l'ivar protégé, objets non nuls et canari intact ; contrôle négatif séparé modifiant volontairement **un mot à l'intérieur du canari alloué**, dont l'échec précis doit être détecté. Arrêt au premier résultat inattendu, préfixes/namespaces neufs, entrées protégées inchangées, bilan et code retour préservés avec copie automatique.
 
