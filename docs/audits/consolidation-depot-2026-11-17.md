@@ -7,6 +7,15 @@ installation, aucun lancement invité, aucune fermeture de PR ou d'issue.
 Préparé avec l'assistance d'un agent IA (Claude Code) pour le mainteneur ;
 les verdicts ci-dessous sont des **recommandations**, pas des décisions.
 
+> **Suivi du 17/11 (après accord d'autonomie du mainteneur).** Intégrés sur
+> `master` : runner Carbon durci, d'après la PR #4 complétée par
+> `-fno-sanitize-recover=all` ([`bdaffd80`](https://github.com/fr4nck/d4rling/commit/bdaffd80d30e6560c49dd035b7d33ae28e8c7665)) ;
+> copie de l'AGENTS.md amont resynchronisée ([`a1dce48b`](https://github.com/fr4nck/d4rling/commit/a1dce48bad792ff2ec435dd123a8a4716d565ac6)) ;
+> suppression du stub `GetApplicationEventTarget` de Carbon, qualifiée sur
+> Mach-O i386/x86_64 ([`08747e3f`](https://github.com/fr4nck/d4rling/commit/08747e3f55951fb3748a64169d526003c96964db),
+> [preuve](../evidence/carbon-gaet-shadow-2026-11-17.md)). Aucune PR n'a été
+> fermée ni fusionnée par GitHub.
+
 ## 1. Référence
 
 | Élément | Valeur vérifiée |
@@ -61,7 +70,7 @@ la PR. L'adaptateur d'allocation CF reste un faux runtime CF.
 | Branche | Contenu non intégré | Constat |
 | --- | --- | --- |
 | `work/core-audio` (23 commits) | CoreMIDI : pont séquenceur ALSA, points virtuels, 3 suites de tests | Seul code de production audio notable resté hors `master` ; à reprendre par lot M-A1 contre la tête actuelle |
-| `work/carbon-reexport-abi-fix` (1 commit) | Retrait de stubs Carbon masquant HIToolbox, test de contrat | **Moitié restante** : `SetEventParameter` retiré par `6659e6b9`, mais `Carbon/src/Carbon.c:47` définit encore `GetApplicationEventTarget` → `NULL` alors que `HIToolbox/src/CarbonEventsCore.c:345` l'implémente. SRC ; effet sur l'export final non vérifié sans build |
+| `work/carbon-reexport-abi-fix` (1 commit) | Retrait de stubs Carbon masquant HIToolbox, test de contrat | **Repris intégralement** : `SetEventParameter` par `6659e6b9`, `GetApplicationEventTarget` par `08747e3f` (masquage confirmé dans les binaires construits, seul cas). Le test de contrat Python et le workflow CI de la branche ne sont pas repris |
 | `work/macho-i386-loader-qualification` (13) | Bancs QT-112/113, workflow CI | Outils de qualification historiques, pas de production |
 | `research/bsd-i386-dispatch-guard-ba34c8ac` (27) | Bancs et preuves BSD i386 | Dépassé par X1/X2 intégrés (#11 close) |
 | `contrib/hostcerts-…`, `contrib/mldr32-retry-…`, `contrib/carboncore-homeresfile-…` | — | Entièrement contenus dans l'amont (#2086, #2087, #2089) |
@@ -79,8 +88,8 @@ la PR. L'adaptateur d'allocation CF reste un faux runtime CF.
 - **mldr G2-D1** (`O_CLOEXEC` sur le Mach-O temporaire) : non intégré ; collision
   sans ASLR toujours reproduite sur le banc du 8/11.
 - **AudioToolbox** : `FillComplexBuffer` lit encore mal le PCM non tassé (hors R2b).
-- **Copie `docs/upstream/darlinghq-AGENTS.md`** : périmée (85 lignes de diff ;
-  amont modifié le 14/11, `d38805e8`, `91d6dacd`).
+- **Copie `docs/upstream/darlinghq-AGENTS.md`** : elle reproduisait l'amont
+  `a6c546f8` (4/11) ; resynchronisée sur `91d6dacd` par `a1dce48b`.
 
 ## 6. Reversements amont — état vérifié
 
@@ -98,7 +107,12 @@ Contributions fusionnées, à ne pas recréer : Darling
 | DiscRecording `DRDeviceStatusChangedNotification` | Absent de l'amont | Commit fork `f7ecdd4f` (export seul) | Provenance publique de la valeur de chaîne à documenter ; aucun comportement de notification |
 | darlingserver, chemin de socket | **Présent** (gitlink amont `71652aa3`) : `strncpy` tronque, `bind` sur le chemin tronqué, `chmod` sur le chemin complet | Diagnostic seulement (ORIGINAL21-DIAG2) | Aucun correctif écrit ; candidat : refuser `ENAMETOOLONG` avant `bind` |
 
-Travail amont concurrent à surveiller : Darling #1780 (WIP Carbon EventLoop).
+Travail amont concurrent : Darling #1780 (WIP Carbon EventLoop) et surtout
+[`e808ce94`](https://github.com/darlinghq/darling/commit/e808ce94e061)
+(13/11, absent du fork), propre implémentation amont des objets, cibles et
+gestionnaires d'événements Carbon (`CarbonEventTargets.c`). La prochaine
+synchronisation devra arbitrer entre elle et l'implémentation du fork
+(PR #2/#3), avec les témoins `carbon-events` comme oracle.
 
 ## 7. Issues — état
 
