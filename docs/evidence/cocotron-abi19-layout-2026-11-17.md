@@ -261,6 +261,35 @@ Les deux sondes d'en-têtes, la compilation et la liaison passent. Les cinq four
 
 **Limites et prochain jalon :** NSResponder et le contrat NSView ci-dessus sont qualifiés dans ces cas ; ce n'est pas une qualification complète d'AppKit. Fenêtres, contrôles, copies, rendu/événements GUI et Logic restent NOT_RUN. Prochaine porte : canari NSWindow avec affichage privé isolé, avant les contrôles et copies ; ne pas utiliser les serveurs historiques.
 
+## ABI22-WINDOW — canari NSWindow avec affichage privé
+
+**TEST directement exécuté et relu par l'agent sur le 5700X/WSL2 Debian, 17 novembre 2026.** Étape `d2-abi22-window.susllk`, checkpoint ABI21 `c65e42a2666b0134fb6da6988472ac3356ff5f91`. Le rapport ABI21 est épinglé et son résultat relu avant le lot ; les canaris déjà qualifiés ne sont pas rejoués.
+
+Pilote privé SHA-256 `81724159c964d5c5363f3361e266bdf8f3996c0b97230a99fd07778eac5a9ad1`, témoin `f1a02e99a538f34662c033e4b8e9d618a6b543b3f87a188f655b1c236f00a8f2`. Le main conserve les gardes de layout et d'UUID, initialise NSApplication puis exécute uniquement `checkWindowSubclass()`. L'oracle amont comprend douze assertions ; quatre vérifications d'allocation non nulle sont ajoutées, soit seize par cas. Il porte sur titre, niveau, contenu, délégué, couleur, frame, acceptation des mouvements de souris comme propriété, ivars protégés et canari avant/après fermeture.
+
+Le témoin conserve `defer: YES` et `setReleasedWhenClosed: NO`. Le négatif i386 altère un mot du canari **après fermeture mais avant libération de l'objet**, puis exige l'unique échec `NSWindow subclass ivars intact after close`. Aucune fenêtre n'est ordonnée au premier plan ; il ne s'agit pas d'une recette de rendu ou d'événements GUI.
+
+### Xvfb et isolation
+
+Le Xvfb installé, SHA-256 `16667b1eaafbe0b09527c2152e45f81b4b8e977012281062fc2fb2427afa66ce`, est vérifié avant le lancement. Chaque cas crée son serveur `:99` **dans ses propres espaces montage/PID/réseau**, avec `/tmp` privé et framebuffer 800×600×24, sans TCP (`-nolisten tcp`). L'attente de disponibilité est bornée à huit secondes par connexion au socket Unix privé ; la commande invitée reste bornée à 65 secondes. L'accès sans cookie est limité à ce serveur isolé, non partagé. La mémoire framebuffer et les options sont documentées par [Xvfb](https://xorg.freedesktop.org/archive/X11R7.5/doc/man/man1/Xvfb.1.html) et [Xserver](https://xorg.freedesktop.org/archive/X11R7.5/doc/man/man1/Xserver.1.html).
+
+Le serveur est créé avec son propre groupe de processus ; un `finally` termine et attend **ce seul processus créé**, y compris lors d'un échec invité. Les fixtures locales vérifient ce nettoyage sur succès et exception, le décompte des assertions, la garde de layout avant NSApplication et la corruption après fermeture. Aucun serveur historique n'est utilisé ou signalé par le code du lot.
+
+### Résultats réels
+
+| Cas | Architecture | Retour invité | Assertions | Résultat |
+| --- | --- | ---: | ---: | --- |
+| B13 de contrôle `b64` | x86_64 | 0 | 16, zéro échec | PASS |
+| Candidat `c32` | i386 | 0 | 16, zéro échec | PASS |
+| Candidat `c64` | x86_64 | 0 | 16, zéro échec | PASS |
+| Négatif `n32` | i386 | 1 attendu | 16, un échec attendu | Altération après fermeture détectée |
+
+Les sondes i386/x86_64, compilations et liens passent. Les sorties, codes, cinq fournisseurs de classes par UUID et quatre liaisons/cache sont relus après l'exécution et concordent avec les plans/résultats sauvegardés. Les quatre journaux de namespace contiennent chacun exactement un marqueur de serveur prêt et un marqueur de serveur possédé attendu après arrêt.
+
+`WINDOW_CANARY=PASS I386_AND_X86_64 NEGATIVE_CONTROL=DETECTED`, code final 0 ; rapport SHA-256 `2c0adc8049a6e0a0b9803b53e78f51a2b8c6ae85ed7766f7de6982182849f320`. Rapport ABI21 et entrées protégées inchangés, cache hôte identique depuis R6, aucun montage de l'étape dans l'espace hôte après essai. Aucune reconstruction de bibliothèque, écriture B13/source/Git/cache hôte ou acquisition réseau. Bilan copié par `clip.exe`.
+
+**Limite :** ce succès qualifie le contrat d'objet NSWindow décrit, pas un affichage réel, une boucle d'événements ou Logic. Contrôles, contrôleurs et copies restent à vérifier. Le correctif R22 d'ownership d'identifiant reste séparé et n'est pas qualifié par ce test.
+
 ## Contrat conservé du lot ABI20-RESPONDER
 
 **Contrat NSResponder exécuté avec succès par R6 ci-dessus ; les tentatives antérieures restent conservées.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
