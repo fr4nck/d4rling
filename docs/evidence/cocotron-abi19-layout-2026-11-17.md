@@ -158,6 +158,25 @@ Les journaux de compilation et de lien du témoin i386 sont absents ; la sonde x
 
 Écritures limitées au nouveau répertoire privé sous `validation`, bibliothèques et installations historiques protégées, réseau nul, délai global 780 s pour le pilote. Bilan conservé et copie presse-papiers automatique avec délai borné, y compris sur échec ; code d'exécution préservé. Aucun résultat R5 réel, aucune qualification complète d'AppKit ni exécution de Logic revendiqués.
 
+## Retour suivant — nouveau diagnostic R4, exécution R5 non établie
+
+**OBS opérateur 5700X, non rejoué par l'agent.** Le message présenté comme « ABI20-R5-WASI » contient `LOT=COCOTRON-ABI20-R4-DIAG`, `RUN_ID=d2-abi20-r4-diag.hn5M5S`, `START_MARKER=ABI20-R4`, mode `READ_EXISTING_COMPILER_LOGS_ONLY` et checkpoint `5722c9f21d7488ca1cf9af21bcb8f146ddeab523`. Le nouveau RUN_ID diffère de `53V9oV`, mais les autres marqueurs sont ceux du bloc R4.
+
+Ce retour est classé **R4**, terminé code 0 en lecture seule. Il confirme les mêmes quatre erreurs `TARGET_OS_WASI` et les mêmes 1 033 avertissements dans le journal R3, avec l'empreinte `3b6af8fafffe03eb8f9e6314447ab6a385a7704e4adca0249de7ba7200683f56`. Aucune compilation du témoin ni exécution invitée n'est rapportée. **Ce message ne prouve ni une exécution ni un échec de R5.** Il ne permet pas d'attribuer la sélection du bloc ou du rapport à l'opérateur, à l'interface, au terminal ou au presse-papiers. L'absence globale d'une exécution R5 n'est pas déduite.
+
+### Reprise ABI20-R5-R2-REPRISE — inventorier avant d'exécuter
+
+**Bloc préparé, À EXÉCUTER sur le 5700X.** Nouveau lot `COCOTRON-ABI20-R5-R2-REPRISE`, marqueur `ABI20-R5-R2`, répertoire propre et checkpoint public distinct. Le prévol technique et le correctif WASI de R5 sont conservés ; aucune nouvelle modification d'ABI, de canari ou de bibliothèque.
+
+1. Inspecter uniquement les deux familles connues `d2-abi20-r5-wasi.*` et `d2-abi20-r5-r2-reprise.*` sous le répertoire de validation existant, en excluant l'étape courante : maximum 64 étapes, lecture limitée à 1 Mio par rapport ou preuve sauvegardée. Aucun inventaire général.
+2. Si une étape antérieure est présente, vérifier ses marqueurs et sa finalisation. Restituer son résultat et son code **sans relancer compilation ou invité**. Un rapport incomplet, absent, mal étiqueté ou incohérent impose un arrêt. Les récépissés de restitution renvoient à l'étape connue d'origine ; références manquantes ou cycliques refusées.
+3. Pour un succès antérieur, vérifier les marqueurs de protection, les quatre entrées `results.json`, les retours invités sauvegardés, les cinq fournisseurs de classes par UUID, les six assertions par cas, le négatif attendu et l'empreinte du témoin. Ce sont des vérifications de **preuves sauvegardées**, aucune nouvelle qualification du runtime courant.
+4. Si aucune étape R5 n'est localisée dans ces seuls préfixes, vérifier le diagnostic R4 `hn5M5S`, les entrées R3 épinglées et le journal des quatre erreurs, puis exécuter dans la nouvelle étape privée le correctif R5 inchangé : `TARGET_OS_WASI=0`, gardes Darwin, deux architectures et contrat NSResponder existant. Ne pas désactiver les erreurs du compilateur.
+
+Le bilan indique explicitement `ACTION=EXISTING_R5_RESULT_NO_REPLAY` ou `ACTION=PRIVATE_WASI_FIX_AND_RESPONDER_CANARY`. Les résultats historiques sont conservés ; aucun nettoyage ni déplacement d'étape existante. Les écritures restent dans le nouveau répertoire de validation, sans réseau, reconstruction de bibliothèques ou écriture Git distante depuis le bloc utilisateur. Le bilan expurgé est conservé et copié automatiquement avec délai borné sur succès comme sur échec ; le code de l'exécution ou du résultat restitué est préservé.
+
+**Vérifications locales :** neuf fixtures couvrent l'absence d'étape, l'échec sauvegardé, le rapport inachevé, le mauvais marqueur, le succès cohérent, le négatif incohérent, le retour invité absent, le récépissé valide et la référence cyclique. Tri des routes, refus sans rejeu, masquage des valeurs sensibles, marqueurs et syntaxe Python passent. Le transformateur R5 et son nettoyage sont inchangés. **Ces fixtures ne sont pas des exécutions du canari sur le 5700X. Aucun résultat R5-R2 réel n'est encore revendiqué.**
+
 ## Contrat conservé du lot ABI20-RESPONDER
 
 **Canaris toujours À EXÉCUTER après résolution de l'échec de compilation ci-dessus.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
