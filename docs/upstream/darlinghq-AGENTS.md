@@ -121,7 +121,9 @@ All of the following must hold:
 - Disassembly, decompilation, or instruction-level inspection of Apple
   binaries, and leaked or confidential Apple material. (Backtraces supplied
   under Section 7 are not in this category; disassembly listings that
-  accompany them are.)
+  accompany them are. Neither is inspection of a third-party application's own
+  code, which is permitted for diagnosis under Section 7 — but what it yields
+  is a lead to confirm, not evidence of how the Apple API behaves.)
 - Apple's corecrypto source (see Section 5), or any restricted source.
 - Verbatim code from third-party projects with an undeclared or incompatible
   license. Other compatibility projects may inform *what* the quirk is, not
@@ -267,7 +269,9 @@ task, review the full diff specifically for leftover probes.
 
 - **No disassembly or decompilation of Apple binaries**, and no use of leaked
   or confidentially obtained Apple source, internal documents, or NDA-covered
-  material. If you suspect something is such material, do not use it.
+  material. If you suspect something is such material, do not use it. This
+  restriction is about Apple's code; third-party applications we are trying to
+  run are treated separately below.
 - Black-box observation of public API behavior is the primary way we discover
   quirks. Record findings as behavioral specifications and tests (inputs,
   outputs, OS version), not as descriptions of internals.
@@ -324,6 +328,61 @@ binaries themselves.
   ("API X is entered via Y, then delegates to Z on a background queue"). Do
   not commit raw traces to the repository unless a maintainer agrees.
 
+### Reverse engineering third-party (non-Apple) software
+
+The prohibitions above are about **Apple's** binaries and restricted Apple
+source. They do not cover the applications we are trying to run. Inspecting a
+third-party, non-Apple application — including disassembling or decompiling it
+— is **permitted** when the purpose is to find out why it crashes or
+misbehaves under Darling.
+
+The reason is that such an application is not something we reimplement. We
+never need its code; we need to know *how it talks to the Apple APIs we
+provide*. Looking at the failing call site to see which API was called, with
+which arguments, and what it expected back tells us what our implementation
+got wrong. That is a diagnostic activity, and its output is a bug report about
+Darling, not a transcription of someone else's program.
+
+**What it may be used for:**
+
+- Identifying the API call, selector, argument values, or structure layout
+  involved in a crash or misbehavior, and what the application expected.
+- Determining which Apple framework or library the application entered, and
+  through which public entry point (feeds Section 2).
+- Deciding whether our behavior deviates from the documented contract, and if
+  the documentation is silent, gathering a lead to confirm by black-box
+  observation under Section 3.
+- Writing a *standalone* reproducer that makes the same calls, so the fix can
+  be tested without the application.
+
+**What it must not be used for:**
+
+- Reproducing the application's own code, algorithms, assets, or data
+  structures in Darling, in any form — copied, translated, or paraphrased from
+  its disassembly. Section 4 applies in full.
+- Circumventing licensing, DRM, copy protection, activation, or anti-tampering
+  in the application. We fix compatibility; we do not defeat protection
+  mechanisms. If an application only fails because of such a mechanism, stop
+  and ask (Section 10).
+- Justifying an application-specific hack. Whatever is learned must still
+  result in a general fix to the documented or quirk behavior of our API
+  (Sections 1 and 3). The application is how the bug was *discovered*, never
+  what the fix is keyed on.
+- Inspecting Apple frameworks that happen to be bundled or statically linked
+  into the application. Those are Apple binaries and remain off limits; the
+  permission here ends at the application's own code.
+
+**Hygiene:**
+
+- Only inspect software you are lawfully entitled to possess and run.
+- Record findings in neutral, API-facing terms ("the application calls X with
+  a NULL second argument and expects errSecParam"), not as a description of
+  the application's internals. Do not paste disassembly listings into the PR,
+  commit messages, issue comments, or the repository.
+- Say in the Provenance note that a third-party application was inspected, and
+  name the general behavior that was identified — the fix itself must stand on
+  the public contract or on evidence admissible under Section 3.
+
 ## 8. Tests
 
 - Every new API behavior needs tests derived from the **documented contract**,
@@ -366,6 +425,9 @@ Stop and ask a maintainer instead of proceeding when:
   anything that looks like it came from restricted material.
 - You are unsure whether a source's license permits use.
 - A fix appears to require an application-specific workaround.
+- An application appears to fail because of its licensing, DRM, copy
+  protection, activation, or anti-tampering mechanism rather than because of
+  an API incompatibility.
 - You suspect you have encountered, or produced something derived from,
   Apple's corecrypto or other restricted code.
 
@@ -381,6 +443,10 @@ Stop and ask a maintainer instead of proceeding when:
       hierarchy/ordering/context, and summarized neutrally in the PR
 - [ ] No verbatim third-party code; any reused code is licensed, attributed,
       and listed
+- [ ] If a third-party application was reverse engineered to diagnose the
+      issue (Section 7): it informed only which API call failed and how, no
+      disassembly is included, nothing from it was reproduced in Darling, and
+      the fix is general rather than keyed on that application
 - [ ] No corecrypto-derived code or reference, nor from any other
       source-available-but-not-free-software Apple release (Section 5)
 - [ ] If this PR touches the CoreCrypto reimplementation, or any other
@@ -395,3 +461,18 @@ Stop and ask a maintainer instead of proceeding when:
 - [ ] Provenance note included
 - [ ] New dependencies' licenses checked
 
+
+## 12. Agent skills for working on Darling
+
+How-to guides for agents are kept in a separate repository,
+[darlinghq/darling-skills](https://github.com/darlinghq/darling-skills):
+building and installing a change, running tests inside the guest (including
+GUI tests on X11 and Wayland), debugging with lldb, checking which APIs an
+application needs, and contributing AppDB reports. Its README explains how to
+install them for Claude Code and other agents.
+
+- If your harness supports skills, install them. Otherwise read the matching
+  `SKILL.md` before building, testing or debugging a change at runtime.
+- The skills describe *how* to do things. This file describes *what* is
+  allowed. Where they conflict, this file wins.
+- Improvements to the skills go to the darling-skills repository, not here.

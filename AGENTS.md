@@ -161,10 +161,15 @@ ne pas exécuter une commande Bash comme une commande PowerShell.
   automatique selon l'outil, ou utiliser l'API GitHub pour les lectures
   distantes annoncées par la mission. Signaler un objet absent.
 
-## Règles de l'amont Darling (synchronisation du 14 novembre 2026)
+## Règles de l'amont Darling (copie resynchronisée le 17 novembre 2026)
 
 L'amont `darlinghq/darling` publie son propre `AGENTS.md`, conservé sans
-modification dans [docs/upstream/darlinghq-AGENTS.md](docs/upstream/darlinghq-AGENTS.md).
+modification dans [docs/upstream/darlinghq-AGENTS.md](docs/upstream/darlinghq-AGENTS.md)
+(texte de l'amont au commit `91d6dacd`, 14 novembre 2026 ; la copie précédente
+reproduisait `a6c546f8` du 4 novembre). Depuis cette révision, l'amont permet
+d'inspecter, **pour diagnostic seulement**, le code propre d'une application
+tierce non Apple (SoundHack par exemple) ; Logic Studio et tout framework Apple
+embarqué restent exclus, et rien de ce code ne peut être reproduit dans Darling.
 Il ne remplace pas ce guide pour le travail dans D4rling, mais s'applique
 intégralement à toute proposition destinée à l'amont (contrat public,
 couches macOS, preuves admissibles, balises `QUIRK:`, aucune information
