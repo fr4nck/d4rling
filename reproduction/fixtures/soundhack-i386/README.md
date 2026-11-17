@@ -629,3 +629,28 @@ private sysroot; every location is `FILE_PRESENT_NOT_LOAD_VERIFIED`.
 This is **not** a dyld bind/ABI, Carbon GUI or audio PASS.
 Private stage: `~/d4wrling-work/validation/soundhack-sh20.3OvPqBmm`.
 [Operator-reported evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH20-official-portable-replay.md).
+
+## SH21 — i386 two-level import closure (static names, not dyld binding)
+
+[sh21_import_closure.py](sh21_import_closure.py) uses the existing pinned
+[macho_audit.py](macho_audit.py) to classify the **393 nlist imports of
+authentic SoundHack 0.896** by their two-level Mach-O library ordinals
+against the seven **actual i386** dylibs already located under the
+private 5700X B13 sysroot. It also records provider identity,
+reexports, symbol-table availability and inconclusive cases.
+A symbol name found in a direct provider is not evidence of an ABI
+match or guest launch; a missing *direct* nlist name is not proof
+that dyld reexports, indirect exports or other mechanisms cannot
+bind the import.
+
+The gate refuses anything other than the exact original SoundHack
+executable SHA-256 and authentic SH20 summary and pins the Git blob
+of the existing Mach-O parser. It writes only a new JSON report to
+an explicitly designated private validation path, with no
+installation, build, guest run, audio or user-file modification.
+
+[test_sh21_import_closure.py](test_sh21_import_closure.py):
+**22/22 synthetic host tests PASS**, including an integrated mock
+for **393 symbols / seven libraries** and adversarial paths,
+bad hashes and wrong symbol provider. **The real SH21 pass on 5700X
+is still pending.** [SH21 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH21-i386-nlist-import-closure.md).
