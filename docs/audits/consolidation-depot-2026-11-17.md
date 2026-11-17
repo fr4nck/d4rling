@@ -15,7 +15,8 @@ les verdicts ci-dessous sont des **recommandations**, pas des décisions.
 > Mach-O i386/x86_64 ([`08747e3f`](https://github.com/fr4nck/d4rling/commit/08747e3f55951fb3748a64169d526003c96964db),
 > [preuve](../evidence/carbon-gaet-shadow-2026-11-17.md)). Aucune PR n'a été
 > fermée ni fusionnée par GitHub. La PR #6 a ensuite été fermée sur décision du
-> mainteneur (branche conservée), et le dossier ATB-FIX3 préparé (§6).
+> mainteneur (branche conservée), le dossier ATB-FIX3 préparé, puis ATB-FIX4 corrigé
+> et les deux qualifiés sur Darling officiel (§6).
 
 ## 1. Référence
 
@@ -102,8 +103,8 @@ Contributions fusionnées, à ne pas recréer : Darling
 
 | Candidat | Défaut dans l'amont actuel | Préparation | Point bloquant |
 | --- | --- | --- | --- |
-| ATB-FIX3 `CFArrayRef` | **Présent** (`AudioFileFormatManager.cpp`, `propSize` laissé à 4 après `CanRead`) | **Dossier prêt** (17/11) : branche `contrib/atb-fix3-propsize-20261115` à `6b672ea8`, correctif + test `tests/src/audiofile_type_tables.c` (x86_64 : 10 échecs sans correctif, OK avec ; i386 : OK dans les deux cas, ×2) ; [dossier et brouillon de PR](../upstream/contributions/atb-fix3-2026-11-17.md) | Rejouer sur un build amont ; décision de publication du mainteneur, qui portera lui-même la PR |
-| ATB-FIX4 `TypesFor*` (nouveau, 17/11) | **Présent** (`AudioFile.cpp`, spécificateur lu comme la chaîne elle-même) | Aucun ; constat dans le dossier ATB-FIX3 | Les programmes macOS publics passent `&chaine` ; plantage rc 139 dans le témoin ; convention à confirmer, correctif à écrire |
+| ATB-FIX3 `CFArrayRef` | **Présent** (`AudioFileFormatManager.cpp`, `propSize` laissé à 4 après `CanRead`) | **Prêt à publier** : `contrib/atb-fix3-propsize-20261115` à `6b672ea8`, correctif + test ; qualifié sur Darling officiel `fcb8a2a4` (x86_64 : 10 échecs sans, OK avec ; i386 OK ; non-régression `audiofile_pcm`/`audioconverter_pcm`) ; [dossier et brouillons de PR](../upstream/contributions/atb-fix3-2026-11-17.md) | Ouverture et suivi par le mainteneur |
+| ATB-FIX4 `TypesFor*` | **Présent** (`AudioFile.cpp`, spécificateur lu comme la chaîne ; clé `CFStringGetCStringPtr` pouvant être NULL) | **Corrigé dans le fork** (`f47b65cf`) ; `contrib/atb-fix4-typesfor-20261117` à `0003cdae`, empilée sur ATB-FIX3 ; qualifié sur Darling officiel : SIGSEGV sans, OK avec, i386 et x86_64 | Convention fondée sur la documentation et l'usage public, non observée sur macOS ; PR après ATB-FIX3 |
 | ATB-FIX2-R2b `ConvertBuffer` | **Recouvrement** : amont #2134 (`412ccb28`, 15/11) court-circuite le PCM linéaire par `PCMConverter` | Commit fork `10d8a58a` | Réévaluer sur le seul chemin non-PCM avant tout dossier |
 | ATB-FIX1 décodeurs FFmpeg | Probable ; amont #2132 a changé la gestion FFmpeg | Commit fork `d65d7df6` | Re-diff après #2132/#2134 |
 | DiscRecording `DRDeviceStatusChangedNotification` | Absent de l'amont | Commit fork `f7ecdd4f` (export seul) | Provenance publique de la valeur de chaîne à documenter ; aucun comportement de notification |
