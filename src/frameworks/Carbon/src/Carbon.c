@@ -44,12 +44,6 @@ void FlushEvents(EventMask a, EventMask b)
     if (verbose) puts("STUB: FlushEvents called");
 }
 
-EventTargetRef GetApplicationEventTarget(void)
-{
-    if (verbose) puts("STUB: GetApplicationEventTarget called");
-	return (EventTargetRef)0;
-}
-
 OSStatus GetEventDispatcherTarget()
 {
     if (verbose) puts("STUB: GetEventDispatcherTarget called");
