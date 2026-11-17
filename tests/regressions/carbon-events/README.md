@@ -176,3 +176,40 @@ the real pinned dependencies. The isolated fixture headers are never included
 by the production CMake build or the real-dependency runner. The dated 2026-10-18
 NON EXÉCUTÉ section above records the original submission session; it is not the
 current result of this isolated follow-up.
+
+## Sanitizer selection and dependency preflight (2026-11-17)
+
+`run.sh` now accepts `SANITIZE=address`, `undefined` or `address,undefined`
+and forwards the flag, with `-fno-sanitize-recover=all`, to every compilation
+and link. Any other value is refused (exit 2) before compiling. Previously only
+`address` was honoured: `undefined`, `address,undefined` and unknown values ran
+**without instrumentation** and still exited 0. Earlier published UBSan results
+came from `run-isolated.sh`, which already handled `SANITIZE` correctly.
+`check-real-deps.sh` runs first and stops with exit 2 (`BLOCKED`, `NOT RUN`)
+when the compiler, a primary source/header or the real `CFBase.h` (pinned
+CoreFoundation and nested swift-corelibs-foundation submodules) is missing.
+It downloads nothing.
+
+```sh
+CC=clang-19 SANITIZE=address,undefined sh tests/regressions/carbon-events/run.sh
+```
+
+Verification on 2026-11-17, Debian/WSL2 x86_64, Clang 19.1.7, tree of `master`
+`59937621` with the real gitlinks CoreFoundation `584b8e08` and
+swift-corelibs-foundation `efb3637c`:
+
+| Case | Result |
+| --- | --- |
+| no `SANITIZE`, `address`, `undefined`, `address,undefined` | 54 + 67 + 125 = **246/246** each; 8/8 compiler/linker calls carry the sanitizer and `-fno-sanitize-recover=all` (0/8 without `SANITIZE`) |
+| `address` with `LINKER=gcc`, `detect_leaks=1` | 246/246 |
+| `SANITIZE=bogus` | refused, exit 2, no compiler call |
+| missing `CFBase.h` / nonexistent `CC` | `BLOCKED`, exit 2 |
+| signed overflow injected into a scratch copy of `events.c`, `SANITIZE=undefined` | previous runner: exit 0, no report (not instrumented); intermediate PR #4 runner: report printed but exit 0; this runner: **exit 1** |
+
+Still out of scope: the test-only CF allocator adapter is not the real CF
+runtime; no Mach-O, i386 or guest execution is implied.
+
+Provenance: the sanitizer selection and preflight come from draft PR #4
+(commit `90a433f2`, fr4nck); `-fno-sanitize-recover=all` and this
+qualification were added during the 2026-11-17 consolidation with the
+assistance of an AI agent (Claude Code).
