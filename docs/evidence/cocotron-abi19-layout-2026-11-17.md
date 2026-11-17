@@ -104,9 +104,32 @@ La reprise inspecte uniquement les répertoires privés correspondant au préfix
 
 Les essais Python de préparation couvrent les routes absence/échec/succès/rapport inachevé, les marqueurs erronés, le refus d'un contrôle négatif incohérent et le choix de la source connue la plus récente. **Ils ne sont pas des exécutions du canari sur le 5700X.** L'overlay ABI19, les recherches d'en-têtes R2, les gardes UUID et le contrat NSResponder sont conservés.
 
+## Retour ABI20-R3 — recherche d'en-têtes franchie, compilation arrêtée
+
+**OBS opérateur 5700X, bilan transmis dans le chat ; non rejoué par l'agent.** Le rapport `d2-abi20-r3-reprise.U4zHpf` porte bien le nouveau lot et le marqueur `ABI20-R3`, au checkpoint public `06454dbdeff174817f068214356b68410e563344`.
+
+- Aucun répertoire R2 retrouvé dans le seul préfixe connu ; aucune conclusion sur des emplacements non inspectés. Le pilote sauvegardé sélectionné est celui de `d2-abi20-responder.5WY4Tm`.
+- `HEADER_SEARCH=ABI16_CAPTURED OPTIONS=39 DEFINES=12 EXPLICIT_SYSROOTS=0` : le prévol initial fondé sur un sysroot unique est dépassé. Les chemins sont capturés, pas téléchargés.
+- Pilote privé SHA-256 : `d9f11bb15f69bc24ed42ffbd5ff53e44abf3d53beb82421e3ca22ab9dd5a1c79` ; options d'en-têtes : `5bf188df501a501dc2a22d1c552bbab44f98ed566062ed19abf828d346f90b58` ; témoin : `fe1f6cf297bc2a72381af501e0b24b63d31c35011fc46d3977289a8472ddb406`.
+- `COMPILE_RUNNER_RC=1`, puis `STATUS=STOP STEP=COMPILE_RESPONDER REASON=RESPONDER_BUILD_FAILED RC=1`. Le bilan final reste code 1. Aucun canari invité qualifié, aucune exécution de Logic.
+- Les quatre détails affichés concernent des **avertissements** de nullabilité dans `signal.h` aux lignes 69, 82 et 83. Ils ne suffisent pas à établir la cause du retour non nul, ni à distinguer sonde d'en-têtes, compilation du témoin et édition de liens.
+- Le rapport déclare les entrées protégées inchangées, aucune écriture B13/source/Git/cache hôte et la fin des espaces de PID possédés. Ce sont les observations du bilan opérateur, sans nouvelle vérification distante par l'agent.
+
+### Défaut du filtre de restitution et diagnostic ABI20-R4
+
+Le filtre antérieur retenait toute ligne contenant notamment `missing`, puis limitait les résultats aux quatre premières lignes. Il sélectionnait donc les avertissements « pointer is missing a nullability type specifier » avant une éventuelle erreur ultérieure ; l'imbrication ajoutait aussi `DETAIL=DETAIL=`. **L'erreur bloquante reste inconnue dans le rapport reçu.** Ne pas masquer ces avertissements ni modifier les options de compilation sur cette seule base.
+
+**Bloc R4 préparé, À EXÉCUTER sur le 5700X.** Une nouvelle étape privée lit uniquement la liste exacte des journaux sauvegardés dans `U4zHpf` : sondes d'en-têtes, compilations, liens i386/x86_64 et journaux du lanceur de compilation. Elle vérifie les empreintes du pilote, du témoin et des options capturées ; les lectures sont bornées à 16 Mio par journal et 64 Mio cumulés.
+
+Le diagnostic distingue `error:`, `fatal error:` et les erreurs d'édition de liens des avertissements, donne le fichier et la ligne du premier diagnostic bloquant avec un court contexte, et relève séparément les statuts du lanceur. Le code 1 historique est conservé comme `SOURCE_EXIT_CODE=1` ; le code du nouveau bloc indique seulement si ce diagnostic a pu être extrait. Si aucun diagnostic explicite n'est trouvé, arrêt code 2 sans correction supposée.
+
+**Vérifications locales :** dix cas de classement passent, dont les avertissements de nullabilité, une erreur promue par `-Werror`, une erreur d'en-tête et des diagnostics de lien ; priorité à la première erreur, masquage de données sensibles et syntaxe Python vérifiés. Le lecteur complet passe aussi des fixtures de rapport (erreur après avertissements, absence d'erreur explicite, refus d'une empreinte modifiée, entrées conservées). Ces vérifications ne sont ni une compilation native ni une exécution invitée. Le bloc ne lance aucun compilateur, aucun canari et aucune commande Git, et ne modifie que son nouveau répertoire de rapport. Copie automatique du bilan expurgé avec délai borné, rapport conservé et code de retour préservé.
+
+Les 137/137 mesures i386 d'ABI19 restent acquises dans leur périmètre ; les 76 différences x86_64 et les comportements restent ouverts. Aucun résultat R4 sur le 5700X n'est revendiqué par cette publication.
+
 ## Contrat conservé du lot ABI20-RESPONDER
 
-**Canaris toujours À EXÉCUTER après correction du prévol ci-dessus.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
+**Canaris toujours À EXÉCUTER après résolution de l'échec de compilation ci-dessus.** Bloc Bash complet remis dans le chat, sans script à télécharger : réutilisation du lanceur ABI19 vérifié, de sa couche et du SDK capturé par ABI16, puis compilation d'une adaptation du test amont limitée à `checkResponderSubclass()`. Le main ne lance pas NSApplication ; pas de Xvfb, de fenêtre ni de réseau.
 
 Critères : contrôle positif B13 x86_64, candidat i386 après garde de layout fragile et candidat x86_64, identité réelle de l'image pour chaque cas, accès à l'ivar protégé, objets non nuls et canari intact ; contrôle négatif séparé modifiant volontairement **un mot à l'intérieur du canari alloué**, dont l'échec précis doit être détecté. Arrêt au premier résultat inattendu, préfixes/namespaces neufs, entrées protégées inchangées, bilan et code retour préservés avec copie automatique.
 
