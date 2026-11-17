@@ -654,3 +654,27 @@ installation, build, guest run, audio or user-file modification.
 for **393 symbols / seven libraries** and adversarial paths,
 bad hashes and wrong symbol provider. **The real SH21 pass on 5700X
 is still pending.** [SH21 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH21-i386-nlist-import-closure.md).
+
+## SH23 — LLVM export-trie composite batch (host-only)
+
+SH22 real run on the 5700X: **9/9 gates PASS**, 393 original i386 imports,
+57 direct nlist names + 125 names reachable through bounded
+LC_REEXPORT_DYLIB + **211 names still not matched by the nlist
+graph**. [SH22 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH22-static-reexport-graph-5700x.md).
+
+[sh23_llvm.py](sh23_llvm.py) combines **12** static gates into one
+reporting pass: SH20/SH22 input pins, 393 ordinals, bounded i386
+reexport graph, installed LLVM 19 export-trie and N_INDR name hints,
+weak/strong counts, Carbon triage and final input hashes. It
+continues independent gates on error, explicitly returns PARTIAL,
+and never runs the application, dyld, Carbon GUI or audio.
+The operator's one-shot Bash wrapper retains the detailed JSON
+and copies a **20-line maximum** summary via Windows `clip.exe`.
+
+The companion [sh23_synthetic_check.py](sh23_synthetic_check.py) runs
+a self-contained simulated 393-import/7-provider/12-gate integration;
+**12/12 PASS locally, not yet real 5700X proof**.
+These are *textual export-trie/alias hints*, **not dyld symbol
+binding or ABI proof**.
+
+[Full SH23 evidence](../../../docs/evidence/soundhack-sh01-2026-11-10/SH23-llvm-exports-trie-batch.md).
