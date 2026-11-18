@@ -92,7 +92,7 @@ static void check_value(id value) {
 static void *worker_main(void *opaque) {
     Worker *worker = (Worker *)opaque;
     NSAutoreleasePool *outer = [[NSAutoreleasePool alloc] init];
-    while (!*worker->start) sched_yield();
+    while (!__atomic_load_n(worker->start, __ATOMIC_ACQUIRE)) sched_yield();
 
     for (int i = 0; i < ROUNDS; ++i) {
         NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -143,8 +143,7 @@ int main(void) {
         }
         ++launched;
     }
-    __sync_synchronize();
-    started = 1;
+    __atomic_store_n(&started, 1, __ATOMIC_RELEASE);
     for (int i = 0; i < launched; ++i) pthread_join(threads[i], NULL);
 
     [box setRetained:nil];
