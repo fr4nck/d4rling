@@ -6,6 +6,38 @@ travail ; sa lecture ne déclenche ni expérimentation ni publication.
 Objectif : livrer une amélioration bornée, prouvée et réutilisable sans
 endommager les travaux existants ni annoncer une compatibilité non démontrée.
 
+Révision : 18 novembre 2026. Les tableaux et procédures de référence sont dans
+`docs/agents/` : [limites d'écriture par lot](docs/agents/limites-ecriture-par-lot.md)
+et [niveaux de vérification et qualification](docs/agents/niveaux-de-verification.md).
+
+## Essentiel (lire d'abord ; le reste du fichier est la référence)
+
+- **Priorité courante :** voir la section suivante. Tout lot doit s'y rattacher.
+- **Commandes :** un seul bloc copiable avec prévol, bilan copié au presse-papiers et code de retour préservé (règle permanente plus bas).
+- **Jamais :** force-push, reset, clean, `git add -A`, toucher au checkout `b7d0cb6`, écrire dans `experiments/petite-victoire/` sans demande explicite du responsable.
+- **Preuve :** PASS seulement avec une sortie observée ; distinguer résultat observé et résultat rapporté.
+- **Revue :** une correction n'est intégrée qu'après relecture par quelqu'un d'autre que son auteur.
+- **Arrêt :** annoncer un critère d'arrêt avant de commencer ; au premier bloqueur reproductible, s'arrêter et le documenter.
+- **Publication :** `master`, avance normale, relire la tête avant et après.
+
+## Priorité courante (à mettre à jour à chaque jalon)
+
+**Objectif de la période :** amener Logic Studio 8 (i386) jusqu'à son prochain obstacle exécuté, puis le lever, et recommencer.
+
+**Dernier obstacle connu :** `libfontconfig.so.1` ELF32 absente au chargement Carbon (L2, 14 novembre 2026). *À confirmer dans PROJECT_STATE.md avant usage.*
+
+**Boucle de travail :** lancer → classer le premier obstacle exécuté → corriger le plus petit élément qui le lève → relancer. Ne pas qualifier un sous-système que Logic n'appelle pas encore.
+
+**Autorisation de lancer Logic ou son témoin d'import :** **NON ACCORDÉE.** Tant que le responsable n'a pas remplacé cette ligne par une autorisation datée et son périmètre (préfixe neuf, timeout borné, namespaces privés), les règles de L-A1 et du §4 s'appliquent : aucun lancement.
+
+**Règle de sélection des lots**, dans cet ordre :
+1. le lot qui lève le premier obstacle exécuté de Logic ;
+2. à défaut, un prérequis direct de cet obstacle (dépendance ELF32, symbole, API appelée) ;
+3. à défaut, la maintenance (synchronisation amont, durcissement des tests), à raison d'un lot sur trois au plus ;
+4. tout autre lot (nouvel audit, témoin synthétique, inventaire) exige une phrase de justification : quel obstacle de la priorité courante il débloque. Sans elle, ne pas le faire.
+
+**Arrêt :** trois tentatives consécutives qui ne changent pas le premier obstacle déclenchent un arrêt et une demande d'arbitrage, pas une quatrième variante.
+
 ## Remise des commandes — règle permanente, indépendante de l'appareil
 
 **Consigne explicite et permanente du responsable (16 novembre 2026) :** ces préférences s'appliquent quel que soit l'appareil utilisé. Ne pas les conditionner à un téléphone, à un contexte mobile ou à un changement d'appareil ; ne pas présumer l'appareil courant. Adapter les commandes au shell et à la machine cible réellement identifiés.
@@ -33,205 +65,84 @@ Avant tout chantier technique significatif, l'agent ayant accès à ce dépôt
 consulte ces deux textes, en particulier **AGT-001 à AGT-014**, puis ce guide
 local et les instructions du sous-système. L'accès au dépôt privé n'est pas
 présumé pour un contributeur extérieur : ne jamais prétendre avoir consulté
-une règle inaccessible. Dans ce cas, appliquer au minimum les garde-fous
-autonomes ci-dessous et signaler toute règle non vérifiable dont dépend
-l'autorisation ou la sûreté d'une opération. En cas de conflit ou
-d'incertitude bloquante, **arrêter l'opération concernée et demander un
-arbitrage**, sans contournement tacite.
+une règle inaccessible ; appliquer au minimum les garde-fous de ce guide et
+signaler toute règle non vérifiable dont dépend l'autorisation ou la sûreté
+d'une opération. En cas de conflit ou d'incertitude bloquante, **arrêter
+l'opération concernée et demander un arbitrage**, sans contournement tacite.
 
 **Contrat obligatoire avant création, développement, script ou délégation
 à un agent :**
 
-1. Identifier le **dépôt canonique**, l'état réel de `master`, les éventuels
-   changements locaux, la source de vérité et les solutions déjà disponibles.
-2. Réutiliser sources, builds, tests, dépendances et outils existants avant de
-   créer une copie, un mécanisme ou un environnement parallèle ; justifier
-   explicitement toute exception.
-3. Conserver **une seule branche de développement : `master`**, un checkout
-   canonique et un build/une installation de référence, avec traçabilité
-   source → build → préfixe → essais. Les anciennes copies restent protégées
-   jusqu'à décision explicite de migration ou de suppression.
-4. Pour le travail pérenne sur le 5700X, viser **au plus trois zones
-   permanentes** sous `/home/Deniel/d4wrling-work` :
-   `canon/` (sources, build, installation), `validation/` (tests et sorties
-   bornées) et `historique/` (preuves protégées). **C'est une cible
-   d'organisation, pas une autorisation de créer ces dossiers, déplacer les
-   copies actuelles ni nettoyer l'existant.** Utiliser l'espace autorisé par
-   la mission ; ne pas multiplier les racines ou dossiers horodatés par
-   défaut. Les essais temporaires ont un propriétaire, une limite et une
-   politique de conservation.
-5. Avant toute commande à effet, annoncer le **shell**, les chemins lus et
-   écrits, le volume, les accès réseau, les changements Git et les risques.
-   Aucune installation, copie volumineuse, écriture sur volume Windows ni
-   téléchargement implicite. Un clone partiel peut déclencher un *lazy fetch*
-   même en lecture ; le prévenir explicitement.
-6. Aucune suppression, aucun déplacement, écrasement, force-push, reset
-   destructif ou réécriture d'historique sans autorisation spécifique.
-   Préserver `experiments/petite-victoire/`, ses preuves et les installations
-   historiques selon les restrictions renforcées plus bas.
-7. Une correction n'est **intégrée** que si elle est revue, testée au niveau
-   pertinent et présente dans `master` ; un PASS synthétique, un commit
-   publié et une recette réelle sont trois états distincts. Porter les
-   corrections qualifiées par petits changements traçables, sans assembler
-   arbitrairement des binaires issus de builds différents.
-8. Définir le livrable demandé **maintenant**, la preuve attendue, les tests
-   négatifs, un budget de travail et un **critère d'arrêt**. Ne pas étendre
-   « go » à des chantiers implicites.
-9. Les prompts destinés à un autre agent et les scripts livrés à l'utilisateur
-   doivent être **complets et collables en une seule fois**, avec prévol du
-   dépôt réel, bon répertoire, protections, lancement et bilan ; aucune
-   retouche manuelle exigée.
-10. Avant diagnostic ou correctif non trivial, lire **documentation officielle
-    et code/version réels** (AGT-014). Si une précondition manque, signaler
-    le blocage plutôt que multiplier des essais ou fabriquer des prérequis.
+1. Identifier le **dépôt canonique**, l'état réel de `master`, les éventuels changements locaux, la source de vérité et les solutions déjà disponibles.
+2. Réutiliser sources, builds, tests, dépendances et outils existants avant de créer une copie, un mécanisme ou un environnement parallèle ; justifier explicitement toute exception.
+3. Conserver **une seule branche de développement : `master`**, un checkout canonique et un build/une installation de référence, avec traçabilité source → build → préfixe → essais. Les anciennes copies restent protégées jusqu'à décision explicite de migration ou de suppression.
+4. Pour le travail pérenne sur le 5700X, viser **au plus trois zones permanentes** sous `$D4RL_HOME/d4wrling-work` : `canon/` (sources, build, installation), `validation/` (tests et sorties bornées) et `historique/` (preuves protégées). **C'est une cible d'organisation, pas une autorisation de créer ces dossiers, déplacer les copies actuelles ni nettoyer l'existant.** Les essais temporaires ont un propriétaire, une limite et une politique de conservation.
+5. Avant toute commande à effet, annoncer le **shell**, les chemins lus et écrits, le volume, les accès réseau, les changements Git et les risques. Aucune installation, copie volumineuse, écriture sur volume Windows ni téléchargement implicite. Un clone partiel peut déclencher un *lazy fetch* même en lecture ; le prévenir explicitement.
+6. Aucune suppression, aucun déplacement, écrasement, force-push, reset destructif ou réécriture d'historique sans autorisation spécifique. Préserver `experiments/petite-victoire/`, ses preuves et les installations historiques.
+7. Une correction n'est **intégrée** que si elle est testée au niveau pertinent, **relue par une personne ou un agent différent de son auteur**, et présente dans `master`. Un PASS synthétique, un commit publié et une recette réelle sont trois états distincts. Porter les corrections qualifiées par petits changements traçables, sans assembler arbitrairement des binaires issus de builds différents. (Détail de la relecture au §7.)
+8. Définir le livrable demandé **maintenant**, la preuve attendue, les tests négatifs, un budget de travail et un **critère d'arrêt**. Ne pas étendre « go » à des chantiers implicites.
+9. Les prompts destinés à un autre agent et les scripts livrés à l'utilisateur doivent être **complets et collables en une seule fois**, avec prévol du dépôt réel, bon répertoire, protections, lancement et bilan ; aucune retouche manuelle exigée.
+10. Avant diagnostic ou correctif non trivial, lire **documentation officielle et code/version réels** (AGT-014). Si une précondition manque, signaler le blocage plutôt que multiplier des essais ou fabriquer des prérequis.
 
 La mémoire conversationnelle ne remplace **jamais** ce prévol documentaire.
 Les règles spécifiques D4rling ci-après renforcent ce contrat ; elles ne
-l'annulent pas. Aucun changement des dossiers existants n'est autorisé par
-ce document seul.
+l'annulent pas.
 
 ## Petite Victoire — développement réservé au responsable du projet
 
-**Le responsable du projet garde la main sur le développement et les choix de produit de Petite
-Victoire**, y compris son nom et son évolution éventuelle vers un DAW.
-Les agents ne choisissent pas spontanément un lot de développement de ce
-projet et n'écrivent pas dans `experiments/petite-victoire/` (code, tests,
-interface, ressources, documentation du produit, versions ou archives).
+**Le responsable du projet garde la main sur le développement et les choix de
+produit de Petite Victoire**, y compris son nom et son évolution éventuelle
+vers un DAW. Les agents ne choisissent pas spontanément un lot de ce projet et
+n'écrivent pas dans `experiments/petite-victoire/` (code, tests, interface,
+ressources, documentation du produit, versions ou archives).
 
-Une intervention exige une **demande explicite et ciblée du responsable du projet**.
-Une mission générale de développement autonome de D4RLING ne délègue pas
-Petite Victoire. La lecture et le signalement de blocages restent possibles
+Une intervention exige une **demande explicite et ciblée du responsable du
+projet**. Une mission générale de développement autonome de D4RLING ne délègue
+pas Petite Victoire. La lecture et le signalement de blocages restent possibles
 dans le périmètre de la mission ; proposer une évolution ne vaut pas
 autorisation de l'implémenter.
 
 Petite Victoire doit devenir le démonstrateur musical de référence pour
-vérifier les fonctions de D4RLING **sans posséder Logic Studio 8**.
-Les agents peuvent préparer et qualifier le socle D4RLING avec leurs propres
-témoins, puis documenter les contrats utilisables par le responsable du projet. La validation
-par Petite Victoire porte sur les chemins réellement exercés et identifiés :
-mode natif et mode invité i386 sont distingués, ainsi que les fonctions
-encore absentes ou non testées. Les jalons Logic/EXS24 et QuickTime gardent
-leurs preuves applicatives propres.
+vérifier les fonctions de D4RLING **sans posséder Logic Studio 8**. Les agents
+peuvent préparer et qualifier le socle D4RLING avec leurs propres témoins, puis
+documenter les contrats utilisables par le responsable. La validation par
+Petite Victoire porte sur les chemins réellement exercés et identifiés : mode
+natif et mode invité i386 sont distingués, ainsi que les fonctions encore
+absentes ou non testées. Les jalons Logic/EXS24 et QuickTime gardent leurs
+preuves applicatives propres.
 
 ## 1. Lire avant d'agir
 
-Lire dans cet ordre :
+Lire dans cet ordre : [PROJECT_STATE.md](PROJECT_STATE.md) ;
+[reproduction/README.md](reproduction/README.md) et
+[reproduction/refs.lock.json](reproduction/refs.lock.json) ;
+[ROADMAP.md](ROADMAP.md) ; le README et les rapports datés du sous-système
+choisi ; [CREDITS.md](CREDITS.md) avant toute réutilisation de code.
 
-1. [PROJECT_STATE.md](PROJECT_STATE.md), état historique de reprise ;
-2. [reproduction/README.md](reproduction/README.md) et
-   [reproduction/refs.lock.json](reproduction/refs.lock.json) ;
-3. [ROADMAP.md](ROADMAP.md), preuves récentes et lots indépendants ;
-4. le README et les rapports datés du sous-système choisi ;
-5. [CREDITS.md](CREDITS.md) avant toute réutilisation de code.
-
-Le README racine renvoie à cet état pour les reprises depuis mobile.
 Confronter les dates **et les révisions** : `master`, branches de travail,
-snapshot historique et installation testée sont des états différents.
-Ne pas transformer une vieille note « stub » en diagnostic actuel sans relire
-le code ; ne pas transformer une nouvelle observation en qualification de
-tous les anciens chemins.
+snapshot historique et installation testée sont des états différents. Ne pas
+transformer une vieille note « stub » en diagnostic actuel sans relire le code ;
+ne pas transformer une nouvelle observation en qualification de tous les
+anciens chemins. Les recettes publiques indiquent le shell et la distribution
+attendus : ne pas exécuter une commande Bash comme une commande PowerShell.
 
 Références de convergence : [audio B14/C10](docs/REPRISE-AUDIO-MUSIQUE-2026-11-08.md),
 [dyld/ABI V0–V2](docs/research/i386-dyld-abi-audit-2026-11.md),
 [exigences Logic](docs/decisions/logic8-exigences-audio-et-chantiers-2026-11-08.md),
 [Petite Victoire v0.1](experiments/petite-victoire/v0.1/README.md).
-Les recettes publiques indiquent le shell et la distribution attendus ;
-ne pas exécuter une commande Bash comme une commande PowerShell.
 
 ## 2. Prévol sans mutation
 
-- Identifier dépôt, branche, HEAD, statut, index, diff et sous-modules
-  disponibles par des lectures bornées. Chercher d'abord avec `rg` /
-  `rg --files`. Ne pas publier les sorties brutes si elles révèlent des
-  données locales. Une copie sans `.git` est une copie de documents, pas
-  un checkout : ne pas y inventer un état Git.
-- Noter les fichiers modifiés/ignorés, leurs propriétaires de travail et les
-  références nécessaires au lot. Préserver tout changement préexistant.
-  Si la cible est déjà modifiée, lire le diff et choisir des fichiers neufs
-  ou signaler le conflit ; ne pas écraser ni intégrer ce diff par défaut.
-- Déterminer l'environnement réel : Linux/WSL2, architectures ELF/Mach-O,
-  outils déjà présents, display, bibliothèques et route audio si nécessaires.
-  Ne pas confondre le PC WSLg testé et un MacBook sous Linux.
-- Choisir un espace de travail unique sous le dossier de projet autorisé,
-  avec build, exports et rapports dédiés ; estimer volume et parallélisme.
-  Ne pas dupliquer des builds/archives volumineux automatiquement.
-- Aucun `fetch`, clone, récupération de sous-module ou paquet caché dans un
-  prévol. Un clone partiel/promisor peut télécharger même pendant une
-  lecture Git : vérifier la disponibilité locale, désactiver la récupération
-  automatique selon l'outil, ou utiliser l'API GitHub pour les lectures
-  distantes annoncées par la mission. Signaler un objet absent.
-
-## Règles de l'amont Darling (copie resynchronisée le 17 novembre 2026)
-
-L'amont `darlinghq/darling` publie son propre `AGENTS.md`, conservé sans
-modification dans [docs/upstream/darlinghq-AGENTS.md](docs/upstream/darlinghq-AGENTS.md)
-(texte de l'amont au commit `91d6dacd`, 14 novembre 2026 ; la copie précédente
-reproduisait `a6c546f8` du 4 novembre). Depuis cette révision, l'amont permet
-d'inspecter, **pour diagnostic seulement**, le code propre d'une application
-tierce non Apple (SoundHack par exemple) ; Logic Studio et tout framework Apple
-embarqué restent exclus, et rien de ce code ne peut être reproduit dans Darling.
-Il ne remplace pas ce guide pour le travail dans D4rling, mais s'applique
-intégralement à toute proposition destinée à l'amont (contrat public,
-couches macOS, preuves admissibles, balises `QUIRK:`, aucune information
-issue du désassemblage de binaires Apple), en complément de la
-[stratégie amont](docs/decisions/strategie-contributions-amont.md).
-
-## Coordination inter-conversations — journal Git partagé (10 novembre 2026)
-
-Le dépôt GitHub `fr4nck/d4rling`, branche `master`, est le **point de
-synchronisation commun** entre les conversations ChatGPT, agents locaux et
-autres contributions. Une conversation, un rapport oral ou une session
-terminale ne remplace pas les commits et documents publiés.
-
-**Avant chaque nouveau lot, reprise ou changement de chantier :**
-
-1. Lire le SHA courant de `master` **et les derniers commits** ; examiner
-   les diffs qui touchent les fichiers, contrats, dépendances ou preuves du lot.
-   Comparer avec le SHA de départ de la conversation ou du checkout local.
-2. Lire le checkpoint publié le plus récent dans le périmètre concerné,
-   puis vérifier l'état du checkout local, les modifications non commitées et
-   les artefacts non publiés. Ne pas refaire un lot déjà qualifié ni ignorer
-   un travail plus récent sous prétexte que la conversation est ancienne.
-3. Définir un lot court et des fichiers attribués. Lorsque deux travaux
-   risquent d'écrire les mêmes fichiers, coordonner la propriété avant
-   modification ; réserver les fichiers partagés à un seul intégrateur.
-
-**À chaque évolution et en fin de lot :**
-
-- Publier un **commit séparé, traçable et de portée réduite** pour toute
-  évolution **achevée et vérifiée** dans le périmètre autorisé : correction,
-  test, documentation ou décision. Le commit mentionne le lot, l'état
-  technique et renvoie vers les preuves utiles. Les tests pertinents doivent
-  passer avant intégration d'une modification de production.
-- Si un candidat, un résultat local ou une dépendance n'est pas encore
-  qualifié ou accessible depuis GitHub, publier **uniquement un checkpoint
-  documentaire honnête**, lorsque sa publication est autorisée :
-  révision, provenance, résultats rapportés vs vérifiés, limitations,
-  statut `PASS`/`FAIL`/`BLOCKED`, et prochaine action exacte.
-  Ne pas publier du code non qualifié sous prétexte de le sauvegarder.
-- À chaque checkpoint, distinguer les faits observés directement par
-  l'agent des résultats **rapportés depuis un autre poste ou une autre
-  conversation**. Ne jamais présenter ces derniers comme des tests rejoués.
-
-**Juste avant chaque commit ou publication :** relire à nouveau `master`,
-inspecter les nouveaux commits et les fichiers concernés. Si la tête a
-changé, comparer et réconcilier avant toute écriture ; ne jamais écraser
-silencieusement un travail concurrent. Publier uniquement en avance normale
-avec vérification explicite de la tête attendue, sans force-push, reset ni
-historique réécrit. Après publication, relire la tête et les fichiers,
-puis communiquer SHA complet, URL, périmètre, preuves et prochain jalon.
-
-Ces contrôles se font **à chaque session et à chaque publication** ; ils
-ne constituent pas une surveillance continue en arrière-plan. Conserver
-la règle de branche unique `master` et toutes les protections du présent
-guide, notamment les exclusions de Petite Victoire, les installations
-historiques et les données propriétaires.
+- Identifier dépôt, branche, HEAD, statut, index, diff et sous-modules par des lectures bornées. Chercher d'abord avec `rg` / `rg --files`. Ne pas publier les sorties brutes si elles révèlent des données locales. Une copie sans `.git` est une copie de documents, pas un checkout : ne pas y inventer un état Git.
+- Noter les fichiers modifiés/ignorés et leurs propriétaires de travail ; préserver tout changement préexistant. Si la cible est déjà modifiée, lire le diff et choisir des fichiers neufs ou signaler le conflit ; ne pas écraser ni intégrer ce diff par défaut.
+- Déterminer l'environnement réel : Linux/WSL2, architectures ELF/Mach-O, outils présents, display, bibliothèques et route audio si nécessaires. Ne pas confondre le PC WSLg testé et un MacBook sous Linux.
+- Choisir un espace de travail unique sous le dossier de projet autorisé, avec build, exports et rapports dédiés ; estimer volume et parallélisme. Ne pas dupliquer automatiquement des builds ou archives volumineux.
+- Aucun `fetch`, clone, récupération de sous-module ou paquet caché dans un prévol. Un clone partiel/promisor peut télécharger même pendant une lecture Git : vérifier la disponibilité locale, désactiver la récupération automatique selon l'outil, ou utiliser l'API GitHub pour les lectures distantes annoncées par la mission. Signaler un objet absent.
 
 ## 3. Choisir et borner un lot
 
-Prendre un seul identifiant de [ROADMAP.md](ROADMAP.md), par exemple R-A1,
-A-A1, Q-A1 ou M-A1. Dans une mission autorisant le développement autonome,
-choisir le plus petit lot utile dont les entrées sont disponibles ; annoncer
+Appliquer la **règle de sélection** de la « Priorité courante ». Prendre un seul
+identifiant de [ROADMAP.md](ROADMAP.md) (R-A1, A-A1, Q-A1, M-A1…), annoncer
 objectif, preuves et fichiers avant de modifier. Une mission documentaire
 reste documentaire.
 
@@ -239,6 +150,7 @@ Fixer un contrat de tâche court :
 
 ```text
 Lot / objectif observable :
+Obstacle de la priorité courante que ce lot lève :
 Base : dépôt, branche, SHA, overlay éventuel, sous-modules concernés
 Entrées disponibles / manquantes :
 Écritures autorisées : liste exacte de fichiers et répertoire de sortie
@@ -246,215 +158,158 @@ Hors périmètre / fichiers partagés réservés :
 Critère PASS : résultat attendu et méthode de mesure
 Contrôles négatifs / erreurs / régressions :
 Condition BLOCKED et tâche indépendante de repli :
+Critère d'arrêt (budget, nombre de tentatives) :
 Livraison : sources, preuve expurgée, commande de reproduction, limites
 Publication autorisée : destination et mode explicitement demandés
 ```
 
-L'autorisation explicite de la mission suffit pour ses actions nécessaires ;
-ne pas redemander la même permission. Si une entrée ou une autorisation
-nouvelle manque, avancer sur les parties indépendantes et poser une seule
-question précise. **Ne pas élargir silencieusement le périmètre.**
+L'autorisation explicite de la mission suffit pour ses actions nécessaires ; ne
+pas redemander la même permission. Si une entrée ou une autorisation nouvelle
+manque, avancer sur les parties indépendantes et poser une seule question
+précise. **Ne pas élargir silencieusement le périmètre.**
 
-Les lots ci-dessous sont parallélisables par leurs contrats, mais aucun guide
-n'autorise à lancer d'autres agents sans mission le prévoyant. Si plusieurs
-agents travaillent effectivement, attribuer des fichiers disjoints ; un seul
-intégrateur écrit les contrats partagés et les fichiers racine. Relire l'état
-courant avant chaque intégration, sans écraser le travail d'un autre agent.
+Si plusieurs agents travaillent effectivement, attribuer des fichiers
+disjoints ; un seul intégrateur écrit les contrats partagés et les fichiers
+racine. Aucun guide n'autorise à lancer d'autres agents sans mission le
+prévoyant. Les répertoires candidats par chantier sont dans
+[limites d'écriture par lot](docs/agents/limites-ecriture-par-lot.md) : leur
+mention n'autorise pas leur modification collective.
 
-## 4. Limites d'écriture par chantier
+## 4. Protéger l'environnement et les travaux locaux
 
-Les répertoires sont des **périmètres candidats**. Le contrat de tâche retient
-une liste de fichiers précise ; leur mention ici n'autorise pas leur
-modification collective.
+- Le checkout historique **`b7d0cb6a79fe196657deb9711647f8486bcc5e5e` avec neuf modifications locales et `parameters.c` ignoré est protégé.** Ne jamais y exécuter checkout/reset/clean/stash/pull, y appliquer les snapshots, ni modifier son build, installation ou préfixe.
+- Ne pas supprimer, déplacer, écraser, « nettoyer » ou versionner les travaux d'autrui. Pas de `git add .` / `git add -A` : sélectionner les seuls fichiers revus. Le motif historique `tests` de `.gitignore` peut masquer un nouveau test ; vérifier explicitement son inclusion et ne forcer que la source précise après revue.
+- Matérialiser les sources historiques uniquement dans une destination neuve avec les recettes documentées ; préférer les entrées locales disponibles.
+- Lancer uniquement dans une installation copiée/cohérente, un préfixe **neuf et court**, des namespaces privés et un timeout borné. Lire le runner avant usage. **La présence d'une installation ne constitue pas l'autorisation de la lancer** ; le lancement de Logic suit l'autorisation de la « Priorité courante ».
+- Ne pas tuer de serveur historique, changer sysctl, démarrer un service global, installer dans `/usr/local` ou `/opt`, ni copier une dylib depuis un autre build pour masquer une dépendance.
+- Après un essai, borner les seuls descendants/namespaces créés par le lot, attendre leur fin, vérifier l'absence de montage/processus résiduel et l'intégrité des fichiers protégés. Conserver les journaux privés.
+- Aucun téléchargement/installation silencieux, SDK récupéré implicitement, fichier dispersé à la racine du disque ou extraction massive de DVD. Si une acquisition devient nécessaire, préciser source, volume, destination et raison avant de demander la décision.
+- Ne pas changer hors mission : CMake racine, CI, packaging, dépendances, révisions de sous-modules, verrous de reproduction, snapshots et correctifs historiques.
 
-| Lot | Écritures isolables | Limites / coordination nécessaire |
-| --- | --- | --- |
-| R-A1 / R-A2 | Note dédiée `docs/research/`, nouvelles fixtures `reproduction/fixtures/` | Lecture seule des binaires installés ; pas de modification mldr, dyld, libSystem/XNU, libgcc ou C2 sans mission de correction |
-| U-A1 | Tests dédiés `tests/regressions/carbon-*/`, note datée | Production `src/frameworks/Carbon/`, interfaces publiques et Cocotron partagés ; attribution requise |
-| A-A1 | Note `docs/evidence/`, nouveau banc isolé `experiments/` hors `experiments/petite-victoire/` | Préserver `src/CoreAudio/`, HAL, PulseAudio, pont ELF/IPC et acquis B11–C10 ; pas de nouveau backend implicite |
-| M-A1 / M-A2 | Nouveaux tests MIDI et AU dans des sous-dossiers distincts de `tests/regressions/` | `src/frameworks/CoreMIDI/`, Component Manager et AudioUnit partagés ; contrôler ABI et durée de vie |
-| Q-A1 | Témoin `tests/regressions/quicktime-*/`, média synthétique défini par source originale, note de preuve | Corrections attribuées seulement dans `src/frameworks/QuickTime/` / `QTKit/` ; aucun Player/codec propriétaire publié |
-| L-A1 | Synthèse expurgée `docs/audits/logic-studio-8/` | DVD, Logic, banques et frameworks privés en lecture seule ; pas de lancement sans autorisation explicite |
-| P — réservé au responsable du projet | Aucune écriture autonome dans `experiments/petite-victoire/` | Intervention uniquement sur demande explicite et ciblée du responsable du projet ; les agents travaillent sur le socle D4RLING et leurs témoins séparés |
-| Intégration documentaire | `ROADMAP.md`, `AGENTS.md`, `PROJECT_STATE.md`, liens README | Un intégrateur ; actualiser les conclusions sans réécrire les anciens rapports |
-
-Ne pas changer hors mission : CMake racine, CI, packaging, dépendances,
-révisions de sous-modules, verrous de reproduction, snapshots et correctifs
-historiques. Les snapshots conservent la source historique ; un correctif
-nouveau reçoit sa propre provenance.
-
-## 5. Protéger l'environnement et les travaux locaux
-
-- Le checkout historique **`b7d0cb6a79fe196657deb9711647f8486bcc5e5e` avec
-  neuf modifications locales et `parameters.c` ignoré est protégé**.
-  Ne jamais y exécuter checkout/reset/clean/stash/pull, y appliquer les
-  snapshots, ni modifier son build, installation ou préfixe.
-- Ne pas supprimer, déplacer, écraser, « nettoyer » ou versionner les travaux
-  d'autrui pour faciliter le lot. Pas de `git add .` / `git add -A` :
-  sélectionner les seuls fichiers revus. Le motif historique `tests` de
-  `.gitignore` peut masquer un nouveau test ; vérifier explicitement son
-  inclusion, et ne forcer que la source précise après revue.
-- Matérialiser les sources historiques uniquement dans une destination neuve
-  avec les recettes documentées. Une récupération réseau reste soumise à
-  l'autorisation de la mission ; préférer les entrées locales disponibles.
-- Lancer uniquement dans installation copiée/cohérente, préfixe **neuf et
-  court**, namespaces privés et timeout borné. Lire le runner avant usage.
-  La présence d'une installation ne constitue pas l'autorisation de la lancer.
-- Ne pas tuer de serveur historique, changer sysctl, démarrer un service
-  global, installer dans `/usr/local` ou `/opt`, ni copier une dylib depuis
-  un autre build pour masquer une dépendance.
-- Après un essai, borner les seuls descendants/namespaces créés par le lot,
-  attendre leur fin, vérifier l'absence de montage/processus résiduel et
-  l'intégrité des fichiers protégés. Conserver les journaux privés.
-- Aucun téléchargement/installation silencieux, SDK récupéré implicitement,
-  fichier dispersé à la racine du disque ou extraction massive de DVD.
-  Si une acquisition devient nécessaire hors autorisation, préciser source,
-  volume, destination et raison avant de demander la décision.
-
-## 6. Implémenter et tester le contrat utile
+## 5. Implémenter et tester le contrat utile
 
 Avant tout correctif, lire source, tests, ABI publique, dépendances et
-révisions de branches. Réutiliser les audits terminés ; rechercher la lacune
-exacte au lieu de refaire un inventaire général. Respecter PulseAudio,
-l'ABI CoreAudio, Carbon et CoreMIDI. Préserver auteurs/licences et enregistrer
-les imports/adaptations dans CREDITS et le commit.
+révisions de branches. Réutiliser les audits terminés ; chercher la lacune
+exacte au lieu de refaire un inventaire général. Respecter PulseAudio, l'ABI
+CoreAudio, Carbon et CoreMIDI. Préserver auteurs/licences et enregistrer les
+imports/adaptations dans CREDITS et le commit.
 
-Pour une correction de comportement, établir un oracle indépendant :
-même entrée avant/après, attendu défini, contrôle positif et négatif, panne
-pertinente et régression ciblée. Ne pas coder un test qui reproduit seulement
-l'implémentation. Un stub doit retourner une erreur honnête plutôt qu'un succès
-sans objet ou effet demandé.
+- **Oracle indépendant :** même entrée avant/après, attendu défini, contrôle positif et négatif, panne pertinente, régression ciblée. Ne pas coder un test qui reproduit seulement l'implémentation.
+- **Stub honnête :** un stub retourne une erreur plutôt qu'un succès sans objet ou effet demandé.
+- **Niveau de preuve adapté :** lecture de source, test hôte, chargement Linux, témoin Darwin i386 et application ne prouvent pas la même chose ; voir le [tableau des niveaux](docs/agents/niveaux-de-verification.md), qui détaille aussi les contrôles Carbon, Mach-O, GUI et la frontière hôte/invité.
+- **Audio :** prouver le chemin natif ou invité réellement utilisé ; aucune allocation, opération disque/réseau ou verrou bloquant dans le callback de rendu ; une écoute est confirmée par une personne ou une capture mesurée, jamais inférée d'un compteur.
+- **Application :** classer le **premier obstacle exécuté** avant les lacunes secondaires ; les tables Mach-O seules ne démontrent ni chargement ni fonctionnement. Réutiliser l'audit existant avant tout nouveau scan. **Ne jamais désassembler de code Apple.** Pour Logic, rester au niveau du comportement observé (symbole absent, plantage, erreur) : c'est ce niveau de preuve que l'amont accepte.
+- Une modification purement documentaire exige revue des faits, liens, références et diff ; pas de build intégral pour cette seule raison.
 
-Choisir le niveau de vérification adapté :
-
-| Niveau | Ce qu'il permet de conclure | Ce qu'il ne prouve pas |
-| --- | --- | --- |
-| Lecture SRC/DOC, audit de symboles | Contrat, présence de code/export ou dépendance à la révision lue | Comportement exécuté |
-| Build / test hôte | Source compilable et assertions dans le banc décrit | ABI invité, vraie CF si adaptateur, application Mach-O |
-| Chargement / marqueur Linux | Étape de chargement ou instructions exécutées | Appels Darwin si syscalls Linux directs |
-| Témoin Darwin i386 | APIs et chemin explicitement exercés | Ensemble du framework, GUI/audio/Logic non exercés |
-| PCM / écoute / application | Résultat du chemin et scénario mesurés | Toute la suite Logic, faible latence ou stabilité générale |
-
-Pour les contrats Carbon hôte, les commandes sont dans
-[le runner existant](tests/regressions/carbon-events/README.md) ; préciser
-adaptateur CF, vrais en-têtes ou fixtures substituées. Si le responsable du projet délègue
-explicitement un test de Petite Victoire, utiliser CMake/CTest et le test Node
-déjà documentés, avec des sorties dédiées, sans installer un outil absent.
-Pour Mach-O, vérifier tranches, ID, exports/réexports, conventions
-d'appel, tailles/alignements, erreurs, callbacks et durées de vie.
-Respecter le graphe `*_firstpass.dylib` ; un build `COMPONENTS=core`
-ne qualifie pas les composants audio `gui`.
-
-V1 i386 doit être clos sur désassemblage brut avant une conclusion H-CF.
-La PR #8/C2 reste expérimentale ; aucune fusion ni nouveau V3 runtime n'est
-autorisé par sa simple mention. Les lots Logic et essais propriétaires
-restent des portes distinctes, comme l'indiquent leurs audits.
-
-Pour l'audio : prouver le chemin natif ou invité réellement utilisé, format,
-frames, callbacks, sortie, arrêt/reprise et erreurs. Aucune allocation,
-opération disque/réseau ou verrou bloquant ajouté au callback de rendu.
-Mesurer xruns, horloge, CPU/RAM et latence acoustique séparément des temps
-d'acquittement. Une écoute doit être confirmée par une personne ou un
-protocole de capture mesuré ; ne jamais l'inférer d'un compteur.
-
-Une modification purement documentaire exige revue des faits, liens,
-références et diff ; ne pas lancer un build intégral pour cette seule raison.
-
-### Qualification GUI, frontière hôte/invité et triage applicatif
-
-Ces compléments s'appliquent **lorsque le lot les exige** ; ils ne créent
-aucun chantier, outil ou prérequis obligatoire supplémentaire.
-
-- **GUI X11/Wayland :** utiliser un serveur d'affichage et un gestionnaire
-  de fenêtres **isolés du bureau et des autres bancs** (Xvfb pour X11,
-  compositeur headless pour Wayland, seulement s'ils sont déjà disponibles).
-  Vérifier le backend effectivement sélectionné : un repli Wayland vers X11
-  ne vaut jamais PASS Wayland. Contrôler fenêtres, focus, dimensions,
-  rendu et événements par des observations/API vérifiables ; toute injection
-  clavier/souris exige son oracle côté application. Rejouer les régressions
-  X11 après une modification d'une couche graphique partagée.
-- **Frontière hôte/invité :** distinguer chemins Mach-O vus via
-  `/Volumes/SystemRoot`, chemins natifs Linux utilisés par les bibliothèques
-  ELF chargées par `wrap_elf`, sockets et variables effectivement transmises
-  au processus invité. Une écriture de l'hôte dans un préfixe overlay actif
-  n'est pas présumée visible dans l'invité. Rediriger les journaux du shell
-  invité vers un fichier, fermer son entrée standard, borner les attentes
-  et ne terminer que les processus/namespaces appartenant au lot.
-- **Triage d'une application :** partir de l'architecture réellement visée
-  (i386 pour Logic 8), distinguer imports forts/faibles, réexports,
-  bibliothèques chargées dès le démarrage ou seulement par des plugins,
-  symboles absents et comportements d'API défaillants. Classer le **premier
-  obstacle exécuté** avant les lacunes secondaires ; les tables Mach-O
-  seules ne démontrent ni chargement, ni fonctionnement. Réutiliser l'audit
-  existant avant tout nouveau scan et ne jamais désassembler de code Apple.
-
-Référence comparative : [méthodes Darling de test invité et de diagnostic
-applicatif](https://github.com/darlinghq/darling-skills) (14 novembre 2026).
-Aucun script, installation partagée, relance globale ni dépendance de ce dépôt
-n'est adopté par la présente règle.
-
-## 7. Preuves, statuts et arrêt
+## 6. Preuves, statuts et arrêt
 
 Une preuve livrable contient :
 
 - date, lot, révisions/overlay, architecture, environnement et outils ;
 - entrées identifiées par empreinte lorsque pertinent, sans secrets ;
-- commande effectivement exécutée, attendu, résultat, retour, durée,
-  marqueurs et artefacts utiles ; préciser ce qui n'a pas été exécuté ;
+- commande effectivement exécutée, attendu, résultat, retour, durée, marqueurs et artefacts utiles ; préciser ce qui n'a pas été exécuté ;
 - contrôles négatifs, pannes, totalité des tentatives et limites ;
 - état avant/après des seuls fichiers et processus concernés ;
-- synthèse publique expurgée et emplacement **privé** des originaux conservés,
-  sans exposer cet emplacement s'il contient des données personnelles.
+- synthèse publique expurgée et emplacement **privé** des originaux conservés, sans exposer cet emplacement s'il contient des données personnelles.
 
 Employer **PASS / FAIL / BLOCKED / À FAIRE** selon ROADMAP et qualifier
 **SRC / DOC / OBS / TEST / INF / HYP / OPEN**. Une hypothèse peut guider un
 test, jamais tenir lieu de résultat. Une sortie d'analyseur `INTEGRITY=PASS`
 n'est pas une vérification indépendante.
 
+Distinguer à chaque checkpoint les faits **observés directement** par l'agent
+et les résultats **rapportés** depuis un autre poste ou une autre
+conversation ; ne jamais présenter ces derniers comme rejoués.
+
 Si une dépendance manque, arrêter le chemin qui en dépend, noter le premier
-bloqueur reproductible et la condition exacte de reprise. Continuer un
-contrat/test/note indépendant dans le périmètre autorisé. Ne pas relancer
-jusqu'au succès, cacher un timeout ou appeler BLOCKED un essai ayant échoué.
+bloqueur reproductible et la condition exacte de reprise, puis continuer un
+contrat/test/note indépendant. Ne pas relancer jusqu'au succès, cacher un
+timeout ou appeler BLOCKED un essai ayant échoué. Appliquer la règle d'arrêt
+(trois tentatives sans changement du premier obstacle).
 
-Actualiser PROJECT_STATE, la commande de reproduction et les limites après
-un jalon important ; ajouter une note datée et préserver le rapport antérieur.
-La roadmap reçoit le résultat du seul critère prouvé, sans gonfler le statut
-d'un axe entier.
+Actualiser PROJECT_STATE, la commande de reproduction et les limites après un
+jalon important ; ajouter une note datée et préserver le rapport antérieur. La
+roadmap reçoit le résultat du seul critère prouvé, sans gonfler le statut d'un
+axe entier.
 
-## 8. Revue et publication
+## 7. Publication, coordination et revue
 
-- Public : documentation originale, sources redistribuables, médias de test
-  originaux et synthèses expurgées. **Jamais** de Logic/EXS24/QuickTime Player
-  propriétaire, DVD, SDK non redistribuable, AU commercial, banque de sons,
-  clé/numéro de série, préfixe, core dump, archive de récupération ou trace
-  privée. Ne pas republier un élément sensible au motif qu'il existe déjà
-  dans un ancien document. Examiner aussi captures et métadonnées.
-- Une publication requiert l'autorisation de la mission. Pour la livraison
-  de ces guides : `fr4nck/d4rling`, **`master` directement, sans créer de
-  branche ni PR**. Les autres missions suivent leur destination autorisée.
-  Pas de contribution amont sans décision distincte :
-  [stratégie amont](docs/decisions/strategie-contributions-amont.md).
-- Commits en français, portée étroite. Exemple documentaire :
-  `docs: préciser les jalons QuickTime et leurs preuves [skip ci]`.
-  Utiliser `[skip ci]` pour la documentation seule lorsque pertinent ;
-  ne pas éviter les contrôles nécessaires à une modification de code.
-- Relire le diff complet et la liste des fichiers du commit. Ne pas publier
-  les changements locaux préexistants. Si le poste n'est pas un checkout
-  propre, une publication documentaire via l'API GitHub peut préserver le
-  poste, à partir de la tête distante relue.
-- Relire `master` juste avant écriture ; utiliser une avance normale avec
-  contrôle de la tête attendue. Si elle a changé, réexaminer les nouveaux
-  commits et reconstruire le changement sur cette base. Aucun force-push,
-  reset ou écrasement de modification concurrente.
-- Après publication, relire la référence et les fichiers, comparer le contenu
-  exact, confirmer les seuls chemins modifiés et fournir URLs + SHA complets.
-  Un objet commit créé sans mise à jour de `master` n'est pas publié.
+`master` est le **point de synchronisation commun** entre conversations,
+agents locaux et contributions : une conversation, un rapport oral ou une
+session terminale ne remplace pas les commits et documents publiés.
+
+**Avant chaque lot, reprise ou changement de chantier :**
+1. Lire le SHA courant de `master` **et les derniers commits** ; examiner les diffs qui touchent les fichiers, contrats, dépendances ou preuves du lot ; comparer avec le SHA de départ.
+2. Lire le checkpoint publié le plus récent du périmètre, puis l'état du checkout local, les modifications non commitées et les artefacts non publiés. Ne pas refaire un lot déjà qualifié ni ignorer un travail plus récent.
+3. Si deux travaux risquent d'écrire les mêmes fichiers, coordonner la propriété avant modification ; réserver les fichiers partagés à un seul intégrateur.
+
+**Contenu public :** documentation originale, sources redistribuables, médias
+de test originaux et synthèses expurgées. **Jamais** de Logic/EXS24/QuickTime
+Player propriétaire, DVD, SDK non redistribuable, AU commercial, banque de
+sons, clé/numéro de série, préfixe, core dump, archive de récupération ou
+trace privée ; examiner aussi captures et métadonnées. Ne pas republier un
+élément sensible au motif qu'il existe déjà dans un ancien document.
+
+**Commits :** en français, portée étroite, un commit séparé par évolution
+**achevée et vérifiée**. Exemple documentaire :
+`docs: préciser les jalons QuickTime et leurs preuves [skip ci]`. Utiliser
+`[skip ci]` pour la documentation seule, jamais pour éviter les contrôles d'une
+modification de code. Si un candidat ou un résultat n'est pas qualifié ou pas
+accessible depuis GitHub, publier **uniquement un checkpoint documentaire
+honnête** (révision, provenance, rapporté vs vérifié, limites, statut, prochaine
+action exacte) ; ne pas publier du code non qualifié sous prétexte de le
+sauvegarder.
+
+**Revue :** toute modification de production (`src/`, tests, CMake, CI) est
+relue sur son diff exact par une personne ou un agent **différent de son
+auteur**. Le message de commit porte `Revue: <qui>, <date>, <verdict>` (accepté,
+accepté avec réserves, refusé). Un auteur ne relit pas son propre diff.
+Exception : la documentation seule et les checkpoints documentaires.
+
+**Publication :** requiert l'autorisation de la mission. Pour la livraison de ce
+guide et de la documentation : `fr4nck/d4rling`, **`master` directement, sans
+branche ni PR**. Relire `master` juste avant écriture ; avance normale avec
+contrôle de la tête attendue. Si elle a changé, réexaminer les nouveaux commits
+et reconstruire le changement sur cette base. Aucun force-push, reset ou
+écrasement d'un travail concurrent. Relire le diff complet et la liste des
+fichiers ; ne pas publier les changements locaux préexistants (si le poste
+n'est pas un checkout propre, une publication documentaire via l'API GitHub
+préserve le poste). Après publication : relire la référence et les fichiers,
+comparer le contenu exact, confirmer les seuls chemins modifiés, fournir URLs
+et SHA complets. Un objet commit sans mise à jour de `master` n'est pas publié.
+
+Ces contrôles se font **à chaque session et à chaque publication** ; ils ne
+constituent pas une surveillance continue en arrière-plan.
+
+## 8. Amont Darling et dette de synchronisation
+
+L'amont `darlinghq/darling` publie son propre `AGENTS.md`, conservé sans
+modification dans [docs/upstream/darlinghq-AGENTS.md](docs/upstream/darlinghq-AGENTS.md)
+(texte de l'amont au commit `91d6dacd`, 14 novembre 2026). Il permet
+d'inspecter, **pour diagnostic seulement**, le code propre d'une application
+tierce non Apple (SoundHack par exemple) ; Logic Studio et tout framework Apple
+embarqué restent exclus, et rien de ce code ne peut être reproduit dans
+Darling. Il ne remplace pas ce guide pour le travail dans D4rling, mais
+s'applique intégralement à toute proposition destinée à l'amont (contrat public,
+couches macOS, preuves admissibles, balises `QUIRK:`, aucune information issue
+du désassemblage de binaires Apple), avec la
+[stratégie amont](docs/decisions/strategie-contributions-amont.md). Pas de
+contribution amont sans décision distincte.
+
+**Dette de synchronisation.** À chaque jalon, relever le retard de `master` sur
+`darlinghq/darling` (en commits) et lister les conflits prévisibles avec les
+travaux en cours (exemple connu : cibles d'événements Carbon, amont `e808ce94`).
+**Seuil : 300 commits** *(valeur proposée, à valider par le responsable ; jusque-là
+indicative)*. Au-delà, ou si un lot touche un fichier déjà modifié par l'amont,
+un lot de synchronisation passe avant tout nouveau lot sur ce périmètre. Les
+correctifs qualifiés de petite portée sont proposés à l'amont, en priorité ceux
+qui réduisent les conflits à venir.
 
 ## 9. Compte rendu final d'un lot
 
 Indiquer le résultat d'abord : objectif atteint ou premier bloqueur, puis
 fichiers changés, preuve et commande de reproduction, ce qui reste non
-qualifié, intégrité des travaux existants, et prochain lot utile.
-Pour une publication, donner branche, URLs et SHA vérifiés.
-Ne jamais annoncer QuickTime, JACK réel, Logic, EXS24 ou un DAW fonctionnels
-sur la seule base d'un symbole, d'un build, d'un mock ou d'un autre banc.
+qualifié, intégrité des travaux existants, et prochain lot utile. Pour une
+publication, donner branche, URLs et SHA vérifiés. Ne jamais annoncer
+QuickTime, JACK réel, Logic, EXS24 ou un DAW fonctionnels sur la seule base
+d'un symbole, d'un build, d'un mock ou d'un autre banc.
