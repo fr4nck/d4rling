@@ -24,11 +24,13 @@ et [niveaux de vérification et qualification](docs/agents/niveaux-de-verificati
 
 **Objectif de la période :** amener Logic Studio 8 (i386) jusqu'à son prochain obstacle exécuté, puis le lever, et recommencer.
 
-**Dernier obstacle connu :** `libfontconfig.so.1` ELF32 absente au chargement Carbon (L2, 14 novembre 2026). *À confirmer dans PROJECT_STATE.md avant usage.*
+**Dernier obstacle connu :** `libcrypto.0.9.7.dylib` absente pendant le chargement du véritable Logic Pro 8 par `dyld` (18 novembre 2026, banc isolé sur le 5700X ; résultat privé rapporté, non rejoué sur `master`). Le banc a franchi l'adresse basse `0x1000` ; la méthode exacte doit encore être documentée. Le candidat local `libcrypto.0.9.8.dylib` reste non qualifié (origine et licence à vérifier). L'ancien obstacle `libfontconfig.so.1` appartient au compte rendu L2 du 14 novembre, non à la priorité actuelle.
+
+**Limite de provenance :** pour `libcrypto`, observer les erreurs de résolution de `dyld` en exécution et qualifier un fournisseur libre à licence compatible par des témoins autonomes ; ne pas analyser ou désassembler Logic ou des bibliothèques Apple, ni déposer de tels binaires dans Git. Si la demande concerne l'activation ou un mécanisme de protection, arrêter et faire arbitrer. Un quirk crypto destiné à l'amont exige l'accord explicite d'un mainteneur.
 
 **Boucle de travail :** lancer → classer le premier obstacle exécuté → corriger le plus petit élément qui le lève → relancer. Ne pas qualifier un sous-système que Logic n'appelle pas encore.
 
-**Autorisation de lancer Logic ou son témoin d'import :** **NON ACCORDÉE.** Tant que le responsable n'a pas remplacé cette ligne par une autorisation datée et son périmètre (préfixe neuf, timeout borné, namespaces privés), les règles de L-A1 et du §4 s'appliquent : aucun lancement.
+**Autorisation de lancer Logic ou son témoin d'import :** **ACCORDÉE LE 18 NOVEMBRE 2026 POUR LA MISSION PRIVÉE CIBLÉE SUR LE 5700X**, visant le franchissement isolé de `0x1000`, puis la qualification de `libcrypto` et une nouvelle tentative de Logic seulement si elle passe. Périmètre : installation historique inchangée, banc et préfixe isolés, espaces de noms privés, temps d'exécution borné, retrait des privilèges comme dans le banc qualifié, aucun réglage global, installation système ou téléchargement sans accord, aucun processus/montage d'autrui perturbé. **Cette autorisation ne vaut pas permission générale pour tout agent, poste, préfixe ou lot futur.** Toute nouvelle exécution hors de la mission autorisée suit le contrat L-A1 et le §4 et demande un périmètre explicite.
 
 **Règle de sélection des lots**, dans cet ordre :
 1. le lot qui lève le premier obstacle exécuté de Logic ;

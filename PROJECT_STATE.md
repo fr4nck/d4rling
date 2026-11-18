@@ -10,13 +10,13 @@
 | Moteur audio de Logic | **NON TESTÉ** — les essais CoreAudio/PulseAudio de Petite Victoire ne valent pas qualification de Logic. |
 | Lecture d'un projet | **NON TESTÉE** — ni projet ni EXS24 exécutés. |
 
-**Verrou actuel :** un banc i386 isolé a franchi l'adresse basse `0x1000` sans changer le réglage global Linux. Le candidat local `libcrypto.0.9.8.dylib` n'est **pas qualifié** comme remplacement de `0.9.7` : comparer imports, exports, ABI et appels réellement employés avant tout essai privé.
+**Verrou actuel :** un banc i386 isolé a franchi l'adresse basse `0x1000` sans changer le réglage global Linux. **Le mécanisme exact n'est pas documenté dans les preuves publiées** : vérifier dans le rapport privé s'il s'agit d'un correctif général du chargeur avec témoin autonome (candidat éventuel à l'amont) ou d'une configuration propre au banc (non transposable telle quelle). Le candidat local `libcrypto.0.9.8.dylib`, signalé comme alias, reste **non qualifié** ; son origine et sa licence ne sont pas établies dans ce dossier. Aucune substitution n'est démontrée. Pour la suite : privilégier les erreurs de résolution observées à l'exécution par `dyld`, puis les contrats publics et des témoins autonomes d'une bibliothèque libre à provenance/licence vérifiées. Aucune analyse interne de Logic ou de binaires Apple pour établir une compatibilité ; aucune modification de sécurité/activation sans examen distinct et, pour un quirk crypto proposé à l'amont, accord explicite d'un mainteneur.
 
 **Niveau de preuve :** résultats communiqués depuis une expérience privée sur le 5700X (18 novembre), **non rejoués sur le `master` GitHub** et ne prouvant ni interface, ni audio de Logic. Petit démonstrateur séparé : Petite Victoire C10, 36/36 contrôles positifs et 16/16 contrôles de panne rapportés ; écoute humaine de la mélodie toujours à confirmer. Les validations historiques restent détaillées ci-dessous.
 
 Dernière consolidation générale : **29 octobre 2026** ; consolidation du
 dépôt, des PR et des branches : **17 novembre 2026** (ci-dessous). Lire ce
-fichier avant de proposer une suite de développement, y compris depuis mobile.
+fichier avant de proposer une suite de développement, quel que soit le poste utilisé.
 
 ## mldr FAT32/FAT64 — port de Darling #2069 (18 novembre 2026)
 
@@ -183,6 +183,8 @@ Une branche portant un correctif ne signifie pas que celui-ci est fusionné.
 
 ## Blocages et décisions actuelles
 
+**Archive historique (29 octobre 2026) :** les points ci-dessous documentent les limites des campagnes anciennes. Ils ne remplacent pas le tableau Logic 8 ni la « Suite utile » du 18 novembre 2026 ; notamment `@rpath` et la reconstitution du checkout ne sont pas les obstacles prioritaires actuellement observés.
+
 - **BN063 :** structure Mach-O32 annonçant CPU x86_64, abort `-6`.
   Les 19 troncatures AY acceptées ne prouvent pas une validation de sécurité.
 - **dyld / banc dynamique :** `E8 ... EB FE` contient une boucle volontaire.
@@ -206,22 +208,14 @@ Une branche portant un correctif ne signifie pas que celui-ci est fusionné.
   les slices i386 et les ID Mach-O. Ne pas copier des artifacts entre arbres
   pour faire disparaître des dépendances non résolues.
 
-## Suite utile, avec critère de réussite
+## Suite utile, avec critère de réussite (mise à jour 18 novembre 2026)
 
-1. Reconstituer la source historique et passer les contrôles hôte documentés.
-   Vérifier ensuite le build et l'exécution du témoin Carbon portable.
-2. Qualifier un témoin dynamique qui termine et son transfert d'entrée ;
-   horodater RPC par rapport au timeout avant toute correction serveur.
-3. Corriger/qualifier `@rpath` par comparaison au témoin `@loader_path`,
-   puis la stabilité de lancement et les cas d'entrée standard.
-4. Fermer l'ABI et les fournisseurs audio, construire en privé les composants
-   gui nécessaires, qualifier HAL/callbacks/start-stop/PCM avant JACK réel.
-5. Pour QuickTime, choisir une petite fonction réellement utile et testable
-   à partir d'un appel applicatif identifié ; éviter une nouvelle série
-   d'inventaires de stubs sans gain fonctionnel.
+1. **Lever `libcrypto.0.9.7.dylib` :** établir l'origine et la licence du candidat `0.9.8` ; relever par exécution les messages de résolution de `dyld`, sans inspection interne des binaires Apple. Utiliser une source libre vérifiée et une licence compatible, puis un témoin autonome pour qualifier l'ABI et le comportement nécessaire. **Critère :** `dyld` termine le chargement de Logic dans le banc isolé, sans copier de dylib entre arbres ni déclarer une compatibilité sur de simples noms de symboles. Si la fonctionnalité touche à l'activation ou à une protection de sécurité, arrêter et demander un arbitrage ; aucun contournement d'activation.
+2. **Documenter le franchissement de `0x1000` :** relever la méthode exacte et ses preuves privées. Distinguer un correctif général de chargeur avec témoin autonome (éventuellement proposable à l'amont après revue) d'un réglage réservé au banc.
+3. **Premier obstacle après `dyld` :** viser le point d'entrée authentique de Logic, classer l'arrêt effectivement constaté, puis poursuivre uniquement dans les autorisations en cours. Le rendu QuickDraw, les événements HIToolbox et l'initialisation des frameworks sont des risques plausibles, **pas** des échecs déjà démontrés pour Logic.
+4. **En parallèle, sans priorité sur ce qui précède :** `@rpath`, écoute audio humaine, QuickTime (C3/C4), synchronisation amont. Conserver leurs preuves historiques et ne pas les relancer sans raison liée au prochain obstacle.
 
-Aucune de ces propositions n'est un résultat exécuté. Une nouvelle contribution
-doit mettre à jour cet état, les commandes de reproduction et les limites.
+Ces priorités sont une décision documentaire ; aucun nouveau test ou lancement n'a été effectué pour les établir. La qualification `libcrypto` et la nouvelle tentative Logic ont été demandées dans un banc privé, sans résultat ultérieur communiqué ici.
 
 ## Conservation et reprise privée
 
