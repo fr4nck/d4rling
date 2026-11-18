@@ -137,3 +137,8 @@ real V3 calls, synthetic-handler protocol tests and pending system integration.
 - `a7ff43c2` — backport of the legacy-ABI instance layout of [darling-cocotron #256](https://github.com/darlinghq/darling-cocotron/pull/256) by **Lubos Dolezel** (notices "Copyright (C) 2026 Lubos Dolezel" kept, Darling GPL-3.0 header in `AppKitIvarLayout.h` kept), adapted to `deef9911` for D4rling, with R14 carried into the moved ivars (R22).
 - `cfa659db` — atomic i386 accessors and compare-and-swap publication of the extras: D4rling, unifying the R5 candidate (recovered by Codex) with the allocation checks of the ABI26-R1 candidate.
 - The production gitlink is **not** changed by this entry; see [docs/evidence/cocotron-r6-convergence-2026-11-18.md](docs/evidence/cocotron-r6-convergence-2026-11-18.md). Prepared with the help of an AI assistant.
+
+## mldr universal binaries, FAT_MAGIC_64 and bounded slice selection (2026-11-18)
+
+- Original code and tests: **Lubos Dolezel** (`LubosD`), [Darling PR #2069](https://github.com/darlinghq/darling/pull/2069), merged as `3edffc15309c9ccefe9d3a59db70a24886a9ee28`. `fat_slice.c`, `fat_slice.h` and `tests/mldr/fat_slice.c` are taken unchanged ("Copyright (C) 2026 Lubos Dolezel", GPL-3.0-or-later kept); the `mldr.c`, `loader.c` and `CMakeLists.txt` hunks are applied as upstream wrote them.
+- D4rling keeps `O_CLOEXEC` (`860dee49`), its i386 guards and `D4RLING_MLDR_I386_MMAP_DIAG`; it adds `tests/regressions/mldr-fat64/` (cap test, guest witnesses). Evidence: [docs/evidence/mldr-fat64-issue18-2026-11-18.md](docs/evidence/mldr-fat64-issue18-2026-11-18.md). Prepared with the help of an AI assistant.

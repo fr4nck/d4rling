@@ -4,6 +4,14 @@ Dernière consolidation générale : **29 octobre 2026** ; consolidation du
 dépôt, des PR et des branches : **17 novembre 2026** (ci-dessous). Lire ce
 fichier avant de proposer une suite de développement, y compris depuis mobile.
 
+## mldr FAT32/FAT64 — port de Darling #2069 (18 novembre 2026)
+
+**TEST invité i386/x86_64 sur le 5700X.** Les six fichiers de Darling #2069 sont portés sur `master` : parseur borné, FAT_MAGIC_64, `fat_offset` en `off_t`. Les trois fichiers nouveaux sont identiques à l'amont. `O_CLOEXEC`, les gardes i386 et le diagnostic mmap sont intacts. En invité, `master` plante (SIGSEGV) sur un universel FAT32 dont un enregistrement déborde du fichier ; le candidat exécute la tranche valide. Un `dyld` FAT64 bloque `master` et fonctionne avec le candidat, en i386 et en x86_64. Tests amont 27/27 ; un test complémentaire tue le mutant sans plafond. **Limite :** un exécutable FAT64 lancé par `execve` n'atteint pas mldr, car l'`execve` du sous-module xnu ne connaît que FAT32, amont compris. Preuve : `docs/evidence/mldr-fat64-issue18-2026-11-18.md`.
+
+## Carbon — vraies fenêtres X11 et `GetNewCWindow` (18 novembre 2026)
+
+**TEST invité i386/x86_64 sur le 5700X** (`1a6bfc32`). HIToolbox crée de vraies fenêtres X11, avec la `libX11` native chargée à la demande. `GetNewCWindow`/`GetNewWindow` lisent `'WIND'` et `'wctb'`. Le témoin donne 19/19 en i386 et en x86_64, et le serveur X montre la fenêtre de la ressource. Sans `DISPLAY`, l'appel échoue proprement. Pas encore de port QuickDraw ni d'événements. SoundHack reste bloqué en amont par son `__TEXT` à `0x1000`. Preuve : `docs/evidence/carbon-getnewcwindow-2026-11-18.md`.
+
 ## Cocotron R6 — correctif unifié publié sur `fr4nck/darling-cocotron` (18 novembre 2026)
 
 **TEST invité i386/x86_64 sur le 5700X.** La branche `d4rling/deef9911` de [`fr4nck/darling-cocotron`](https://github.com/fr4nck/darling-cocotron) porte trois commits au-dessus du gitlink `deef9911` : R14, backport #256 avec R22, et atomicité unifiée (`cfa659db`, arbre identique à l'arbre testé). La convergence garde les accesseurs R5, identiques à ceux d'ABI26, la publication par CAS de R5, et les contrôles NULL d'ABI26. Le verrou par accès d'ABI26-R1 est écarté : 3,7 µs au lieu de 5 ns par lecture de champ d'extras. Le témoin ABI26-R2 s'exécute enfin dans le vrai invité : 8800/8800, le non-atomique plante. Première publication, destruction et copie : PASS, alors que le non-atomique perd 4 940 valeurs et fait 2 000 utilisations après libération. Arbre final : 137/137 layouts et ABI24 87/87. **Gitlink de production inchangé, intégration préparée en attente d'accord.** [Preuve et plan](docs/evidence/cocotron-r6-convergence-2026-11-18.md).
