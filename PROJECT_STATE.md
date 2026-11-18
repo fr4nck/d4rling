@@ -1,5 +1,19 @@
 # D4RLING — état de référence pour reprendre le projet
 
+## Lecture rapide — Logic Pro 8 (18 novembre 2026)
+
+| Palier | Statut |
+| --- | --- |
+| Dépendances chargées | **PARTIEL** — exécutable Logic et plusieurs frameworks privés, dont XAudioUnits, chargés ; `libcrypto.0.9.7.dylib` manque encore. |
+| Première fenêtre | **NON ATTEINTE** — arrêt de `dyld` avant le point d'entrée de Logic. |
+| Menus fonctionnels | **NON TESTÉS** — aucune fenêtre Logic obtenue. |
+| Moteur audio de Logic | **NON TESTÉ** — les essais CoreAudio/PulseAudio de Petite Victoire ne valent pas qualification de Logic. |
+| Lecture d'un projet | **NON TESTÉE** — ni projet ni EXS24 exécutés. |
+
+**Verrou actuel :** un banc i386 isolé a franchi l'adresse basse `0x1000` sans changer le réglage global Linux. Le candidat local `libcrypto.0.9.8.dylib` n'est **pas qualifié** comme remplacement de `0.9.7` : comparer imports, exports, ABI et appels réellement employés avant tout essai privé.
+
+**Niveau de preuve :** résultats communiqués depuis une expérience privée sur le 5700X (18 novembre), **non rejoués sur le `master` GitHub** et ne prouvant ni interface, ni audio de Logic. Petit démonstrateur séparé : Petite Victoire C10, 36/36 contrôles positifs et 16/16 contrôles de panne rapportés ; écoute humaine de la mélodie toujours à confirmer. Les validations historiques restent détaillées ci-dessous.
+
 Dernière consolidation générale : **29 octobre 2026** ; consolidation du
 dépôt, des PR et des branches : **17 novembre 2026** (ci-dessous). Lire ce
 fichier avant de proposer une suite de développement, y compris depuis mobile.
@@ -97,8 +111,10 @@ test ignoré par Git, sondes sources et commandes exécutables.
 de ces campagnes. Ces documents décrivent des niveaux de preuve différents.
 
 Le projet vise progressivement Logic Studio 8 / QuickTime 7 et le transport
-CoreAudio/MIDI. **Aucune application complète ni chaîne audio réelle n'est
-qualifiée.** Cela ne retire pas les preuves positives Carbon i386 ci-dessous.
+CoreAudio/MIDI. **Aucune application musicale complète n'est qualifiée.** Les
+chemins PCM vers PulseAudio ont des preuves techniques bornées, sans écoute
+acoustique confirmée pour Petite Victoire et sans moteur audio Logic qualifié.
+Cela ne retire pas les preuves positives Carbon i386 ci-dessous.
 
 ## Actualisation ciblée QuickTime — C3-M3 réel i386 (12 novembre 2026)
 

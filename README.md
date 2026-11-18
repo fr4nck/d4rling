@@ -20,7 +20,7 @@ toward Logic Studio 8 compatibility.
 
 The default `master` branch includes the latest upstream baseline imported on
 2026-10-15, `60ba801decee7a00782f74f6be4c8ffb013f79ff`, plus this fork's changes.
-Logic has not been installed or run; compatibility is not established.
+**Logic Pro 8 — status on 2026-11-18:** [five-stage progress at a glance](PROJECT_STATE.md#lecture-rapide--logic-pro-8-18-novembre-2026). In a private isolated i386 test, low-address mapping at `0x1000` succeeded and the original executable plus some private frameworks (including XAudioUnits) loaded. `dyld` then stopped on missing `libcrypto.0.9.7.dylib`, before Logic's entry point. This experiment was reported, not replayed on GitHub `master`. No Logic window, menus, audio engine or project playback has been validated.
 
 ## Keeping the fork current
 

@@ -1,7 +1,9 @@
 # Logic Studio 8 work in the personal fork
 
 This work is developed in `fr4nck/d4rling`. It has not been submitted to
-`darlinghq/darling`. No Logic installation or execution has been performed.
+`darlinghq/darling`.
+
+**Current checkpoint (2026-11-18; private test reported, not replayed on GitHub `master`):** the original i386 Logic Pro 8 executable was launched under an isolated low-address mapping setup; it and private frameworks including XAudioUnits reached `dyld`, but `libcrypto.0.9.7.dylib` was not found and Logic's entry point was not reached. `0.9.8` is only an unqualified local candidate. No Logic GUI, menus, engine or project playback has been validated. See the [five-stage project status](../PROJECT_STATE.md#lecture-rapide--logic-pro-8-18-novembre-2026). The sections below document earlier, dated checks and must not be read as current status.
 
 ## Reference and changes
 
