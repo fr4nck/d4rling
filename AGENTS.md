@@ -24,9 +24,9 @@ et [niveaux de vérification et qualification](docs/agents/niveaux-de-verificati
 
 **Objectif de la période :** amener Logic Studio 8 (i386) jusqu'à son prochain obstacle exécuté, puis le lever, et recommencer.
 
-**Dernier obstacle connu :** `libcrypto.0.9.7.dylib` absente pendant le chargement du véritable Logic Pro 8 par `dyld` (18 novembre 2026, banc isolé sur le 5700X ; résultat privé rapporté, non rejoué sur `master`). Le banc a franchi l'adresse basse `0x1000` ; la méthode exacte doit encore être documentée. Le candidat local `libcrypto.0.9.8.dylib` reste non qualifié (origine et licence à vérifier). L'ancien obstacle `libfontconfig.so.1` appartient au compte rendu L2 du 14 novembre, non à la priorité actuelle.
+**Dernier obstacle connu :** `dyld` échoue sur `_kWSMethodInvocationResult`, demandé par DotMacKit à CoreServices, **avant le point d'entrée de Logic 8** (18 novembre 2026, banc privé sur 5700X, rapport Claude Code non rejoué sur `master`). Le chargement des 164 images i386 est atteint dans ce banc, avec une libcrypto 0.9.8 candidate et ProKit provenant du média original. Les 99 autres absences préalables et 613 ultérieures proviennent d'un diagnostic statique privé, non de 99 échecs `dyld` observés. `0x1000` est franchi dans un banc temporairement privilégié, pas par un correctif général rootless.
 
-**Limite de provenance :** pour `libcrypto`, observer les erreurs de résolution de `dyld` en exécution et qualifier un fournisseur libre à licence compatible par des témoins autonomes ; ne pas analyser ou désassembler Logic ou des bibliothèques Apple, ni déposer de tels binaires dans Git. Si la demande concerne l'activation ou un mécanisme de protection, arrêter et faire arbitrer. Un quirk crypto destiné à l'amont exige l'accord explicite d'un mainteneur.
+**Limite de provenance :** les erreurs `dyld` observées à l'exécution peuvent guider un diagnostic ; les tableaux tirés des imports de frameworks Apple, les binaires Logic/ProKit/DotMacKit et leur analyse interne restent privés. Pour l'amont, privilégier contrats publics, sources licites et tests autonomes. Ne pas fabriquer les valeurs prétendument observées de constantes. Tout quirk de sécurité/crypto doit obtenir l'accord explicite d'un mainteneur. Ne pas détourner l'activation ou une protection.
 
 **Boucle de travail :** lancer → classer le premier obstacle exécuté → corriger le plus petit élément qui le lève → relancer. Ne pas qualifier un sous-système que Logic n'appelle pas encore.
 
@@ -297,6 +297,8 @@ couches macOS, preuves admissibles, balises `QUIRK:`, aucune information issue
 du désassemblage de binaires Apple), avec la
 [stratégie amont](docs/decisions/strategie-contributions-amont.md). Pas de
 contribution amont sans décision distincte.
+
+- **Symboles privés :** ne pas ajouter un symbole privé ou non documenté à la surface publique du simple fait qu'une application l'importe ; seulement si le comportement d'une couche publique l'exige, s'il est général, et avec l'accord d'un mainteneur (amont §7).
 
 **Dette de synchronisation.** À chaque jalon, relever le retard de `master` sur
 `darlinghq/darling` (en commits) et lister les conflits prévisibles avec les

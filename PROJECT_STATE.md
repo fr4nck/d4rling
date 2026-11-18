@@ -4,19 +4,36 @@
 
 | Palier | Statut |
 | --- | --- |
-| Dépendances chargées | **PARTIEL** — exécutable Logic et plusieurs frameworks privés, dont XAudioUnits, chargés ; `libcrypto.0.9.7.dylib` manque encore. |
-| Première fenêtre | **NON ATTEINTE** — arrêt de `dyld` avant le point d'entrée de Logic. |
-| Menus fonctionnels | **NON TESTÉS** — aucune fenêtre Logic obtenue. |
-| Moteur audio de Logic | **NON TESTÉ** — les essais CoreAudio/PulseAudio de Petite Victoire ne valent pas qualification de Logic. |
-| Lecture d'un projet | **NON TESTÉE** — ni projet ni EXS24 exécutés. |
+| Chargement des dépendances | **PASS borné dans un banc privé** — les 164 images i386 de la fermeture se chargent, dont les frameworks de ProAppRuntime ; seule EuCon est une dépendance faible optionnelle. |
+| Liaison des symboles | **BLOQUÉE AVANT L'ENTRÉE** — premier échec vu par `dyld` : `_kWSMethodInvocationResult` (DotMacKit vers CoreServices). |
+| Première fenêtre Logic | **NON ATTEINTE** |
+| Menus Logic | **NON TESTÉS** |
+| Moteur audio Logic | **NON TESTÉ** |
+| Lecture d'un projet / EXS24 | **NON TESTÉE** |
 
-**Verrou actuel :** un banc i386 isolé a franchi l'adresse basse `0x1000` sans changer le réglage global Linux. **Le mécanisme exact n'est pas documenté dans les preuves publiées** : vérifier dans le rapport privé s'il s'agit d'un correctif général du chargeur avec témoin autonome (candidat éventuel à l'amont) ou d'une configuration propre au banc (non transposable telle quelle). Le candidat local `libcrypto.0.9.8.dylib`, signalé comme alias, reste **non qualifié** ; son origine et sa licence ne sont pas établies dans ce dossier. Aucune substitution n'est démontrée. Pour la suite : privilégier les erreurs de résolution observées à l'exécution par `dyld`, puis les contrats publics et des témoins autonomes d'une bibliothèque libre à provenance/licence vérifiées. Aucune analyse interne de Logic ou de binaires Apple pour établir une compatibilité ; aucune modification de sécurité/activation sans examen distinct et, pour un quirk crypto proposé à l'amont, accord explicite d'un mainteneur.
+**Preuve :** rapport de Claude Code du 18/11, issu d'un **banc privé sur le 5700X** et non rejoué sur `master`. `libcrypto.0.9.7.dylib` a été satisfaite dans ce banc par une image OpenSSL 0.9.8zh i386 ; la qualification couvre le chargement et huit témoins cryptographiques, **pas** une compatibilité générale ni la provenance/licence de cette image. `ProKit`, extrait du média original, reste privé et ne doit pas entrer dans Git.
 
-**Niveau de preuve :** résultats communiqués depuis une expérience privée sur le 5700X (18 novembre), **non rejoués sur le `master` GitHub** et ne prouvant ni interface, ni audio de Logic. Petit démonstrateur séparé : Petite Victoire C10, 36/36 contrôles positifs et 16/16 contrôles de panne rapportés ; écoute humaine de la mélodie toujours à confirmer. Les validations historiques restent détaillées ci-dessous.
+**Tri des manques :** un symbole est confirmé par erreur de `dyld` ; **99 absences potentielles avant le point d'entrée** et 613 autres importations sont issues d'un classement statique des tables de liaison. Ces chiffres ne sont ni 99 échecs exécutés ni une liste de fonctions à implémenter telle quelle. Les données dérivées de binaires Apple restent privées ; une contribution amont repose sur des contrats publics, du code libre et des témoins autonomes.
 
-Dernière consolidation générale : **29 octobre 2026** ; consolidation du
-dépôt, des PR et des branches : **17 novembre 2026** (ci-dessous). Lire ce
-fichier avant de proposer une suite de développement, quel que soit le poste utilisé.
+**Adresse `0x1000` :** franchie dans le banc au moyen d'un démarrage WSL en root et d'un namespace `bubblewrap` avec capacités élevées au démarrage, **retirées avant `dyld`**. Aucun changement global à `vm.mmap_min_addr` n'est rapporté. C'est une méthode **propre au banc**, non un correctif général rootless de `mldr`. Avant tout nouveau banc privilégié : contrôler l'isolement du réseau et l'inaccessibilité des volumes Windows. Conserver les deux copies root privées jusqu'à décision explicite.
+
+## Convergence des chantiers — 18 novembre 2026
+
+| Chantier | Intégré à `master` | Dernier résultat et limite |
+| --- | --- | --- |
+| `mldr` FAT32/FAT64, `O_CLOEXEC` | **OUI** | Tests hôte et invités i386/x86_64 bornés PASS ; `execve` FAT64 via XNU reste distinct. |
+| Carbon / HIToolbox X11 | **OUI** | `GetNewCWindow`, témoin ressource `WIND` **19/19** i386/x86_64, sur serveur X de test ; pas encore QuickDraw ni événements de fenêtre. |
+| Cocotron R6 + R6-OWN-01 | **OUI** — fusion [#19](https://github.com/fr4nck/d4rling/pull/19), gitlink `77219763` | Layout 137/137, ABI24 87/87 et ownership 24/24 en invité ; ne prouve pas la GUI de Logic. |
+| AudioToolbox FIX1–FIX3 | **OUI** | Correctifs qualifiés en i386/x86_64 ; B12/B13 PCM vers PulseAudio prouvé par capture, écoute acoustique non confirmée. |
+| Logic Pro 8 original | **NON** (essai privé) | 164 images chargées ; liaison `dyld` bloquée avant le point d'entrée, aucun moteur audio Logic. |
+| SoundHack original | **NON** (essais privés) | Application universelle extraite, FFT originale invitée PASS ; application et fenêtre non exécutées. |
+| Cocotron / MEGA-19 ImageIO | **NON** | Sources 5/5, références AppKit 7/7 ; compilation ImageIO **0/2** bloquée dans les en-têtes Darwin (`uint16_t`), cause précise non tranchée. 16 exports CGL repérés, liaison complète non prouvée. |
+| EGL-BRIDGE-08 | **NON** (qualification privée) | Mesa/EGL/CGL et fenêtre mappée sous WSLg PASS ; visibilité Windows **confirmée ABI29**, **non vérifiée B13**. Campagne close. |
+| Petite Victoire C10 | **NON** (chantier séparé) | 36 contrôles positifs et 16 cas d'échec rapportés ; écoute humaine toujours à confirmer. |
+
+**Lecture :** les résultats des bancs, de `master` et des applications ne sont pas interchangeables. Aucun lancement de Logic avec première fenêtre, menus ou projet n'est qualifié. Les rapports historiques ci-dessous conservent leur état à leur date ; une mention ancienne « en attente d'intégration » ne doit pas annuler une fusion ultérieure.
+
+Convergence documentaire : **18 novembre 2026**, à partir du dépôt GitHub et des rapports transmis, **sans exécution ni nouvelle qualification**. Précédentes consolidations : 29 octobre et 17 novembre 2026.
 
 ## mldr FAT32/FAT64 — port de Darling #2069 (18 novembre 2026)
 
@@ -27,6 +44,8 @@ fichier avant de proposer une suite de développement, quel que soit le poste ut
 **TEST invité i386/x86_64 sur le 5700X** (`1a6bfc32`). HIToolbox crée de vraies fenêtres X11, avec la `libX11` native chargée à la demande. `GetNewCWindow`/`GetNewWindow` lisent `'WIND'` et `'wctb'`. Le témoin donne 19/19 en i386 et en x86_64, et le serveur X montre la fenêtre de la ressource. Sans `DISPLAY`, l'appel échoue proprement. Pas encore de port QuickDraw ni d'événements. SoundHack reste bloqué en amont par son `__TEXT` à `0x1000`. Preuve : `docs/evidence/carbon-getnewcwindow-2026-11-18.md`.
 
 ## Cocotron R6 — correctif unifié publié sur `fr4nck/darling-cocotron` (18 novembre 2026)
+
+**Mise à jour postérieure au bilan R6 :** le gitlink de production est **désormais intégré** par la fusion [#19](https://github.com/fr4nck/d4rling/pull/19), commit `610a1c0e`, épinglé sur `77219763` (R6 + R6-OWN-01). La mention « inchangé / en attente d'accord » dans le paragraphe historique suivant décrit seulement le moment de sa rédaction.
 
 **TEST invité i386/x86_64 sur le 5700X.** La branche `d4rling/deef9911` de [`fr4nck/darling-cocotron`](https://github.com/fr4nck/darling-cocotron) porte trois commits au-dessus du gitlink `deef9911` : R14, backport #256 avec R22, et atomicité unifiée (`cfa659db`, arbre identique à l'arbre testé). La convergence garde les accesseurs R5, identiques à ceux d'ABI26, la publication par CAS de R5, et les contrôles NULL d'ABI26. Le verrou par accès d'ABI26-R1 est écarté : 3,7 µs au lieu de 5 ns par lecture de champ d'extras. Le témoin ABI26-R2 s'exécute enfin dans le vrai invité : 8800/8800, le non-atomique plante. Première publication, destruction et copie : PASS, alors que le non-atomique perd 4 940 valeurs et fait 2 000 utilisations après libération. Arbre final : 137/137 layouts et ABI24 87/87. **Gitlink de production inchangé, intégration préparée en attente d'accord.** [Preuve et plan](docs/evidence/cocotron-r6-convergence-2026-11-18.md).
 
@@ -210,12 +229,12 @@ Une branche portant un correctif ne signifie pas que celui-ci est fusionné.
 
 ## Suite utile, avec critère de réussite (mise à jour 18 novembre 2026)
 
-1. **Lever `libcrypto.0.9.7.dylib` :** établir l'origine et la licence du candidat `0.9.8` ; relever par exécution les messages de résolution de `dyld`, sans inspection interne des binaires Apple. Utiliser une source libre vérifiée et une licence compatible, puis un témoin autonome pour qualifier l'ABI et le comportement nécessaire. **Critère :** `dyld` termine le chargement de Logic dans le banc isolé, sans copier de dylib entre arbres ni déclarer une compatibilité sur de simples noms de symboles. Si la fonctionnalité touche à l'activation ou à une protection de sécurité, arrêter et demander un arbitrage ; aucun contournement d'activation.
-2. **Documenter le franchissement de `0x1000` :** relever la méthode exacte et ses preuves privées. Distinguer un correctif général de chargeur avec témoin autonome (éventuellement proposable à l'amont après revue) d'un réglage réservé au banc.
-3. **Premier obstacle après `dyld` :** viser le point d'entrée authentique de Logic, classer l'arrêt effectivement constaté, puis poursuivre uniquement dans les autorisations en cours. Le rendu QuickDraw, les événements HIToolbox et l'initialisation des frameworks sont des risques plausibles, **pas** des échecs déjà démontrés pour Logic.
-4. **En parallèle, sans priorité sur ce qui précède :** `@rpath`, écoute audio humaine, QuickTime (C3/C4), synchronisation amont. Conserver leurs preuves historiques et ne pas les relancer sans raison liée au prochain obstacle.
+1. **Liaison `dyld` :** partir du premier message observé (`_kWSMethodInvocationResult`) et du contrat public de sa couche. Distinguer les symboles publics implémentables avec des tests autonomes des imports privés ou non documentés. Les 99 entrées issues de l'analyse statique ne sont pas un plan automatique d'implémentation ; leurs données propriétaires restent dans le banc privé. **Critère :** atteindre le point d'entrée de Logic dans un essai isolé et autorisé.
+2. **Provenance et sûreté :** établir origine/licence du candidat OpenSSL, documenter le mécanisme root/`bubblewrap` à `0x1000` et les limites de ses privilèges, préparer réseau coupé et volumes Windows inaccessibles pour tout nouveau banc. Aucun code Apple propriétaire, aucune modification de sécurité/activation ni quirk crypto sans arbitrage requis.
+3. **Après l'entrée :** classer le premier blocage réellement exécuté. QuickDraw, événements, QTKit et AudioUnit sont des risques futurs, **pas** des blocages déjà rencontrés par Logic.
+4. **Convergence sans relance :** garder EGL-BRIDGE-08 et ImageIO MEGA-19 clos en qualification, leurs preuves attribuées à leurs agents ; préserver les deux copies root privées. Reprendre un seul lot concret seulement sur décision du coordinateur.
 
-Ces priorités sont une décision documentaire ; aucun nouveau test ou lancement n'a été effectué pour les établir. La qualification `libcrypto` et la nouvelle tentative Logic ont été demandées dans un banc privé, sans résultat ultérieur communiqué ici.
+Aucune de ces décisions documentaires ne vaut validation supplémentaire ni nouvelle autorisation d'expérimenter.
 
 ## Conservation et reprise privée
 
