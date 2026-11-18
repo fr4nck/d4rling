@@ -63,3 +63,25 @@ The disabled X11 branch is retained but has not been compiled or tested.
 `CreateNewWindow` rejects null arguments before clearing the output; the supplied
 tests do not assert output clearing for a null rectangle. Broader API contract
 changes and an AppKit/Cocotron bridge require separate investigation.
+
+## Window backend (2026-11-18)
+
+`MacWindows.cpp` now implements Carbon windows on X11 (see
+[docs/evidence/carbon-getnewcwindow-2026-11-18.md](../../../docs/evidence/carbon-getnewcwindow-2026-11-18.md)).
+`run.sh` compiles it with the real Darling headers, as `../carbon-contracts`
+does, and links `../carbon-contracts/host-shims.c` and the CF allocator adapter.
+On the host, `/usr/lib/native/libX11.dylib` cannot be loaded, so these checks
+exercise argument validation and the path without a window backend:
+`CreateNewWindow` still reports `unimpErr` and clears its output.
+
+The 25 original assertions are kept. Five of them, those on a NULL `WindowRef`,
+now expect `errInvalidWindowRef` instead of `unimpErr`: still an explicit
+failure, now naming the cause. Twelve assertions were added for the new APIs
+(foreign pointers, empty rectangle, refCon, titles, port bounds, no QuickDraw
+port claimed): 37 checks, 0 failures with GCC 14 and Clang 19. The previous
+source does not compile them: the new APIs are missing.
+
+The minimal stand-in header in `include/` and the MSVC runner
+`run-windows.cmd` belong to the original lot only. The new source needs Xlib,
+CoreFoundation and CarbonCore headers that the stand-in does not provide, so
+that runner no longer applies.

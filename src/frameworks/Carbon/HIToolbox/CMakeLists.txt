@@ -32,6 +32,12 @@ add_framework(HIToolbox
 
 	DEPENDENCIES
 		CoreFoundation
+		CoreServices
 		Foundation
 		system
 )
+
+# Carbon windows are X11 windows (MacWindows.cpp). Like Cocotron's X11 backend,
+# the native libX11 is only loaded when the first window is created.
+find_package(X11 REQUIRED)
+target_include_directories(HIToolbox PRIVATE ${X11_INCLUDE_DIR})
