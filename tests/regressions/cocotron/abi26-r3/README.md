@@ -9,7 +9,7 @@
 ## ABI26-R3 : banc autonome (pas un autre inventaire)
 
 Le pilote local `cocotron_abi26_r3.sh` a ete prepare pour le 5700X avec SHA-256 :
-`d0293402e0fd4b2ff5200512adf61f724ad7a8dd8ee59e0cebdb12429581dfc4`.
+`11be90b9c0c0d4325e1d9f649d611a0ecfaffb196adab315ef6b46781ff444ab`.
 
 Il comporte 10 etapes independantes, avec etat PASS/REVIEW/BLOCKED et affichage de l'activite en temps reel :
 
