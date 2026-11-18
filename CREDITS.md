@@ -129,3 +129,11 @@ real V3 calls, synthetic-handler protocol tests and pending system integration.
 - The unchanged guest test `tests/libcxx-legacy-exports.c` comes from **Lubos Dolezel**, [Darling #2112](https://github.com/darlinghq/darling/pull/2112), `6649be99dac6a54e29a09d661fa095bf8ac3c532`; original copyright/repository license retained. The ptrace test is not imported.
 - Seven upstream LLVM tests are reused unchanged by reference, with source blobs and Apache-2.0 WITH LLVM-exception recorded in the regression manifest. Additional drivers/address-only binding fixture are original GPL-3.0-or-later.
 - Local integration is the LIBCXX-LEGACY-01 commit containing this entry; [executed proof and scope](docs/evidence/libcxx-legacy-01-2026-11-15.md).
+
+## Cocotron R6 — legacy ABI, atomic accessors, identifier ownership (2026-11-18)
+
+- Repository: [`fr4nck/darling-cocotron`](https://github.com/fr4nck/darling-cocotron), a fork of [darlinghq/darling-cocotron](https://github.com/darlinghq/darling-cocotron) (MIT; all Cocotron and Darling notices and the upstream history kept). Branch `d4rling/deef9911`, based on the D4rling gitlink `deef99117c634c4e05cdd8fda4487c2dbc1d78a0`; `master` mirrors upstream.
+- `086d75fb` — R14 identifier ownership in `NSCell`/`NSMenu` copies: D4rling fix (16 November 2026).
+- `a7ff43c2` — backport of the legacy-ABI instance layout of [darling-cocotron #256](https://github.com/darlinghq/darling-cocotron/pull/256) by **Lubos Dolezel** (notices "Copyright (C) 2026 Lubos Dolezel" kept, Darling GPL-3.0 header in `AppKitIvarLayout.h` kept), adapted to `deef9911` for D4rling, with R14 carried into the moved ivars (R22).
+- `cfa659db` — atomic i386 accessors and compare-and-swap publication of the extras: D4rling, unifying the R5 candidate (recovered by Codex) with the allocation checks of the ABI26-R1 candidate.
+- The production gitlink is **not** changed by this entry; see [docs/evidence/cocotron-r6-convergence-2026-11-18.md](docs/evidence/cocotron-r6-convergence-2026-11-18.md). Prepared with the help of an AI assistant.
