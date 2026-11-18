@@ -1,478 +1,324 @@
-# AGENTS.md
-
-> **Note to human contributors and reviewers.** This document tells an AI
-> agent how to behave *if* you use one. It is not permission to submit code
-> you do not understand. You are responsible for every line in a PR you open,
-> AI-assisted or not: you must be able to explain what it does, why it is
-> correct, and why it follows the rules below, in your own words. "The agent
-> wrote it and followed AGENTS.md" is not an acceptable answer to a reviewer's
-> question, and a PR whose author cannot explain their own change may be
-> closed regardless of how it was produced.
->
-> When a maintainer asks a question on a PR or issue, we expect a reply from
-> you, the human contributor, not from your AI assistant pasted verbatim, and
-> not from the AI replying on your behalf. Maintainers are volunteering their
-> time to review your contribution; having that time spent talking to a bot
-> instead of you is disrespectful and such comments may be disregarded.
-
-This project is a clean-room-style reimplementation of macOS/Apple platform
-functionality. The goal is **API compatibility with the publicly documented
-contracts**, while avoiding legal risk and low-quality, application-specific
-hacks.
-
-These rules apply to every agent and contributor. When a rule conflicts with
-making a task "work", the rule wins. If you cannot complete a task without
-breaking a rule, stop and say so (see Section 10).
-
----
-
-## 1. Implement the documented contract, not a particular application
-
-- Target the behavior described in public API documentation, public headers,
-  standards, and RFCs. These are the source of truth.
-- Never add special cases, bundle-ID checks, app-name checks, version sniffing,
-  or "if this app calls it, return X" logic to make one application work.
-- If an application fails, find the **general** documented behavior we got
-  wrong or haven't implemented, and fix that.
-- Where documentation is ambiguous or silent, first prefer the most
-  conservative, spec-consistent behavior. If real-world compatibility requires
-  more than that, follow Section 3 (Undocumented behavior and quirks). Never
-  guess silently.
-- Match documented error codes, return values, threading/reentrancy guarantees,
-  and nullability contracts, not just the happy path.
-
-## 2. Follow the macOS layering and dependency hierarchy
-
-Apple's platform is a stack: higher-level frameworks are built on lower-level
-frameworks and libraries. Applications are written against that stack and
-implicitly rely on its structure. Our implementation must have the same shape.
-
-- **Mirror the layering.** If framework A sits on top of library B on macOS,
-  our A must be implemented on top of our B, through B's interfaces. Do not
-  re-implement B's functionality privately inside A.
-- **Fix things at the right layer.** A bug or missing behavior belongs in the
-  lowest layer where it originates. Do not patch it in a higher layer to hide
-  a lower-layer defect, and do not duplicate logic across layers.
-- **Preserve the compatibility assumption between layers.** Applications that
-  use framework A assume library B is compatible with what A needs, and
-  applications may also call B directly alongside A. Changes to B must keep
-  both usage patterns working. Behavior, object identity, ownership, error
-  propagation, and state shared between layers must be consistent whether an
-  application enters through A or through B.
-- **No dependency inversions.** Lower layers must not depend on higher layers,
-  and no cyclic dependencies may be introduced. Do not make a layer reach
-  around the one directly beneath it unless that is how macOS does it.
-- **Preserve interposition and substitution points.** Where applications or
-  system components can observe or override a lower-level call (callbacks,
-  delegates, notifications, dynamic dispatch), the higher layer must go
-  through that same path rather than a private shortcut.
-- **Establish the hierarchy from evidence.** Use public documentation,
-  published architecture overviews, public headers (what imports or wraps
-  what), linkage visible via public tooling (e.g. which libraries a public
-  binary declares as dependencies), and backtraces provided under Section 7.
-  If the correct layer for something is unclear, ask (Section 10).
-- **Place quirks at the layer where they originate**, not where they were first
-  noticed.
-
-## 3. Undocumented behavior and quirks
-
-Public documentation is incomplete, and real applications sometimes depend on
-behavior the original implementation exhibits but never documented. We support
-such quirks deliberately and carefully, as a last resort, never casually and
-never as a shortcut.
-
-### When a quirk may be implemented
-
-All of the following must hold:
-
-1. **Documented behavior is insufficient.** The public contract, standards, and
-   conservative interpretation do not produce correct compatibility.
-2. **There is acceptable evidence** that the original behaves this way (see
-   "Acceptable evidence").
-3. **It is general.** The quirk is a property of the API under certain inputs or
-   states, not a reaction to a specific application. Test: would any
-   application making the same call get the same result? If the behavior only
-   triggers for a given bundle ID, app name, version, or call pattern unique
-   to one app, it is a hack and is forbidden (Section 1).
-4. **It is the minimal behavior needed.** Replicate the observable effect, not
-   guessed internals. Do not speculate about why the original does it.
-
-### Acceptable evidence (strongest first)
-
-- Public, license-clean documentation from other sources: Apple technical
-  notes, release notes, WWDC material, published books, reputable third-party
-  write-ups of observed behavior (paraphrased, never copied).
-- Black-box observation of the original through its public API, captured as a
-  reproducible behavioral test (inputs, outputs, error codes, OS version).
-- **Backtraces from real macOS** supplied by a human (see Section 7). These are
-  evidence of *what called what, in what order, in what context*, which makes
-  them especially valuable for layering (Section 2), call ordering, threading
-  context, and error propagation. They show behavior, not implementation.
-- Multiple independent, credible reports of the same observed behavior from
-  public bug trackers, forums, or other open-source compatibility projects,
-  cited by link. Summarize them; do not copy code from them.
-- A strong inference (e.g. a documented sibling API behaves this way, and
-  applications widely rely on it), clearly labeled as inference with the
-  reasoning stated. Inference alone is the weakest tier and requires
-  maintainer approval.
-
-### Never acceptable evidence
-
-- Disassembly, decompilation, or instruction-level inspection of Apple
-  binaries, and leaked or confidential Apple material. (Backtraces supplied
-  under Section 7 are not in this category; disassembly listings that
-  accompany them are. Neither is inspection of a third-party application's own
-  code, which is permitted for diagnosis under Section 7 — but what it yields
-  is a lead to confirm, not evidence of how the Apple API behaves.)
-- Apple's corecrypto source (see Section 5), or any restricted source.
-- Verbatim code from third-party projects with an undeclared or incompatible
-  license. Other compatibility projects may inform *what* the quirk is, not
-  *how* we write it.
-
-### How to implement a quirk
-
-- **Isolate it.** Put the quirk behind a clearly named helper or branch so it
-  can be found, reviewed, and removed. Do not scatter it through mainline
-  logic.
-- **Mark it in a code comment.** Every quirk carries a comment starting with
-  the tag `QUIRK:` placed directly at the quirk. The comment must be
-  self-contained and state:
-  - the observed behavior, in neutral terms,
-  - the evidence and its tier (and a link if public),
-  - affected OS versions, if known,
-  - the test that pins it.
-
-  Example:
-  ```c
-  // QUIRK: returns EINVAL instead of success for zero-length input.
-  // Not documented. Evidence: black-box observation on macOS 14.x
-  // (tier 2); same behavior reported in <public URL>.
-  // Test: test_quirk_zero_length_input_returns_einval
-  ```
-- **Test it.** Add a test that fails without the quirk. The test name or a
-  comment must make clear it covers a quirk and reference the same behavior
-  the code comment describes.
-- **Scope by OS version only if the evidence shows version dependence.** Never
-  scope by application.
-- **Do not weaken documented behavior** for cases the documentation does cover.
-  A quirk applies only to the gap.
-- **Security-sensitive quirks** (crypto, authentication, sandboxing, signature
-  or certificate validation, memory safety) are never implemented without
-  explicit maintainer approval. Compatibility must not silently weaken
-  security.
-
-### Distinguishing quirks from hacks
-
-| Quirk (allowed, with evidence) | Hack (forbidden) |
-|---|---|
-| API returns a specific error code for an undocumented edge-case input, for all callers | Return a canned value when the caller is `com.vendor.App` |
-| Preserves an observed ordering or default value that many apps rely on | Skip a failing call because one app crashes on it |
-| Marked with a `QUIRK:` comment, evidence stated, and pinned by a test | Explained only by "makes app X work" |
-
-If the real-world trigger was one application, use that only to *discover* the
-behavior. Then reproduce the general behavior with a standalone test that does
-not involve that application.
-
-## 4. No verbatim copying; use sources for understanding only
-
-- Do not copy code, comments, distinctive structure, or test fixtures verbatim
-  (or near-verbatim) from any external source unless its license is explicitly
-  declared and permissive **and** compatible with this project's license.
-- "Found on the internet / in a repo / in a gist / in a Stack Overflow answer"
-  is not a license. No declared license means no permission.
-- Third-party code you discover may inform your understanding of *what* needs
-  to be done. Close it, then write the implementation independently, in your
-  own structure and style.
-- If permissively licensed code is genuinely reused, it must be recorded
-  (source URL, commit, license, copyright notice) in the PR and in the
-  project's third-party notices, and required attribution must be preserved.
-- Do not reproduce Apple's documentation prose verbatim in comments or docs.
-  Paraphrase and link to the public documentation instead.
-
-## 5. CoreCrypto (and alike): absolute prohibition (highest priority)
-
-- Apple's open-source CoreCrypto (corecrypto) is under a license that is
-  incompatible with this project. **No code from it may ever enter this
-  codebase under any circumstances**: not copied, not translated to another
-  language, not "lightly refactored", not reproduced from memory, not used as
-  a line-by-line reference while writing.
-- **This extends to any other Apple source we cannot freely use, however it
-  became available.** Apple occasionally publishes source for a component
-  under terms that make the *source available to read* without it being
-  *free/open-source software* we can actually use here (e.g.
-  viewing/research-only terms, no-redistribution or no-derivative clauses,
-  patent carve-outs, or anything short of a license compatible with this
-  project's license). The same is true, with even less ambiguity, of Apple
-  source that was *leaked* rather than intentionally released — i.e. it
-  became "available" through a breach, an unauthorized dump, or similar,
-  with no license from Apple at all. It makes no difference whether such
-  source arrived via an official-looking release or a leak, how it was found
-  (a public repo, a forum, a pastebin, a torrent, etc.), or whether it
-  carries Apple's name or copyright notice: if it is not under a license
-  compatible with this project's license, it is restricted material, full
-  stop, and every rule in this section that applies to corecrypto applies
-  identically to it, whether or not it is named here: no copying,
-  translating, "light refactoring", reproduction from memory, or use as a
-  line-by-line reference; no pasting it into prompts, tool calls, scratch
-  files, or PR text; implementation only from the public API contract,
-  published standards, and public test vectors; and the same mandatory human
-  review step below before any PR touching a reimplementation of it can be
-  merged. If you are unsure whether source you have encountered falls into
-  this category, treat it as if it does and ask a maintainer (Section 10)
-  before using it for anything beyond understanding the public contract.
-- Do not open, quote, summarize, or paste corecrypto source into prompts, tool
-  calls, scratch files, or PR text.
-- Implement CoreCrypto-compatible APIs from: the public API contract,
-  published standards (FIPS, NIST SP, RFCs), and public test vectors (e.g.
-  NIST CAVP, Wycheproof, RFC appendices).
-- Prefer well-known, permissively licensed, vetted crypto implementations as
-  backends over writing primitives from scratch. Do not invent cryptography.
-- Treat anything resembling corecrypto's internal structure, naming of
-  internals, or algorithms-as-written as a red flag. If you notice that your
-  output might be derived from it, discard it and start over from the
-  standards, then tell the maintainers.
-- Backtraces that pass through corecrypto may be used only to understand which
-  public API calls into it and in what order. They must never be used to infer
-  or reconstruct anything about corecrypto's internals.
-- Quirks in crypto code require explicit maintainer approval (Section 3).
-- **Mandatory human review step.** Any PR touching the CoreCrypto
-  reimplementation, or the reimplementation of any other component covered by
-  the extension above, requires an explicit, separate check — stated by the
-  author and verified by the reviewer, not merely assumed because
-  "AGENTS.md was followed" — that the diff does not contain verbatim or
-  near-verbatim code from Apple's corecrypto (or the other component's)
-  source (including variable/field names, comments, or distinctive structure
-  copied from it). This check must be performed by reading the actual diff
-  side-by-side with knowledge of corecrypto's public layout/API (never its
-  source, per above), not by
-  asking an AI agent to self-certify its own output. If a reviewer cannot
-  confirm this, the PR must not be merged until a maintainer with corecrypto
-  familiarity confirms it.
-
-## 6. No leftover runtime validation or debugging code
-
-Debugging aids must never be present in final commits or PRs. This includes:
-
-- Writing to temp files, or dumping buffers/state/arguments to disk or stdout
-  when some condition occurs.
-- `printf`/`NSLog`/`println!`/`print` debugging, ad-hoc logging, or
-  `abort()`/`assert` probes added only to observe application behavior.
-- Environment-variable, file-existence, or flag-gated "diagnostic" paths that
-  exist only to inspect the behavior of a particular app.
-- Commented-out debugging code, `TODO remove`, or `HACK` markers left behind.
-
-Unit tests, integration tests, and *intentional, documented* logging that is
-part of the product's design are fine and encouraged. Before finishing any
-task, review the full diff specifically for leftover probes.
-
-## 7. Provenance and clean-room hygiene
-
-- **No disassembly or decompilation of Apple binaries**, and no use of leaked
-  or confidentially obtained Apple source, internal documents, or NDA-covered
-  material. If you suspect something is such material, do not use it. This
-  restriction is about Apple's code; third-party applications we are trying to
-  run are treated separately below.
-- Black-box observation of public API behavior is the primary way we discover
-  quirks. Record findings as behavioral specifications and tests (inputs,
-  outputs, OS version), not as descriptions of internals.
-- Every PR must include a short **Provenance** note: what sources informed the
-  change (public docs, standards, test vectors, black-box observations,
-  backtraces), and confirmation that no restricted material was used.
-- Keep research notes separate from implementation: describe observed behavior
-  in neutral terms ("function X returns error E for input class Y"), not in
-  terms of someone else's code.
-
-### Backtraces from macOS
-
-Backtraces captured from a real macOS system are permitted evidence and are
-part of our clean-room process. They are observations of runtime behavior, not
-decompilation.
-
-**Who provides them.** A human contributor captures the backtrace on a
-macOS system they are entitled to use (e.g. from a debugger, a crash report,
-or a sampling tool) and supplies it as input. Agents must not attempt to
-obtain backtraces by disassembling, unpacking, or otherwise inspecting Apple
-binaries themselves.
-
-**What they may be used for:**
-
-- Learning the call hierarchy: which framework or library calls which, and
-  through which public entry points (feeds Section 2).
-- Learning ordering, threading and queue context, callback and delegate
-  invocation paths, and where errors originate and propagate.
-- Confirming that a public API is implemented on top of another public API.
-- Supporting a quirk as evidence (Section 3), together with a reproducible
-  test.
-
-**What they must not be used for:**
-
-- Reconstructing function bodies, algorithms, data structures, or control flow
-  inside a function. A stack tells you who called whom, not how a function
-  works.
-- Using instruction offsets, register contents, raw memory dumps, or
-  disassembly that may accompany a trace. If a supplied trace contains such
-  material, ignore it and ask the contributor to remove it. Do not use it.
-- Adding private or undocumented symbols to our public surface merely because
-  they appear in a trace. Implement a private symbol only when public-layer
-  behavior requires it, it is general, and a maintainer approves.
-- Copying symbol names into our code as a way to mimic internal structure.
-  Our internals are named and organized by our own design. Only the public API
-  and the layering are dictated by compatibility.
-
-**Hygiene for supplied traces:**
-
-- Strip personal data, paths containing usernames, hostnames, tokens, and
-  application-private information before sharing.
-- State the macOS version and architecture, and how the trace was captured.
-- In the PR, summarize what was learned from the trace in neutral terms
-  ("API X is entered via Y, then delegates to Z on a background queue"). Do
-  not commit raw traces to the repository unless a maintainer agrees.
-
-### Reverse engineering third-party (non-Apple) software
-
-The prohibitions above are about **Apple's** binaries and restricted Apple
-source. They do not cover the applications we are trying to run. Inspecting a
-third-party, non-Apple application — including disassembling or decompiling it
-— is **permitted** when the purpose is to find out why it crashes or
-misbehaves under Darling.
-
-The reason is that such an application is not something we reimplement. We
-never need its code; we need to know *how it talks to the Apple APIs we
-provide*. Looking at the failing call site to see which API was called, with
-which arguments, and what it expected back tells us what our implementation
-got wrong. That is a diagnostic activity, and its output is a bug report about
-Darling, not a transcription of someone else's program.
-
-**What it may be used for:**
-
-- Identifying the API call, selector, argument values, or structure layout
-  involved in a crash or misbehavior, and what the application expected.
-- Determining which Apple framework or library the application entered, and
-  through which public entry point (feeds Section 2).
-- Deciding whether our behavior deviates from the documented contract, and if
-  the documentation is silent, gathering a lead to confirm by black-box
-  observation under Section 3.
-- Writing a *standalone* reproducer that makes the same calls, so the fix can
-  be tested without the application.
-
-**What it must not be used for:**
-
-- Reproducing the application's own code, algorithms, assets, or data
-  structures in Darling, in any form — copied, translated, or paraphrased from
-  its disassembly. Section 4 applies in full.
-- Circumventing licensing, DRM, copy protection, activation, or anti-tampering
-  in the application. We fix compatibility; we do not defeat protection
-  mechanisms. If an application only fails because of such a mechanism, stop
-  and ask (Section 10).
-- Justifying an application-specific hack. Whatever is learned must still
-  result in a general fix to the documented or quirk behavior of our API
-  (Sections 1 and 3). The application is how the bug was *discovered*, never
-  what the fix is keyed on.
-- Inspecting Apple frameworks that happen to be bundled or statically linked
-  into the application. Those are Apple binaries and remain off limits; the
-  permission here ends at the application's own code.
-
-**Hygiene:**
-
-- Only inspect software you are lawfully entitled to possess and run.
-- Record findings in neutral, API-facing terms ("the application calls X with
-  a NULL second argument and expects errSecParam"), not as a description of
-  the application's internals. Do not paste disassembly listings into the PR,
-  commit messages, issue comments, or the repository.
-- Say in the Provenance note that a third-party application was inspected, and
-  name the general behavior that was identified — the fix itself must stand on
-  the public contract or on evidence admissible under Section 3.
-
-## 8. Tests
-
-- Every new API behavior needs tests derived from the **documented contract**,
-  public standards, or (for quirks) reproducible black-box observation, not
-  from one application's traffic.
-- Layering-relevant behavior (e.g. a higher-level framework correctly
-  delegating to the lower-level library, shared objects behaving identically
-  across layers) should be covered by tests that exercise both entry points.
-- Include negative and edge-case tests (error codes, invalid arguments,
-  nullability, boundary sizes), especially for crypto and parsing code.
-- Test vectors must come from public, license-clean sources; cite them.
-- Never weaken or delete a failing test to make a change pass. Fix the cause or
-  raise it.
-
-## 9. Quality and security expectations
-
-- No `unsafe`/unchecked memory handling without justification in a comment.
-- Crypto code: constant-time comparisons for secrets, zeroize key material, no
-  secrets in logs, no custom primitives.
-- Add or update dependencies only if the license is compatible; list new
-  dependencies and their licenses in the PR.
-- Keep public API signatures binary- and source-compatible with the documented
-  Apple API. Don't add public symbols that aren't part of the contract without
-  maintainer sign-off.
-
-## 10. When to stop and ask
-
-Stop and ask a maintainer instead of proceeding when:
-
-- Compatibility seems to require behavior that is undocumented, and the only
-  way to learn it would be to look at proprietary or restricted code.
-- A needed quirk has only inference-tier evidence, is security-sensitive, or
-  could only be confirmed by looking at proprietary or restricted code.
-- You cannot tell whether observed behavior is general or specific to one
-  application.
-- You cannot tell which layer a piece of functionality belongs to, or a change
-  would require breaking the layering (upward dependency, cycle, or bypassing
-  a layer).
-- A supplied backtrace includes disassembly, register or memory contents, or
-  anything that looks like it came from restricted material.
-- You are unsure whether a source's license permits use.
-- A fix appears to require an application-specific workaround.
-- An application appears to fail because of its licensing, DRM, copy
-  protection, activation, or anti-tampering mechanism rather than because of
-  an API incompatibility.
-- You suspect you have encountered, or produced something derived from,
-  Apple's corecrypto or other restricted code.
-
-## 11. PR checklist
-
-- [ ] Behavior follows public documentation/standards; no app-specific hacks
-- [ ] Implementation respects the macOS layering: built on the correct lower
-      layer, fix placed at the right layer, no upward dependencies or cycles
-- [ ] Any undocumented behavior is isolated, marked with a self-contained
-      `QUIRK:` comment (behavior, evidence, test), pinned by a test, and not
-      application-specific
-- [ ] Any backtrace used was human-supplied, sanitized, used only for
-      hierarchy/ordering/context, and summarized neutrally in the PR
-- [ ] No verbatim third-party code; any reused code is licensed, attributed,
-      and listed
-- [ ] If a third-party application was reverse engineered to diagnose the
-      issue (Section 7): it informed only which API call failed and how, no
-      disassembly is included, nothing from it was reproduced in Darling, and
-      the fix is general rather than keyed on that application
-- [ ] No corecrypto-derived code or reference, nor from any other
-      source-available-but-not-free-software Apple release (Section 5)
-- [ ] If this PR touches the CoreCrypto reimplementation, or any other
-      component covered by Section 5's extension: a human reviewer has
-      explicitly checked the diff for verbatim/near-verbatim code from
-      Apple's source (not merely assumed compliance)
-- [ ] The PR author can explain, in their own words, what this change does
-      and why it is correct, and will personally respond (and not AI) to
-      maintainer questions on this PR
-- [ ] No debugging/probe code left in the diff
-- [ ] Tests added from contract/standards/observation; vectors cited
-- [ ] Provenance note included
-- [ ] New dependencies' licenses checked
-
-
-## 12. Agent skills for working on Darling
-
-How-to guides for agents are kept in a separate repository,
-[darlinghq/darling-skills](https://github.com/darlinghq/darling-skills):
-building and installing a change, running tests inside the guest (including
-GUI tests on X11 and Wayland), debugging with lldb, checking which APIs an
-application needs, and contributing AppDB reports. Its README explains how to
-install them for Claude Code and other agents.
-
-- If your harness supports skills, install them. Otherwise read the matching
-  `SKILL.md` before building, testing or debugging a change at runtime.
-- The skills describe *how* to do things. This file describes *what* is
-  allowed. Where they conflict, this file wins.
-- Improvements to the skills go to the darling-skills repository, not here.
+# AGENTS.md — travailler de façon autonome dans D4RLING
+
+Ce guide s'applique au dépôt entier, sous réserve des consignes plus précises
+d'un sous-dossier et de la mission explicite de l'utilisateur. Il encadre le
+travail ; sa lecture ne déclenche ni expérimentation ni publication.
+Objectif : livrer une amélioration bornée, prouvée et réutilisable sans
+endommager les travaux existants ni annoncer une compatibilité non démontrée.
+
+Révision : 18 novembre 2026. Les tableaux et procédures de référence sont dans
+`docs/agents/` : [limites d'écriture par lot](docs/agents/limites-ecriture-par-lot.md)
+et [niveaux de vérification et qualification](docs/agents/niveaux-de-verification.md).
+
+## Essentiel (lire d'abord ; le reste du fichier est la référence)
+
+- **Priorité courante :** voir la section suivante. Tout lot doit s'y rattacher.
+- **Commandes :** un seul bloc copiable avec prévol, bilan copié au presse-papiers et code de retour préservé (règle permanente plus bas).
+- **Jamais :** force-push, reset, clean, `git add -A`, toucher au checkout `b7d0cb6`, écrire dans `experiments/petite-victoire/` sans demande explicite du responsable.
+- **Preuve :** PASS seulement avec une sortie observée ; distinguer résultat observé et résultat rapporté.
+- **Revue :** une correction n'est intégrée qu'après relecture par quelqu'un d'autre que son auteur.
+- **Arrêt :** annoncer un critère d'arrêt avant de commencer ; au premier bloqueur reproductible, s'arrêter et le documenter.
+- **Publication :** `master`, avance normale, relire la tête avant et après.
+
+## Priorité courante (à mettre à jour à chaque jalon)
+
+**Objectif de la période :** amener Logic Studio 8 (i386) jusqu'à son prochain obstacle exécuté, puis le lever, et recommencer.
+
+**Dernier obstacle connu :** `libfontconfig.so.1` ELF32 absente au chargement Carbon (L2, 14 novembre 2026). *À confirmer dans PROJECT_STATE.md avant usage.*
+
+**Boucle de travail :** lancer → classer le premier obstacle exécuté → corriger le plus petit élément qui le lève → relancer. Ne pas qualifier un sous-système que Logic n'appelle pas encore.
+
+**Condition de recevabilité de chaque correctif (amont §1, §3) :** Logic sert à *découvrir* un défaut, jamais de clé du correctif. Le correctif est général (contrat documenté ou comportement établi par une preuve admissible) et pinné par un témoin autonome qui n'utilise ni Logic ni ses fichiers. Si un échec vient de l'activation, du numéro de série ou d'une protection de Logic, et non d'une incompatibilité d'API : s'arrêter et demander (amont §7, §10).
+
+**Autorisation de lancer Logic ou son témoin d'import :** **NON ACCORDÉE.** Tant que le responsable n'a pas remplacé cette ligne par une autorisation datée et son périmètre (préfixe neuf, timeout borné, namespaces privés), les règles de L-A1 et du §4 s'appliquent : aucun lancement.
+
+**Règle de sélection des lots**, dans cet ordre :
+1. le lot qui lève le premier obstacle exécuté de Logic ;
+2. à défaut, un prérequis direct de cet obstacle (dépendance ELF32, symbole, API appelée) ;
+3. à défaut, la maintenance (synchronisation amont, durcissement des tests), à raison d'un lot sur trois au plus ;
+4. tout autre lot (nouvel audit, témoin synthétique, inventaire) exige une phrase de justification : quel obstacle de la priorité courante il débloque. Sans elle, ne pas le faire.
+
+**Arrêt :** trois tentatives consécutives qui ne changent pas le premier obstacle déclenchent un arrêt et une demande d'arbitrage, pas une quatrième variante.
+
+## Remise des commandes — règle permanente, indépendante de l'appareil
+
+**Consigne explicite et permanente du responsable (16 novembre 2026) :** ces préférences s'appliquent quel que soit l'appareil utilisé. Ne pas les conditionner à un téléphone, à un contexte mobile ou à un changement d'appareil ; ne pas présumer l'appareil courant. Adapter les commandes au shell et à la machine cible réellement identifiés.
+
+- **Commandes intégrales dans le chat :** fournir toute commande Bash/Shell (dont `sh`) ou PowerShell dans **un bloc unique, autonome et directement copiable**, avec prévol, chemins, limites d'écriture, accès réseau, protections, exécution et bilan. Aucune retouche ni composition manuelle ne doit être exigée.
+- **Jamais de scripts à télécharger, sauf demande explicite :** ne fournir ni fichier `.sh`/`.ps1`, ni archive, pièce jointe ou lien de téléchargement/sandbox pour remettre un script à l'utilisateur sans cette demande.
+- **Copie automatique pour CHAQUE commande ou script Bash/Shell :** incorporer dans le même bloc la collecte du bilan/journal utile et sa copie dans le presse-papiers **à la fin de l'exécution, y compris en cas d'échec**, sans demander une seconde commande ni une étape manuelle supplémentaire. Le résultat doit être prêt à coller dans la conversation.
+- **Finalisation et code de retour :** installer la finalisation avant les prévols et opérations susceptibles d'échouer (`trap EXIT` en Bash, mécanisme équivalent compatible avec le shell employé). Capturer immédiatement le véritable code de retour de l'exécution, joindre au bilan le diagnostic et ce code, puis préserver ce même code après journalisation, copie et nettoyage. Une erreur du presse-papiers ne doit ni masquer l'échec initial ni transformer une exécution réussie en échec.
+- **Presse-papiers disponible :** privilégier `clip.exe` sous WSL2, `pbcopy` sous macOS, puis `wl-copy` ou `xclip` sous Linux selon les outils et la session disponibles. Vérifier la disponibilité et le succès réel de la copie ; ne pas installer d'outil implicitement.
+- **Protection des secrets :** ne collecter que les informations utiles et non sensibles ; expurger avant affichage, enregistrement ou copie les mots de passe, jetons, clés, données personnelles et chemins sensibles. Ne pas activer de trace de commandes ni copier un inventaire brut de l'environnement susceptible de révéler des secrets.
+- **Rapport préservé si la copie est impossible :** afficher un avertissement explicite, garder le bilan expurgé lisible dans le terminal et conserver tout rapport déjà enregistré dans son emplacement autorisé à accès restreint, sans le supprimer ni l'écraser lors du nettoyage. L'absence ou l'échec du presse-papiers ne doit jamais faire perdre le rapport ni altérer le code de retour initial.
+- **Un bloc collé n'est pas une preuve d'exécution.** Seule une sortie de terminal, un rapport ou l'action effective d'un outil permet d'affirmer qu'une commande a été exécutée ou qu'un résultat est observé.
+- Ne pas confondre l'appareil de conversation et la machine cible (5700X/WSL2, 10400, etc.), ni présumer un accès à celle-ci. Si l'agent ne peut pas y exécuter les commandes, le dire et remettre le bloc directement exploitable.
+- Cette règle concerne **la forme de livraison à l'utilisateur** ; les agents peuvent créer leurs propres fichiers de travail uniquement dans les emplacements et limites autorisés par leur mission.
+
+Voir aussi la consigne transversale du dépôt `PMSL-Arch/AGENTS.md`.
+
+## Gouvernance transversale — PMSL-ARCH
+
+La **source de règles transversales de développement** est le dépôt privé
+[`fr4nck/PMSL-Arch`](https://github.com/fr4nck/PMSL-Arch), branche `main` :
+[`AGENTS.md`](https://github.com/fr4nck/PMSL-Arch/blob/main/AGENTS.md) et
+[`docs/GOUVERNANCE_AGENTS_OBJECTIFS.md`](https://github.com/fr4nck/PMSL-Arch/blob/main/docs/GOUVERNANCE_AGENTS_OBJECTIFS.md).
+Avant tout chantier technique significatif, l'agent ayant accès à ce dépôt
+consulte ces deux textes, en particulier **AGT-001 à AGT-014**, puis ce guide
+local et les instructions du sous-système. L'accès au dépôt privé n'est pas
+présumé pour un contributeur extérieur : ne jamais prétendre avoir consulté
+une règle inaccessible ; appliquer au minimum les garde-fous de ce guide et
+signaler toute règle non vérifiable dont dépend l'autorisation ou la sûreté
+d'une opération. En cas de conflit ou d'incertitude bloquante, **arrêter
+l'opération concernée et demander un arbitrage**, sans contournement tacite.
+
+**Contrat obligatoire avant création, développement, script ou délégation
+à un agent :**
+
+1. Identifier le **dépôt canonique**, l'état réel de `master`, les éventuels changements locaux, la source de vérité et les solutions déjà disponibles.
+2. Réutiliser sources, builds, tests, dépendances et outils existants avant de créer une copie, un mécanisme ou un environnement parallèle ; justifier explicitement toute exception.
+3. Conserver **une seule branche de développement : `master`**, un checkout canonique et un build/une installation de référence, avec traçabilité source → build → préfixe → essais. Les anciennes copies restent protégées jusqu'à décision explicite de migration ou de suppression.
+4. Pour le travail pérenne sur le 5700X, viser **au plus trois zones permanentes** sous `$D4RL_HOME/d4wrling-work` : `canon/` (sources, build, installation), `validation/` (tests et sorties bornées) et `historique/` (preuves protégées). **C'est une cible d'organisation, pas une autorisation de créer ces dossiers, déplacer les copies actuelles ni nettoyer l'existant.** Les essais temporaires ont un propriétaire, une limite et une politique de conservation.
+5. Avant toute commande à effet, annoncer le **shell**, les chemins lus et écrits, le volume, les accès réseau, les changements Git et les risques. Aucune installation, copie volumineuse, écriture sur volume Windows ni téléchargement implicite. Un clone partiel peut déclencher un *lazy fetch* même en lecture ; le prévenir explicitement.
+6. Aucune suppression, aucun déplacement, écrasement, force-push, reset destructif ou réécriture d'historique sans autorisation spécifique. Préserver `experiments/petite-victoire/`, ses preuves et les installations historiques.
+7. Une correction n'est **intégrée** que si elle est testée au niveau pertinent, **relue par une personne ou un agent différent de son auteur**, et présente dans `master`. Un PASS synthétique, un commit publié et une recette réelle sont trois états distincts. Porter les corrections qualifiées par petits changements traçables, sans assembler arbitrairement des binaires issus de builds différents. (Détail de la relecture au §7.)
+8. Définir le livrable demandé **maintenant**, la preuve attendue, les tests négatifs, un budget de travail et un **critère d'arrêt**. Ne pas étendre « go » à des chantiers implicites.
+9. Les prompts destinés à un autre agent et les scripts livrés à l'utilisateur doivent être **complets et collables en une seule fois**, avec prévol du dépôt réel, bon répertoire, protections, lancement et bilan ; aucune retouche manuelle exigée.
+10. Avant diagnostic ou correctif non trivial, lire **documentation officielle et code/version réels** (AGT-014). Si une précondition manque, signaler le blocage plutôt que multiplier des essais ou fabriquer des prérequis.
+
+La mémoire conversationnelle ne remplace **jamais** ce prévol documentaire.
+Les règles spécifiques D4rling ci-après renforcent ce contrat ; elles ne
+l'annulent pas.
+
+## Petite Victoire — développement réservé au responsable du projet
+
+**Le responsable du projet garde la main sur le développement et les choix de
+produit de Petite Victoire**, y compris son nom et son évolution éventuelle
+vers un DAW. Les agents ne choisissent pas spontanément un lot de ce projet et
+n'écrivent pas dans `experiments/petite-victoire/` (code, tests, interface,
+ressources, documentation du produit, versions ou archives).
+
+Une intervention exige une **demande explicite et ciblée du responsable du
+projet**. Une mission générale de développement autonome de D4RLING ne délègue
+pas Petite Victoire. La lecture et le signalement de blocages restent possibles
+dans le périmètre de la mission ; proposer une évolution ne vaut pas
+autorisation de l'implémenter.
+
+Petite Victoire doit devenir le démonstrateur musical de référence pour
+vérifier les fonctions de D4RLING **sans posséder Logic Studio 8**. Les agents
+peuvent préparer et qualifier le socle D4RLING avec leurs propres témoins, puis
+documenter les contrats utilisables par le responsable. La validation par
+Petite Victoire porte sur les chemins réellement exercés et identifiés : mode
+natif et mode invité i386 sont distingués, ainsi que les fonctions encore
+absentes ou non testées. Les jalons Logic/EXS24 et QuickTime gardent leurs
+preuves applicatives propres.
+
+## 1. Lire avant d'agir
+
+Lire dans cet ordre : [PROJECT_STATE.md](PROJECT_STATE.md) ;
+[reproduction/README.md](reproduction/README.md) et
+[reproduction/refs.lock.json](reproduction/refs.lock.json) ;
+[ROADMAP.md](ROADMAP.md) ; le README et les rapports datés du sous-système
+choisi ; [CREDITS.md](CREDITS.md) avant toute réutilisation de code.
+
+Confronter les dates **et les révisions** : `master`, branches de travail,
+snapshot historique et installation testée sont des états différents. Ne pas
+transformer une vieille note « stub » en diagnostic actuel sans relire le code ;
+ne pas transformer une nouvelle observation en qualification de tous les
+anciens chemins. Les recettes publiques indiquent le shell et la distribution
+attendus : ne pas exécuter une commande Bash comme une commande PowerShell.
+
+Références de convergence : [audio B14/C10](docs/REPRISE-AUDIO-MUSIQUE-2026-11-08.md),
+[dyld/ABI V0–V2](docs/research/i386-dyld-abi-audit-2026-11.md),
+[exigences Logic](docs/decisions/logic8-exigences-audio-et-chantiers-2026-11-08.md),
+[Petite Victoire v0.1](experiments/petite-victoire/v0.1/README.md).
+
+## 2. Prévol sans mutation
+
+- Identifier dépôt, branche, HEAD, statut, index, diff et sous-modules par des lectures bornées. Chercher d'abord avec `rg` / `rg --files`. Ne pas publier les sorties brutes si elles révèlent des données locales. Une copie sans `.git` est une copie de documents, pas un checkout : ne pas y inventer un état Git.
+- Noter les fichiers modifiés/ignorés et leurs propriétaires de travail ; préserver tout changement préexistant. Si la cible est déjà modifiée, lire le diff et choisir des fichiers neufs ou signaler le conflit ; ne pas écraser ni intégrer ce diff par défaut.
+- Déterminer l'environnement réel : Linux/WSL2, architectures ELF/Mach-O, outils présents, display, bibliothèques et route audio si nécessaires. Ne pas confondre le PC WSLg testé et un MacBook sous Linux.
+- Choisir un espace de travail unique sous le dossier de projet autorisé, avec build, exports et rapports dédiés ; estimer volume et parallélisme. Ne pas dupliquer automatiquement des builds ou archives volumineux.
+- Aucun `fetch`, clone, récupération de sous-module ou paquet caché dans un prévol. Un clone partiel/promisor peut télécharger même pendant une lecture Git : vérifier la disponibilité locale, désactiver la récupération automatique selon l'outil, ou utiliser l'API GitHub pour les lectures distantes annoncées par la mission. Signaler un objet absent.
+
+## 3. Choisir et borner un lot
+
+Appliquer la **règle de sélection** de la « Priorité courante ». Prendre un seul
+identifiant de [ROADMAP.md](ROADMAP.md) (R-A1, A-A1, Q-A1, M-A1…), annoncer
+objectif, preuves et fichiers avant de modifier. Une mission documentaire
+reste documentaire.
+
+Fixer un contrat de tâche court :
+
+```text
+Lot / objectif observable :
+Obstacle de la priorité courante que ce lot lève :
+Base : dépôt, branche, SHA, overlay éventuel, sous-modules concernés
+Entrées disponibles / manquantes :
+Écritures autorisées : liste exacte de fichiers et répertoire de sortie
+Hors périmètre / fichiers partagés réservés :
+Critère PASS : résultat attendu et méthode de mesure
+Contrôles négatifs / erreurs / régressions :
+Condition BLOCKED et tâche indépendante de repli :
+Critère d'arrêt (budget, nombre de tentatives) :
+Livraison : sources, preuve expurgée, commande de reproduction, limites
+Publication autorisée : destination et mode explicitement demandés
+```
+
+L'autorisation explicite de la mission suffit pour ses actions nécessaires ; ne
+pas redemander la même permission. Si une entrée ou une autorisation nouvelle
+manque, avancer sur les parties indépendantes et poser une seule question
+précise. **Ne pas élargir silencieusement le périmètre.**
+
+Si plusieurs agents travaillent effectivement, attribuer des fichiers
+disjoints ; un seul intégrateur écrit les contrats partagés et les fichiers
+racine. Aucun guide n'autorise à lancer d'autres agents sans mission le
+prévoyant. Les répertoires candidats par chantier sont dans
+[limites d'écriture par lot](docs/agents/limites-ecriture-par-lot.md) : leur
+mention n'autorise pas leur modification collective.
+
+## 4. Protéger l'environnement et les travaux locaux
+
+- Le checkout historique **`b7d0cb6a79fe196657deb9711647f8486bcc5e5e` avec neuf modifications locales et `parameters.c` ignoré est protégé.** Ne jamais y exécuter checkout/reset/clean/stash/pull, y appliquer les snapshots, ni modifier son build, installation ou préfixe.
+- Ne pas supprimer, déplacer, écraser, « nettoyer » ou versionner les travaux d'autrui. Pas de `git add .` / `git add -A` : sélectionner les seuls fichiers revus. Le motif historique `tests` de `.gitignore` peut masquer un nouveau test ; vérifier explicitement son inclusion et ne forcer que la source précise après revue.
+- Matérialiser les sources historiques uniquement dans une destination neuve avec les recettes documentées ; préférer les entrées locales disponibles.
+- Lancer uniquement dans une installation copiée/cohérente, un préfixe **neuf et court**, des namespaces privés et un timeout borné. Lire le runner avant usage. **La présence d'une installation ne constitue pas l'autorisation de la lancer** ; le lancement de Logic suit l'autorisation de la « Priorité courante ».
+- Ne pas tuer de serveur historique, changer sysctl, démarrer un service global, installer dans `/usr/local` ou `/opt`, ni copier une dylib depuis un autre build pour masquer une dépendance.
+- Après un essai, borner les seuls descendants/namespaces créés par le lot, attendre leur fin, vérifier l'absence de montage/processus résiduel et l'intégrité des fichiers protégés. Conserver les journaux privés.
+- Aucun téléchargement/installation silencieux, SDK récupéré implicitement, fichier dispersé à la racine du disque ou extraction massive de DVD. Si une acquisition devient nécessaire, préciser source, volume, destination et raison avant de demander la décision.
+- Ne pas changer hors mission : CMake racine, CI, packaging, dépendances, révisions de sous-modules, verrous de reproduction, snapshots et correctifs historiques.
+
+## 5. Implémenter et tester le contrat utile
+
+Avant tout correctif, lire source, tests, ABI publique, dépendances et
+révisions de branches. Réutiliser les audits terminés ; chercher la lacune
+exacte au lieu de refaire un inventaire général. Respecter PulseAudio, l'ABI
+CoreAudio, Carbon et CoreMIDI. Préserver auteurs/licences et enregistrer les
+imports/adaptations dans CREDITS et le commit.
+
+- **Oracle indépendant :** même entrée avant/après, attendu défini, contrôle positif et négatif, panne pertinente, régression ciblée. Ne pas coder un test qui reproduit seulement l'implémentation.
+- **Stub honnête :** un stub retourne une erreur plutôt qu'un succès sans objet ou effet demandé.
+- **Niveau de preuve adapté :** lecture de source, test hôte, chargement Linux, témoin Darwin i386 et application ne prouvent pas la même chose ; voir le [tableau des niveaux](docs/agents/niveaux-de-verification.md), qui détaille aussi les contrôles Carbon, Mach-O, GUI et la frontière hôte/invité.
+- **Audio :** prouver le chemin natif ou invité réellement utilisé ; aucune allocation, opération disque/réseau ou verrou bloquant dans le callback de rendu ; une écoute est confirmée par une personne ou une capture mesurée, jamais inférée d'un compteur.
+- **Application :** classer le **premier obstacle exécuté** avant les lacunes secondaires ; les tables Mach-O seules ne démontrent ni chargement ni fonctionnement. Réutiliser l'audit existant avant tout nouveau scan. **Ne jamais désassembler ni inspecter au niveau instruction un binaire Apple** (Logic est un binaire Apple). Pour Logic, rester au niveau des bibliothèques déclarées comme dépendances (outillage public) et du comportement observé (symbole absent, plantage, erreur). Une application tierce non Apple peut être inspectée pour diagnostic selon le §8.
+- Une modification purement documentaire exige revue des faits, liens, références et diff ; pas de build intégral pour cette seule raison.
+
+## 6. Preuves, statuts et arrêt
+
+Une preuve livrable contient :
+
+- date, lot, révisions/overlay, architecture, environnement et outils ;
+- entrées identifiées par empreinte lorsque pertinent, sans secrets ;
+- commande effectivement exécutée, attendu, résultat, retour, durée, marqueurs et artefacts utiles ; préciser ce qui n'a pas été exécuté ;
+- contrôles négatifs, pannes, totalité des tentatives et limites ;
+- état avant/après des seuls fichiers et processus concernés ;
+- synthèse publique expurgée et emplacement **privé** des originaux conservés, sans exposer cet emplacement s'il contient des données personnelles.
+
+Employer **PASS / FAIL / BLOCKED / À FAIRE** selon ROADMAP et qualifier
+**SRC / DOC / OBS / TEST / INF / HYP / OPEN**. Une hypothèse peut guider un
+test, jamais tenir lieu de résultat. Une sortie d'analyseur `INTEGRITY=PASS`
+n'est pas une vérification indépendante.
+
+Distinguer à chaque checkpoint les faits **observés directement** par l'agent
+et les résultats **rapportés** depuis un autre poste ou une autre
+conversation ; ne jamais présenter ces derniers comme rejoués.
+
+Si une dépendance manque, arrêter le chemin qui en dépend, noter le premier
+bloqueur reproductible et la condition exacte de reprise, puis continuer un
+contrat/test/note indépendant. Ne pas relancer jusqu'au succès, cacher un
+timeout ou appeler BLOCKED un essai ayant échoué. Appliquer la règle d'arrêt
+(trois tentatives sans changement du premier obstacle).
+
+Actualiser PROJECT_STATE, la commande de reproduction et les limites après un
+jalon important ; ajouter une note datée et préserver le rapport antérieur. La
+roadmap reçoit le résultat du seul critère prouvé, sans gonfler le statut d'un
+axe entier.
+
+## 7. Publication, coordination et revue
+
+`master` est le **point de synchronisation commun** entre conversations,
+agents locaux et contributions : une conversation, un rapport oral ou une
+session terminale ne remplace pas les commits et documents publiés.
+
+**Avant chaque lot, reprise ou changement de chantier :**
+1. Lire le SHA courant de `master` **et les derniers commits** ; examiner les diffs qui touchent les fichiers, contrats, dépendances ou preuves du lot ; comparer avec le SHA de départ.
+2. Lire le checkpoint publié le plus récent du périmètre, puis l'état du checkout local, les modifications non commitées et les artefacts non publiés. Ne pas refaire un lot déjà qualifié ni ignorer un travail plus récent.
+3. Si deux travaux risquent d'écrire les mêmes fichiers, coordonner la propriété avant modification ; réserver les fichiers partagés à un seul intégrateur.
+
+**Contenu public :** documentation originale, sources redistribuables, médias
+de test originaux et synthèses expurgées. **Jamais** de Logic/EXS24/QuickTime
+Player propriétaire, DVD, SDK non redistribuable, AU commercial, banque de
+sons, clé/numéro de série, préfixe, core dump, archive de récupération ou
+trace privée ; examiner aussi captures et métadonnées. Ne pas republier un
+élément sensible au motif qu'il existe déjà dans un ancien document.
+
+**Commits :** en français, portée étroite, un commit séparé par évolution
+**achevée et vérifiée**. Exemple documentaire :
+`docs: préciser les jalons QuickTime et leurs preuves [skip ci]`. Utiliser
+`[skip ci]` pour la documentation seule, jamais pour éviter les contrôles d'une
+modification de code. Si un candidat ou un résultat n'est pas qualifié ou pas
+accessible depuis GitHub, publier **uniquement un checkpoint documentaire
+honnête** (révision, provenance, rapporté vs vérifié, limites, statut, prochaine
+action exacte) ; ne pas publier du code non qualifié sous prétexte de le
+sauvegarder.
+
+**Revue :** toute modification de production (`src/`, tests, CMake, CI) est
+relue sur son diff exact par une personne ou un agent **différent de son
+auteur**. Le message de commit porte `Revue: <qui>, <date>, <verdict>` (accepté,
+accepté avec réserves, refusé). Un auteur ne relit pas son propre diff.
+Exception : la documentation seule et les checkpoints documentaires.
+
+**Publication :** requiert l'autorisation de la mission. Pour la livraison de ce
+guide et de la documentation : `fr4nck/d4rling`, **`master` directement, sans
+branche ni PR**. Relire `master` juste avant écriture ; avance normale avec
+contrôle de la tête attendue. Si elle a changé, réexaminer les nouveaux commits
+et reconstruire le changement sur cette base. Aucun force-push, reset ou
+écrasement d'un travail concurrent. Relire le diff complet et la liste des
+fichiers ; ne pas publier les changements locaux préexistants (si le poste
+n'est pas un checkout propre, une publication documentaire via l'API GitHub
+préserve le poste). Après publication : relire la référence et les fichiers,
+comparer le contenu exact, confirmer les seuls chemins modifiés, fournir URLs
+et SHA complets. Un objet commit sans mise à jour de `master` n'est pas publié.
+
+Ces contrôles se font **à chaque session et à chaque publication** ; ils ne
+constituent pas une surveillance continue en arrière-plan.
+
+## 8. Amont Darling et dette de synchronisation
+
+L'amont `darlinghq/darling` publie son propre `AGENTS.md`, conservé sans
+modification dans [docs/upstream/darlinghq-AGENTS.md](docs/upstream/darlinghq-AGENTS.md)
+(commit `91d6dacd`, 14 novembre 2026). Son texte a été relu en entier le 18
+novembre 2026 et le résumé ci-dessous lui correspond. Il ne remplace pas ce
+guide pour le travail dans D4rling, mais s'applique intégralement à toute
+proposition destinée à l'amont, avec la
+[stratégie amont](docs/decisions/strategie-contributions-amont.md). Pas de
+contribution amont sans décision distincte du responsable.
+
+- **Responsabilité :** l'auteur d'une PR répond de chaque ligne, sait l'expliquer avec ses propres mots et répond lui-même aux mainteneurs. Une réponse d'agent, collée ou envoyée à sa place, peut être ignorée et la PR fermée. Le responsable répond personnellement.
+- **Contrat, pas application :** implémenter le comportement documenté ; aucun cas particulier par application (identifiant de bundle, nom, version). L'application sert à découvrir le défaut ; le correctif est général et pinné par un témoin autonome.
+- **Couches :** reproduire la hiérarchie macOS, corriger à la couche d'origine, aucune inversion de dépendance ni contournement d'une couche.
+- **Comportements non documentés :** isolés, balisés `QUIRK:` (comportement, preuve et son niveau, versions d'OS, test), testés. Aucun quirk touchant la sécurité sans accord d'un mainteneur.
+- **Preuves admissibles :** documentation publique, observation en boîte noire reproductible, backtraces macOS fournis et nettoyés par un humain (hiérarchie, ordre, contexte, jamais le fonctionnement interne ni offsets, registres ou désassemblage), recoupements publics citables.
+- **Jamais :** désassemblage ou inspection au niveau instruction de binaires Apple, matériel fuité, code source de corecrypto ou de toute source Apple lisible mais non libre.
+- **Application tierce non Apple :** son inspection, désassemblage compris, est permise pour diagnostiquer un échec (quel appel, quels arguments, ce qu'elle attend). Sans reproduire son code, sans contourner licence, activation, DRM ou protection, et sans toucher aux frameworks Apple qu'elle embarque.
+- **Dans chaque PR :** note de provenance, liste de contrôle de l'amont (§11 de leur fichier), aucune sonde ni chemin de diagnostic résiduel (variable d'environnement, sortie de test, journal de débogage), tests tirés du contrat, aucun code tiers sans licence compatible déclarée, aucune prose d'Apple recopiée.
+- **Compétences (`darling-skills`) :** pour une contribution amont, lire le `SKILL.md` correspondant avant de construire, tester ou déboguer ; en cas de conflit, l'`AGENTS.md` amont l'emporte.
+
+
+**Dette de synchronisation.** À chaque jalon, relever le retard de `master` sur
+`darlinghq/darling` (en commits) et lister les conflits prévisibles avec les
+travaux en cours (exemple connu : cibles d'événements Carbon, amont `e808ce94`).
+**Seuil : 300 commits** *(valeur proposée, à valider par le responsable ; jusque-là
+indicative)*. Au-delà, ou si un lot touche un fichier déjà modifié par l'amont,
+un lot de synchronisation passe avant tout nouveau lot sur ce périmètre. Les
+correctifs qualifiés de petite portée sont proposés à l'amont, en priorité ceux
+qui réduisent les conflits à venir.
+
+## 9. Compte rendu final d'un lot
+
+Indiquer le résultat d'abord : objectif atteint ou premier bloqueur, puis
+fichiers changés, preuve et commande de reproduction, ce qui reste non
+qualifié, intégrité des travaux existants, et prochain lot utile. Pour une
+publication, donner branche, URLs et SHA vérifiés. Ne jamais annoncer
+QuickTime, JACK réel, Logic, EXS24 ou un DAW fonctionnels sur la seule base
+d'un symbole, d'un build, d'un mock ou d'un autre banc.
