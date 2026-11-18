@@ -6,6 +6,7 @@ Rapport : [docs/evidence/cocotron-r6-convergence-2026-11-18.md](../../../../docs
 | --- | --- |
 | `r6-extras.m` | Compilé contre l'en-tête `AppKitIvarLayout.h` testé (`-I` son répertoire), sans AppKit. Il définit une classe à extras par pointeur et une à stockage annexe. Modes : `first N ptr|side` (4 threads sur la première publication du bloc), `destroy N` (valeur lue, conteneur détruit par un autre thread), `copy N` (copies `NS_EXTRA_COPY` + R22 pendant des lectures). Valeurs « pierre tombale » ; `R6_RESULT … verdict=PASS|FAIL`, rc 1 en cas d'anomalie. SHA-256 tel qu'exécuté : `42bd3aea…`. |
 | `r6-cost.m` | Lié à AppKit : nanosecondes par `-[NSMenuItem tag]` (lecture d'un champ d'extras), par setter et par getter `view`, et par pool d'autorelease. SHA-256 : `cc0a4ea0…`. |
+| `own01.m` | R6-OWN-01 (issue #16) : lié à AppKit. `own01 placeholder\|locales\|real orig-first\|copy-first`. Valeurs suivies « pierre tombale » (sous-classe de `NSString` à compteur propre) ou vraies valeurs `NSString`/`NSArray` sous `NSZombieEnabled=YES`. `OWN_RESULT … PASS\|FAIL`, rc 1 en cas d'anomalie. Rapport : [cocotron-r6-own01-2026-11-18.md](../../../../docs/evidence/cocotron-r6-own01-2026-11-18.md). |
 
 Le témoin `tests/regressions/cocotron/abi26-r2/atomic-accessors-runtime.m` du
 chantier ABI26 a été exécuté **tel quel**, compilé dans l'espace R6 contre
