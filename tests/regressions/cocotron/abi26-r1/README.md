@@ -36,7 +36,7 @@ encore revendique ici.
 
 Le passage a l'execution de tests multithreads avec le **vrai runtime
 Objective-C Darwin i386** reste requis. Les points ouverts comprennent :
-initialisation concurrente des blocs, effets des accesses directs a
+initialisation concurrente des blocs, effets des acces directs a
 `NS_EXTRA`, comportement des associations et de `NS_EXTRA_COPY`,
 `NS_EXTRA_FREE`, autorelease pools, cycle de vie de l'objet, securite
 du verrou en reentrance, dependances `objc_sync_enter/exit`, validation
@@ -48,5 +48,5 @@ compilation comme une preuve d'atomicite effective, de stabilite
 multithread, de GUI ou de Logic.
 
 References :
-[ABI25, defaut observe](../../../..//docs/evidence/cocotron-abi25-port-review-2026-11-17.md)
-et [contrat ABI26](../../../..//docs/evidence/cocotron-abi26-i386-atomicity-contract-2026-11-18.md).
+[ABI25, defaut observe](../../../../docs/evidence/cocotron-abi25-port-review-2026-11-17.md)
+et [contrat ABI26](../../../../docs/evidence/cocotron-abi26-i386-atomicity-contract-2026-11-18.md).
