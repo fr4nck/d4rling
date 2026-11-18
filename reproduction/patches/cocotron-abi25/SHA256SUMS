@@ -1,0 +1,4 @@
+b35db80c2de0b1f0cbe2bcf766ac6e39906ccc30659dea206986cbc8b7c5a195  0001-cocotron-abi256-on-deef-original.patch
+f541f3e91bed7edec2654a7d7d48f10aeb81b52d669ff5098f29ebeaae08cdf8  0002-cocotron-abi25-atomic-followup.patch
+d1211b706721eddfe4ad2d45d71ae615f3f50eeafb1480a652ea7873b307a7eb  0003-cocotron-identifier-ownership-after-abi25.patch
+6df50e0ee30ad222f1ff4700fb1542eb94757a934a2991792d2b854eb7f7f76a  0010-cocotron-identifier-ownership-deef.patch
