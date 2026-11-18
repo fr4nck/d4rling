@@ -366,7 +366,7 @@ void load(const char* path, cpu_type_t forced_arch, bool expect_dylinker, char**
 	int fd;
 	uint32_t magic;
 
-	fd = open(path, O_RDONLY);
+	fd = open(path, O_RDONLY | O_CLOEXEC);
 	if (fd == -1)
 	{
 		fprintf(stderr, "Cannot open %s: %s\n", path, strerror(errno));
