@@ -5,7 +5,7 @@
 | Palier | Statut |
 | --- | --- |
 | Chargement des dépendances | **PASS borné dans un banc privé** — les 164 images i386 de la fermeture se chargent, dont les frameworks de ProAppRuntime ; seule EuCon est une dépendance faible optionnelle. |
-| Liaison des symboles | **BLOQUÉE AVANT L'ENTRÉE** — premier échec vu par `dyld` : `_kWSMethodInvocationResult` (DotMacKit vers CoreServices). |
+| Liaison des symboles | **BLOQUÉE AVANT L'ENTRÉE** — premier échec vu par `dyld` : `_kWSMethodInvocationResult` (DotMacKit vers CoreServices). Valeur publique mesurée sur macOS 15.7.9 x86_64 : `"/Result"` ([WSKEY-01](docs/evidence/wskey-01-macos-2026-11-21.md)). Définition candidate dans OSServices relue, **non intégrée** : qualification i386/x86_64 sur le vrai build et en invité **BLOCKED** ([WSKEY-02](docs/evidence/wskey-02-osservices-2026-11-21.md), 21/11). |
 | Première fenêtre Logic | **NON ATTEINTE** |
 | Menus Logic | **NON TESTÉS** |
 | Moteur audio Logic | **NON TESTÉ** |
@@ -229,7 +229,7 @@ Une branche portant un correctif ne signifie pas que celui-ci est fusionné.
 
 ## Suite utile, avec critère de réussite (mise à jour 18 novembre 2026)
 
-1. **Liaison `dyld` :** partir du premier message observé (`_kWSMethodInvocationResult`) et du contrat public de sa couche. Distinguer les symboles publics implémentables avec des tests autonomes des imports privés ou non documentés. Les 99 entrées issues de l'analyse statique ne sont pas un plan automatique d'implémentation ; leurs données propriétaires restent dans le banc privé. **Critère :** atteindre le point d'entrée de Logic dans un essai isolé et autorisé.
+1. **Liaison `dyld` :** partir du premier message observé (`_kWSMethodInvocationResult`) et du contrat public de sa couche. Distinguer les symboles publics implémentables avec des tests autonomes des imports privés ou non documentés. Les 99 entrées issues de l'analyse statique ne sont pas un plan automatique d'implémentation ; leurs données propriétaires restent dans le banc privé. **Critère :** atteindre le point d'entrée de Logic dans un essai isolé et autorisé. **21/11 :** valeur mesurée (`"/Result"`, WSKEY-01) et candidat OSServices relu (WSKEY-02) ; prochaine action : build canonique et témoins invités i386/x86_64 sur le 5700X, puis intégration et, sous autorisation, nouvelle tentative Logic.
 2. **Provenance et sûreté :** établir origine/licence du candidat OpenSSL, documenter le mécanisme root/`bubblewrap` à `0x1000` et les limites de ses privilèges, préparer réseau coupé et volumes Windows inaccessibles pour tout nouveau banc. Aucun code Apple propriétaire, aucune modification de sécurité/activation ni quirk crypto sans arbitrage requis.
 3. **Après l'entrée :** classer le premier blocage réellement exécuté. QuickDraw, événements, QTKit et AudioUnit sont des risques futurs, **pas** des blocages déjà rencontrés par Logic.
 4. **Convergence sans relance :** garder EGL-BRIDGE-08 et ImageIO MEGA-19 clos en qualification, leurs preuves attribuées à leurs agents ; préserver les deux copies root privées. Reprendre un seul lot concret seulement sur décision du coordinateur.
