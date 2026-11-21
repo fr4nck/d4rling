@@ -1,0 +1,214 @@
+name: WSKEY-01 macOS kWSMethodInvocationResult value
+
+# Lot D4RLING / WSKEY-01-MACOS.
+# Measures, on a real macOS runner, the runtime value of the public
+# CoreServices constant CFStringRef kWSMethodInvocationResult.
+# Self-contained: no checkout, no action, no download, no secret.
+# Exit codes: 0 = PASS, 1 = FAIL, 2 = BLOCKED.
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - '.github/workflows/wskey-01-macos.yml'
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  wskey-01:
+    runs-on: macos-15-intel
+    timeout-minutes: 5
+    steps:
+      - name: Measure kWSMethodInvocationResult
+        shell: bash
+        run: |
+          set +e
+          set -u
+
+          W="${RUNNER_TEMP}/wskey01"
+          mkdir -p "$W" && cd "$W" || exit 2
+
+          echo "== [1/6] system"
+          echo "WSKEY01 GITHUB_SHA=${GITHUB_SHA}"
+          echo "WSKEY01 IMAGE=${ImageOS:-unknown} ${ImageVersion:-unknown}"
+          sw_vers
+          echo "WSKEY01 UNAME_M=$(uname -m)"
+          echo "WSKEY01 UNAME_R=$(uname -r)"
+          echo "WSKEY01 SDK_VERSION=$(xcrun --show-sdk-version 2>&1)"
+          echo "WSKEY01 CLANG=$(clang --version 2>&1 | head -n 1)"
+
+          echo "== [2/6] sources"
+          cat > wskey.c <<'EOF'
+          #include <CoreFoundation/CoreFoundation.h>
+          #include <stdio.h>
+          #include <stdlib.h>
+
+          /* Public CoreServices constant (WebServicesCore). Declared here so
+             the probe does not depend on the header being shipped. */
+          extern const CFStringRef kWSMethodInvocationResult;
+
+          static const char *pf(int ok) { return ok ? "PASS" : "FAIL"; }
+
+          int main(void)
+          {
+              CFStringRef v = kWSMethodInvocationResult;
+
+              printf("WSKEY01 CHECK nonnull=%s\n", pf(v != NULL));
+              if (v == NULL) {
+                  printf("WSKEY01 RESULT=FAIL reason=null-value\n");
+                  return 1;
+              }
+
+              CFTypeID tid = CFGetTypeID(v);
+              CFTypeID sid = CFStringGetTypeID();
+              printf("WSKEY01 TYPEID value=%lu cfstring=%lu\n",
+                     (unsigned long)tid, (unsigned long)sid);
+              printf("WSKEY01 CHECK typeid_is_cfstring=%s\n", pf(tid == sid));
+              if (tid != sid) {
+                  printf("WSKEY01 RESULT=FAIL reason=not-a-cfstring\n");
+                  return 1;
+              }
+
+              CFIndex n16 = CFStringGetLength(v);
+              CFIndex cap = CFStringGetMaximumSizeForEncoding(
+                  n16, kCFStringEncodingUTF8) + 1;
+              UInt8 *buf = malloc((size_t)cap);
+              if (buf == NULL) {
+                  printf("WSKEY01 RESULT=FAIL reason=malloc\n");
+                  return 1;
+              }
+              CFIndex used = 0;
+              CFIndex conv = CFStringGetBytes(v, CFRangeMake(0, n16),
+                  kCFStringEncodingUTF8, 0, 0, buf, cap, &used);
+              printf("WSKEY01 CHECK utf8_conversion=%s\n", pf(conv == n16));
+              if (conv != n16) {
+                  printf("WSKEY01 RESULT=FAIL reason=utf8-conversion\n");
+                  free(buf);
+                  return 1;
+              }
+
+              printf("WSKEY01 VALUE_UTF16_LENGTH=%ld\n", (long)n16);
+              printf("WSKEY01 VALUE_UTF8_BYTES=%ld\n", (long)used);
+              printf("WSKEY01 VALUE_UTF8=[%.*s]\n", (int)used, (const char *)buf);
+              printf("WSKEY01 VALUE_HEX=");
+              for (CFIndex i = 0; i < used; i++)
+                  printf("%02x", buf[i]);
+              printf("\n");
+              free(buf);
+
+              int pos_cmp = CFStringCompare(v, CFSTR("/Result"), 0)
+                            == kCFCompareEqualTo;
+              int pos_eq = CFEqual(v, CFSTR("/Result")) ? 1 : 0;
+              int neg_cmp = CFStringCompare(v, CFSTR("Result"), 0)
+                            == kCFCompareEqualTo;
+              int neg_eq = CFEqual(v, CFSTR("Result")) ? 1 : 0;
+
+              printf("WSKEY01 COMPARE \"/Result\" CFStringCompare=%s CFEqual=%s\n",
+                     pos_cmp ? "equal" : "different",
+                     pos_eq ? "equal" : "different");
+              printf("WSKEY01 COMPARE \"Result\" CFStringCompare=%s CFEqual=%s\n",
+                     neg_cmp ? "equal" : "different",
+                     neg_eq ? "equal" : "different");
+
+              int pos_ok = pos_cmp && pos_eq;
+              int neg_ok = !neg_cmp && !neg_eq;
+              printf("WSKEY01 CHECK positive_equals_slash_Result=%s\n", pf(pos_ok));
+              printf("WSKEY01 CHECK negative_differs_from_Result=%s\n", pf(neg_ok));
+
+              if (pos_ok && neg_ok) {
+                  printf("WSKEY01 RESULT=PASS\n");
+                  return 0;
+              }
+              printf("WSKEY01 RESULT=FAIL reason=comparison\n");
+              return 1;
+          }
+          EOF
+
+          cat > neg.c <<'EOF'
+          #include <CoreFoundation/CoreFoundation.h>
+
+          /* Deliberately fictitious name: link must fail. */
+          extern const CFStringRef kWSKEY01FictitiousMissingSymbol;
+
+          int main(void)
+          {
+              return kWSKEY01FictitiousMissingSymbol == NULL;
+          }
+          EOF
+          shasum -a 256 wskey.c neg.c
+
+          echo "== [3/6] build (strong link against CoreServices)"
+          clang -arch x86_64 -std=c11 -Wall -Wextra -Werror -O0 \
+            wskey.c -framework CoreServices -o wskey > build.log 2>&1
+          BUILD_RC=$?
+          cat build.log
+          echo "WSKEY01 BUILD_RC=${BUILD_RC}"
+
+          echo "== [4/6] negative link control (fictitious symbol)"
+          clang -arch x86_64 -std=c11 -O0 \
+            neg.c -framework CoreServices -o neg > neg.log 2>&1
+          NEG_RC=$?
+          cat neg.log
+          echo "WSKEY01 NEG_LINK_RC=${NEG_RC}"
+          if [ "$NEG_RC" -ne 0 ] && grep -q 'Undefined symbols' neg.log; then
+            NEG_LINK=PASS
+          else
+            NEG_LINK=FAIL
+          fi
+          echo "WSKEY01 CHECK negative_link_rejected=${NEG_LINK}"
+
+          STRONG=NOT_RUN
+          RUN_RC=NOT_RUN
+          if [ "$BUILD_RC" -eq 0 ]; then
+            echo "== [5/6] strong-link check on the probe binary"
+            otool -L wskey
+            REF="$(nm -m wskey | grep '_kWSMethodInvocationResult')"
+            echo "$REF"
+            if [ -n "$REF" ] \
+               && echo "$REF" | grep -q 'undefined' \
+               && echo "$REF" | grep -q 'from CoreServices' \
+               && ! echo "$REF" | grep -qi 'weak'; then
+              STRONG=PASS
+            else
+              STRONG=FAIL
+            fi
+            echo "WSKEY01 CHECK strong_link_coreservices=${STRONG}"
+
+            echo "== [6/6] run"
+            ./wskey > run.log 2>&1
+            RUN_RC=$?
+            cat run.log
+            echo "WSKEY01 RUN_RC=${RUN_RC}"
+          fi
+
+          echo "== verdict"
+          if [ "$BUILD_RC" -ne 0 ]; then
+            if grep -q '_kWSMethodInvocationResult' build.log \
+               && grep -q 'Undefined symbols' build.log; then
+              REASON=symbol-unresolved-at-link-time
+            else
+              REASON=build-error
+            fi
+            VERDICT=BLOCKED
+          elif [ "$RUN_RC" -ne 0 ] && grep -q 'Symbol not found' run.log; then
+            VERDICT=BLOCKED; REASON=dyld-symbol-not-found
+          elif [ "$RUN_RC" -ne 0 ] && ! grep -q 'WSKEY01 RESULT=' run.log; then
+            VERDICT=BLOCKED; REASON=unexpected-runtime-exit
+          elif [ "$NEG_LINK" != PASS ] || [ "$STRONG" != PASS ]; then
+            VERDICT=FAIL; REASON=link-controls
+          elif [ "$RUN_RC" -eq 0 ] && grep -q '^WSKEY01 RESULT=PASS$' run.log; then
+            VERDICT=PASS; REASON=all-checks
+          else
+            VERDICT=FAIL; REASON=probe-checks
+          fi
+
+          echo "WSKEY01 SUMMARY BUILD_RC=${BUILD_RC} NEG_LINK_RC=${NEG_RC}" \
+               "STRONG=${STRONG} RUN_RC=${RUN_RC}"
+          echo "WSKEY01 VERDICT=${VERDICT} REASON=${REASON}"
+
+          case "$VERDICT" in
+            PASS) exit 0 ;;
+            FAIL) exit 1 ;;
+            *) exit 2 ;;
+          esac
