@@ -14,6 +14,7 @@ add_framework(OSServices
 
 	SOURCES
 		empty.c
+		WSMethodInvocation.c
 
 	DEPENDENCIES
 		CoreFoundation
