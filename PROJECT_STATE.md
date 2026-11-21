@@ -5,7 +5,7 @@
 | Palier | Statut |
 | --- | --- |
 | Chargement des dépendances | **PASS borné dans un banc privé** — les 164 images i386 de la fermeture se chargent, dont les frameworks de ProAppRuntime ; seule EuCon est une dépendance faible optionnelle. |
-| Liaison des symboles | **Premier échec connu levé dans D4rling, effet sur Logic non observé.** `dyld` s'arrêtait sur `_kWSMethodInvocationResult` (DotMacKit vers CoreServices). La constante (`"/Result"`, mesurée sur macOS 15.7.9 x86_64, [WSKEY-01](docs/evidence/wskey-01-macos-2026-11-21.md)) est désormais définie dans OSServices et réexportée par CoreServices (`master` `941183fa`). Témoins invités i386/x86_64 PASS rapportés depuis le 5700X ; Darling CI verte ([WSKEY-02](docs/evidence/wskey-02-qualif-r4-5700x-2026-11-21.md), 21/11). Logic non relancé : prochain obstacle inconnu. |
+| Liaison des symboles | **Premier échec connu levé dans D4rling, effet sur Logic non observé.** `dyld` s'arrêtait sur `_kWSMethodInvocationResult` (DotMacKit vers CoreServices). La constante (`"/Result"`, mesurée sur macOS 15.7.9 x86_64, [WSKEY-01](docs/evidence/wskey-01-macos-2026-11-21.md)) est désormais définie dans OSServices et réexportée par CoreServices (`master` `941183fa`). Témoins invités i386/x86_64 PASS rapportés depuis le 5700X ; Darling CI verte ([WSKEY-02](docs/evidence/wskey-02-qualif-r4-5700x-2026-11-21.md), 21/11). Logic non relancé : prochain obstacle inconnu ; LOGIC-LNEXT BLOCKED le 22/11 (banc non reproductible, voir « Adresse `0x1000` »). |
 | Première fenêtre Logic | **NON ATTEINTE** |
 | Menus Logic | **NON TESTÉS** |
 | Moteur audio Logic | **NON TESTÉ** |
@@ -16,6 +16,15 @@
 **Tri des manques :** un symbole est confirmé par erreur de `dyld` ; **99 absences potentielles avant le point d'entrée** et 613 autres importations sont issues d'un classement statique des tables de liaison. Ces chiffres ne sont ni 99 échecs exécutés ni une liste de fonctions à implémenter telle quelle. Les données dérivées de binaires Apple restent privées ; une contribution amont repose sur des contrats publics, du code libre et des témoins autonomes.
 
 **Adresse `0x1000` :** franchie dans le banc au moyen d'un démarrage WSL en root et d'un namespace `bubblewrap` avec capacités élevées au démarrage, **retirées avant `dyld`**. Aucun changement global à `vm.mmap_min_addr` n'est rapporté. C'est une méthode **propre au banc**, non un correctif général rootless de `mldr`. Avant tout nouveau banc privilégié : contrôler l'isolement du réseau et l'inaccessibilité des volumes Windows. Conserver les deux copies root privées jusqu'à décision explicite.
+
+**Banc `0x1000` non reproductible tel quel (22 novembre 2026, lot LOGIC-LNEXT, rapporté depuis le 5700X).** Les pièces du banc du 18/11 se trouvaient dans `/tmp`, un tmpfs vidé au redémarrage de WSL (21/11, 20:52).
+
+- **Constatés absents à leur emplacement enregistré** (`/tmp`) : les deux copies root du banc, que le paragraphe ci-dessus demandait de conserver ; le `mldr32` qualifié qui abandonne ses privilèges (`5dee29be…`) ; l'extraction de Logic ; le témoin `low-macho`.
+- **Non retrouvés ailleurs, sans preuve d'absence :** une recherche ciblée sur le disque Linux et dans les dossiers de preuves côté Windows n'a retrouvé ni ce `mldr32` (le seul binaire trouvé, `bcaf30e6…`, est un autre) ni l'extraction. La recherche générale sur le répertoire personnel a expiré (rc 143) : elle est **incomplète**.
+- **Rapportés intacts, empreintes vérifiées :** build et installation B13, canon, runner, couche WSKEY-02 r4, `libcrypto` candidate, ProAppRuntime, cache `ld.so`. L'archive d'origine de Logic reste sur le média.
+- **Écarts de la recette historique avec les protections actuelles :** elle rend `/mnt/c` visible en lecture seule dans le banc et écrit ses journaux dans un dossier Windows. Toute reprise devra masquer `/mnt` et écrire côté Linux.
+
+**LOGIC-LNEXT : BLOCKED** (rc 2). **Aucune tentative Logic consommée** sur celle autorisée ; aucune exécution, aucun build, aucun privilège. La reprise demande une décision du mainteneur : reconstruire et requalifier le `mldr32`, réextraire Logic dans un dossier Linux persistant, masquer `/mnt`. Le prochain obstacle (sept autres constantes `kWS…` importées par DotMacKit) est **déduit** de l'inventaire statique privé, **non observé**.
 
 ## Convergence des chantiers — 18 novembre 2026
 
