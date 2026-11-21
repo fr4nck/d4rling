@@ -5,7 +5,7 @@
 | Palier | Statut |
 | --- | --- |
 | Chargement des dépendances | **PASS borné dans un banc privé** — les 164 images i386 de la fermeture se chargent, dont les frameworks de ProAppRuntime ; seule EuCon est une dépendance faible optionnelle. |
-| Liaison des symboles | **BLOQUÉE AVANT L'ENTRÉE** — premier échec vu par `dyld` : `_kWSMethodInvocationResult` (DotMacKit vers CoreServices). Valeur publique mesurée sur macOS 15.7.9 x86_64 : `"/Result"` ([WSKEY-01](docs/evidence/wskey-01-macos-2026-11-21.md)). Définition candidate dans OSServices relue, **non intégrée** : qualification i386/x86_64 sur le vrai build et en invité **BLOCKED** ([WSKEY-02](docs/evidence/wskey-02-osservices-2026-11-21.md), 21/11). |
+| Liaison des symboles | **Premier échec connu levé dans D4rling, effet sur Logic non observé.** `dyld` s'arrêtait sur `_kWSMethodInvocationResult` (DotMacKit vers CoreServices). La constante (`"/Result"`, mesurée sur macOS 15.7.9 x86_64, [WSKEY-01](docs/evidence/wskey-01-macos-2026-11-21.md)) est désormais définie dans OSServices et réexportée par CoreServices (`master` `941183fa`). Témoins invités i386/x86_64 PASS rapportés depuis le 5700X ; Darling CI verte ([WSKEY-02](docs/evidence/wskey-02-qualif-r4-5700x-2026-11-21.md), 21/11). Logic non relancé : prochain obstacle inconnu. |
 | Première fenêtre Logic | **NON ATTEINTE** |
 | Menus Logic | **NON TESTÉS** |
 | Moteur audio Logic | **NON TESTÉ** |
@@ -26,6 +26,7 @@
 | Cocotron R6 + R6-OWN-01 | **OUI** — fusion [#19](https://github.com/fr4nck/d4rling/pull/19), gitlink `77219763` | Layout 137/137, ABI24 87/87 et ownership 24/24 en invité ; ne prouve pas la GUI de Logic. |
 | AudioToolbox FIX1–FIX3 | **OUI** | Correctifs qualifiés en i386/x86_64 ; B12/B13 PCM vers PulseAudio prouvé par capture, écoute acoustique non confirmée. |
 | Logic Pro 8 original | **NON** (essai privé) | 164 images chargées ; liaison `dyld` bloquée avant le point d'entrée, aucun moteur audio Logic. |
+| WSKEY-02 `kWSMethodInvocationResult` | **OUI** — `941183fa` | Export OSServices et réexport CoreServices, témoins invités i386/x86_64 PASS (rapportés, 5700X, r4 64/64) ; CI verte. Résolution dans Logic non observée. |
 | SoundHack original | **NON** (essais privés) | Application universelle extraite, FFT originale invitée PASS ; application et fenêtre non exécutées. |
 | Cocotron / MEGA-19 ImageIO | **NON** | Sources 5/5, références AppKit 7/7 ; compilation ImageIO **0/2** bloquée dans les en-têtes Darwin (`uint16_t`), cause précise non tranchée. 16 exports CGL repérés, liaison complète non prouvée. |
 | EGL-BRIDGE-08 | **NON** (qualification privée) | Mesa/EGL/CGL et fenêtre mappée sous WSLg PASS ; visibilité Windows **confirmée ABI29**, **non vérifiée B13**. Campagne close. |
@@ -229,7 +230,7 @@ Une branche portant un correctif ne signifie pas que celui-ci est fusionné.
 
 ## Suite utile, avec critère de réussite (mise à jour 18 novembre 2026)
 
-1. **Liaison `dyld` :** partir du premier message observé (`_kWSMethodInvocationResult`) et du contrat public de sa couche. Distinguer les symboles publics implémentables avec des tests autonomes des imports privés ou non documentés. Les 99 entrées issues de l'analyse statique ne sont pas un plan automatique d'implémentation ; leurs données propriétaires restent dans le banc privé. **Critère :** atteindre le point d'entrée de Logic dans un essai isolé et autorisé. **21/11 :** valeur mesurée (`"/Result"`, WSKEY-01) et candidat OSServices relu (WSKEY-02) ; prochaine action : build canonique et témoins invités i386/x86_64 sur le 5700X, puis intégration et, sous autorisation, nouvelle tentative Logic.
+1. **Liaison `dyld` :** partir du premier message observé (`_kWSMethodInvocationResult`) et du contrat public de sa couche. Distinguer les symboles publics implémentables avec des tests autonomes des imports privés ou non documentés. Les 99 entrées issues de l'analyse statique ne sont pas un plan automatique d'implémentation ; leurs données propriétaires restent dans le banc privé. **Critère :** atteindre le point d'entrée de Logic dans un essai isolé et autorisé. **21/11 :** `_kWSMethodInvocationResult` implémenté et qualifié en invité (WSKEY-01, WSKEY-02, `941183fa`). Prochaine action, sous autorisation : relancer le banc Logic privé avec ce CoreServices et classer le prochain obstacle exécuté.
 2. **Provenance et sûreté :** établir origine/licence du candidat OpenSSL, documenter le mécanisme root/`bubblewrap` à `0x1000` et les limites de ses privilèges, préparer réseau coupé et volumes Windows inaccessibles pour tout nouveau banc. Aucun code Apple propriétaire, aucune modification de sécurité/activation ni quirk crypto sans arbitrage requis.
 3. **Après l'entrée :** classer le premier blocage réellement exécuté. QuickDraw, événements, QTKit et AudioUnit sont des risques futurs, **pas** des blocages déjà rencontrés par Logic.
 4. **Convergence sans relance :** garder EGL-BRIDGE-08 et ImageIO MEGA-19 clos en qualification, leurs preuves attribuées à leurs agents ; préserver les deux copies root privées. Reprendre un seul lot concret seulement sur décision du coordinateur.

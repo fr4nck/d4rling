@@ -1,6 +1,25 @@
-# WSKEY-02 — `kWSMethodInvocationResult` dans OSServices : candidat relu, intégration BLOCKED (21 novembre 2026)
+# WSKEY-02 — `kWSMethodInvocationResult` dans OSServices : intégré et qualifié (21 novembre 2026)
 
-**Statut : BLOCKED.** La définition candidate est prête, compilée et vérifiée en
+**Mise à jour du 21/11 au soir : le statut BLOCKED ci-dessous est obsolète.**
+Le diff relu a été qualifié sur le 5700X, puis intégré à `master` par
+[`941183fa`](https://github.com/fr4nck/d4rling/commit/941183fa6badb1af72ecc371769ca12758b1ca81).
+Preuves et provenance : [synthèse r4](wskey-02-qualif-r4-5700x-2026-11-21.md).
+
+| Niveau | Statut |
+| --- | --- |
+| Symbole implémenté dans OSServices, réexporté par CoreServices | **OUI** — `master` `941183fa`, diff identique au candidat relu (SHA-256 `2690d4e3…`) |
+| Exports, liaison forte et témoins invités i386/x86_64, avec négatifs | **PASS rapporté** — 5700X, passe r4, 64/64 ; non rejoué par l'auteur de cette mise à jour |
+| Build complet de `master` (Darling CI) | **PASS observé** — [run 44945137873](https://github.com/fr4nck/d4rling/actions/runs/44945137873) |
+| Résolution du symbole dans Logic 8 original | **NON OBSERVÉE** — Logic non relancé ; prochain obstacle `dyld` inconnu |
+
+Le texte qui suit est le checkpoint d'origine, conservé tel quel ; son statut
+BLOCKED décrit l'état d'avant la qualification sur le 5700X.
+
+---
+
+## Checkpoint d'origine : candidat relu, intégration BLOCKED (21/11, avant qualification)
+
+**Statut d'origine (obsolète) : BLOCKED.** La définition candidate est prête, compilée et vérifiée en
 Mach-O i386 et x86_64 au niveau objet, puis relue par un agent distinct de
 l'auteur (« accepté avec réserves »). Elle **n'est pas intégrée à `master`** :
 la qualification exigée sur le vrai build et en invité Darling (i386 et x86_64)
