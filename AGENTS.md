@@ -40,6 +40,16 @@ et [niveaux de vérification et qualification](docs/agents/niveaux-de-verificati
 
 **Arrêt :** trois tentatives consécutives qui ne changent pas le premier obstacle déclenchent un arrêt et une demande d'arbitrage, pas une quatrième variante.
 
+## Pérennité des bancs et preuves — AGT-015 (22 novembre 2026)
+
+**Règle transversale immédiate :** appliquer l'[AGT-015 de PMSL-Arch](https://github.com/fr4nck/PMSL-Arch/blob/main/docs/GOUVERNANCE_AGENTS_OBJECTIFS.md) à tout développement D4rling. Un jalon qualifié doit rester reproductible après coupure de courant, redémarrage WSL ou fin de session. `/tmp`, `tmpfs` et les espaces de travail temporaires ne servent qu'à des ressources jetables.
+
+- Avant de déclarer un jalon durable, vérifier que recettes, versions, binaires qualifiés non trivialement reproductibles, entrées autorisées et preuves nécessaires à sa reprise sont dans des **emplacements Linux persistants déjà autorisés**, avec empreintes et provenance. Les éléments reconstruisibles de façon démontrée peuvent n'exiger qu'une recette et des entrées durables.
+- Conserver la chaîne source → build → installation → banc et les chemins réels de reprise ; tester sans dépendre de l'ancien `/tmp` par un contrôle ciblé **non destructif**. Consigner `REPRISE=PASS` ou `REPRISE=BLOCKED` avec sa cause, distinct du résultat des tests fonctionnels.
+- Réutiliser `validation/` et `historique/` selon les propriétaires de lot ; ne pas dupliquer ni déplacer automatiquement les installations ou preuves existantes. Aucun `rm /tmp`, redémarrage imposé, copie de média propriétaire dans Git, écriture Windows ou acquisition implicite.
+
+**Motif :** le banc Logic du 18 novembre a perdu des composants indispensables après redémarrage WSL. Sa remise en état exige un lot autorisé et la vérification de sa durabilité avant clôture. Voir `PROJECT_STATE.md`.
+
 ## Remise des commandes — règle permanente, indépendante de l'appareil
 
 **Consigne explicite et permanente du responsable (16 novembre 2026) :** ces préférences s'appliquent quel que soit l'appareil utilisé. Ne pas les conditionner à un téléphone, à un contexte mobile ou à un changement d'appareil ; ne pas présumer l'appareil courant. Adapter les commandes au shell et à la machine cible réellement identifiés.
