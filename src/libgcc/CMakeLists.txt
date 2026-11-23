@@ -19,6 +19,8 @@ set(DYLIB_INSTALL_NAME "/usr/lib/libgcc_s.1.dylib")
 add_darling_library(gcc_s SHARED ${libgcc_sources})
 make_fat(gcc_s)
 target_link_libraries(gcc_s PRIVATE compiler_rt)
+# Mac OS X <= 10.5 images import _Unwind_* from libgcc_s (libunwind hides them from libSystem for 10.4/10.5)
+reexport(gcc_s unwind ${CMAKE_BINARY_DIR}/src/external/libunwind/libunwind.dylib)
 set_target_properties(gcc_s PROPERTIES OUTPUT_NAME "gcc_s.1")
 
 InstallSymlink("libgcc_s.1.dylib" "${CMAKE_INSTALL_PREFIX}/libexec/darling/usr/lib/libgcc_s.dylib")
