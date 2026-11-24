@@ -1,0 +1,234 @@
+#define MEDIA_PATH "/Volumes/SystemRoot/path/to/validation/quicktime-b12-20261114/media/demo.mov"
+
+#define main qt11_original_main
+#include "qt11-runtime-witness.c"
+#undef main
+
+typedef unsigned char U8;
+
+typedef union {
+    unsigned int align;
+    unsigned char bytes[80];
+} Ref;
+
+typedef struct __attribute__((packed,aligned(2))) {
+    short volume;
+    int parent;
+    U8 name[64];
+} Spec;
+
+_Static_assert(sizeof(Spec)==70,"FSSpec ABI");
+
+typedef short (*OpenFn)(const Spec *,short *,signed char);
+typedef short (*CloseFn)(short);
+typedef short (*MovieFn)(
+    Movie *,short,short *,U8 *,short,U8 *
+);
+
+typedef int (*PathRefFn)(
+    const U8 *,Ref *,U8 *
+);
+
+typedef int (*CatalogFn)(
+    const Ref *,unsigned int,
+    void *,void *,Spec *,Ref *
+);
+
+typedef short (*SpecRefFn)(const Spec *,Ref *);
+
+typedef int (*RefPathFn)(
+    const Ref *,U8 *,unsigned int
+);
+
+static Ref ref,back;
+static Spec spec;
+static U8 pathbuf[4096];
+
+int main(void)
+{
+    char path[]=
+        "/Volumes/SystemRoot/path/to/development/"
+        "qt-mass08.UOtXy3Pe/QuickTime.qt09";
+
+    char *argv[]={(char *)"qt16",path,0};
+
+    printf("QT16_WITNESS_START bits=%u\n",
+        (unsigned)(sizeof(void*)*8));
+
+    fflush(0);
+
+    void *lib=dlopen(path,6);
+
+    if(!lib)
+        return 23;
+
+    typedef SInt16 (*EnterFn)(void);
+    typedef void (*ExitFn)(void);
+    typedef void (*DisposeFn)(Movie);
+    typedef SInt32 (*QueryFn)(Movie);
+
+    LOAD(EnterFn,enter,"EnterMovies");
+    LOAD(ExitFn,leave,"ExitMovies");
+    LOAD(DisposeFn,dispose,"DisposeMovie");
+    LOAD(OpenFn,openMovie,"OpenMovieFile");
+    LOAD(CloseFn,closeMovie,"CloseMovieFile");
+    LOAD(MovieFn,fromFile,"NewMovieFromFile");
+    LOAD(QueryFn,duration,"GetMovieDuration");
+    LOAD(QueryFn,scale,"GetMovieTimeScale");
+    LOAD(QueryFn,tracks,"GetMovieTrackCount");
+
+    if(enter()!=0)
+        return 24;
+
+    short id=-1;
+    short rc=openMovie(0,&id,1);
+
+    if(rc!=-50) {
+        printf("BASELINE_FILE_API_UNIMPLEMENTED\n");
+        fflush(0);
+        return 41;
+    }
+
+    check(id==-1,"invalid open preserves output");
+    check(closeMovie(-1)==-51,"invalid close rejected");
+
+    Movie m=0;
+
+    check(
+        fromFile(&m,-1,0,0,0,0)==-51,
+        "invalid file reference rejected"
+    );
+
+    check(m==0,"invalid file reference creates no movie");
+
+    if(failures)
+        return 42;
+
+    printf("QT16_NEGATIVE_CONTRACTS_PASS\n");
+    fflush(0);
+
+    const char *ccpath=
+        "/System/Library/Frameworks/"
+        "CoreServices.framework/Versions/A/Frameworks/"
+        "CarbonCore.framework/Versions/A/CarbonCore";
+
+    void *cc=dlopen(ccpath,6);
+
+    if(!cc)
+        return 77;
+
+    PathRefFn pathRef=(PathRefFn)
+        dlsym(cc,"FSPathMakeRef");
+
+    CatalogFn catalog=(CatalogFn)
+        dlsym(cc,"FSGetCatalogInfo");
+
+    SpecRefFn specRef=(SpecRefFn)
+        dlsym(cc,"FSpMakeFSRef");
+
+    RefPathFn refPath=(RefPathFn)
+        dlsym(cc,"FSRefMakePath");
+
+    if(!pathRef || !catalog || !specRef || !refPath) {
+        printf("CARBON_FILE_MANAGER_SYMBOL_MISSING\n");
+        return 77;
+    }
+
+    const U8 *mediaPath=(const U8 *)MEDIA_PATH;
+
+    int a=pathRef(mediaPath,&ref,0);
+
+    printf("FSPathMakeRef_RC=%d\n",a);
+
+    if(a)
+        return 77;
+
+    spec.name[0]=255;
+
+    a=catalog(&ref,0,0,0,&spec,0);
+
+    printf(
+        "FSGetCatalogInfo_RC=%d SPEC_NAME_LENGTH=%u\n",
+        a,(unsigned)spec.name[0]
+    );
+
+    if(a || spec.name[0]==0 || spec.name[0]>63) {
+        printf("CARBON_FSSPEC_NOT_POPULATED\n");
+        return 77;
+    }
+
+    a=specRef(&spec,&back);
+
+    printf("FSpMakeFSRef_RC=%d\n",a);
+
+    if(a)
+        return 77;
+
+    a=refPath(&back,pathbuf,sizeof(pathbuf));
+
+    printf("FSRefMakePath_RC=%d\n",a);
+
+    if(a)
+        return 77;
+
+    unsigned n=0;
+
+    while(n<sizeof(pathbuf) &&
+          pathbuf[n]==mediaPath[n]) {
+        if(!pathbuf[n])
+            break;
+
+        ++n;
+    }
+
+    if(n==sizeof(pathbuf) ||
+       pathbuf[n]!=mediaPath[n]) {
+        printf("CARBON_PATH_ROUNDTRIP_MISMATCH\n");
+        return 77;
+    }
+
+    printf("CARBON_FSSPEC_ROUNDTRIP_PASS\n");
+
+    rc=openMovie(&spec,&id,1);
+
+    printf("OpenMovieFile_RC=%d REF=%d\n",rc,id);
+
+    if(rc || id<0)
+        return 43;
+
+    rc=fromFile(&m,id,0,0,0,0);
+
+    printf("NewMovieFromFile_RC=%d\n",rc);
+
+    if(rc || !m)
+        return 44;
+
+    check(closeMovie(id)==0,"file closed");
+    check(closeMovie(id)==-51,"double close rejected");
+
+    check(scale(m)==600,"movie timescale");
+    check(duration(m)==1200,"movie duration");
+    check(tracks(m)==1,"movie tracks");
+
+    Movie invalid=0;
+
+    check(
+        fromFile(&invalid,id,0,0,0,0)==-51,
+        "closed file reference rejected"
+    );
+
+    check(invalid==0,"no movie from closed file");
+
+    dispose(m);
+    leave();
+
+    dlclose(cc);
+    dlclose(lib);
+
+    if(!failures)
+        printf("QT16_FILE_API_PASS\n");
+
+    fflush(0);
+
+    return failures?45:0;
+}

@@ -1,0 +1,195 @@
+
+#define main qt11_previous_main
+#include "qt11-runtime-witness.c"
+#undef main
+
+#include "qt11r10-fixture.h"
+
+typedef void **Handle;
+typedef void *Track;
+typedef void *Media;
+
+typedef struct {
+    void *data;
+    SInt32 dataLength;
+} PointerDataRefRecord;
+
+typedef SInt16 (*OpenFn)(
+    Movie *,SInt16,SInt16 *,Handle,unsigned int
+);
+
+typedef SInt32 (*QueryFn)(Movie);
+typedef SInt32 (*TimeFn)(Movie,void *);
+typedef void (*ScaleFn)(Movie,SInt32);
+typedef void (*SegmentFn)(Movie,SInt32,SInt32);
+typedef SInt16 (*ErrorFn)(void);
+typedef Track (*TrackFn)(Movie,SInt32);
+typedef Media (*MediaFn)(Track);
+typedef SInt32 (*MediaQueryFn)(Media);
+
+int main(void)
+{
+    char path[]=
+        "/Volumes/SystemRoot/path/to/development/"
+        "qt-mass08.UOtXy3Pe/QuickTime.qt09";
+
+    char *argv[]={(char *)"qt12",path,0};
+
+    (void)reference_pcm;
+
+    printf("QT12_TIME_START bits=%u\n",
+        (unsigned)(sizeof(void*)*8));
+    fflush(0);
+
+    void *lib=dlopen(path,6);
+
+    if(!lib) {
+        printf("LOAD_ERROR %s\n",dlerror());
+        return 23;
+    }
+
+    typedef SInt16 (*EnterFn)(void);
+    typedef void (*ExitFn)(void);
+    typedef void (*DisposeFn)(Movie);
+
+    LOAD(EnterFn,enter,"EnterMovies");
+    LOAD(ExitFn,leave,"ExitMovies");
+    LOAD(DisposeFn,dispose,"DisposeMovie");
+    LOAD(OpenFn,openMovie,"NewMovieFromDataRef");
+    LOAD(QueryFn,scale,"GetMovieTimeScale");
+    LOAD(QueryFn,duration,"GetMovieDuration");
+    LOAD(TimeFn,position,"GetMovieTime");
+    LOAD(ScaleFn,setScale,"SetMovieTimeScale");
+    LOAD(SegmentFn,setSegment,"SetMovieActiveSegment");
+    LOAD(ErrorFn,error,"GetMoviesError");
+    LOAD(TrackFn,track,"GetMovieIndTrack");
+    LOAD(MediaFn,media,"GetTrackMedia");
+    LOAD(MediaQueryFn,mediaScale,"GetMediaTimeScale");
+    LOAD(MediaQueryFn,samples,"GetMediaSampleCount");
+
+    if(enter()!=0)
+        return 24;
+
+    PointerDataRefRecord rec={
+        fixture,(SInt32)sizeof(fixture)
+    };
+
+    PointerDataRefRecord *recp=&rec;
+    Movie a=0,b=0;
+
+    if(openMovie(&a,0,0,(Handle)&recp,PTR_DATA_HANDLER)
+       || !a)
+        return 25;
+
+    if(openMovie(&b,0,0,(Handle)&recp,PTR_DATA_HANDLER)
+       || !b)
+        return 26;
+
+    check(scale(a)==8000,"initial timescale");
+    check(duration(a)==8000,"initial duration");
+    check(position(a,0)==0,"initial position");
+
+    Media m=media(track(a,1));
+
+    if(!m)
+        return 27;
+
+    setSegment(a,2000,4000);
+
+    check(error()==0,"nonempty segment");
+    check(position(a,0)==2000,"segment position");
+
+    if(failures)
+        return 28;
+
+    setScale(a,16000);
+
+    SInt16 err=error();
+
+    SInt32 firstScale=scale(a);
+    SInt32 firstDuration=duration(a);
+
+    printf(
+        "FIRST_SCALE_ERROR=%d SCALE=%d DURATION=%d\n",
+        err,firstScale,firstDuration
+    );
+
+    fflush(0);
+
+    if(err!=0 && firstScale==8000 &&
+       firstDuration==8000) {
+        printf("BASELINE_NONEMPTY_REJECT\n");
+        dispose(a);
+        dispose(b);
+        leave();
+        fflush(0);
+        return 41;
+    }
+
+    check(err==0,"rescale accepted");
+    check(firstScale==16000,"new timescale");
+    check(firstDuration==16000,"duration preserved");
+    check(position(a,0)==4000,"scaled position");
+
+    check(scale(b)==8000,"second movie scale unchanged");
+    check(duration(b)==8000,"second movie duration unchanged");
+    check(position(b,0)==0,"second movie position unchanged");
+
+    check(mediaScale(m)==8000,"media timescale unchanged");
+    check(samples(m)==8000,"media sample count unchanged");
+
+    setScale(a,4000);
+
+    check(error()==0,"downscale accepted");
+    check(scale(a)==4000,"downscaled timescale");
+    check(duration(a)==4000,"downscaled duration");
+    check(position(a,0)==1000,"downscaled position");
+
+    setScale(a,8000);
+
+    check(error()==0,"roundtrip accepted");
+    check(scale(a)==8000,"roundtrip scale");
+    check(duration(a)==8000,"roundtrip duration");
+    check(position(a,0)==2000,"roundtrip position");
+
+    setScale(a,0);
+
+    check(error()!=0,"zero scale rejected");
+    check(scale(a)==8000,"zero scale atomic rejection");
+    check(position(a,0)==2000,"position preserved on error");
+
+    setScale(a,-1);
+
+    check(error()!=0,"negative scale rejected");
+    check(scale(a)==8000,"negative scale atomic rejection");
+
+    setScale(a,1);
+
+    check(error()!=0,"collapsed segment rejected");
+    check(scale(a)==8000,"collapse atomic rejection");
+    check(duration(a)==8000,"duration preserved on collapse");
+    check(position(a,0)==2000,"position preserved on collapse");
+
+    setSegment(a,3000,2000);
+
+    check(error()==0,"new active segment");
+    check(position(a,0)==3000,"new segment position");
+
+    setScale(a,16000);
+
+    check(error()==0,"rescale new segment");
+    check(position(a,0)==6000,"new segment rescaled");
+
+    dispose(a);
+    dispose(b);
+    leave();
+    dlclose(lib);
+
+    if(!failures)
+        printf("QT12_TIME_PASS\n");
+
+    printf("QT12_FAILURES=%d\n",failures);
+    fflush(0);
+
+    return failures?42:0;
+}

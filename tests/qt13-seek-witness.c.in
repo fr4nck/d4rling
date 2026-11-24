@@ -1,0 +1,209 @@
+#define HAS_GET_SEGMENT 1
+
+#define main qt11_original_main
+#include "qt11-runtime-witness.c"
+#undef main
+
+#include "qt11r10-fixture.h"
+
+typedef void **Handle;
+
+typedef struct {
+    void *data;
+    SInt32 dataLength;
+} PointerDataRefRecord;
+
+typedef SInt16 (*OpenFn)(
+    Movie *,SInt16,SInt16 *,Handle,unsigned int
+);
+
+typedef void (*SeekFn)(Movie,SInt32);
+typedef void (*SetSegmentFn)(Movie,SInt32,SInt32);
+typedef void (*GetSegmentFn)(Movie,SInt32 *,SInt32 *);
+typedef void (*ScaleFn)(Movie,SInt32);
+typedef SInt32 (*TimeFn)(Movie,void *);
+typedef SInt16 (*ErrorFn)(void);
+
+int main(void)
+{
+    char path[]=
+        "/Volumes/SystemRoot/path/to/development/"
+        "qt-mass08.UOtXy3Pe/QuickTime.qt09";
+
+    char *argv[]={(char *)"qt13",path,0};
+
+    (void)reference_pcm;
+
+    printf("QT13_START bits=%u\n",
+        (unsigned)(sizeof(void*)*8));
+    fflush(0);
+
+    void *lib=dlopen(path,6);
+
+    if(!lib)
+        return 23;
+
+    typedef SInt16 (*EnterFn)(void);
+    typedef void (*ExitFn)(void);
+    typedef void (*DisposeFn)(Movie);
+
+    LOAD(EnterFn,enter,"EnterMovies");
+    LOAD(ExitFn,leave,"ExitMovies");
+    LOAD(DisposeFn,dispose,"DisposeMovie");
+    LOAD(OpenFn,openMovie,"NewMovieFromDataRef");
+    LOAD(SeekFn,seek,"SetMovieTimeValue");
+    LOAD(TimeFn,position,"GetMovieTime");
+    LOAD(ErrorFn,error,"GetMoviesError");
+    LOAD(SetSegmentFn,setSegment,"SetMovieActiveSegment");
+    LOAD(ScaleFn,setScale,"SetMovieTimeScale");
+
+    if(enter()!=0)
+        return 24;
+
+    PointerDataRefRecord rec={
+        fixture,(SInt32)sizeof(fixture)
+    };
+
+    PointerDataRefRecord *recp=&rec;
+    Movie a=0,b=0;
+
+    if(openMovie(&a,0,0,(Handle)&recp,PTR_DATA_HANDLER)
+        || !a)
+        return 25;
+
+    if(openMovie(&b,0,0,(Handle)&recp,PTR_DATA_HANDLER)
+        || !b)
+        return 26;
+
+    check(position(a,0)==0,"initial position A");
+
+    seek(a,1000);
+
+    SInt16 e=error();
+    SInt32 p=position(a,0);
+
+    printf("FIRST_SEEK_ERROR=%d POSITION=%d\n",e,p);
+
+    if(p==0 && !failures) {
+        printf("BASELINE_SEEK_UNIMPLEMENTED\n");
+        dispose(a);
+        dispose(b);
+        leave();
+        fflush(0);
+        return 41;
+    }
+
+    check(e==0 && p==1000,"seek accepted");
+    check(position(b,0)==0,"movie isolation");
+
+    seek(a,8000);
+    check(error()==0,"seek movie end");
+    check(position(a,0)==8000,"end position");
+
+    seek(a,8001);
+    check(error()!=0,"past end rejected");
+    check(position(a,0)==8000,"atomic past end rejection");
+
+    seek(a,-1);
+    check(error()!=0,"negative seek rejected");
+    check(position(a,0)==8000,"negative seek atomic");
+
+    seek(a,0);
+    check(error()==0,"rewind");
+    check(position(a,0)==0,"rewind position");
+
+    setSegment(a,2000,4000);
+    check(error()==0,"set active segment");
+    check(position(a,0)==2000,"segment initial position");
+
+    seek(a,3500);
+    check(error()==0,"seek within segment");
+    check(position(a,0)==3500,"segment seek position");
+
+    seek(a,1999);
+    check(error()!=0,"before segment rejected");
+    check(position(a,0)==3500,"before segment atomic");
+
+    seek(a,6001);
+    check(error()!=0,"after segment rejected");
+    check(position(a,0)==3500,"after segment atomic");
+
+    seek(a,6000);
+    check(error()==0,"segment end accepted");
+    check(position(a,0)==6000,"segment end position");
+
+    seek(a,3500);
+    check(error()==0,"seek back within segment");
+
+    setScale(a,16000);
+    check(error()==0,"rescale after seek");
+    check(position(a,0)==7000,"rescaled seek position");
+
+    check(position(b,0)==0,"second movie unchanged");
+
+    seek(0,123);
+    check(error()!=0,"null movie rejected");
+
+    if(!failures)
+        printf("QT13_SEEK_PASS\n");
+
+#if HAS_GET_SEGMENT
+    LOAD(GetSegmentFn,getSegment,"GetMovieActiveSegment");
+
+    SInt32 begin=-1,duration=-1;
+
+    getSegment(a,&begin,&duration);
+
+    check(error()==0,"get active segment");
+    check(begin==4000,"scaled segment start");
+    check(duration==8000,"scaled segment duration");
+
+    begin=-1;
+    duration=-1;
+
+    getSegment(b,&begin,&duration);
+
+    check(error()==0,"second movie segment");
+    check(begin==0 && duration==8000,
+        "independent segment");
+
+    begin=-1;
+
+    getSegment(a,&begin,0);
+
+    check(error()==0 && begin==4000,
+        "optional duration output");
+
+    duration=-1;
+
+    getSegment(a,0,&duration);
+
+    check(error()==0 && duration==8000,
+        "optional start output");
+
+    getSegment(a,0,0);
+    check(error()!=0,"both output pointers null");
+
+    begin=123;
+    duration=456;
+
+    getSegment(0,&begin,&duration);
+
+    check(error()!=0,"null movie segment query");
+    check(begin==123 && duration==456,
+        "invalid query preserves outputs");
+
+    if(!failures)
+        printf("QT13_SEGMENT_PASS\n");
+#endif
+
+    dispose(a);
+    dispose(b);
+    leave();
+    dlclose(lib);
+
+    printf("QT13_FAILURES=%d\n",failures);
+    fflush(0);
+
+    return failures?42:0;
+}

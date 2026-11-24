@@ -1,0 +1,416 @@
+#define DIRECT 0
+
+#define main qt11_previous_main
+#include "qt11-runtime-witness.c"
+#undef main
+
+#include "tone.h"
+
+extern int usleep(unsigned int);
+
+typedef unsigned int U32;
+typedef int OSStatus;
+typedef void *QueueRef;
+
+typedef struct {
+    double sampleRate;
+    U32 formatID;
+    U32 formatFlags;
+    U32 bytesPerPacket;
+    U32 framesPerPacket;
+    U32 bytesPerFrame;
+    U32 channelsPerFrame;
+    U32 bitsPerChannel;
+    U32 reserved;
+} ASBD;
+
+typedef struct {
+    U32 capacity;
+    void *data;
+    U32 size;
+    void *user;
+    U32 packetCapacity;
+    void *packets;
+    U32 packetCount;
+} QueueBuffer;
+
+typedef QueueBuffer *BufferRef;
+
+typedef void (*QueueCallback)(
+    void *,QueueRef,BufferRef
+);
+
+typedef OSStatus (*NewQueue)(
+    const ASBD *,QueueCallback,
+    void *,void *,void *,U32,QueueRef *
+);
+
+typedef OSStatus (*AllocateBuffer)(
+    QueueRef,U32,BufferRef *
+);
+
+typedef OSStatus (*EnqueueBuffer)(
+    QueueRef,BufferRef,U32,const void *
+);
+
+typedef OSStatus (*StartQueue)(
+    QueueRef,const void *
+);
+
+typedef OSStatus (*StopQueue)(
+    QueueRef,unsigned char
+);
+
+typedef OSStatus (*DisposeQueue)(
+    QueueRef,unsigned char
+);
+
+_Static_assert(sizeof(ASBD)==40,"ASBD ABI");
+
+static unsigned char pcm[16000];
+static int callbacks;
+
+static void completed(
+    void *user,QueueRef q,BufferRef b
+)
+{
+    (void)user;
+    (void)q;
+    (void)b;
+
+    __atomic_add_fetch(
+        &callbacks,1,__ATOMIC_RELEASE
+    );
+}
+
+#if !DIRECT
+
+typedef void **Handle;
+typedef void *Track;
+typedef void *Media;
+
+typedef struct {
+    void *data;
+    SInt32 dataLength;
+} PointerDataRefRecord;
+
+typedef SInt16 (*OpenFn)(
+    Movie *,SInt16,SInt16 *,Handle,unsigned int
+);
+
+typedef Track (*TrackFn)(Movie,SInt32);
+typedef Media (*MediaFn)(Track);
+typedef SInt32 (*MovieQuery)(Movie);
+typedef SInt32 (*MediaQuery)(Media);
+
+typedef SInt16 (*SampleFn)(
+    Media,Handle,SInt32,SInt32 *,
+    SInt32,SInt32 *,SInt32 *,
+    Handle,SInt32 *,SInt32,SInt32 *,SInt16 *
+);
+
+typedef Handle (*NewHandleFn)(SInt32);
+typedef void (*DisposeHandleFn)(Handle);
+typedef SInt32 (*HandleSizeFn)(Handle);
+
+static int extract_pcm(void)
+{
+    char path[]=
+        "/Volumes/SystemRoot/path/to/development/"
+        "qt-mass08.UOtXy3Pe/QuickTime.qt09";
+
+    char *argv[]={(char *)"qt14",path,0};
+
+    void *lib=dlopen(path,6);
+
+    if(!lib) {
+        printf("QT_LOAD_ERROR %s\n",dlerror());
+        return 20;
+    }
+
+    typedef SInt16 (*EnterFn)(void);
+    typedef void (*ExitFn)(void);
+    typedef void (*DisposeFn)(Movie);
+
+    LOAD(EnterFn,enter,"EnterMovies");
+    LOAD(ExitFn,leave,"ExitMovies");
+    LOAD(DisposeFn,dispose,"DisposeMovie");
+    LOAD(OpenFn,openMovie,"NewMovieFromDataRef");
+    LOAD(MovieQuery,duration,"GetMovieDuration");
+    LOAD(MovieQuery,scale,"GetMovieTimeScale");
+    LOAD(TrackFn,track,"GetMovieIndTrack");
+    LOAD(MediaFn,media,"GetTrackMedia");
+    LOAD(MediaQuery,samples,"GetMediaSampleCount");
+    LOAD(MediaQuery,mediaScale,"GetMediaTimeScale");
+    LOAD(SampleFn,getSample,"GetMediaSample");
+
+    if(enter()!=0)
+        return 21;
+
+    PointerDataRefRecord rec={
+        fixture,(SInt32)sizeof(fixture)
+    };
+
+    PointerDataRefRecord *recp=&rec;
+    Movie m=0;
+
+    if(openMovie(
+        &m,0,0,(Handle)&recp,PTR_DATA_HANDLER
+    ) || !m)
+        return 22;
+
+    Track t=track(m,1);
+    Media md=t?media(t):0;
+
+    if(!md ||
+        duration(m)!=8000 ||
+        scale(m)!=8000 ||
+        mediaScale(md)!=8000 ||
+        samples(md)!=8000)
+        return 23;
+
+    const char *ccpath=
+        "/System/Library/Frameworks/CoreServices.framework/"
+        "Versions/A/Frameworks/CarbonCore.framework/"
+        "Versions/A/CarbonCore";
+
+    void *cc=dlopen(ccpath,6);
+
+    if(!cc)
+        return 24;
+
+    NewHandleFn allocate=(NewHandleFn)
+        resolve(cc,"NewHandle",ccpath);
+
+    DisposeHandleFn release=(DisposeHandleFn)
+        resolve(cc,"DisposeHandle",ccpath);
+
+    HandleSizeFn sizeOf=(HandleSizeFn)
+        resolve(cc,"GetHandleSize",ccpath);
+
+    if(!allocate || !release || !sizeOf)
+        return 25;
+
+    Handle h=allocate(0);
+
+    if(!h)
+        return 26;
+
+    SInt32 total=0;
+    int rc=0;
+
+    while(total<8000) {
+        SInt32 size=0,when=0,per=0,index=0,count=0;
+        SInt16 flags=0;
+
+        rc=getSample(
+            md,h,16000,&size,total,
+            &when,&per,0,&index,
+            8000-total,&count,&flags
+        );
+
+        if(
+            rc || count<=0 || count>8000-total
+            || size!=count*2
+            || sizeOf(h)<size || !*h
+        ) {
+            rc=27;
+            break;
+        }
+
+        unsigned char *data=(unsigned char *)*h;
+
+        for(SInt32 i=0;i<size;++i)
+            pcm[total*2+i]=data[i];
+
+        total+=count;
+    }
+
+    release(h);
+    dispose(m);
+    leave();
+
+    dlclose(cc);
+    dlclose(lib);
+
+    if(rc || total!=8000)
+        return 28;
+
+    unsigned bad=0;
+
+    for(unsigned i=0;i<sizeof(pcm);++i)
+        if(pcm[i]!=reference_pcm[i])
+            ++bad;
+
+    printf(
+        "QT_PCM_FRAMES=%d QT_PCM_BYTES=%u MISMATCHES=%u\n",
+        total,(unsigned)sizeof(pcm),bad
+    );
+
+    if(bad)
+        return 29;
+
+    printf("QT_PCM_PASS\n");
+    fflush(0);
+
+    return 0;
+}
+#endif
+
+static int play_pcm(void)
+{
+    const char *path=
+        "/System/Library/Frameworks/"
+        "AudioToolbox.framework/Versions/A/AudioToolbox";
+
+    void *h=dlopen(path,6);
+
+    if(!h) {
+        printf("AUDIO_LOAD_ERROR %s\n",dlerror());
+        return 40;
+    }
+
+#define GET(type,var,name) \
+    type var=(type)resolve(h,name,path); \
+    if(!var) return 41
+
+    GET(NewQueue,create,"AudioQueueNewOutput");
+    GET(AllocateBuffer,allocate,"AudioQueueAllocateBuffer");
+    GET(EnqueueBuffer,enqueue,"AudioQueueEnqueueBuffer");
+    GET(StartQueue,start,"AudioQueueStart");
+    GET(StopQueue,stop,"AudioQueueStop");
+    GET(DisposeQueue,dispose,"AudioQueueDispose");
+
+    ASBD format={
+        8000.0,
+        0x6c70636dU, /* lpcm */
+        12U,         /* signed integer, packed */
+        2,1,2,1,16,0
+    };
+
+    QueueRef q=0;
+    BufferRef b=0;
+
+    callbacks=0;
+
+    OSStatus rc=create(
+        &format,completed,0,0,0,0,&q
+    );
+
+    printf("AQ_CREATE_RC=%d\n",rc);
+    fflush(0);
+
+    if(rc || !q)
+        return 42;
+
+    rc=allocate(q,sizeof(pcm),&b);
+
+    printf("AQ_ALLOCATE_RC=%d\n",rc);
+
+    if(rc || !b || !b->data ||
+       b->capacity<sizeof(pcm)) {
+        dispose(q,1);
+        return 43;
+    }
+
+    unsigned char *dest=(unsigned char *)b->data;
+
+    for(unsigned i=0;i<sizeof(pcm);++i)
+        dest[i]=pcm[i];
+
+    b->size=sizeof(pcm);
+
+    rc=enqueue(q,b,0,0);
+
+    printf("AQ_ENQUEUE_RC=%d\n",rc);
+    fflush(0);
+
+    if(rc) {
+        dispose(q,1);
+        return 44;
+    }
+
+    int early=__atomic_load_n(
+        &callbacks,__ATOMIC_ACQUIRE
+    );
+
+    printf("AQ_CALLBACKS_BEFORE_START=%d\n",early);
+
+    if(early) {
+        dispose(q,1);
+        return 45;
+    }
+
+    rc=start(q,0);
+
+    printf("AQ_START_RC=%d\n",rc);
+    fflush(0);
+
+    if(rc) {
+        dispose(q,1);
+        return 46;
+    }
+
+    unsigned polls=0;
+
+    while(
+        !__atomic_load_n(
+            &callbacks,__ATOMIC_ACQUIRE
+        )
+        && polls<250
+    ) {
+        usleep(20000);
+        ++polls;
+    }
+
+    int completedCount=__atomic_load_n(
+        &callbacks,__ATOMIC_ACQUIRE
+    );
+
+    printf("AQ_CALLBACKS=%d\n",completedCount);
+    printf("AQ_WAIT_POLLS=%u\n",polls);
+    fflush(0);
+
+    /* A buffer callback can precede physical output.
+       Allow the short test signal time to drain. */
+    if(completedCount==1)
+        usleep(1200000);
+
+    OSStatus stopRc=stop(q,1);
+    OSStatus disposeRc=dispose(q,1);
+
+    printf("AQ_STOP_RC=%d\n",stopRc);
+    printf("AQ_DISPOSE_RC=%d\n",disposeRc);
+
+    if(completedCount!=1 || stopRc || disposeRc)
+        return 47;
+
+    printf("AUDIOQUEUE_PASS\n");
+    fflush(0);
+
+    return 0;
+}
+
+int main(void)
+{
+    printf("QT14_START bits=%u direct=%d\n",
+        (unsigned)(sizeof(void*)*8),DIRECT);
+
+    fflush(0);
+
+#if DIRECT
+    (void)fixture;
+
+    for(unsigned i=0;i<sizeof(pcm);++i)
+        pcm[i]=reference_pcm[i];
+
+    printf("DIRECT_PCM_READY\n");
+#else
+    int rc=extract_pcm();
+
+    if(rc)
+        return rc;
+#endif
+
+    return play_pcm();
+}

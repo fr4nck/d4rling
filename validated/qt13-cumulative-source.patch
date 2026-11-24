@@ -1,0 +1,151 @@
+--- a/src/QuickTime.c
++++ b/src/QuickTime.c
+@@ -4540,10 +4540,31 @@
+     return NULL;
+ }
+ 
+-void* GetMovieActiveSegment(void)
+-{
+-    if (verbose) puts("STUB: GetMovieActiveSegment called");
+-    return NULL;
++void GetMovieActiveSegment(Movie theMovie,
++                           TimeValue *startTime,
++                           TimeValue *duration)
++{
++    struct D4RLMovieStorage *storage =
++        movie_lookup(theMovie);
++
++    if (!storage)
++        return;
++
++    if (!startTime && !duration) {
++        movie_error = paramErr;
++        return;
++    }
++
++    const struct qt_timeline *t =
++        &storage->value.timeline;
++
++    if (startTime)
++        *startTime = t->begin;
++
++    if (duration)
++        *duration = t->end - t->begin;
++
++    movie_error = noErr;
+ }
+ 
+ void* GetMovieAnchorDataRef(void)
+@@ -25658,26 +25679,105 @@
+ void SetMovieTimeScale(Movie theMovie, TimeScale timeScale)
+ {
+     struct D4RLMovieStorage *storage = movie_lookup(theMovie);
++
+     if (!storage)
+         return;
++
+     if (timeScale <= 0) {
+         movie_error = d4rlMovieParamErr;
+         return;
+     }
+-    /* No tracks or edits exist; rescaling a parsed duration is not implemented. */
+-    if (storage->value.duration != 0) {
++
++    struct qt_timeline *t = &storage->value.timeline;
++
++    if (t->scale <= 0 ||
++        t->scale != storage->value.time_scale ||
++        t->duration != storage->value.duration ||
++        t->duration < 0 ||
++        t->begin < 0 ||
++        t->end < t->begin ||
++        t->end > t->duration ||
++        t->position < t->begin ||
++        t->position > t->end) {
++        movie_error = d4rlMovieParamErr;
++        return;
++    }
++
++    if (timeScale == t->scale) {
++        movie_error = noErr;
++        return;
++    }
++
++    if (t->running || t->remainder != 0) {
+         movie_error = d4rlMovieUnimplemented;
+         return;
+     }
++
++    uint64_t oldScale = (uint64_t)t->scale;
++    uint64_t newScale = (uint64_t)timeScale;
++
++    uint64_t duration =
++        (uint64_t)t->duration * newScale / oldScale;
++
++    uint64_t begin =
++        (uint64_t)t->begin * newScale / oldScale;
++
++    uint64_t end =
++        (uint64_t)t->end * newScale / oldScale;
++
++    uint64_t position =
++        (uint64_t)t->position * newScale / oldScale;
++
++    if (duration > INT32_MAX ||
++        begin > INT32_MAX ||
++        end > INT32_MAX ||
++        position > INT32_MAX ||
++        (t->duration > 0 && duration == 0) ||
++        (t->end > t->begin && begin == end)) {
++        movie_error = d4rlMovieParamErr;
++        return;
++    }
++
++    /* Commit only after all validation succeeds. */
++
++    t->scale = timeScale;
++    t->duration = (int32_t)duration;
++    t->begin = (int32_t)begin;
++    t->end = (int32_t)end;
++    t->position = (int32_t)position;
++
+     storage->value.time_scale = timeScale;
+-    storage->value.timeline.scale = timeScale;
++    storage->value.duration = (TimeValue)duration;
++
+     movie_error = noErr;
+ }
+ 
+-void* SetMovieTimeValue(void)
+-{
+-    if (verbose) puts("STUB: SetMovieTimeValue called");
+-    return NULL;
++void SetMovieTimeValue(Movie theMovie, TimeValue newTime)
++{
++    struct D4RLMovieStorage *storage =
++        movie_lookup(theMovie);
++
++    if (!storage)
++        return;
++
++    struct qt_timeline *t = &storage->value.timeline;
++
++    /* Active playback requires audio-backend coordination. */
++    if (t->running) {
++        movie_error = unimpErr;
++        return;
++    }
++
++    if (newTime < t->begin ||
++        newTime > t->end) {
++        movie_error = paramErr;
++        return;
++    }
++
++    t->position = newTime;
++    t->remainder = 0;
++
++    movie_error = noErr;
+ }
+ 
+ void* SetMovieUseTrackForTimeTableCallBack(void)

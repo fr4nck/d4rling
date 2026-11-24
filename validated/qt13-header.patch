@@ -1,0 +1,20 @@
+--- a/include/QuickTime/QuickTime.h
++++ b/include/QuickTime/QuickTime.h
+@@ -801,7 +801,7 @@
+ void* GetMediaTrack(void);
+ void* GetMediaUserData(void);
+ void* GetMovieActive(void);
+-void* GetMovieActiveSegment(void);
++void GetMovieActiveSegment(Movie theMovie, TimeValue *startTime, TimeValue *duration);
+ void* GetMovieAnchorDataRef(void);
+ void* GetMovieAudioBalance(void);
+ void* GetMovieAudioContext(void);
+@@ -4285,7 +4285,7 @@
+ void* SetMovieRate(void);
+ void* SetMovieSelection(void);
+ void* SetMovieTime(void);
+-void* SetMovieTimeValue(void);
++void SetMovieTimeValue(Movie theMovie, TimeValue newTime);
+ void* SetMovieUseTrackForTimeTableCallBack(void);
+ void* SetMovieVideoOutput(void);
+ void* SetMovieVisualBrightness(void);

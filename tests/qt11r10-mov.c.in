@@ -1,0 +1,215 @@
+
+#define main qt11_original_main
+#include "qt11-runtime-witness.c"
+#undef main
+#include "fixture.h"
+
+typedef void **Handle;
+typedef void *Track;
+typedef void *Media;
+
+typedef struct {
+    void *data;
+    SInt32 dataLength;
+} PointerDataRefRecord;
+
+typedef SInt16 (*OpenFn)(
+    Movie *,SInt16,SInt16 *,Handle,unsigned int
+);
+
+typedef Track (*TrackFn)(Movie,SInt32);
+typedef Media (*MediaFn)(Track);
+
+typedef SInt16 (*SampleFn)(
+    Media,Handle,SInt32,SInt32 *,
+    SInt32,SInt32 *,SInt32 *,
+    Handle,SInt32 *,SInt32,SInt32 *,SInt16 *
+);
+
+typedef Handle (*NewHandleFn)(SInt32);
+typedef void (*DisposeHandleFn)(Handle);
+typedef SInt32 (*HandleSizeFn)(Handle);
+
+int main(void)
+{
+    char path[]=
+        "/Volumes/SystemRoot/path/to/development/"
+        "qt-mass08.UOtXy3Pe/QuickTime.qt09";
+
+    char *argv[]={(char *)"qtpcm",path,0};
+
+    const char *ccpath=
+        "/System/Library/Frameworks/CoreServices.framework/"
+        "Versions/A/Frameworks/CarbonCore.framework/"
+        "Versions/A/CarbonCore";
+
+    printf("MOV_WITNESS_START bits=%u\n",
+        (unsigned)(sizeof(void*)*8));
+
+    fflush(0);
+
+    void *lib=dlopen(path,6);
+
+    if(!lib) {
+        printf("LOAD_ERROR %s\n",dlerror());
+        return 23;
+    }
+
+    typedef SInt16 (*EnterFn)(void);
+    typedef void (*ExitFn)(void);
+    typedef void (*DisposeFn)(Movie);
+    typedef SInt32 (*MovieQuery)(Movie);
+    typedef SInt32 (*MediaQuery)(Media);
+
+    LOAD(EnterFn,enter,"EnterMovies");
+    LOAD(ExitFn,leave,"ExitMovies");
+    LOAD(DisposeFn,dispose,"DisposeMovie");
+    LOAD(OpenFn,openMovie,"NewMovieFromDataRef");
+    LOAD(MovieQuery,duration,"GetMovieDuration");
+    LOAD(MovieQuery,scale,"GetMovieTimeScale");
+    LOAD(MovieQuery,tracks,"GetMovieTrackCount");
+    LOAD(TrackFn,track,"GetMovieIndTrack");
+    LOAD(MediaFn,media,"GetTrackMedia");
+    LOAD(MediaQuery,mediaScale,"GetMediaTimeScale");
+    LOAD(MediaQuery,sampleCount,"GetMediaSampleCount");
+    LOAD(SampleFn,getSample,"GetMediaSample");
+
+    if(enter()!=0)
+        return 24;
+
+    PointerDataRefRecord rec={fixture,4};
+    PointerDataRefRecord *recp=&rec;
+    Movie movie=0;
+
+    SInt16 rc=openMovie(
+        &movie,0,0,(Handle)&recp,PTR_DATA_HANDLER
+    );
+
+    check(rc!=0 && movie==0,"truncated MOV rejected");
+
+    if(movie) {
+        dispose(movie);
+        movie=0;
+    }
+
+    rec.dataLength=(SInt32)sizeof(fixture);
+
+    rc=openMovie(
+        &movie,0,0,(Handle)&recp,PTR_DATA_HANDLER
+    );
+
+    printf("MOV_OPEN_RC=%d\n",rc);
+    fflush(0);
+
+    if(rc || !movie)
+        return 25;
+
+    SInt32 d=duration(movie);
+    SInt32 s=scale(movie);
+
+    printf("MOV_DURATION=%d TIMESCALE=%d TRACKS=%d\n",
+        d,s,tracks(movie));
+
+    check(s>0 && d==s,"one second duration");
+    check(tracks(movie)==1,"one audio track");
+
+    Track t=track(movie,1);
+    Media m=t?media(t):0;
+
+    if(!m)
+        return 26;
+
+    check(mediaScale(m)==8000,"media timescale");
+    check(sampleCount(m)==8000,"sample count");
+
+    if(failures)
+        return 27;
+
+    printf("MOV_METADATA_PASS\n");
+    fflush(0);
+
+    void *cc=dlopen(ccpath,6);
+
+    if(!cc)
+        return 28;
+
+    NewHandleFn allocate=(NewHandleFn)
+        resolve(cc,"NewHandle",ccpath);
+
+    DisposeHandleFn release=(DisposeHandleFn)
+        resolve(cc,"DisposeHandle",ccpath);
+
+    HandleSizeFn sizeOf=(HandleSizeFn)
+        resolve(cc,"GetHandleSize",ccpath);
+
+    if(!allocate || !release || !sizeOf)
+        return 29;
+
+    Handle h=allocate(0);
+
+    if(!h)
+        return 30;
+
+    SInt32 total=0,bytes=0;
+    unsigned mismatches=0;
+
+    while(total<8000) {
+        SInt32 size=0,when=0,per=0,index=0,count=0;
+        SInt16 flags=0;
+
+        rc=getSample(
+            m,h,16000,&size,total,
+            &when,&per,0,&index,
+            8000-total,&count,&flags
+        );
+
+        if(
+            rc || count<=0 || count>8000-total
+            || size!=count*2
+            || sizeOf(h)<size
+            || !*h
+        ) {
+            printf(
+                "PCM_READ_FAIL rc=%d count=%d size=%d\n",
+                rc,count,size
+            );
+
+            ++failures;
+            break;
+        }
+
+        unsigned char *data=(unsigned char *)*h;
+
+        for(SInt32 i=0;i<size;++i) {
+            unsigned expected=reference_pcm[total*2+i];
+
+            if(data[i]!=expected)
+                ++mismatches;
+        }
+
+        total+=count;
+        bytes+=size;
+    }
+
+    printf(
+        "PCM_FRAMES=%d PCM_BYTES=%d BYTE_MISMATCHES=%u\n",
+        total,bytes,mismatches
+    );
+
+    check(total==8000,"all PCM frames");
+    check(bytes==16000,"all PCM bytes");
+    check(mismatches==0,"bit exact PCM");
+
+    release(h);
+    dispose(movie);
+    leave();
+
+    dlclose(cc);
+    dlclose(lib);
+
+    if(!failures)
+        printf("MOV_PCM_PASS\n");
+
+    fflush(0);
+    return failures?31:0;
+}
