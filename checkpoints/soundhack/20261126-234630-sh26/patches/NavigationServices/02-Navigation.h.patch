@@ -1,0 +1,66 @@
+--- a/src/frameworks/Carbon/NavigationServices/include/NavigationServices/Navigation.h
++++ b/src/frameworks/Carbon/NavigationServices/include/NavigationServices/Navigation.h
+@@ -119,8 +119,6 @@
+ typedef void (*NavEventProcPtr)(NavEventCallbackMessage callBackSelector, NavCBRecPtr callBackParms, void* callBackUD);
+ typedef NavEventProcPtr NavEventUPP;
+ 
+-#define NewNavEventUPP(userRoutine) ((NavEventUPP) (userRoutine))
+-#define DisposeNavEventUPP(userUPP)
+ #define InvokeNavEventUPP(callBackSelector, callBackParms, callBackUD, userUPP) (*(userUPP))(callBackSelector, callBackParms, callBackUD)
+ 
+ enum {
+@@ -181,6 +179,54 @@
+ 
+ #endif
+ 
++
++#ifndef __LP64__
++
++NavEventUPP NewNavEventUPP(NavEventProcPtr routine);
++void DisposeNavEventUPP(NavEventUPP upp);
++
++typedef SInt16 NavFilterModes;
++
++typedef Boolean (*NavObjectFilterProcPtr)(
++    AEDesc* item,
++    void* info,
++    void* clientData,
++    NavFilterModes mode);
++
++typedef NavObjectFilterProcPtr NavObjectFilterUPP;
++
++NavObjectFilterUPP NewNavObjectFilterUPP(
++    NavObjectFilterProcPtr routine);
++
++void DisposeNavObjectFilterUPP(NavObjectFilterUPP upp);
++
++#endif
++
++
++#ifndef __LP64__
++typedef struct NavMenuItemSpec** NavMenuItemSpecArrayHandle;
++
++#pragma pack(push, 2)
++
++typedef struct NavDialogOptions {
++    UInt16 version;
++    NavDialogOptionFlags dialogOptionFlags;
++    Point location;
++    Str255 clientName;
++    Str255 windowTitle;
++    Str255 actionButtonLabel;
++    Str255 cancelButtonLabel;
++    Str255 savedFileName;
++    Str255 message;
++    UInt32 preferenceKey;
++    NavMenuItemSpecArrayHandle popupExtension;
++    char reserved[494];
++} NavDialogOptions;
++
++#pragma pack(pop)
++
++OSErr NavGetDefaultDialogOptions(NavDialogOptions* options);
++#endif
+ #ifdef __cplusplus
+ }
+ #endif

@@ -1,0 +1,46 @@
+--- a/src/frameworks/CoreServices/src/CarbonCore/DateTimeUtils.cpp
++++ b/src/frameworks/CoreServices/src/CarbonCore/DateTimeUtils.cpp
+@@ -105,3 +105,43 @@
+ 	
+ 	*secs = t + 2082844800l;
+ }
++
++#ifndef __LP64__
++#include <CoreServices/MacTypes.h>
++
++#include <stdint.h>
++#include <time.h>
++#include <errno.h>
++
++extern "C" void Delay(
++    unsigned long numTicks,
++    unsigned long* finalTicks)
++{
++    // Round the interval upwards to a whole nanosecond.
++    uint64_t ns=
++        ((uint64_t)numTicks*1000000000ull+59ull)/60ull;
++
++    struct timespec remaining;
++    remaining.tv_sec=(time_t)(ns/1000000000ull);
++    remaining.tv_nsec=(long)(ns%1000000000ull);
++
++    if (numTicks) {
++        while (nanosleep(&remaining,&remaining)!=0) {
++            if (errno!=EINTR)
++                break;
++        }
++    }
++
++    if (finalTicks) {
++        // Exactly the clock and conversion used by
++        // HIToolbox TickCount in cb7adbc77.
++        uint64_t uptime=
++            clock_gettime_nsec_np(CLOCK_UPTIME_RAW);
++
++        *finalTicks=(uint32_t)(
++            (uptime/1000ull)*60ull/1000000ull
++        );
++    }
++}
++
++#endif

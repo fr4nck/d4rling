@@ -1,0 +1,251 @@
+{
+  "source_revision": "cb7adbc7733e8251e2f409d2e35597490a7440cb",
+  "historical_missing_symbols": 74,
+  "candidate_exports_compiled": 53,
+  "remaining_symbols": 21,
+  "exports_represented_by_source_backups": 41,
+  "families": {
+    "CarbonCore": {
+      "candidate_exports": 26,
+      "binary_sha256": "e9b90eaed32525e71aa48ce21512f692066486b0deac7e131bcc8e07d1b31294",
+      "binary_published": false,
+      "runtime_qualified": false,
+      "patches": [
+        {
+          "source": "src/frameworks/CoreServices/include/CarbonCore/MacMemory.h",
+          "patch": "patches/CarbonCore/01-MacMemory.h.patch",
+          "original_sha256": "bdc78a15dd33e1f4aabee002ef9908d6eab35b51d3bd1c98c1a142a6fdfafdb7",
+          "candidate_sha256": "23b51104f99c7ab50b8ee1a9b523ff002904bf3dbb0558a4333a446fb0f4fb82",
+          "patch_sha256": "385232ba31ce2625fc737464af614ca4d9c0ae19a0def1712ef877f76fa92172",
+          "reconstruction_verified": true
+        },
+        {
+          "source": "src/frameworks/CoreServices/src/CarbonCore/Aliases.cpp",
+          "patch": "patches/CarbonCore/02-Aliases.cpp.patch",
+          "original_sha256": "0c4d156a9358c01ecead5f79fbd3659aa1ce76cda2b257780d5d5ef2c797c7f9",
+          "candidate_sha256": "86cdc980654788f9ad1e2539ae388e1cd4c4bd83bae7930a9174f81bbae2be20",
+          "patch_sha256": "62e7c44c49fabc5b07181ff402cad10285e52260df9c57e3ff8587b5b4e07cfb",
+          "reconstruction_verified": true
+        },
+        {
+          "source": "src/frameworks/CoreServices/src/CarbonCore/DateTimeUtils.cpp",
+          "patch": "patches/CarbonCore/03-DateTimeUtils.cpp.patch",
+          "original_sha256": "5c09d9d58ced9af13bc75f03fe9af48eb6523c7d67a3a657734ab4b427fafc31",
+          "candidate_sha256": "13ade1d841f84c3676e9e535e69b76e87ee1a6fd30c9650eff061dd66349b8f0",
+          "patch_sha256": "90ad92c5f27da2477738935cea007ea519d05820dd7a21e76162d228bde7325b",
+          "reconstruction_verified": true
+        },
+        {
+          "source": "src/frameworks/CoreServices/src/CarbonCore/FileManager.cpp",
+          "patch": "patches/CarbonCore/04-FileManager.cpp.patch",
+          "original_sha256": "9e956647a76936eb4c098c70520afa371a5bf2a9a39ee264632155da8af995f5",
+          "candidate_sha256": "459c420d94a67d78ddb70013386afed6fd8330082cd83196e792ae355cc1797e",
+          "patch_sha256": "6e6f1968129a5c6f967baa8c5a01d8baa36ef09cf3e0a34f7b4ee23824b890ce",
+          "reconstruction_verified": true
+        },
+        {
+          "source": "src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp",
+          "patch": "patches/CarbonCore/05-MacMemory.cpp.patch",
+          "original_sha256": "5824b27ba1fe8591bcac127626d050af38aa0cc89ebad7ac790020c3fa246c3b",
+          "candidate_sha256": "9a68cbe72be5c8221f19b9d2e031ee264135527efbb864642e32f45d8cd0132a",
+          "patch_sha256": "ba0dcc87d89bfcff5a3a3ad1aa737c99a95650377062c1681f95698f04bd34d6",
+          "reconstruction_verified": true
+        },
+        {
+          "source": "src/frameworks/CoreServices/src/CarbonCore/Resources.cpp",
+          "patch": "patches/CarbonCore/06-Resources.cpp.patch",
+          "original_sha256": "1d98036669842d9b0b6b404c6f041bcb70f462272bb3307dd745769a7ac0154a",
+          "candidate_sha256": "b85686dbe12f103847007c529d29d0fb389511b721c9ac25c321d30f0453169d",
+          "patch_sha256": "a6f4e0e4ce36ae6c3b377644cb6fc23bc36f807c2c70a1fb3abc2b15e19481bb",
+          "reconstruction_verified": true
+        },
+        {
+          "source": "src/frameworks/CoreServices/src/CarbonCore/ResourcesImpl.cpp",
+          "patch": "patches/CarbonCore/07-ResourcesImpl.cpp.patch",
+          "original_sha256": "3d92787f5c59f7e239ac59636a270e7afd6c04d1627b0d4fc55c02c0199d4d22",
+          "candidate_sha256": "cd94bfdaba466dbc294e495de5cde6acf4e896ddda0fc5cc0eca1e5e175a1d83",
+          "patch_sha256": "7ff867af14d65a85b75920a856b800f971fe075b767f2629e05d4cece6e09854",
+          "reconstruction_verified": true
+        },
+        {
+          "source": "src/frameworks/CoreServices/src/CarbonCore/ResourcesImpl.h",
+          "patch": "patches/CarbonCore/08-ResourcesImpl.h.patch",
+          "original_sha256": "3b511e6e06d90c27acc525635ab0e0384858c4a13a05e0649a2c887c46465110",
+          "candidate_sha256": "cd2986d9ce109e25bc4c52e9a7704f339e4abca832baef32558679252b540cb6",
+          "patch_sha256": "a2a6c853abee55502bbab0e24e3499dec8a16ce37bd71834ec97d9b7200f88e0",
+          "reconstruction_verified": true
+        },
+        {
+          "source": "src/frameworks/CoreServices/src/CarbonCore/ToolUtils.cpp",
+          "patch": "patches/CarbonCore/09-ToolUtils.cpp.patch",
+          "original_sha256": "b95947f2f37d7695f6d86ff3f9bfd5efe9216276f987f341872d9d9a5858f279",
+          "candidate_sha256": "177b03abbaf01bac7e3bc899d1b9c156065cace8945227ab80e27efab153ba04",
+          "patch_sha256": "4ba3a5d60c791f2b577a04b7475fc6cc12228ef925880e527aa26975463411c3",
+          "reconstruction_verified": true
+        }
+      ],
+      "status": "SOURCE_PATCHES_VERIFIED"
+    },
+    "CarbonSound": {
+      "candidate_exports": 10,
+      "binary_sha256": "2fdaada0bd2e29325a4d1af38caa298daa71636caee312ce0d0b35ae191e7844",
+      "binary_published": false,
+      "runtime_qualified": false,
+      "patches": [
+        {
+          "source": "src/frameworks/Carbon/CarbonSound/src/SoundManager.cpp",
+          "patch": "patches/CarbonSound/01-SoundManager.cpp.patch",
+          "original_sha256": "d70a1307cb0113f20c0eb276a146d90e5b64a693004702859c7d37539d22730d",
+          "candidate_sha256": "88087d5e84b1094e8596ec3ff0c50202974014d6eef1a4d50830ac9cd0a2e7b1",
+          "patch_sha256": "cf0a33f4e7af26c06f9fef5cc3ab2d7591afb9c9234567a77b1cd15a029959db",
+          "reconstruction_verified": true
+        },
+        {
+          "source": "src/frameworks/Carbon/CarbonSound/include/CarbonSound/Sound.h",
+          "patch": "patches/CarbonSound/02-Sound.h.patch",
+          "original_sha256": "38b4743e32fd4e0affbb3db76b4f4b7dafa066cb617b9114743208006cb31992",
+          "candidate_sha256": "81466c026a65e523495644e4db808d09a88da3d4e3a3a702e281c2a7f53ccaed",
+          "patch_sha256": "ee4754d3ed45dd59fba6564c6cca310e1a1910ccfdd1c0745b34bf7dde259943",
+          "reconstruction_verified": true
+        }
+      ],
+      "status": "SOURCE_PATCHES_VERIFIED"
+    },
+    "NavigationServices": {
+      "candidate_exports": 5,
+      "binary_sha256": "bd617522d5fcc2d1df11acd342e545e9c78b534e92dc47a60044f715ba11cfac",
+      "binary_published": false,
+      "runtime_qualified": false,
+      "patches": [
+        {
+          "source": "src/frameworks/Carbon/NavigationServices/src/Navigation.c",
+          "patch": "patches/NavigationServices/01-Navigation.c.patch",
+          "original_sha256": "da0b4c733e046796388114c1d7aaf16b24000fe3005f0eebb3937b50aa5cc976",
+          "candidate_sha256": "2a334475fb7ef338c5686bd29eac88a84f10f8969c26f01488411aa7c72829a0",
+          "patch_sha256": "351f720c253eeb77bab04514a68ecafa8dfd98c45fc088df0d65a8b1576cd79d",
+          "reconstruction_verified": true
+        },
+        {
+          "source": "src/frameworks/Carbon/NavigationServices/include/NavigationServices/Navigation.h",
+          "patch": "patches/NavigationServices/02-Navigation.h.patch",
+          "original_sha256": "f6ce25e82dc28c44ca88bbb1e52e2ca860fa977fbf853dc76b30878c683f7052",
+          "candidate_sha256": "f19b08bd2ca018671c2ee3a28ff8ac6bf009ddae84e05894aa06a611fb644a01",
+          "patch_sha256": "501e25161d685de2e3fbd58064866759493540805f2f0ed52b29e07374be8bf6",
+          "reconstruction_verified": true
+        }
+      ],
+      "status": "SOURCE_PATCHES_VERIFIED"
+    },
+    "HIToolbox": {
+      "candidate_exports": 12,
+      "binary_sha256": "0471bf24acd452091dc80170c6861a5900d0a8b8a86cf8a7aa766db6cae81ea8",
+      "binary_published": false,
+      "runtime_qualified": false,
+      "patches": [],
+      "status": "SOURCE_BACKUP_INCOMPLETE",
+      "reason": "Source mapping, identity or publication guard not established."
+    }
+  },
+  "static_import_chains": {
+    "_malloc": {
+      "status": "PENDING",
+      "runtime_qualified": false
+    },
+    "__ZTISt9bad_alloc": {
+      "status": "STATIC_PROVIDER_CHAIN_PRESENT",
+      "runtime_qualified": false,
+      "chain": [
+        {
+          "provider": "/usr/lib/libc++abi.dylib",
+          "symbol": "__ZTISt9bad_alloc",
+          "proof": "DIRECT_EXPORT_TRIE",
+          "sha256": "81f0cdbf46fbfedb6f138f781f3299bc695cb977c01954a256a6fceda637f3ed"
+        }
+      ]
+    },
+    "___cxa_end_catch": {
+      "status": "STATIC_PROVIDER_CHAIN_PRESENT",
+      "runtime_qualified": false,
+      "chain": [
+        {
+          "provider": "/usr/lib/libc++abi.dylib",
+          "symbol": "___cxa_end_catch",
+          "proof": "DIRECT_EXPORT_TRIE",
+          "sha256": "81f0cdbf46fbfedb6f138f781f3299bc695cb977c01954a256a6fceda637f3ed"
+        }
+      ]
+    },
+    "_clock_gettime_nsec_np": {
+      "status": "STATIC_PROVIDER_CHAIN_PRESENT",
+      "runtime_qualified": false,
+      "chain": [
+        {
+          "provider": "/usr/lib/libSystem.B.dylib",
+          "symbol": "_clock_gettime_nsec_np",
+          "proof": "LC_REEXPORT_DYLIB"
+        },
+        {
+          "provider": "/usr/lib/system/libsystem_c.dylib",
+          "symbol": "_clock_gettime_nsec_np",
+          "proof": "DIRECT_EXPORT_TRIE",
+          "sha256": "bbabd6d71b1008cf2ec1016bafaf78506ad61cf16f27ab634a1b2c893111f88d"
+        }
+      ]
+    },
+    "_fcntl$UNIX2003": {
+      "status": "STATIC_PROVIDER_CHAIN_PRESENT",
+      "runtime_qualified": false,
+      "chain": [
+        {
+          "provider": "/usr/lib/libSystem.B.dylib",
+          "symbol": "_fcntl$UNIX2003",
+          "proof": "LC_REEXPORT_DYLIB"
+        },
+        {
+          "provider": "/usr/lib/system/libsystem_kernel.dylib",
+          "symbol": "_fcntl$UNIX2003",
+          "proof": "DIRECT_EXPORT_TRIE",
+          "sha256": "dd228a723edc27cb63ac287fd2a22b0d99669babfbfc16e37d3fbcf2666b2b05"
+        }
+      ]
+    },
+    "_fsync$UNIX2003": {
+      "status": "STATIC_PROVIDER_CHAIN_PRESENT",
+      "runtime_qualified": false,
+      "chain": [
+        {
+          "provider": "/usr/lib/libSystem.B.dylib",
+          "symbol": "_fsync$UNIX2003",
+          "proof": "LC_REEXPORT_DYLIB"
+        },
+        {
+          "provider": "/usr/lib/system/libsystem_kernel.dylib",
+          "symbol": "_fsync$UNIX2003",
+          "proof": "DIRECT_EXPORT_TRIE",
+          "sha256": "dd228a723edc27cb63ac287fd2a22b0d99669babfbfc16e37d3fbcf2666b2b05"
+        }
+      ]
+    },
+    "_fsetxattr": {
+      "status": "STATIC_PROVIDER_CHAIN_PRESENT",
+      "runtime_qualified": false,
+      "chain": [
+        {
+          "provider": "/usr/lib/libSystem.B.dylib",
+          "symbol": "_fsetxattr",
+          "proof": "LC_REEXPORT_DYLIB"
+        },
+        {
+          "provider": "/usr/lib/system/libsystem_kernel.dylib",
+          "symbol": "_fsetxattr",
+          "proof": "DIRECT_EXPORT_TRIE",
+          "sha256": "dd228a723edc27cb63ac287fd2a22b0d99669babfbfc16e37d3fbcf2666b2b05"
+        }
+      ]
+    }
+  },
+  "strict_combined_link": "NOT_PASSED",
+  "soundhack_strict_relink": "NOT_RUN",
+  "functional_qualification": "NOT_ESTABLISHED",
+  "license_review_complete": false
+}

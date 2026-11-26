@@ -1,0 +1,14 @@
+--- a/src/frameworks/CoreServices/include/CarbonCore/MacMemory.h
++++ b/src/frameworks/CoreServices/include/CarbonCore/MacMemory.h
+@@ -33,6 +33,11 @@
+ void HLock(Handle h);
+ void HLockHi(Handle h);
+ void HUnlock(Handle h);
++
++SignedByte HGetState(Handle h);
++void HSetState(Handle h, SignedByte state);
++void HNoPurge(Handle h);
++
+ OSErr HandToHand(Handle* h);
+ OSErr HandAndHand(Handle h1, Handle h2);
+ OSErr PtrAndHand(const void* ptr1, Handle hand2, long size);

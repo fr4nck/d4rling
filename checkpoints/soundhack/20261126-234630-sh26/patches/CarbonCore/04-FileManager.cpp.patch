@@ -1,0 +1,774 @@
+--- a/src/frameworks/CoreServices/src/CarbonCore/FileManager.cpp
++++ b/src/frameworks/CoreServices/src/CarbonCore/FileManager.cpp
+@@ -432,6 +432,48 @@
+ }
+ 
+ // TODO: Test this function!
++
++static OSStatus sh23LookupFolder(
++    const char* path,Boolean createFolder,FSRef* location)
++{
++    if (!path || !*path || !location)
++        return paramErr;
++
++    struct stat st;
++
++    if (stat(path,&st)!=0) {
++        int error=errno;
++
++        if (!createFolder || error!=ENOENT)
++            return makeOSStatus(error);
++
++        if (mkdir(path,0777)!=0 && errno!=EEXIST)
++            return makeOSStatus(errno);
++
++        if (stat(path,&st)!=0)
++            return makeOSStatus(errno);
++    }
++
++    if (!S_ISDIR(st.st_mode))
++        return dirNFErr;
++
++    FSRef candidate={};
++    Boolean directory=false;
++
++    OSStatus err=FSPathMakeRefWithOptions(
++        (const uint8_t*)path,0,&candidate,&directory);
++
++    if (err!=noErr)
++        return err;
++
++    if (!directory)
++        return dirNFErr;
++
++    *location=candidate;
++
++    return noErr;
++}
++
+ OSStatus FSFindFolder(long vRefNum, OSType folderType, Boolean createFolder, FSRef* location)
+ {
+ 	if (folderType == kTemporaryFolderType)
+@@ -441,12 +483,7 @@
+ 		if (!tmpdir)
+ 			tmpdir = "/tmp";
+ 		
+-		FSPathMakeRef((const uint8_t*) tmpdir, location, nullptr);
+-		
+-		if (createFolder && access(tmpdir, F_OK) != 0)
+-			mkdir(tmpdir, 0777);
+-		
+-		return noErr;
++		return sh23LookupFolder(tmpdir,createFolder,location);
+ 	}
+ 	else if (folderType == kDesktopFolderType || folderType == kSystemDesktopFolderType)
+ 	{
+@@ -455,7 +492,8 @@
+ 		std::string line, desktop;
+ 		const char* home = getenv("HOME");
+ 		
+-		desktop = home;
++		if (!home || !*home) return fnfErr;
++desktop = home;
+ 		desktop += "/Desktop";
+ 	
+ 		if (cfg.is_open())
+@@ -473,12 +511,7 @@
+ 			}
+ 		}
+ 		
+-		FSPathMakeRef((const uint8_t*) desktop.c_str(), location, nullptr);
+-		
+-		if (createFolder && access(desktop.c_str(), F_OK) != 0)
+-			mkdir(desktop.c_str(), 0777);
+-		
+-		return noErr;
++		return sh23LookupFolder(desktop.c_str(),createFolder,location);
+ 	}
+ 	else
+ 		return unimpErr;
+@@ -1989,3 +2022,684 @@
+ 	return FSpSetFInfo(spec, &info);
+ }
+ #endif
++
++
++/* Classic File Manager adapters. */
++#ifndef __LP64__
++
++extern "C" OSErr FSRead(
++    short refNum, long* count, void* buffer)
++{
++    if (!count)
++        return paramErr;
++
++    if (*count < 0 || (*count && !buffer))
++        return paramErr;
++
++    ByteCount requested = (ByteCount)*count;
++    ByteCount actual = 0;
++
++    OSErr result = FSReadFork(
++        refNum, fsAtMark, 0,
++        requested, buffer, &actual);
++
++    *count = (long)actual;
++    return result;
++}
++
++extern "C" OSErr FSWrite(
++    short refNum, long* count, const void* buffer)
++{
++    if (!count)
++        return paramErr;
++
++    if (*count < 0 || (*count && !buffer))
++        return paramErr;
++
++    ByteCount requested = (ByteCount)*count;
++    ByteCount actual = 0;
++
++    OSErr result = FSWriteFork(
++        refNum, fsAtMark, 0,
++        requested, buffer, &actual);
++
++    *count = (long)actual;
++    return result;
++}
++
++
++extern "C" OSErr FSClose(short refNum)
++{
++    return FSCloseFork(refNum);
++}
++
++
++extern "C" OSErr GetFPos(short refNum, long* position)
++{
++    if (!position)
++        return paramErr;
++
++    SInt64 value = 0;
++    OSErr result = FSGetForkPosition(refNum, &value);
++
++    if (result != noErr)
++        return result;
++
++    if (value < 0 || value > 2147483647LL)
++        return paramErr;
++
++    *position = (long)value;
++    return noErr;
++}
++
++extern "C" OSErr GetEOF(short refNum, long* length)
++{
++    if (!length)
++        return paramErr;
++
++    SInt64 value = 0;
++    OSErr result = FSGetForkSize(refNum, &value);
++
++    if (result != noErr)
++        return result;
++
++    if (value < 0 || value > 2147483647LL)
++        return paramErr;
++
++    *length = (long)value;
++    return noErr;
++}
++
++
++extern "C" OSErr FSpOpenDF(
++    const FSSpec* spec,
++    SignedByte permission,
++    short* refNum)
++{
++    if (!spec || !refNum)
++        return paramErr;
++
++    FSRef ref;
++    OSErr result = FSpMakeFSRef(spec, &ref);
++
++    if (result != noErr)
++        return result;
++
++    HFSUniStr255 name;
++    result = FSGetDataForkName(&name);
++
++    if (result != noErr)
++        return result;
++
++    FSIORefNum opened;
++    result = FSOpenFork(
++        &ref, name.length, name.unicode,
++        permission, &opened);
++
++    if (result != noErr)
++        return result;
++
++    *refNum = opened;
++    return noErr;
++}
++
++#endif
++
++
++#ifndef __LP64__
++
++// Classic File Manager ABI, packed on two-byte boundaries.
++// This is an internal view of the historical IOParam record,
++// not a new public FSForkIOParam layout.
++#pragma pack(push, 2)
++struct ClassicIOParamView {
++    void* qLink;
++    SInt16 qType;
++    SInt16 ioTrap;
++    Ptr ioCmdAddr;
++    void (*ioCompletion)(void*);
++    volatile OSErr ioResult;
++    StringPtr ioNamePtr;
++    SInt16 ioVRefNum;
++    SInt16 ioRefNum;
++    SInt8 ioVersNum;
++    SInt8 ioPermssn;
++    Ptr ioMisc;
++    Ptr ioBuffer;
++    SInt32 ioReqCount;
++    SInt32 ioActCount;
++    SInt16 ioPosMode;
++    SInt32 ioPosOffset;
++};
++#pragma pack(pop)
++
++static_assert(sizeof(void*) == 4, "Classic ABI requires i386");
++static_assert(sizeof(ClassicIOParamView) == 50, "IOParam size");
++static_assert(__builtin_offsetof(ClassicIOParamView, ioResult) == 16,
++              "IOParam result offset");
++static_assert(__builtin_offsetof(ClassicIOParamView, ioRefNum) == 24,
++              "IOParam refnum offset");
++static_assert(__builtin_offsetof(ClassicIOParamView, ioBuffer) == 32,
++              "IOParam buffer offset");
++static_assert(__builtin_offsetof(ClassicIOParamView, ioReqCount) == 36,
++              "IOParam request offset");
++static_assert(__builtin_offsetof(ClassicIOParamView, ioActCount) == 40,
++              "IOParam actual offset");
++static_assert(__builtin_offsetof(ClassicIOParamView, ioPosMode) == 44,
++              "IOParam mode offset");
++static_assert(__builtin_offsetof(ClassicIOParamView, ioPosOffset) == 46,
++              "IOParam position offset");
++
++static OSErr classicPBTransfer(
++    ClassicIOParamView* pb, Boolean async, bool writing)
++{
++    if (!pb)
++        return paramErr;
++
++    pb->ioActCount = 0;
++
++    // Do not emulate asynchronous completion synchronously.
++    if (async) {
++        pb->ioResult = unimpErr;
++        return unimpErr;
++    }
++
++    if (pb->ioReqCount < 0 ||
++        (pb->ioReqCount != 0 && !pb->ioBuffer)) {
++        pb->ioResult = paramErr;
++        return paramErr;
++    }
++
++    ByteCount actual = 0;
++    OSErr result;
++
++    if (writing) {
++        result = FSWriteFork(
++            pb->ioRefNum,
++            (UInt16)pb->ioPosMode,
++            (SInt64)pb->ioPosOffset,
++            (ByteCount)pb->ioReqCount,
++            pb->ioBuffer,
++            &actual);
++    } else {
++        result = FSReadFork(
++            pb->ioRefNum,
++            (UInt16)pb->ioPosMode,
++            (SInt64)pb->ioPosOffset,
++            (ByteCount)pb->ioReqCount,
++            pb->ioBuffer,
++            &actual);
++    }
++
++    pb->ioActCount = (SInt32)actual;
++
++    SInt64 mark = 0;
++    OSErr positionResult =
++        FSGetForkPosition(pb->ioRefNum, &mark);
++
++    if (positionResult == noErr) {
++        if (mark >= 0 && mark <= 2147483647LL)
++            pb->ioPosOffset = (SInt32)mark;
++        else if (result == noErr)
++            result = posErr;
++    } else if (result == noErr) {
++        result = positionResult;
++    }
++
++    pb->ioResult = result;
++    return result;
++}
++
++extern "C" OSErr PBRead(
++    ClassicIOParamView* pb, Boolean async)
++{
++    return classicPBTransfer(pb, async, false);
++}
++
++extern "C" OSErr PBWrite(
++    ClassicIOParamView* pb, Boolean async)
++{
++    return classicPBTransfer(pb, async, true);
++}
++
++
++#endif
++
++#ifndef __LP64__
++// Darwin's native UPP is a callable routine pointer.
++// No allocation or mixed-mode descriptor is necessary.
++extern "C" IOCompletionUPP NewIOCompletionUPP(
++    void (*routine)(void*))
++{
++    return reinterpret_cast<IOCompletionUPP>(routine);
++}
++
++#endif
++
++#ifndef __LP64__
++#include <stdint.h>
++#include <CoreServices/FileManager.h>
++
++#ifdef __cplusplus
++extern "C"
++#endif
++OSErr FindFolder(
++    short volume,OSType folderType,
++    Boolean createFolder,
++    short* foundVolume,long* foundDirectory)
++{
++    if (!foundVolume || !foundDirectory)
++        return paramErr;
++
++    FSRef ref;
++
++    OSStatus err=FSFindFolder(
++        volume,folderType,createFolder,&ref);
++
++    if (err!=noErr)
++        return err>=-32768 && err<=32767
++            ? (OSErr)err : ioErr;
++
++    FSCatalogInfo info={0};
++
++    err=FSGetCatalogInfo(
++        &ref,
++        kFSCatInfoVolume |
++        kFSCatInfoNodeID |
++        kFSCatInfoNodeFlags,
++        &info,0,0,0);
++
++    if (err!=noErr)
++        return err>=-32768 && err<=32767
++            ? (OSErr)err : ioErr;
++
++    if (!(info.nodeFlags & kFSNodeIsDirectoryMask))
++        return dirNFErr;
++
++    *foundVolume=info.volume;
++
++    // Preserve the legacy 32-bit catalog identifier.
++    *foundDirectory=(long)(int32_t)info.nodeID;
++
++    return noErr;
++}
++
++#endif
++
++#ifndef __LP64__
++
++namespace {
++
++OSErr sh24FlushDescriptor(int fd)
++{
++    int flags=fcntl(fd,F_GETFL);
++
++    if (flags<0)
++        return ioErr;
++
++    if ((flags&O_ACCMODE)==O_RDONLY)
++        return noErr;
++
++    int rc;
++
++    do {
++        rc=fsync(fd);
++    } while (rc<0 && errno==EINTR);
++
++    return rc==0 ? noErr : ioErr;
++}
++
++OSErr sh24FlushOpenForks(
++    const unsigned char* volumeName,short volume)
++{
++    if (volume!=0 && volume!=-100)
++        return nsvErr;
++
++    if (volumeName && volumeName[0]) {
++        unsigned n=volumeName[0];
++
++        if (n>63)
++            return bdNamErr;
++
++        if (volumeName[n]==':')
++            --n;
++
++        if (n!=12 ||
++            memcmp(volumeName+1,"Macintosh HD",12))
++            return nsvErr;
++    }
++
++    std::lock_guard<std::mutex> lock(g_openForksLock);
++
++    OSErr first=noErr;
++
++    for (auto const& entry:g_openForks) {
++        int fd=entry.second.fd;
++
++        // Resource forks currently held in memory are
++        // read-only in this revision.
++        if (fd<0)
++            continue;
++
++        OSErr err=sh24FlushDescriptor(fd);
++
++        if (first==noErr && err!=noErr)
++            first=err;
++    }
++
++    return first;
++}
++
++}
++
++extern "C" OSErr FlushVol(
++    const unsigned char* volumeName,short volume)
++{
++    return sh24FlushOpenForks(volumeName,volume);
++}
++
++#endif
++
++#ifndef __LP64__
++#include <CarbonCore/Files.h>
++
++#include <stdint.h>
++#include <stddef.h>
++#include <string.h>
++#include <dirent.h>
++#include <sys/stat.h>
++#include <errno.h>
++#include <stdio.h>
++
++#pragma pack(push, 2)
++struct SH23VolumePB {
++    unsigned char prefix[16];
++    int16_t result;
++    unsigned char* name;
++    int16_t volume;
++    uint32_t reserved;
++    int16_t index;
++    uint32_t created;
++    uint32_t modified;
++    uint16_t attributes;
++    uint16_t rootFiles;
++    uint16_t bitmap;
++    uint16_t allocPtr;
++    uint16_t totalBlocks;
++    uint32_t blockSize;
++    uint32_t clumpSize;
++    uint16_t allocationStart;
++    uint32_t nextID;
++    uint16_t freeBlocks;
++    uint16_t signature;
++    int16_t drive;
++    int16_t driver;
++    int16_t filesystemID;
++    uint32_t backup;
++    uint16_t sequence;
++    uint32_t writeCount;
++    uint32_t fileCount;
++    uint32_t folderCount;
++    uint8_t finderInfo[32];
++};
++#pragma pack(pop)
++
++#ifdef __i386__
++static_assert(sizeof(SH23VolumePB)==122,"HVolumeParam size");
++static_assert(offsetof(SH23VolumePB,result)==16,"result");
++static_assert(offsetof(SH23VolumePB,name)==18,"name");
++static_assert(offsetof(SH23VolumePB,volume)==22,"volume");
++static_assert(offsetof(SH23VolumePB,index)==28,"index");
++static_assert(offsetof(SH23VolumePB,totalBlocks)==46,"blocks");
++static_assert(offsetof(SH23VolumePB,blockSize)==48,"block size");
++static_assert(offsetof(SH23VolumePB,freeBlocks)==62,"free");
++static_assert(offsetof(SH23VolumePB,finderInfo)==90,"Finder");
++#endif
++
++namespace {
++
++uint32_t sh23LegacyDate(const UTCDateTime& date)
++{
++    return date.highSeconds ? UINT32_MAX : date.lowSeconds;
++}
++
++bool sh23VolumeGeometry(
++    uint64_t total,uint64_t freeBytes,uint32_t nativeBlock,
++    uint32_t* size,uint16_t* blocks,uint16_t* available)
++{
++    if (!nativeBlock || freeBytes>total ||
++        total<nativeBlock)
++        return false;
++
++    uint64_t nativeCount=total/nativeBlock;
++
++    uint64_t multiplier=
++        nativeCount/65535u+
++        (nativeCount%65535u!=0);
++
++    if (!multiplier ||
++        multiplier>UINT32_MAX/nativeBlock)
++        return false;
++
++    uint64_t allocation=multiplier*nativeBlock;
++
++    uint64_t n=total/allocation;
++    uint64_t f=freeBytes/allocation;
++
++    if (!n || n>65535u || f>n)
++        return false;
++
++    *size=(uint32_t)allocation;
++    *blocks=(uint16_t)n;
++    *available=(uint16_t)f;
++
++    return true;
++}
++
++OSErr sh23RootFileCount(uint16_t* result)
++{
++    DIR* dir=opendir("/");
++
++    if (!dir)
++        return ioErr;
++
++    unsigned count=0;
++    OSErr err=noErr;
++
++    for (;;) {
++        errno=0;
++        struct dirent* entry=readdir(dir);
++
++        if (!entry) {
++            if (errno)
++                err=ioErr;
++            break;
++        }
++
++        if (!strcmp(entry->d_name,".") ||
++            !strcmp(entry->d_name,".."))
++            continue;
++
++        char path[4096];
++
++        int n=snprintf(path,sizeof(path),"/%s",entry->d_name);
++
++        if (n<0 || (size_t)n>=sizeof(path)) {
++            err=ioErr;
++            break;
++        }
++
++        struct stat st;
++
++        if (lstat(path,&st)!=0) {
++            if (errno==ENOENT)
++                continue;
++
++            err=ioErr;
++            break;
++        }
++
++        if (!S_ISDIR(st.st_mode) && count<65535u)
++            ++count;
++    }
++
++    closedir(dir);
++
++    if (err==noErr)
++        *result=(uint16_t)count;
++
++    return err;
++}
++
++bool sh23VolumeNameMatches(const unsigned char* name)
++{
++    if (!name || !name[0])
++        return true;
++
++    const char expected[]="Macintosh HD";
++
++    unsigned length=name[0];
++
++    if (length>31)
++        return false;
++
++    if (length && name[length]==':')
++        --length;
++
++    return length==sizeof(expected)-1 &&
++           memcmp(name+1,expected,length)==0;
++}
++
++} // namespace
++
++
++static OSErr sh24VolumeResult(
++    unsigned char* sh24Bytes,OSErr sh24Error)
++{
++    int16_t sh24Value=(int16_t)sh24Error;
++    memcpy(sh24Bytes+offsetof(SH23VolumePB,result),
++           &sh24Value,sizeof(sh24Value));
++    return sh24Error;
++}
++
++extern "C" OSErr PBHGetVInfo(
++    HParmBlkPtr sh24Block,Boolean sh24Async)
++{
++    if (!sh24Block)
++        return paramErr;
++
++    // Only the synchronous form is implemented.
++    // No callback is called or queued.
++    auto* sh24PBBytes=reinterpret_cast<unsigned char*>(sh24Block);
++
++    
++
++    if (sh24Async)
++        return sh24VolumeResult(sh24PBBytes,unimpErr);
++
++    SH23VolumePB pb={};
++
++    memcpy(&pb,sh24PBBytes,sizeof(pb));
++
++    FSVolumeRefNum requested=pb.volume;
++    ItemCount index=0;
++
++    if (pb.index>0) {
++        index=(ItemCount)pb.index;
++    } else {
++        if (pb.index<0 &&
++            !sh23VolumeNameMatches(pb.name))
++            return sh24VolumeResult(sh24PBBytes,nsvErr);
++
++        if (requested==0)
++            requested=-100;
++    }
++
++    FSVolumeInfo info={};
++    HFSUniStr255 name={};
++    FSVolumeRefNum actual=0;
++
++    OSErr err=FSGetVolumeInfo(
++        requested,index,&actual,
++        kFSVolInfoGettableInfo,
++        &info,&name,nullptr);
++
++    if (err!=noErr)
++        return sh24VolumeResult(sh24PBBytes,err);
++
++    uint32_t size=0;
++    uint16_t blocks=0,available=0;
++
++    if (!sh23VolumeGeometry(
++        info.totalBytes,info.freeBytes,info.blockSize,
++        &size,&blocks,&available))
++        return sh24VolumeResult(sh24PBBytes,paramErr);
++
++    unsigned char sh26PascalName[32]={};
++
++    if (name.length>31)
++        return sh24VolumeResult(sh24PBBytes,bdNamErr);
++
++    sh26PascalName[0]=(unsigned char)name.length;
++
++    for (unsigned i=0;i<name.length;i++) {
++        if (name.unicode[i]>127)
++            return sh24VolumeResult(sh24PBBytes,unimpErr);
++
++        sh26PascalName[i+1]=(unsigned char)name.unicode[i];
++    }
++
++    uint16_t rootCount=0;
++
++    err=sh23RootFileCount(&rootCount);
++
++    if (err!=noErr)
++        return sh24VolumeResult(sh24PBBytes,err);
++
++    pb.volume=actual;
++    pb.created=sh23LegacyDate(info.createDate);
++    pb.modified=sh23LegacyDate(info.modifyDate);
++
++    // Do not map modern journal/default-volume flags
++    // onto incompatible legacy volume attributes.
++    pb.attributes=
++        (info.flags&kFSVolFlagHardwareLockedMask)
++        ? 0x0080u : 0;
++
++    pb.rootFiles=rootCount;
++
++    // HFS-only internal geometry is unavailable.
++    pb.bitmap=0;
++    pb.allocPtr=0;
++    pb.allocationStart=0;
++
++    pb.totalBlocks=blocks;
++    pb.blockSize=size;
++    pb.clumpSize=info.dataClumpSize;
++    pb.nextID=info.nextCatalogID;
++    pb.freeBlocks=available;
++
++    pb.signature=info.signature;
++    pb.drive=(int16_t)info.driveNumber;
++    pb.driver=(int16_t)info.driverRefNum;
++    pb.filesystemID=(int16_t)info.filesystemID;
++
++    pb.backup=sh23LegacyDate(info.backupDate);
++    pb.sequence=0;
++    pb.writeCount=0;
++    pb.fileCount=info.fileCount;
++    pb.folderCount=info.folderCount;
++
++    memcpy(pb.finderInfo,info.finderInfo,32);
++
++    pb.result=noErr;
++
++    memcpy(sh24PBBytes,&pb,sizeof(pb));
++
++    if (pb.name)
++        memcpy(pb.name,sh26PascalName,(size_t)sh26PascalName[0]+1);
++
++    return noErr;
++}
++
++#endif

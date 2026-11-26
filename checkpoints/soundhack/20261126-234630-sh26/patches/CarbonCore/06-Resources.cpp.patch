@@ -1,0 +1,196 @@
+--- a/src/frameworks/CoreServices/src/CarbonCore/Resources.cpp
++++ b/src/frameworks/CoreServices/src/CarbonCore/Resources.cpp
+@@ -1074,3 +1074,193 @@
+ 	}
+ 	return 0;
+ }
++
++
++
++#ifndef __LP64__
++
++// The existing FSOpenResFile handles the resource fork,
++// current resource file selection and ResError.
++extern "C" ResFileRefNum FSpOpenResFile(
++    const FSSpec* spec, SInt8 permission)
++{
++    if (!spec) {
++        g_lastError = paramErr;
++        return kResFileNotOpened;
++    }
++
++    // Resource persistence is outside this implementation.
++    if (permission != fsRdPerm) {
++        g_lastError = unimpErr;
++        return kResFileNotOpened;
++    }
++
++    FSRef ref;
++    OSErr err = FSpMakeFSRef(spec, &ref);
++
++    if (err != noErr) {
++        g_lastError = err;
++        return kResFileNotOpened;
++    }
++
++    return FSOpenResFile(&ref, permission);
++}
++
++#endif
++
++
++#ifndef __LP64__
++
++extern "C" long GetResourceSizeOnDisk(Handle resource)
++{
++    std::unique_lock<std::mutex> lock(g_resourcesLock);
++
++    if (!resource) {
++        g_lastError=resNotFound;
++        return -1;
++    }
++
++    auto* entry=findResourceDataByHandle(resource);
++
++    if (!entry)
++        return -1;
++
++    // An entry newly added in memory has no disk block.
++    // Resources::save is not implemented in this revision.
++    if (entry->originalDiskSize<0) {
++        g_lastError=resNotFound;
++        return -1;
++    }
++
++    if (entry->originalDiskSize>LONG_MAX) {
++        g_lastError=paramErr;
++        return -1;
++    }
++
++    g_lastError=noErr;
++    return (long)entry->originalDiskSize;
++}
++
++#endif
++
++#ifndef __LP64__
++
++static void sh24Put16(unsigned char* p,uint16_t value)
++{
++    p[0]=(unsigned char)(value>>8);
++    p[1]=(unsigned char)value;
++}
++
++static void sh24Put32(unsigned char* p,uint32_t value)
++{
++    p[0]=(unsigned char)(value>>24);
++    p[1]=(unsigned char)(value>>16);
++    p[2]=(unsigned char)(value>>8);
++    p[3]=(unsigned char)value;
++}
++
++static void sh24EmptyResourceMap(unsigned char* bytes)
++{
++    memset(bytes,0,286);
++
++    sh24Put32(bytes,256);
++    sh24Put32(bytes+4,256);
++    sh24Put32(bytes+8,0);
++    sh24Put32(bytes+12,30);
++
++    memcpy(bytes+256,bytes,16);
++
++    sh24Put16(bytes+280,28);
++    sh24Put16(bytes+282,30);
++    sh24Put16(bytes+284,0xffff);
++}
++
++#include <stdint.h>
++#include <sys/xattr.h>
++#include <CarbonCore/Files.h>
++
++extern "C" void FSpCreateResFile(
++    const FSSpec* spec,OSType creator,
++    OSType fileType,ScriptCode scriptTag)
++{
++    if (!spec) {
++        g_lastError=paramErr;
++        return;
++    }
++
++    if (!spec->name[0] ||
++        spec->name[0]>sizeof(spec->name)-1) {
++        g_lastError=bdNamErr;
++        return;
++    }
++
++    FSRef ref={};
++
++    OSStatus err=FSpMakeFSRef(spec,&ref);
++
++    if (err==fnfErr) {
++        err=FSpCreate(spec,creator,fileType,scriptTag);
++
++        if (err==noErr)
++            err=FSpMakeFSRef(spec,&ref);
++    }
++
++    if (err!=noErr) {
++        g_lastError=(OSErr)err;
++        return;
++    }
++
++    uint8_t path[4096]={};
++
++    err=FSRefMakePath(&ref,path,sizeof(path));
++
++    if (err!=noErr) {
++        g_lastError=(OSErr)err;
++        return;
++    }
++
++    int fd=open(
++        (const char*)path,
++        O_RDWR|O_NOFOLLOW
++    );
++
++    if (fd<0) {
++        g_lastError=(errno==EACCES || errno==EPERM)
++            ? permErr : ioErr;
++        return;
++    }
++
++    struct stat st;
++
++    if (fstat(fd,&st)!=0 || !S_ISREG(st.st_mode)) {
++        close(fd);
++        g_lastError=paramErr;
++        return;
++    }
++
++    unsigned char bytes[286];
++
++    sh24EmptyResourceMap(bytes);
++
++    int rc=fsetxattr(
++        fd,"com.apple.ResourceFork",
++        bytes,sizeof(bytes),0,XATTR_CREATE
++    );
++
++    int savedErrno=errno;
++
++    close(fd);
++
++    if (rc==0)
++        g_lastError=noErr;
++    else if (savedErrno==EEXIST)
++        g_lastError=dupFNErr;
++    else if (savedErrno==ENOSPC)
++        g_lastError=dskFulErr;
++    else if (savedErrno==EACCES || savedErrno==EPERM)
++        g_lastError=permErr;
++    else
++        g_lastError=ioErr;
++}
++
++#endif

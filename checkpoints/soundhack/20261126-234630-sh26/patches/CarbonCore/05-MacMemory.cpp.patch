@@ -1,0 +1,456 @@
+--- a/src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp
++++ b/src/frameworks/CoreServices/src/CarbonCore/MacMemory.cpp
+@@ -20,6 +20,7 @@
+ #include <CarbonCore/MacMemory.h>
+ #include <CarbonCore/MacErrors.h>
+ #include <cstring>
++#include <climits>
+ #include <stdint.h>
+ #include <cstdlib>
+ #include <cstdio>
+@@ -103,61 +104,186 @@
+ 	free(p);
+ }
+ 
+-void DisposeHandle(Handle handle)
+-{
+-	DisposePtr(*handle);
+-	free(handle);
++
++// Classic handle metadata. The master pointer remains the
++// allocator's existing Handle representation.
++static std::mutex g_handleStateMutex;
++
++static std::unordered_map<Handle, unsigned char>& handleStates()
++{
++    static auto* states =
++        new std::unordered_map<Handle, unsigned char>;
++    return *states;
++}
++
++static const unsigned char kHandleLocked = 0x80;
++static const unsigned char kHandlePurgeable = 0x40;
++static const unsigned char kHandleResource = 0x20;
++
++static unsigned char handleState(Handle h)
++{
++    std::lock_guard<std::mutex> guard(g_handleStateMutex);
++    auto it = handleStates().find(h);
++    return it == handleStates().end() ? 0 : it->second;
++}
++
++static void changeHandleState(
++    Handle h, unsigned char clear, unsigned char set)
++{
++    std::lock_guard<std::mutex> guard(g_handleStateMutex);
++
++    auto it = handleStates().find(h);
++
++    if (it != handleStates().end())
++        it->second = (it->second & ~clear) | set;
++}
++
++static Handle makeTrackedHandle(Ptr data)
++{
++    Handle h = (Handle)malloc(sizeof(*h));
++
++    if (!h) {
++        DisposePtr(data);
++        return nullptr;
++    }
++
++    *h = data;
++
++    try {
++        std::lock_guard<std::mutex> guard(g_handleStateMutex);
++        handleStates().emplace(h, 0);
++    } catch (...) {
++        DisposePtr(data);
++        free(h);
++        return nullptr;
++    }
++
++    return h;
++}
++
++extern "C" SignedByte HGetState(Handle h)
++{
++    return (SignedByte)handleState(h);
++}
++
++extern "C" void HSetState(Handle h, SignedByte state)
++{
++    const unsigned char mask =
++        kHandleLocked | kHandlePurgeable | kHandleResource;
++
++    changeHandleState(h, mask, (unsigned char)state & mask);
++}
++
++extern "C" void HNoPurge(Handle h)
++{
++    changeHandleState(h, kHandlePurgeable, 0);
++}
++
++void DisposeHandle(Handle h)
++{
++    if (!h)
++        return;
++
++    {
++        std::lock_guard<std::mutex> guard(g_handleStateMutex);
++        handleStates().erase(h);
++    }
++
++    DisposePtr(*h);
++    free(h);
+ }
+ 
+ Size GetHandleSize(Handle h)
+ {
+-	if (!*h)
+-		return 0;
+-	return GetPtrSize(*h);
++    return h && *h ? GetPtrSize(*h) : 0;
+ }
+ 
+ void EmptyHandle(Handle h)
+ {
+-	if (*h)
+-	{
+-		DisposePtr(*h);
+-		*h = nullptr;
+-	}
+-}
+-
+-OSErr PtrToHand(const void* srcPtr, Handle* dstHndl, long size)
+-{
+-	*dstHndl = NewHandle(size);
+-	memcpy(**dstHndl, srcPtr, size);
+-	return noErr;
+-}
+-
+-OSErr PtrToXHand(const void* srcPtr, Handle dstHndl, long size)
+-{
+-	SetHandleSize(dstHndl, size);
+-	memcpy(*dstHndl, srcPtr, size);
+-	return noErr;
++    if (!h || !*h || (handleState(h) & kHandleLocked))
++        return;
++
++    DisposePtr(*h);
++    *h = nullptr;
++}
++
++OSErr PtrToHand(
++    const void* srcPtr, Handle* dstHndl, long size)
++{
++    if (!dstHndl || size < 0 || (size && !srcPtr))
++        return paramErr;
++
++    Handle h = NewHandle(size);
++
++    if (!h)
++        return memFullErr;
++
++    if (size)
++        memcpy(*h, srcPtr, size);
++
++    *dstHndl = h;
++    return noErr;
++}
++
++OSErr PtrToXHand(
++    const void* srcPtr, Handle dstHndl, long size)
++{
++    if (!dstHndl || size < 0 || (size && !srcPtr))
++        return paramErr;
++
++    // Source may refer to the handle being resized.
++    void* copy = size ? malloc(size) : nullptr;
++
++    if (size && !copy)
++        return memFullErr;
++
++    if (size)
++        memcpy(copy, srcPtr, size);
++
++    SetHandleSize(dstHndl, size);
++
++    if (GetHandleSize(dstHndl) != size ||
++        (size && !*dstHndl)) {
++        free(copy);
++        return memFullErr;
++    }
++
++    if (size)
++        memcpy(*dstHndl, copy, size);
++
++    free(copy);
++    return noErr;
+ }
+ 
+ Handle NewHandle(long size)
+ {
+-	Handle h = (Handle) malloc(sizeof(*h));
+-	*h = NewPtr(size);
+-	return h;
++    if (size < 0)
++        return nullptr;
++
++    Ptr data = NewPtr(size);
++
++    if (!data)
++        return nullptr;
++
++    return makeTrackedHandle(data);
+ }
+ 
+ Handle NewHandleClear(long size)
+ {
+-	Handle h = (Handle) malloc(sizeof(*h));
+-	*h = NewPtrClear(size);
+-	return h;
++    if (size < 0)
++        return nullptr;
++
++    Ptr data = NewPtrClear(size);
++
++    if (!data)
++        return nullptr;
++
++    return makeTrackedHandle(data);
+ }
+ 
+ Handle NewEmptyHandle(void)
+ {
+-	Handle h = (Handle) malloc(sizeof(*h));
+-	*h = nullptr;
+-	return h;
++    return makeTrackedHandle(nullptr);
+ }
+ 
+ long GetPtrSize(Ptr ptr)
+@@ -188,86 +314,169 @@
+ 
+ void SetHandleSize(Handle h, long newSize)
+ {
+-	if (!*h)
+-		*h = NewPtr(newSize);
+-	else if (!newSize)
+-	{
+-		DisposePtr(*h);
+-		*h = nullptr;
+-	}
+-	else
+-	{
+-		Ptr old = *h;
+-		*h = (Ptr) realloc(old, newSize);
+-		forgetBlockSize(old);
+-		recordBlockSize(*h, newSize);
+-	}
++    if (!h || newSize < 0)
++        return;
++
++    if (handleState(h) & kHandleLocked) {
++        // A locked allocation must never be relocated.
++        // Resizing inside existing capacity preserves the pointer.
++        if (*h && newSize > 0 &&
++            (size_t)newSize <= malloc_size(*h))
++            recordBlockSize(*h, newSize);
++
++        return;
++    }
++
++    if (!newSize) {
++        EmptyHandle(h);
++        return;
++    }
++
++    if (!*h) {
++        *h = NewPtr(newSize);
++        return;
++    }
++
++    Ptr old = *h;
++    Ptr resized = (Ptr)realloc(old, newSize);
++
++    if (!resized)
++        return;
++
++    forgetBlockSize(old);
++    *h = resized;
++    recordBlockSize(resized, newSize);
+ }
+ 
+ void ReallocateHandle(Handle h, Size byteCount)
+ {
+-	SetHandleSize(h, 0);
+-	SetHandleSize(h, byteCount);
++    if (!h || byteCount < 0 ||
++        (handleState(h) & kHandleLocked))
++        return;
++
++    if (!byteCount) {
++        EmptyHandle(h);
++        return;
++    }
++
++    Ptr data = NewPtr(byteCount);
++
++    if (!data)
++        return;
++
++    DisposePtr(*h);
++    *h = data;
+ }
+ 
+ void HLock(Handle h)
+ {
++    changeHandleState(h, 0, kHandleLocked);
+ }
+ 
+ void HLockHi(Handle h)
+ {
++    // This allocator has no classic high-memory heap zone.
++    // Preserve the meaningful lock semantics.
++    HLock(h);
+ }
+ 
+ void HUnlock(Handle h)
+ {
++    changeHandleState(h, kHandleLocked, 0);
+ }
+ 
+ OSErr HandToHand(Handle* h)
+ {
+-	if (!h)
+-		return paramErr;
+-	if (!*h)
+-	{
+-		*h = NewEmptyHandle();
+-		return noErr;
+-	}
+-
+-	Handle src = *h;
+-	long size = GetHandleSize(src);
+-	Handle newHandle = NewHandle(size);
+-
+-	memcpy(*newHandle, *src, size);
+-	*h = newHandle;
+-
+-	return noErr;
++    if (!h)
++        return paramErr;
++
++    if (!*h || !**h) {
++        Handle copy = NewEmptyHandle();
++
++        if (!copy)
++            return memFullErr;
++
++        *h = copy;
++        return noErr;
++    }
++
++    return PtrToHand(**h, h, GetHandleSize(*h));
+ }
+ 
+ // Append h1 to h2
+ OSErr HandAndHand(Handle h1, Handle h2)
+ {
+-	if (!h1 || !h2)
+-		return paramErr;
+-	if (!*h1)
+-		return noErr;
+-	long origSize = GetHandleSize(h2);
+-	long addSize = GetHandleSize(h1);
+-
+-	SetHandleSize(h2, origSize + addSize);
+-	memcpy(*h2 + origSize, *h1, addSize);
+-
+-	return noErr;
++    if (!h1 || !h2)
++        return paramErr;
++
++    if (!*h1)
++        return noErr;
++
++    return PtrAndHand(*h1, h2, GetHandleSize(h1));
+ }
+ 
+ OSErr PtrAndHand(const void* ptr1, Handle hand2, long size)
+ {
+-	if (!size)
+-		return noErr;
+-	if (!ptr1 || !hand2)
+-		return paramErr;
+-	
+-	long origSize = GetHandleSize(hand2);
+-	SetHandleSize(hand2, origSize + size);
+-
+-	memcpy(*hand2 + origSize, ptr1, size);
+-	return noErr;
+-}
++    if (!hand2 || size < 0 || (size && !ptr1))
++        return paramErr;
++
++    if (!size)
++        return noErr;
++
++    long oldSize = GetHandleSize(hand2);
++
++    if (oldSize < 0 || size > LONG_MAX - oldSize)
++        return paramErr;
++
++    // Preserve overlapping sources across realloc.
++    void* copy = malloc(size);
++
++    if (!copy)
++        return memFullErr;
++
++    memcpy(copy, ptr1, size);
++
++    long total = oldSize + size;
++
++    SetHandleSize(hand2, total);
++
++    if (!*hand2 || GetHandleSize(hand2) != total) {
++        free(copy);
++        return memFullErr;
++    }
++
++    memcpy(*hand2 + oldSize, copy, size);
++    free(copy);
++
++    return noErr;
++}
++
++#ifndef __LP64__
++
++namespace {
++
++// Compatibility value for the obsolete classic heap APIs.
++// This is not a reservation or an allocation guarantee.
++constexpr long sh24LegacyHeapCapacity=256L*1024L*1024L;
++
++}
++
++extern "C" long FreeMem(void)
++{
++    return sh24LegacyHeapCapacity;
++}
++
++extern "C" long MaxBlock(void)
++{
++    return sh24LegacyHeapCapacity;
++}
++
++extern "C" Size MaxMem(Size* grow)
++{
++    if (grow)
++        *grow=0;
++
++    return (Size)sh24LegacyHeapCapacity;
++}
++
++#endif

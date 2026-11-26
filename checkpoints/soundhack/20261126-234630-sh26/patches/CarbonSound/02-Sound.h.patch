@@ -1,0 +1,87 @@
+--- a/src/frameworks/Carbon/CarbonSound/include/CarbonSound/Sound.h
++++ b/src/frameworks/Carbon/CarbonSound/include/CarbonSound/Sound.h
+@@ -192,6 +192,84 @@
+ OSErr SndDoImmediate(SndChannelPtr chan, const SndCommand* cmd);
+ OSErr SndChannelStatus(SndChannelPtr chan, short theLength, SCStatus* theStatus);
+ 
++
++#ifndef __LP64__
++
++#pragma pack(push, 2)
++typedef struct SoundComponentData {
++    SInt32 flags;
++    OSType format;
++    SInt16 numChannels;
++    SInt16 sampleSize;
++    UnsignedFixed sampleRate;
++    SInt32 sampleCount;
++    Byte* buffer;
++    SInt32 reserved;
++} SoundComponentData;
++#pragma pack(pop)
++
++typedef struct OpaqueSoundConverter* SoundConverter;
++
++OSErr SoundConverterOpen(
++    const SoundComponentData* input,
++    const SoundComponentData* output,
++    SoundConverter* converter);
++
++OSErr SoundConverterClose(SoundConverter converter);
++
++OSErr SoundConverterGetBufferSizes(
++    SoundConverter converter,
++    unsigned long inputBytesTarget,
++    unsigned long* inputFrames,
++    unsigned long* inputBytes,
++    unsigned long* outputBytes);
++
++OSErr SoundConverterBeginConversion(
++    SoundConverter converter);
++
++OSErr SoundConverterConvertBuffer(
++    SoundConverter converter,
++    const void* input,
++    unsigned long inputFrames,
++    void* output,
++    unsigned long* outputFrames,
++    unsigned long* outputBytes);
++
++OSErr SoundConverterEndConversion(
++    SoundConverter converter,
++    void* output,
++    unsigned long* outputFrames,
++    unsigned long* outputBytes);
++
++#endif
++
++
++#ifndef __LP64__
++typedef struct SndListResource** SndListHandle;
++
++OSErr SetupAIFFHeader(
++    short fRefNum, short numChannels,
++    UnsignedFixed sampleRate, short sampleSize,
++    OSType compressionType, unsigned long numBytes,
++    unsigned long numFrames);
++
++OSErr SetupSndHeader(
++    SndListHandle sndHandle, short numChannels,
++    UnsignedFixed sampleRate, short sampleSize,
++    OSType compressionType, short baseNote,
++    unsigned long numBytes, short* headerLen);
++#endif
++
++
++#ifndef __LP64__
++OSErr SndPlay(SndChannelPtr chan, SndListHandle sndHdl, Boolean async);
++#endif
++
++#ifndef __LP64__
++OSErr SoundConverterSetInfo(
++    SoundConverter converter, OSType selector, void* info);
++#endif
++
+ #ifdef __cplusplus
+ }
+ #endif

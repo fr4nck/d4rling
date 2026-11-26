@@ -1,0 +1,10 @@
+--- a/src/frameworks/CoreServices/src/CarbonCore/ResourcesImpl.h
++++ b/src/frameworks/CoreServices/src/CarbonCore/ResourcesImpl.h
+@@ -40,6 +40,7 @@
+ 		std::string name;
+ 		ResAttributes attributes;
+ 		std::vector<uint8_t> dataBacking;
++		int64_t originalDiskSize = -1;
+ 		Resources* parent;
+ 
+ 		ResourceData() {}

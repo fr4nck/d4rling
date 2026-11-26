@@ -1,0 +1,771 @@
+--- a/src/frameworks/Carbon/CarbonSound/src/SoundManager.cpp
++++ b/src/frameworks/Carbon/CarbonSound/src/SoundManager.cpp
+@@ -684,3 +684,768 @@
+ 	memcpy(theStatus, &status, std::min<size_t>(theLength, sizeof(status)));
+ 	return noErr;
+ }
++
++#ifndef __LP64__
++
++#include <stdint.h>
++#include <stdlib.h>
++#include <string.h>
++
++#if defined(__i386__)
++static_assert(sizeof(SoundComponentData)==28,
++              "SoundComponentData ABI");
++static_assert(
++    __builtin_offsetof(SoundComponentData,buffer)==20,
++    "SoundComponentData buffer offset");
++#endif
++
++namespace {
++
++enum class LegacyPCM {
++    Invalid,
++    Unsigned8,
++    Signed16BE,
++    Signed16LE
++};
++
++constexpr uint32_t pcmTag(
++    char a, char b, char c, char d)
++{
++    return ((uint32_t)(unsigned char)a<<24) |
++           ((uint32_t)(unsigned char)b<<16) |
++           ((uint32_t)(unsigned char)c<<8) |
++           (uint32_t)(unsigned char)d;
++}
++
++LegacyPCM legacyPCMFormat(const SoundComponentData& d)
++{
++    if (d.format==pcmTag('r','a','w',' ') &&
++        d.sampleSize==8)
++        return LegacyPCM::Unsigned8;
++
++    if (d.format==pcmTag('t','w','o','s') &&
++        d.sampleSize==16)
++        return LegacyPCM::Signed16BE;
++
++    if (d.format==pcmTag('s','o','w','t') &&
++        d.sampleSize==16)
++        return LegacyPCM::Signed16LE;
++
++    return LegacyPCM::Invalid;
++}
++
++unsigned pcmBytes(LegacyPCM f)
++{
++    return f==LegacyPCM::Unsigned8 ? 1 : 2;
++}
++
++int32_t decodeLegacyPCM(
++    const uint8_t* p, LegacyPCM format)
++{
++    if (format==LegacyPCM::Unsigned8)
++        return ((int32_t)p[0]-128)*256;
++
++    uint32_t word;
++
++    if (format==LegacyPCM::Signed16BE)
++        word=((uint32_t)p[0]<<8)|p[1];
++    else
++        word=((uint32_t)p[1]<<8)|p[0];
++
++    return word>=32768
++        ? (int32_t)word-65536
++        : (int32_t)word;
++}
++
++void encodeLegacyPCM(
++    uint8_t* p, LegacyPCM format, int32_t sample)
++{
++    if (format==LegacyPCM::Unsigned8) {
++        p[0]=(uint8_t)((sample+32768)/256);
++        return;
++    }
++
++    uint16_t word=(uint16_t)sample;
++
++    if (format==LegacyPCM::Signed16BE) {
++        p[0]=(uint8_t)(word>>8);
++        p[1]=(uint8_t)word;
++    } else {
++        p[0]=(uint8_t)word;
++        p[1]=(uint8_t)(word>>8);
++    }
++}
++
++} // namespace
++
++struct OpaqueSoundConverter {
++    LegacyPCM input;
++    LegacyPCM output;
++    unsigned channels;
++    unsigned inFrame;
++    unsigned outFrame;
++    bool active;
++};
++
++extern "C" OSErr SoundConverterOpen(
++    const SoundComponentData* input,
++    const SoundComponentData* output,
++    SoundConverter* converter)
++{
++    if (!converter)
++        return paramErr;
++
++    *converter=nullptr;
++
++    if (!input || !output ||
++        !input->sampleRate || !output->sampleRate)
++        return paramErr;
++
++    // This implementation is strictly interleaved PCM.
++    // Extended records, codecs and resampling are excluded.
++    if (input->flags || output->flags ||
++        input->reserved || output->reserved ||
++        input->sampleRate!=output->sampleRate ||
++        input->numChannels!=output->numChannels ||
++        input->numChannels<1 || input->numChannels>2)
++        return unimpErr;
++
++    LegacyPCM in=legacyPCMFormat(*input);
++    LegacyPCM out=legacyPCMFormat(*output);
++
++    if (in==LegacyPCM::Invalid ||
++        out==LegacyPCM::Invalid)
++        return unimpErr;
++
++    auto* c=(OpaqueSoundConverter*)malloc(sizeof(OpaqueSoundConverter));
++
++    if (!c)
++        return memFullErr;
++
++    c->input=in;
++    c->output=out;
++    c->channels=(unsigned)input->numChannels;
++    c->inFrame=c->channels*pcmBytes(in);
++    c->outFrame=c->channels*pcmBytes(out);
++    c->active=false;
++
++    *converter=c;
++    return noErr;
++}
++
++extern "C" OSErr SoundConverterClose(
++    SoundConverter c)
++{
++    if (!c)
++        return paramErr;
++
++    free(c);
++    return noErr;
++}
++
++extern "C" OSErr SoundConverterGetBufferSizes(
++    SoundConverter c,
++    unsigned long target,
++    unsigned long* frames,
++    unsigned long* inputBytes,
++    unsigned long* outputBytes)
++{
++    if (!c || !frames || !inputBytes || !outputBytes)
++        return paramErr;
++
++    *frames=*inputBytes=*outputBytes=0;
++
++    if (target>UINT32_MAX || target<c->inFrame)
++        return paramErr;
++
++    unsigned long n=target/c->inFrame;
++
++    if (n>UINT32_MAX/c->outFrame)
++        return paramErr;
++
++    *frames=n;
++    *inputBytes=n*c->inFrame;
++    *outputBytes=n*c->outFrame;
++    return noErr;
++}
++
++extern "C" OSErr SoundConverterBeginConversion(
++    SoundConverter c)
++{
++    if (!c || c->active)
++        return paramErr;
++
++    c->active=true;
++    return noErr;
++}
++
++extern "C" OSErr SoundConverterConvertBuffer(
++    SoundConverter c,
++    const void* input,
++    unsigned long frames,
++    void* output,
++    unsigned long* outputFrames,
++    unsigned long* outputBytes)
++{
++    if (!outputFrames || !outputBytes)
++        return paramErr;
++
++    *outputFrames=*outputBytes=0;
++
++    if (!c || !c->active)
++        return paramErr;
++
++    if (!frames)
++        return noErr;
++
++    if (!input || !output ||
++        frames>UINT32_MAX/c->inFrame ||
++        frames>UINT32_MAX/c->outFrame)
++        return paramErr;
++
++    size_t inSize=(size_t)frames*c->inFrame;
++    size_t outSize=(size_t)frames*c->outFrame;
++
++    if (c->input==c->output) {
++        memmove(output,input,inSize);
++    } else {
++        // A separate destination protects overlapping buffers.
++        auto* temp=(uint8_t*)malloc(outSize);
++
++        if (!temp)
++            return memFullErr;
++
++        auto* src=(const uint8_t*)input;
++        size_t samples=(size_t)frames*c->channels;
++
++        unsigned inBytes=pcmBytes(c->input);
++        unsigned outBytes=pcmBytes(c->output);
++
++        for (size_t n=0;n<samples;n++) {
++            int32_t value=decodeLegacyPCM(
++                src+n*inBytes,c->input);
++
++            encodeLegacyPCM(
++                temp+n*outBytes,c->output,value);
++        }
++
++        memcpy(output,temp,outSize);
++        free(temp);
++    }
++
++    *outputFrames=frames;
++    *outputBytes=(unsigned long)outSize;
++    return noErr;
++}
++
++extern "C" OSErr SoundConverterEndConversion(
++    SoundConverter c,
++    void* output,
++    unsigned long* frames,
++    unsigned long* bytes)
++{
++    (void)output;
++
++    if (!frames || !bytes)
++        return paramErr;
++
++    *frames=*bytes=0;
++
++    if (!c || !c->active)
++        return paramErr;
++
++    // Equal-rate PCM has no delayed packets to flush.
++    c->active=false;
++    return noErr;
++}
++
++#endif
++
++#ifndef __LP64__
++#include <CarbonCore/Files.h>
++#include <CarbonCore/MacMemory.h>
++
++#include <stdint.h>
++#include <string.h>
++
++namespace {
++
++void sh22Put16(uint8_t* p,uint16_t v)
++{
++    p[0]=(uint8_t)(v>>8);
++    p[1]=(uint8_t)v;
++}
++
++void sh22Put32(uint8_t* p,uint32_t v)
++{
++    p[0]=(uint8_t)(v>>24);
++    p[1]=(uint8_t)(v>>16);
++    p[2]=(uint8_t)(v>>8);
++    p[3]=(uint8_t)v;
++}
++
++// Exact conversion from unsigned 16.16 fixed-point
++// sample rate to the AIFF extended-precision encoding.
++void sh22Rate80(uint8_t* p,uint32_t rate)
++{
++    memset(p,0,10);
++
++    if (!rate)
++        return;
++
++    unsigned highest=0;
++
++    for (uint32_t r=rate;r>1;r>>=1)
++        ++highest;
++
++    uint16_t exponent=(uint16_t)(16383+highest-16);
++    uint64_t mantissa=(uint64_t)rate<<(63-highest);
++
++    sh22Put16(p,exponent);
++
++    for (unsigned n=0;n<8;n++)
++        p[2+n]=(uint8_t)(mantissa>>(56-8*n));
++}
++
++OSErr sh22FrameCount(
++    short channels,short bits,uint32_t rate,
++    unsigned long bytes,uint32_t* frames)
++{
++    if (!rate || channels<1 || channels>2 ||
++        (bits!=8 && bits!=16 && bits!=24 && bits!=32))
++        return paramErr;
++
++    unsigned stride=(unsigned)channels*(unsigned)(bits/8);
++
++    if (bytes>UINT32_MAX || bytes%stride)
++        return paramErr;
++
++    *frames=(uint32_t)(bytes/stride);
++    return noErr;
++}
++
++} // namespace
++
++extern "C" OSErr SetupAIFFHeader(
++    short ref,short channels,UnsignedFixed rate,
++    short bits,OSType compression,
++    unsigned long bytes,unsigned long suppliedFrames)
++{
++    // Only uncompressed AIFF is implemented.
++    if (compression!=0x4e4f4e45u)
++        return -223;
++
++    uint32_t frames=0;
++
++    OSErr err=sh22FrameCount(
++        channels,bits,rate,bytes,&frames);
++
++    if (err!=noErr)
++        return err;
++
++    if (suppliedFrames && suppliedFrames!=frames)
++        return paramErr;
++
++    uint64_t formSize=46ull+bytes+(bytes&1ul);
++
++    if (formSize>UINT32_MAX)
++        return paramErr;
++
++    uint8_t h[54]={};
++
++    memcpy(h,"FORM",4);
++    sh22Put32(h+4,(uint32_t)formSize);
++    memcpy(h+8,"AIFFCOMM",8);
++
++    sh22Put32(h+16,18);
++    sh22Put16(h+20,(uint16_t)channels);
++    sh22Put32(h+22,frames);
++    sh22Put16(h+26,(uint16_t)bits);
++    sh22Rate80(h+28,rate);
++
++    memcpy(h+38,"SSND",4);
++    sh22Put32(h+42,(uint32_t)(8+bytes));
++
++    // Offset and blockSize remain zero.
++    // Audio payload and odd-byte padding belong to the caller.
++    ByteCount actual=0;
++
++    err=FSWriteFork(
++        ref,fsAtMark,0,sizeof(h),h,&actual);
++
++    if (err!=noErr)
++        return err;
++
++    return actual==sizeof(h) ? noErr : ioErr;
++}
++
++extern "C" OSErr SetupSndHeader(
++    SndListHandle sound,short channels,
++    UnsignedFixed rate,short bits,
++    OSType compression,short note,
++    unsigned long bytes,short* headerLen)
++{
++    if (!headerLen)
++        return paramErr;
++
++    *headerLen=0;
++
++    if (compression!=0x4e4f4e45u)
++        return -223;
++
++    if ((bits!=8 && bits!=16) ||
++        note<0 || note>127)
++        return paramErr;
++
++    uint32_t frames=0;
++
++    OSErr err=sh22FrameCount(
++        channels,bits,rate,bytes,&frames);
++
++    if (err!=noErr)
++        return err;
++
++    Handle h=reinterpret_cast<Handle>(sound);
++
++    if (!h || !*h)
++        return paramErr;
++
++    bool standard=channels==1 && bits==8;
++    unsigned length=standard ? 42 : 84;
++
++    if (GetHandleSize(h)<(Size)length)
++        return memFullErr;
++
++    // Canonical big-endian format-1 resource.
++    // The sampled-sound header begins at offset 20.
++    uint8_t header[84]={};
++
++    sh22Put16(header,1);
++    sh22Put16(header+2,1);
++    sh22Put16(header+4,5);
++
++    sh22Put32(
++        header+6,
++        channels==1 ? 0x80u : 0xc0u
++    );
++
++    sh22Put16(header+10,1);
++    sh22Put16(header+12,0x8051);
++    sh22Put32(header+16,20);
++
++    uint8_t* snd=header+20;
++
++    sh22Put32(snd+4,standard ? frames : channels);
++    sh22Put32(snd+8,rate);
++
++    snd[20]=standard ? 0 : 255;
++    snd[21]=(uint8_t)note;
++
++    if (!standard) {
++        sh22Put32(snd+22,frames);
++        sh22Rate80(snd+26,rate);
++        sh22Put16(snd+48,(uint16_t)bits);
++    }
++
++    memcpy(*h,header,length);
++
++    *headerLen=(short)length;
++    return noErr;
++}
++
++#endif
++
++#ifndef __LP64__
++#include <new>
++
++#include <stdint.h>
++#include <stddef.h>
++
++namespace {
++
++struct LegacyResourcePCM {
++    uint32_t channels;
++    uint32_t bits;
++    uint32_t rate;
++    uint32_t frames;
++    uint32_t offset;
++    uint32_t length;
++    uint32_t note;
++};
++
++uint16_t resource16(const uint8_t* p)
++{
++    return ((uint16_t)p[0]<<8)|p[1];
++}
++
++uint32_t resource32(const uint8_t* p)
++{
++    return ((uint32_t)p[0]<<24)|
++           ((uint32_t)p[1]<<16)|
++           ((uint32_t)p[2]<<8)|p[3];
++}
++
++bool resourceSpan(size_t total,size_t offset,size_t count)
++{
++    return offset<=total && count<=total-offset;
++}
++
++bool parseLegacyResource(
++    const uint8_t* data,size_t length,LegacyResourcePCM* result)
++{
++    if (!result)
++        return false;
++
++    *result={};
++
++    if (!data || !resourceSpan(length,0,20))
++        return false;
++
++    // Format 1, one sampled-sound modifier,
++    // one offset-based buffer or sound command.
++    if (resource16(data)!=1 ||
++        resource16(data+2)!=1 ||
++        resource16(data+4)!=5 ||
++        resource16(data+10)!=1)
++        return false;
++
++    uint32_t init=resource32(data+6);
++
++    if (init!=0x80u && init!=0xc0u)
++        return false;
++
++    uint16_t command=resource16(data+12);
++
++    if ((command!=0x8051u && command!=0x8050u) ||
++        resource16(data+14)!=0)
++        return false;
++
++    uint32_t offset=resource32(data+16);
++
++    if (offset<20 || !resourceSpan(length,offset,22))
++        return false;
++
++    const uint8_t* h=data+offset;
++
++    // External sample pointers inside a disk resource
++    // cannot be dereferenced safely.
++    if (resource32(h)!=0)
++        return false;
++
++    uint32_t rate=resource32(h+8);
++
++    if (rate<(1000u<<16) || h[21]>127)
++        return false;
++
++    // Looping resources are outside this bounded player.
++    if (resource32(h+12)!=0 || resource32(h+16)!=0)
++        return false;
++
++    uint32_t channels,bits,frames,headerSize;
++
++    if (h[20]==0) {
++        channels=1;
++        bits=8;
++        frames=resource32(h+4);
++        headerSize=22;
++    } else if (h[20]==255) {
++        headerSize=64;
++
++        if (!resourceSpan(length,offset,headerSize))
++            return false;
++
++        channels=resource32(h+4);
++        frames=resource32(h+22);
++        bits=resource16(h+48);
++
++        // Reject external marker/instrument/recording data.
++        if (resource32(h+36) ||
++            resource32(h+40) ||
++            resource32(h+44))
++            return false;
++    } else {
++        return false;
++    }
++
++    if ((channels!=1 && channels!=2) ||
++        (bits!=8 && bits!=16) ||
++        (channels==1 && init!=0x80u) ||
++        (channels==2 && init!=0xc0u))
++        return false;
++
++    // Resource playback is bounded to avoid excessive
++    // allocation in the existing float/resampling engine.
++    if (!frames || frames>4000000u)
++        return false;
++
++    uint64_t bytes=(uint64_t)frames*channels*(bits/8u);
++    uint64_t samplesAt=(uint64_t)offset+headerSize;
++
++    if (bytes>UINT32_MAX || samplesAt>UINT32_MAX ||
++        !resourceSpan(length,(size_t)samplesAt,(size_t)bytes))
++        return false;
++
++    result->channels=channels;
++    result->bits=bits;
++    result->rate=rate;
++    result->frames=frames;
++    result->offset=(uint32_t)samplesAt;
++    result->length=(uint32_t)bytes;
++    result->note=h[21];
++
++    return true;
++}
++
++} // namespace
++
++
++extern "C" OSErr SndPlay(
++    SndChannelPtr chan,SndListHandle resource,Boolean async)
++{
++    Handle h=reinterpret_cast<Handle>(resource);
++
++    if (!h || !*h)
++        return paramErr;
++
++    Size length=GetHandleSize(h);
++
++    if (length<=0)
++        return badFormat;
++
++    LegacyResourcePCM pcm;
++
++    if (!parseLegacyResource(
++        reinterpret_cast<const uint8_t*>(*h),
++        (size_t)length,&pcm))
++        return badFormat;
++
++    // A temporary channel is supported only synchronously.
++    // No untracked background channel or lifetime leak.
++    if (!chan && async)
++        return unimpErr;
++
++    bool temporary=(chan==nullptr);
++
++    if (temporary) {
++        OSErr err=SndNewChannel(
++            &chan,sampledSynth,
++            pcm.channels==1 ? initMono : initStereo,
++            nullptr);
++
++        if (err!=noErr)
++            return err;
++    }
++
++    auto ch=findChannel(chan);
++
++    if (!ch) {
++        if (temporary)
++            SndDisposeChannel(chan,true);
++
++        return badChannel;
++    }
++
++    bool unavailable=false;
++
++    {
++        std::lock_guard<std::mutex> lock(ch->mutex);
++
++        unavailable=ch->disposing ||
++            (!async && (
++                ch->paused ||
++                std::this_thread::get_id()==
++                    ch->callbackThread.get_id()));
++    }
++
++    if (unavailable) {
++        if (temporary)
++            SndDisposeChannel(chan,true);
++
++        return siDeviceBusyErr;
++    }
++
++    // Translate big-endian resource metadata into a native
++    // SoundHeader. The PCM bytes remain in their original
++    // representation. SndDoCommand copies the samples into
++    // the existing engine's owned float buffer before return.
++    SoundHeader standard={};
++    ExtSoundHeader extended={};
++
++    SndCommand cmd={};
++    cmd.cmd=bufferCmd;
++
++    Ptr samples=*h+pcm.offset;
++
++    if (pcm.channels==1 && pcm.bits==8) {
++        standard.samplePtr=samples;
++        standard.length=pcm.frames;
++        standard.sampleRate=pcm.rate;
++        standard.encode=stdSH;
++        standard.baseFrequency=(UInt8)pcm.note;
++
++        cmd.param2=(SInt32)(intptr_t)&standard;
++    } else {
++        extended.samplePtr=samples;
++        extended.numChannels=pcm.channels;
++        extended.sampleRate=pcm.rate;
++        extended.numFrames=pcm.frames;
++        extended.sampleSize=(UInt16)pcm.bits;
++        extended.encode=extSH;
++        extended.baseFrequency=(UInt8)pcm.note;
++
++        cmd.param2=(SInt32)(intptr_t)&extended;
++    }
++
++    OSErr err=noErr;
++
++    try {
++        err=SndDoCommand(chan,&cmd,async);
++
++        if (err==noErr && !async && !temporary) {
++            std::unique_lock<std::mutex> lock(ch->mutex);
++
++            ch->changed.wait(lock,[&] {
++                return ch->disposing ||
++                    (ch->items.empty() && ch->due.empty());
++            });
++
++            if (ch->disposing)
++                err=badChannel;
++        }
++    } catch (const std::bad_alloc&) {
++        err=memFullErr;
++    } catch (...) {
++        err=siDeviceBusyErr;
++    }
++
++    if (temporary) {
++        OSErr disposed=SndDisposeChannel(chan,err!=noErr);
++
++        if (err==noErr)
++            err=disposed;
++    }
++
++    return err;
++}
++
++#endif
++
++#ifndef __LP64__
++
++extern "C" OSErr SoundConverterSetInfo(
++    SoundConverter converter,OSType selector,void* info)
++{
++    if (!converter)
++        return paramErr;
++
++    // This PCM converter implements no decompressor
++    // configuration properties. Do not read, retain or
++    // pretend to apply a compressed-codec parameter atom.
++    (void)selector;
++    (void)info;
++
++    // Historical Sound Manager siUnknownInfoType.
++    return (OSErr)-231;
++}
++
++#endif

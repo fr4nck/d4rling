@@ -1,0 +1,18 @@
+--- a/src/frameworks/CoreServices/src/CarbonCore/ResourcesImpl.cpp
++++ b/src/frameworks/CoreServices/src/CarbonCore/ResourcesImpl.cpp
+@@ -116,6 +116,7 @@
+ 	type = that.type;
+ 	name = std::move(that.name);
+ 	dataBacking = std::move(that.dataBacking);
++	originalDiskSize = that.originalDiskSize;
+ 	attributes = that.attributes;
+ 	data = that.data;
+ 	parent = that.parent;
+@@ -229,6 +230,7 @@
+ 				throw OSErr(eofErr);
+ 			const uint8_t* block = mem + dataOffset + resourceOffset + 4;
+ 			res.dataBacking.assign(block, block + blockLength);
++			res.originalDiskSize = static_cast<int64_t>(blockLength);
+ 			res.type = type;
+ 			res.parent = this;
+ 			typeData.resources.emplace_back(std::make_unique<ResourceData>(std::move(res)));

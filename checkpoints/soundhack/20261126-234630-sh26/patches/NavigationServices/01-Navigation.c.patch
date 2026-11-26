@@ -1,0 +1,66 @@
+--- a/src/frameworks/Carbon/NavigationServices/src/Navigation.c
++++ b/src/frameworks/Carbon/NavigationServices/src/Navigation.c
+@@ -148,3 +148,63 @@
+ }
+ 
+ #endif
++
++#ifndef __LP64__
++
++NavEventUPP NewNavEventUPP(NavEventProcPtr routine)
++{
++    return routine;
++}
++
++void DisposeNavEventUPP(NavEventUPP upp)
++{
++    // Native UPPs own no descriptor or allocated storage.
++    (void)upp;
++}
++
++NavObjectFilterUPP NewNavObjectFilterUPP(
++    NavObjectFilterProcPtr routine)
++{
++    return routine;
++}
++
++void DisposeNavObjectFilterUPP(NavObjectFilterUPP upp)
++{
++    (void)upp;
++}
++
++#endif
++
++#ifndef __LP64__
++
++_Static_assert(sizeof(NavDialogOptions)==2048,
++               "Legacy NavDialogOptions size");
++_Static_assert(__builtin_offsetof(
++    NavDialogOptions,dialogOptionFlags)==2,"flags offset");
++_Static_assert(__builtin_offsetof(
++    NavDialogOptions,location)==6,"location offset");
++_Static_assert(__builtin_offsetof(
++    NavDialogOptions,clientName)==10,"clientName offset");
++_Static_assert(__builtin_offsetof(
++    NavDialogOptions,preferenceKey)==1546,"preference offset");
++_Static_assert(__builtin_offsetof(
++    NavDialogOptions,popupExtension)==1550,"popup offset");
++_Static_assert(__builtin_offsetof(
++    NavDialogOptions,reserved)==1554,"reserved offset");
++
++OSErr NavGetDefaultDialogOptions(NavDialogOptions* options)
++{
++    if (!options)
++        return paramErr;
++
++    memset(options,0,sizeof(*options));
++
++    options->version=0;
++    options->dialogOptionFlags=0x000000E4;
++    options->location.h=-1;
++    options->location.v=-1;
++
++    return noErr;
++}
++
++#endif
