@@ -1,5 +1,9 @@
 # D4RLING — état de référence pour reprendre le projet
 
+## SoundHack i386 — SH55 / SH56 (27 novembre 2026)
+
+**PASS borné rapporté par le 5700X, non rejoué sur `master`.** SH55 : **4/4 sur le même Mach-O signé** — ouverture WAV, copie AIFF PCM exacte, gain +6,0206 dB et lecture PortAudio (88 217 frames, aucun écart d'échantillon). Intégrité 218/218, archive locale vérifiée, 26/26 éléments d'intégration exportés. Lecture via un pont synchrone PCM16 spécialisé et CoreAudio historique dans un préfixe privé. SH56 : patches WriteHeader/Markers préparés, compilation reproductible bloquée, aucun nouveau runtime ; SH55 préservé. Interface graphique, PBRead asynchrone générique, marqueurs non vides, écoute et import/export QuickTime restent non qualifiés. Ni application de production ni port source intégré. Reprise autonome depuis Git seule bloquée ; conserver le banc et les preuves locales. [Rapport, empreintes et reprise](docs/evidence/soundhack-sh01-2026-11-10/SH55-SH56-5700X-checkpoint-2026-11-27.md).
+
 ## Lecture rapide — Logic Pro 8 (18 novembre 2026)
 
 | Palier | Statut |
